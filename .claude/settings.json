@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run new:*)",
+      "Bash(npm run check:*)",
+      "Bash(npm run render:*)",
+      "Bash(npm run preview:*)",
+      "Bash(npm run list)",
+      "Bash(ffmpeg:*)",
+      "Bash(ffprobe:*)"
+    ]
+  }
+}

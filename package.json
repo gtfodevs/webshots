@@ -1,0 +1,23 @@
+{
+  "name": "webshots",
+  "private": true,
+  "type": "module",
+  "description": "Describe a video, get a narrated, animated MP4. GSAP stages + Argo (Kokoro voice, Playwright, ffmpeg), driven by Claude Code.",
+  "scripts": {
+    "setup": "npm install && npx playwright install chromium && node scripts/webshots.mjs doctor",
+    "doctor": "node scripts/webshots.mjs doctor",
+    "new": "node scripts/webshots.mjs new",
+    "preview": "node scripts/webshots.mjs preview",
+    "check": "node scripts/webshots.mjs check",
+    "render": "node scripts/webshots.mjs render",
+    "list": "node scripts/webshots.mjs list"
+  },
+  "dependencies": {
+    "@argo-video/cli": "0.41.0",
+    "@playwright/test": "1.63.0",
+    "gsap": "3.15.0",
+    "kokoro-js": "1.2.1",
+    "playwright": "1.63.0"
+  },
+  "engines": { "node": ">=20" }
+}

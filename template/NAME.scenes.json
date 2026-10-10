@@ -1,0 +1,5 @@
+[
+  { "scene": "title", "text": "Replace this with the opening line of narration." },
+  { "scene": "point", "text": "Each scene gets one or two sentences. The scene stays on screen until its line finishes." },
+  { "scene": "outro", "text": "And end with a short closing line." }
+]

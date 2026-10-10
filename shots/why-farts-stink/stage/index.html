@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1280, height=720">
+<title>Why Do Farts Stink?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;800&display=swap">
+<style>
+  :root {
+    --sky: #fff7e8;
+    --sky2: #e9f7d9;
+    --ink: #2b2140;
+    --muted: #6d6382;
+    --stink: #9bc43a;
+    --stink-dark: #5f8a12;
+    --sulfur: #f2c230;
+    --pink: #ff8fa3;
+    --blue: #5aa9e6;
+    --teal: #3fbfa8;
+    --grey: #a7a2b3;
+    --display: "Fredoka", "Trebuchet MS", system-ui, sans-serif;
+    --body: "Nunito", system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; width: 1280px; height: 720px; overflow: hidden; background: var(--sky); }
+  body { font-family: var(--body); color: var(--ink); }
+  #bg { position: absolute; inset: 0; background: radial-gradient(1100px 700px at 30% 20%, var(--sky) 0%, var(--sky2) 100%); }
+  .scene { position: absolute; inset: 0; opacity: 0; visibility: hidden; }
+  .scene svg { position: absolute; inset: 0; width: 1280px; height: 720px; }
+  .big { font-family: var(--display); font-weight: 700; letter-spacing: -0.01em; }
+  .h1 { position: absolute; left: 0; right: 0; text-align: center; font-family: var(--display); font-weight: 700; font-size: 92px; line-height: 1; color: var(--ink); }
+  .h2 { position: absolute; left: 0; right: 0; text-align: center; font-family: var(--display); font-weight: 600; font-size: 52px; line-height: 1.1; color: var(--ink); }
+  .sub { position: absolute; left: 0; right: 0; text-align: center; font-family: var(--body); font-weight: 800; font-size: 30px; color: var(--muted); }
+  .chip { display: inline-block; font-family: var(--display); font-weight: 600; font-size: 26px; padding: 8px 18px; border-radius: 999px; background: #fff; border: 3px solid var(--ink); }
+  .stamp { position: absolute; font-family: var(--display); font-weight: 700; font-size: 44px; color: #fff; background: var(--teal); border: 5px solid var(--ink); padding: 6px 26px; border-radius: 16px; transform: rotate(-8deg); }
+  text { font-family: var(--display); font-weight: 600; }
+</style>
+</head>
+<body>
+<div id="bg"></div>
+
+<!-- 1. Title -->
+<section class="scene" id="s-title">
+  <svg viewBox="0 0 1280 720">
+    <g id="cloud" transform="translate(640 470)">
+      <g id="cloud-body">
+        <circle cx="-120" cy="10" r="80" fill="var(--stink)"/>
+        <circle cx="-30" cy="-40" r="105" fill="var(--stink)"/>
+        <circle cx="90" cy="-10" r="90" fill="var(--stink)"/>
+        <circle cx="170" cy="30" r="62" fill="var(--stink)"/>
+        <rect x="-190" y="20" width="420" height="90" rx="45" fill="var(--stink)"/>
+        <circle cx="-55" cy="-10" r="12" fill="var(--ink)"/>
+        <circle cx="35" cy="-10" r="12" fill="var(--ink)"/>
+        <path d="M-40 35 Q-10 60 20 35" stroke="var(--ink)" stroke-width="9" fill="none" stroke-linecap="round"/>
+      </g>
+      <g id="title-lines" stroke="var(--stink-dark)" stroke-width="9" fill="none" stroke-linecap="round">
+        <path class="wiggle" d="M-150 -150 q20 -30 0 -60 q-20 -30 0 -60"/>
+        <path class="wiggle" d="M0 -170 q20 -30 0 -60 q-20 -30 0 -60"/>
+        <path class="wiggle" d="M150 -140 q20 -30 0 -60 q-20 -30 0 -60"/>
+      </g>
+    </g>
+  </svg>
+  <div class="h1" id="title-text" style="top:58px">Why do farts stink?</div>
+</section>
+
+<!-- 2. The mix: mostly odorless gases -->
+<section class="scene" id="s-mix">
+  <div class="h2" style="top:56px">What's actually in a fart?</div>
+  <svg viewBox="0 0 1280 720">
+    <g class="mol" id="m-n2" transform="translate(250 360)">
+      <circle cx="-34" r="52" fill="var(--blue)" stroke="var(--ink)" stroke-width="5"/><circle cx="34" r="52" fill="var(--blue)" stroke="var(--ink)" stroke-width="5"/>
+      <text y="120" text-anchor="middle" font-size="40" fill="var(--ink)">N₂</text><text y="158" text-anchor="middle" font-size="22" fill="var(--muted)">nitrogen</text>
+    </g>
+    <g class="mol" id="m-co2" transform="translate(510 380)">
+      <circle cx="-62" r="38" fill="var(--grey)" stroke="var(--ink)" stroke-width="5"/><circle r="46" fill="#4a4458" stroke="var(--ink)" stroke-width="5"/><circle cx="62" r="38" fill="var(--grey)" stroke="var(--ink)" stroke-width="5"/>
+      <text y="120" text-anchor="middle" font-size="40" fill="var(--ink)">CO₂</text><text y="158" text-anchor="middle" font-size="22" fill="var(--muted)">carbon dioxide</text>
+    </g>
+    <g class="mol" id="m-h2" transform="translate(770 360)">
+      <circle cx="-26" r="38" fill="#ffffff" stroke="var(--ink)" stroke-width="5"/><circle cx="26" r="38" fill="#ffffff" stroke="var(--ink)" stroke-width="5"/>
+      <text y="120" text-anchor="middle" font-size="40" fill="var(--ink)">H₂</text><text y="158" text-anchor="middle" font-size="22" fill="var(--muted)">hydrogen</text>
+    </g>
+    <g class="mol" id="m-ch4" transform="translate(1030 380)">
+      <circle r="48" fill="var(--teal)" stroke="var(--ink)" stroke-width="5"/>
+      <circle cx="-62" cy="-30" r="24" fill="#fff" stroke="var(--ink)" stroke-width="5"/><circle cx="62" cy="-30" r="24" fill="#fff" stroke="var(--ink)" stroke-width="5"/>
+      <circle cx="-40" cy="52" r="24" fill="#fff" stroke="var(--ink)" stroke-width="5"/><circle cx="40" cy="52" r="24" fill="#fff" stroke="var(--ink)" stroke-width="5"/>
+      <text y="120" text-anchor="middle" font-size="40" fill="var(--ink)">CH₄</text><text y="158" text-anchor="middle" font-size="22" fill="var(--muted)">methane</text>
+    </g>
+  </svg>
+  <div class="stamp" id="mix-stamp" style="left:500px;top:590px">ZERO SMELL</div>
+</section>
+
+<!-- 3. The ratio -->
+<section class="scene" id="s-ratio">
+  <div class="h2" style="top:70px">How much of it smells?</div>
+  <svg viewBox="0 0 1280 720">
+    <rect x="140" y="260" width="1000" height="150" rx="28" fill="#fff" stroke="var(--ink)" stroke-width="6"/>
+    <rect id="bar-odorless" x="146" y="266" width="0" height="138" rx="22" fill="#cfe7f7"/>
+    <rect id="bar-stink" x="1128" y="266" width="0" height="138" rx="6" fill="var(--stink)"/>
+    <text id="pct-odorless" x="560" y="358" text-anchor="middle" font-size="64" fill="var(--ink)" opacity="0">99% no smell</text>
+    <g id="pct-stink" opacity="0">
+      <path d="M1131 420 L1131 500" stroke="var(--ink)" stroke-width="5" stroke-linecap="round"/>
+      <text x="1131" y="560" text-anchor="end" font-size="52" fill="var(--stink-dark)">this 1% is the stink</text>
+    </g>
+  </svg>
+</section>
+
+<!-- 4. The culprit: hydrogen sulfide -->
+<section class="scene" id="s-culprit">
+  <div class="h2" style="top:56px">Meet the culprit</div>
+  <svg viewBox="0 0 1280 720">
+    <g id="h2s" transform="translate(470 400)">
+      <g id="h2s-body">
+        <circle cx="-120" cy="70" r="58" fill="#fff" stroke="var(--ink)" stroke-width="6"/>
+        <circle cx="120" cy="70" r="58" fill="#fff" stroke="var(--ink)" stroke-width="6"/>
+        <circle r="110" fill="var(--sulfur)" stroke="var(--ink)" stroke-width="7"/>
+        <circle cx="-36" cy="-20" r="14" fill="var(--ink)"/><circle cx="36" cy="-20" r="14" fill="var(--ink)"/>
+        <path d="M-40 -58 L-14 -44 M40 -58 L14 -44" stroke="var(--ink)" stroke-width="8" stroke-linecap="round"/>
+        <path d="M-34 38 Q0 18 34 38" stroke="var(--ink)" stroke-width="9" fill="none" stroke-linecap="round"/>
+        <text y="12" text-anchor="middle" font-size="0" fill="var(--ink)">S</text>
+      </g>
+      <g id="h2s-lines" stroke="var(--stink-dark)" stroke-width="9" fill="none" stroke-linecap="round">
+        <path class="draw" d="M-60 -130 q18 -26 0 -52 q-18 -26 0 -52"/>
+        <path class="draw" d="M0 -140 q18 -26 0 -52 q-18 -26 0 -52"/>
+        <path class="draw" d="M60 -130 q18 -26 0 -52 q-18 -26 0 -52"/>
+      </g>
+    </g>
+  </svg>
+  <div id="culprit-name" style="position:absolute;left:720px;top:300px;width:520px">
+    <div class="big" style="font-size:58px;line-height:1.05">hydrogen sulfide</div>
+    <div style="font-size:30px;font-weight:800;color:var(--muted);margin-top:8px">H₂S · smells like rotten eggs</div>
+  </div>
+  <div id="culprit-friends" style="position:absolute;left:720px;top:470px;width:520px;display:flex;gap:12px;flex-wrap:wrap">
+    <span class="chip">methanethiol</span><span class="chip">dimethyl sulfide</span>
+  </div>
+</section>
+
+<!-- 5. The factory: bacteria + sulfur foods -->
+<section class="scene" id="s-factory">
+  <div class="h2" style="top:46px">Who makes it? Your gut bacteria.</div>
+  <svg viewBox="0 0 1280 720">
+    <path d="M120 470 C 300 330, 480 610, 660 470 S 1020 330, 1180 470" stroke="#f3b6b6" stroke-width="150" fill="none" stroke-linecap="round"/>
+    <path d="M120 470 C 300 330, 480 610, 660 470 S 1020 330, 1180 470" stroke="#e98f8f" stroke-width="6" fill="none" stroke-dasharray="18 22" opacity=".6"/>
+    <g id="foods">
+      <g class="food" id="f-egg"><ellipse rx="44" ry="56" fill="#fff" stroke="var(--ink)" stroke-width="5"/><circle r="22" fill="var(--sulfur)"/></g>
+      <g class="food" id="f-broc"><rect x="-10" y="0" width="20" height="60" rx="8" fill="#6aa84f" stroke="var(--ink)" stroke-width="5"/><circle cx="-24" cy="-6" r="28" fill="#4f9d3a" stroke="var(--ink)" stroke-width="5"/><circle cx="22" cy="-10" r="30" fill="#4f9d3a" stroke="var(--ink)" stroke-width="5"/><circle cx="0" cy="-34" r="28" fill="#5cae45" stroke="var(--ink)" stroke-width="5"/></g>
+      <g class="food" id="f-steak"><path d="M-52 -14 C -52 -50, 40 -56, 54 -20 C 66 14, 20 44, -18 38 C -46 34, -52 14, -52 -14 Z" fill="#c8524a" stroke="var(--ink)" stroke-width="5"/><ellipse cx="6" cy="-6" rx="16" ry="11" fill="#f6e2d8"/></g>
+    </g>
+    <g id="bugs">
+      <g class="bug" transform="translate(420 470)"><ellipse rx="56" ry="38" fill="var(--stink)" stroke="var(--ink)" stroke-width="5"/><circle cx="-16" cy="-8" r="8" fill="var(--ink)"/><circle cx="16" cy="-8" r="8" fill="var(--ink)"/><path class="mouth" d="M-16 12 Q0 26 16 12" stroke="var(--ink)" stroke-width="6" fill="none" stroke-linecap="round"/></g>
+      <g class="bug" transform="translate(660 470)"><ellipse rx="56" ry="38" fill="#b7d86a" stroke="var(--ink)" stroke-width="5"/><circle cx="-16" cy="-8" r="8" fill="var(--ink)"/><circle cx="16" cy="-8" r="8" fill="var(--ink)"/><path class="mouth" d="M-16 12 Q0 26 16 12" stroke="var(--ink)" stroke-width="6" fill="none" stroke-linecap="round"/></g>
+      <g class="bug" transform="translate(900 470)"><ellipse rx="56" ry="38" fill="var(--stink)" stroke="var(--ink)" stroke-width="5"/><circle cx="-16" cy="-8" r="8" fill="var(--ink)"/><circle cx="16" cy="-8" r="8" fill="var(--ink)"/><path class="mouth" d="M-16 12 Q0 26 16 12" stroke="var(--ink)" stroke-width="6" fill="none" stroke-linecap="round"/></g>
+    </g>
+    <g id="puffs"></g>
+  </svg>
+  <div class="sub" style="top:640px">eggs · meat · broccoli · cabbage: foods with sulfur in them</div>
+</section>
+
+<!-- 6. The nose -->
+<section class="scene" id="s-nose">
+  <div class="h2" style="top:46px">Your nose is a super-sensor</div>
+  <svg viewBox="0 0 1280 720">
+    <g transform="translate(330 420)"><g id="nose">
+      <path d="M-30 -190 C 10 -120, 40 -40, 70 10 C 110 70, 70 120, 20 110 C 0 140, -60 140, -80 100 C -130 110, -150 60, -110 30 C -80 -20, -60 -110, -30 -190 Z" fill="#ffc7a8" stroke="var(--ink)" stroke-width="7"/>
+      <ellipse cx="-40" cy="95" rx="16" ry="10" fill="#8a4b3a"/><ellipse cx="22" cy="95" rx="16" ry="10" fill="#8a4b3a"/>
+    </g></g>
+    <g id="scent"></g>
+    <g id="pools" transform="translate(760 420)">
+      <rect x="-10" y="40" width="200" height="110" rx="18" fill="#7cc6f2" stroke="var(--ink)" stroke-width="6"/>
+      <rect x="230" y="40" width="200" height="110" rx="18" fill="#7cc6f2" stroke="var(--ink)" stroke-width="6"/>
+      <path id="drop" d="M210 -120 C 230 -90, 240 -70, 240 -52 C 240 -34, 226 -22, 210 -22 C 194 -22, 180 -34, 180 -52 C 180 -70, 190 -90, 210 -120 Z" fill="var(--sulfur)" stroke="var(--ink)" stroke-width="5"/>
+      <text x="210" y="210" text-anchor="middle" font-size="30" fill="var(--ink)">1 drop in 2 backyard pools</text>
+    </g>
+  </svg>
+  <div id="ppb" class="big" style="position:absolute;left:720px;top:170px;width:520px;text-align:center;font-size:84px;color:var(--stink-dark)">0.5 ppb</div>
+  <div class="sub" style="left:720px;right:auto;width:520px;top:270px;font-size:26px">parts per billion</div>
+</section>
+
+<!-- 7. Why so sensitive -->
+<section class="scene" id="s-why">
+  <div class="h2" style="top:70px">Why so sensitive?</div>
+  <svg viewBox="0 0 1280 720">
+    <g transform="translate(640 400)"><g id="bell">
+      <path d="M-110 70 C -110 -40, -80 -120, 0 -120 C 80 -120, 110 -40, 110 70 L 140 100 L -140 100 Z" fill="var(--sulfur)" stroke="var(--ink)" stroke-width="7"/>
+      <circle cy="128" r="26" fill="var(--sulfur)" stroke="var(--ink)" stroke-width="7"/>
+      <rect x="-14" y="-152" width="28" height="34" rx="10" fill="var(--sulfur)" stroke="var(--ink)" stroke-width="6"/>
+    </g></g>
+    <g id="ring-lines" stroke="var(--ink)" stroke-width="8" stroke-linecap="round" fill="none">
+      <path d="M440 300 L390 270"/><path d="M430 380 L370 380"/><path d="M840 300 L890 270"/><path d="M850 380 L910 380"/>
+    </g>
+  </svg>
+  <div class="sub" style="top:600px;font-size:34px;color:var(--ink)">A built-in alarm for rotten, spoiled food</div>
+</section>
+
+<!-- 8. Outro -->
+<section class="scene" id="s-outro">
+  <svg viewBox="0 0 1280 720">
+    <g transform="translate(640 470) scale(.8)"><g id="outro-cloud">
+      <circle cx="-120" cy="10" r="80" fill="var(--stink)"/><circle cx="-30" cy="-40" r="105" fill="var(--stink)"/><circle cx="90" cy="-10" r="90" fill="var(--stink)"/><circle cx="170" cy="30" r="62" fill="var(--stink)"/><rect x="-190" y="20" width="420" height="90" rx="45" fill="var(--stink)"/>
+      <path d="M-70 -15 q15 -14 30 0" stroke="var(--ink)" stroke-width="10" fill="none" stroke-linecap="round"/><path d="M20 -15 q15 -14 30 0" stroke="var(--ink)" stroke-width="10" fill="none" stroke-linecap="round"/>
+      <path d="M-50 30 Q -10 70 30 30" stroke="var(--ink)" stroke-width="10" fill="none" stroke-linecap="round"/>
+    </g></g>
+  </svg>
+  <div class="h2" id="outro-a" style="top:100px">Mostly harmless air…</div>
+  <div class="h2" id="outro-b" style="top:180px;color:var(--stink-dark)">plus a dash of rotten egg.</div>
+  <div class="h1" id="outro-c" style="top:600px;font-size:64px">Excuse you.</div>
+</section>
+
+<script src="vendor/gsap.min.js"></script>
+<script src="vendor/DrawSVGPlugin.min.js"></script>
+<script src="vendor/MotionPathPlugin.min.js"></script>
+<script>
+gsap.registerPlugin(DrawSVGPlugin, MotionPathPlugin);
+const $ = (s) => document.querySelector(s);
+const $$ = (s) => [...document.querySelectorAll(s)];
+let current = null;
+const loops = [];
+
+function show(id) {
+  const next = $('#s-' + id);
+  const tl = gsap.timeline();
+  if (current && current !== next) tl.to(current, { autoAlpha: 0, duration: 0.35, ease: 'power1.in' });
+  tl.set(next, { autoAlpha: 1 });
+  current = next;
+  return tl;
+}
+function stopLoops() { while (loops.length) loops.pop().kill(); }
+function loop(t) { loops.push(t); return t; }
+
+function puff(parent, x, y, color = 'var(--stink)') {
+  const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  c.setAttribute('cx', x); c.setAttribute('cy', y); c.setAttribute('r', 14);
+  c.setAttribute('fill', color); c.setAttribute('stroke', 'var(--ink)'); c.setAttribute('stroke-width', 4);
+  parent.appendChild(c);
+  return c;
+}
+
+const scenes = {
+  title() {
+    stopLoops();
+    const tl = show('title');
+    tl.from('#title-text', { y: -60, scale: 0.6, autoAlpha: 0, duration: 0.9, ease: 'back.out(2)' })
+      .from('#cloud-body', { scale: 0, transformOrigin: '50% 60%', duration: 0.8, ease: 'elastic.out(1, 0.5)' }, '-=0.3')
+      .from('#title-lines path', { drawSVG: 0, duration: 0.7, stagger: 0.15 }, '-=0.2');
+    tl.add(() => loop(gsap.to('#cloud-body', { scaleY: 0.94, scaleX: 1.04, transformOrigin: '50% 100%', yoyo: true, repeat: -1, duration: 0.6, ease: 'sine.inOut' })));
+    tl.add(() => loop(gsap.to('#title-lines', { y: '-=14', yoyo: true, repeat: -1, duration: 0.9, ease: 'sine.inOut' })));
+    return tl;
+  },
+  mix() {
+    stopLoops();
+    const tl = show('mix');
+    tl.from('#s-mix .h2', { y: -40, autoAlpha: 0, duration: 0.6, ease: 'back.out(2)' })
+      .from('.mol', { scale: 0, transformOrigin: '50% 50%', duration: 0.7, stagger: 0.35, ease: 'back.out(2.5)' })
+      .from('#mix-stamp', { scale: 3, autoAlpha: 0, duration: 0.45, ease: 'power3.in' }, '+=0.6')
+      .to('#mix-stamp', { rotate: -4, duration: 0.15, yoyo: true, repeat: 3 });
+    tl.add(() => $$('.mol').forEach((m, i) => loop(gsap.to(m, { y: '+=18', yoyo: true, repeat: -1, duration: 1.2 + i * 0.2, ease: 'sine.inOut', delay: i * 0.1 }))));
+    return tl;
+  },
+  ratio() {
+    stopLoops();
+    const tl = show('ratio');
+    tl.from('#s-ratio .h2', { y: -40, autoAlpha: 0, duration: 0.6, ease: 'back.out(2)' })
+      .to('#bar-odorless', { attr: { width: 982 }, duration: 1.6, ease: 'power2.inOut' })
+      .to('#pct-odorless', { opacity: 1, duration: 0.4 }, '-=0.4')
+      .to('#bar-stink', { attr: { width: 12 }, duration: 0.5, ease: 'back.out(3)' }, '+=0.6')
+      .to('#pct-stink', { opacity: 1, duration: 0.5 })
+      .from('#pct-stink text', { x: 40, duration: 0.6, ease: 'back.out(2)' }, '<');
+    tl.add(() => loop(gsap.to('#bar-stink', { attr: { fill: '#c6e66a' }, yoyo: true, repeat: -1, duration: 0.5 })));
+    return tl;
+  },
+  culprit() {
+    stopLoops();
+    const tl = show('culprit');
+    tl.from('#s-culprit .h2', { y: -40, autoAlpha: 0, duration: 0.6, ease: 'back.out(2)' })
+      .from('#h2s-body', { x: -500, rotate: -40, duration: 1.0, ease: 'back.out(1.4)' })
+      .from('#h2s-lines path', { drawSVG: 0, duration: 0.6, stagger: 0.12 })
+      .from('#culprit-name', { x: 80, autoAlpha: 0, duration: 0.7, ease: 'back.out(2)' }, '-=0.3')
+      .from('#culprit-friends .chip', { y: 30, autoAlpha: 0, duration: 0.5, stagger: 0.2, ease: 'back.out(2)' }, '+=1.2');
+    tl.add(() => loop(gsap.to('#h2s-body', { rotate: 6, yoyo: true, repeat: -1, duration: 0.7, ease: 'sine.inOut', transformOrigin: '50% 60%' })));
+    tl.add(() => loop(gsap.to('#h2s-lines', { y: '-=12', yoyo: true, repeat: -1, duration: 0.8, ease: 'sine.inOut' })));
+    return tl;
+  },
+  factory() {
+    stopLoops();
+    const tl = show('factory');
+    tl.from('#s-factory .h2', { y: -40, autoAlpha: 0, duration: 0.6, ease: 'back.out(2)' })
+      .from('.bug', { scale: 0, transformOrigin: '50% 50%', duration: 0.6, stagger: 0.2, ease: 'back.out(3)' });
+    gsap.set(['#f-egg', '#f-broc', '#f-steak'], { x: -120, y: 300, scale: 1 });
+    ['#f-egg', '#f-broc', '#f-steak'].forEach((f, i) => {
+      const bugX = [420, 660, 900][i];
+      tl.to(f, { motionPath: { path: `M-120 300 C 150 200, ${bugX - 160} 260, ${bugX} 455` }, duration: 1.1, ease: 'power1.inOut' }, i === 0 ? '+=0.2' : '-=0.4')
+        .to(f, { scale: 0, transformOrigin: '50% 50%', duration: 0.25, ease: 'power2.in' })
+        .to(`.bug:nth-child(${i + 1})`, { scaleX: 1.25, scaleY: 0.8, transformOrigin: '50% 50%', duration: 0.12, yoyo: true, repeat: 3 }, '<')
+        .add(() => {
+          const g = $('#puffs');
+          for (let k = 0; k < 3; k++) {
+            const c = puff(g, bugX - 20 + k * 20, 420, 'var(--sulfur)');
+            gsap.to(c, { attr: { cy: 230 - k * 20, r: 20 }, opacity: 0, duration: 2.2, delay: k * 0.2, ease: 'power1.out', onComplete: () => c.remove() });
+          }
+        });
+    });
+    tl.add(() => loop(gsap.to('.bug', { y: '-=10', yoyo: true, repeat: -1, duration: 0.6, ease: 'sine.inOut', stagger: 0.15 })));
+    return tl;
+  },
+  nose() {
+    stopLoops();
+    const tl = show('nose');
+    tl.from('#s-nose .h2', { y: -40, autoAlpha: 0, duration: 0.6, ease: 'back.out(2)' })
+      .from('#nose', { scale: 0, transformOrigin: '50% 70%', duration: 0.8, ease: 'back.out(2)' })
+      .add(() => {
+        const g = $('#scent');
+        for (let k = 0; k < 8; k++) {
+          const c = puff(g, 640 + Math.random() * 60, 360 + Math.random() * 160);
+          gsap.to(c, { attr: { cx: 330, cy: 520, r: 4 }, opacity: 0, duration: 1.6, delay: k * 0.18, ease: 'power2.in', onComplete: () => c.remove() });
+        }
+      })
+      .to('#nose', { scaleX: 1.12, scaleY: 0.94, transformOrigin: '50% 80%', duration: 0.12, yoyo: true, repeat: 7 }, '+=0.5')
+      .from('#ppb', { scale: 0.3, autoAlpha: 0, duration: 0.7, ease: 'back.out(2.5)' }, '-=0.6')
+      .from('#s-nose .sub', { autoAlpha: 0, duration: 0.4 })
+      .from('#pools rect', { y: 40, autoAlpha: 0, duration: 0.6, stagger: 0.2, ease: 'back.out(2)' }, '+=0.3')
+      .from('#pools text', { autoAlpha: 0, duration: 0.4 })
+      .from('#drop', { y: -140, autoAlpha: 0, duration: 0.9, ease: 'bounce.out' });
+    return tl;
+  },
+  why() {
+    stopLoops();
+    const tl = show('why');
+    tl.from('#s-why .h2', { y: -40, autoAlpha: 0, duration: 0.6, ease: 'back.out(2)' })
+      .from('#bell', { scale: 0, transformOrigin: '50% 50%', duration: 0.7, ease: 'back.out(2.5)' })
+      .from('#ring-lines path', { drawSVG: 0, duration: 0.4, stagger: 0.08 })
+      .from('#s-why .sub', { y: 30, autoAlpha: 0, duration: 0.6, ease: 'back.out(2)' });
+    tl.add(() => loop(gsap.to('#bell', { rotate: 12, transformOrigin: '50% 0%', yoyo: true, repeat: -1, duration: 0.12, ease: 'sine.inOut' })));
+    tl.add(() => loop(gsap.to('#ring-lines', { opacity: 0.2, yoyo: true, repeat: -1, duration: 0.25 })));
+    return tl;
+  },
+  outro() {
+    stopLoops();
+    const tl = show('outro');
+    tl.from('#outro-a', { y: -40, autoAlpha: 0, duration: 0.6, ease: 'back.out(2)' })
+      .from('#outro-b', { y: -40, autoAlpha: 0, duration: 0.6, ease: 'back.out(2)' }, '+=0.5')
+      .from('#outro-cloud', { scale: 0, transformOrigin: '50% 50%', duration: 0.8, ease: 'elastic.out(1, 0.5)' }, '-=0.2')
+      .from('#outro-c', { scale: 2.5, autoAlpha: 0, duration: 0.5, ease: 'power3.in' }, '+=0.8');
+    tl.add(() => loop(gsap.to('#outro-cloud', { y: '-=16', yoyo: true, repeat: -1, duration: 0.8, ease: 'sine.inOut' })));
+    return tl;
+  },
+};
+
+window.scene = (name) => new Promise((resolve) => {
+  const tl = scenes[name]();
+  tl.eventCallback('onComplete', resolve);
+});
+window.sceneNames = Object.keys(scenes);
+document.fonts?.ready.then(() => { document.body.dataset.ready = '1'; });
+</script>
+</body>
+</html>

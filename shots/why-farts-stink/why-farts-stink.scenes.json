@@ -1,0 +1,18 @@
+[
+  { "scene": "title", "voice": "am_michael",
+    "text": "Why do farts stink? It's a question that has haunted elevators for centuries. Let's clear the air." },
+  { "scene": "mix", "voice": "am_michael",
+    "text": "First, what's actually in a fart? Mostly nitrogen, carbon dioxide, hydrogen, and in some people, methane. Part of it is air you swallowed, and the rest is made by bacteria in your gut. And here's the twist: none of these gases smell at all." },
+  { "scene": "ratio", "voice": "am_michael",
+    "text": "In fact, about ninety-nine percent of a fart has no smell. All of the stink comes from the last one percent, or even less." },
+  { "scene": "culprit", "voice": "am_michael",
+    "text": "Meet the culprit: hydrogen sulfide, the gas that smells like rotten eggs. It brings friends, like methanethiol and dimethyl sulfide. They're all sulfur gases." },
+  { "scene": "factory", "voice": "am_michael",
+    "text": "They're made by the trillions of bacteria living in your gut. When they break down foods with sulfur in them, like eggs, meat, broccoli and cabbage, out come the smelly gases." },
+  { "scene": "nose", "voice": "am_michael",
+    "text": "And your nose is a super-sensor. You can smell hydrogen sulfide at about half a part per billion. That's like one drop in two backyard swimming pools." },
+  { "scene": "why", "voice": "am_michael",
+    "text": "Scientists think we're this sensitive for a good reason. The same smell comes from rotting food, so your nose works like an alarm that says: don't eat that." },
+  { "scene": "outro", "voice": "am_michael",
+    "text": "So a fart is mostly harmless air, plus a tiny dash of rotten egg. Excuse you." }
+]
