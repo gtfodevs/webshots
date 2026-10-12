@@ -50,6 +50,23 @@ F.ANIMS = {
   victory: { durations: [260, 900], frames: [P(3, [[0.3, 0], [-0.3, 0]], [[0.4, -0.6], [0.2, 0.4]]), P(1, [[0.25, 0], [-0.28, 0]], [[0.3, -1.1], [0.15, 0.45]])] },
 };
 F.ANIMS.attack = F.ANIMS.punch;
+// Real sprite art (per-pose frames from <char>_sprites / uno_sprites.py, atlas stage/assets/px/<char>.json).
+// A char listed here is drawn from its atlas; anims name atlas poses. idle_br1/2 = master idle with the chest up 1/2 px.
+F.SPRITE_ANIMS = {
+  uno: {
+    idle:    { loop: 1, frames: ['idle_a', 'idle_br1', 'idle_br2', 'idle_br1'], durations: [300, 180, 340, 180] },
+    walk:    { loop: 1, frames: ['walk_contact_R', 'walk_pass_R', 'walk_contact_L', 'walk_pass_L'], durations: [130, 110, 130, 110] },
+    punch:   { frames: ['punch_windup', 'punch_extend'], durations: [110, 220] },
+    kick:    { frames: ['kick_chamber', 'kick_extend'], durations: [120, 240] },
+    special: { frames: ['special_charge', 'special_release'], durations: [260, 360] },
+    block:   { frames: ['block'], durations: [400] },
+    hit:     { frames: ['hit'], durations: [350] },
+    ko_fall: { frames: ['ko_fall'], durations: [600] },
+    ko_down: { frames: ['ko_down'], durations: [1000] },
+    victory: { frames: ['idle_br1', 'victory'], durations: [120, 900] },
+  },
+};
+F.animOf = (c, a) => (F.SPRITE_ANIMS[c] && F.SPRITE_ANIMS[c][a]) || F.ANIMS[a];
 // lean plan: KAZE-9 and RAIJIN (montage-only) get idle / attack / hit / KO (ASSET_LIST.md)
 F.MOVESET = { full: ['idle', 'walk', 'punch', 'kick', 'special', 'block', 'hit', 'ko_fall', 'ko_down', 'victory'], montage: ['idle', 'attack', 'hit', 'ko_fall', 'ko_down'] };
 F.movesOf = (c) => (F.CHARS[c].montage ? F.MOVESET.montage : F.MOVESET.full);
@@ -96,8 +113,8 @@ F.poseRects = function (c, anim, fi) {
   return out;
 };
 F.frameKey = (c, a, i) => JSON.stringify(F.poseRects(c, a, i));
-F.frameAt = function (anim, local, loop) { // local seconds since the anim started -> frame index
-  const A = F.ANIMS[anim], d = A.durations, tot = d.reduce((p, q) => p + q, 0); let ms = local * 1000;
+F.frameAt = function (anim, local, loop, c) { // local seconds since the anim started -> frame index
+  const A = c ? F.animOf(c, anim) : F.ANIMS[anim], d = A.durations, tot = d.reduce((p, q) => p + q, 0); let ms = local * 1000;
   if (loop || A.loop) ms = ((ms % tot) + tot) % tot; else if (ms >= tot) return d.length - 1;
   let i = 0; while (i < d.length - 1 && ms >= d[i]) { ms -= d[i]; i++; } return i;
 };
@@ -188,7 +205,7 @@ F.build = function (TL) {
   function fighterAt(f, side, t) {
     const W = warp(f, t), me = side === 1 ? (f.tagged ? f.tagged(t) : f.p1) : f.p2, home = side === 1 ? 168 : 312, dir = side === 1 ? 1 : -1;
     const C = F.CHARS[me], moves = F.movesOf(me), st = { char: me, side, flip: side === 2, x: home, anim: 'idle', frame: 0, air: 0 };
-    const pick = (anim, local, loop) => { const a = moves.includes(anim) ? anim : (anim === 'punch' || anim === 'kick' || anim === 'special' ? 'attack' : anim === 'walk' || anim === 'victory' || anim === 'block' ? 'idle' : anim); st.anim = a; st.frame = F.frameAt(a, local, loop); };
+    const pick = (anim, local, loop) => { const a = moves.includes(anim) ? anim : (anim === 'punch' || anim === 'kick' || anim === 'special' ? 'attack' : anim === 'walk' || anim === 'victory' || anim === 'block' ? 'idle' : anim); st.anim = a; st.frame = F.frameAt(a, local, loop, me); };
     pick('idle', W - f.t0 + side * 0.37, 1);
     let x = home;
     for (const e of f.events) {

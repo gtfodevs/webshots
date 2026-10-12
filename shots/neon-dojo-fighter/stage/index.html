@@ -23,15 +23,17 @@
 <script>
 (async () => {
 const VERT = new URLSearchParams(location.search).get('format') === 'vertical' || document.documentElement.dataset.format === 'vertical';
-const W = 480, H = 270, R = Math.round;
-const cv = document.getElementById('g'); cv.width = VERT ? 270 : 480; cv.height = VERT ? 480 : 270;
+const W = 480, H = 270, R = Math.round, Z = 2; // logic in 480x270, drawn at 960x540 (sprites keep 2x detail)
+const cv = document.getElementById('g'); cv.width = VERT ? 540 : 960; cv.height = VERT ? 960 : 540;
 const out = cv.getContext('2d'); out.imageSmoothingEnabled = false;
-const wc = document.createElement('canvas'); wc.width = W; wc.height = H;
+const wc = document.createElement('canvas'); wc.width = W * Z; wc.height = H * Z;
 const g = wc.getContext('2d'); g.imageSmoothingEnabled = false;
 const TL = await Music.load('timeline.json');
 const E = FIGHT.build(TL), CH = FIGHT.CHARS, ST = FIGHT.STAGES;
 const img = (src) => new Promise((ok) => { const i = new Image(); i.onload = () => ok(i); i.src = src; });
 const font = await img('assets/px/font8.png');
+const SPR = {}; for (const c of Object.keys(FIGHT.SPRITE_ANIMS)) SPR[c] = { meta: await (await fetch(`assets/px/${c}.json`)).json(), img: await img(`assets/px/${c}.png`) };
+const whiteOf = new Map(); function white(c) { if (whiteOf.has(c)) return whiteOf.get(c); const a = SPR[c].img, k = document.createElement('canvas'); k.width = a.width; k.height = a.height; const x = k.getContext('2d'); x.drawImage(a, 0, 0); x.globalCompositeOperation = 'source-in'; x.fillStyle = '#fff'; x.fillRect(0, 0, k.width, k.height); whiteOf.set(c, k); return k; }
 const hash = (n) => { const x = Math.sin(n * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const beatIdx = (t) => { let n = -1; for (const b of TL.beats) { if (b > t) break; n++; } return n; };
@@ -66,9 +68,16 @@ function ph(c, x, y, w, h, label, col = '#3a1a70') { // labelled placeholder box
 const COL = (C) => ({ chrome: C.chrome, dark: '#4a4e66', limb: '#8a90a8', foot: '#2a2c3a', acc: C.acc, acc2: C.acc2, eye: '#ff2030', fist: C.chrome });
 const qa = (window.__qa = window.__qa || { draws: [] });
 function fighter(st, o = {}) {
-  const C = CH[st.char], rects = FIGHT.poseRects(st.char, st.anim, st.frame), col = COL(C), s = st.flip ? -1 : 1;
+  const C = CH[st.char], rects = SPR[st.char] ? [] : FIGHT.poseRects(st.char, st.anim, st.frame), col = COL(C), s = st.flip ? -1 : 1;
   const gy = o.ground ?? st.y; // contact shadow on the stage ground even when airborne
   g.fillStyle = '#0000007a'; const sw = R(C.w * 1.6 + 10); g.fillRect(R(st.x - sw / 2), (o.groundRow ?? st.y) - 1 + (st.air ? 0 : 0), sw, 3); g.fillRect(R(st.x - sw / 2) + 3, (o.groundRow ?? st.y) + 2, sw - 6, 1);
+  if (SPR[st.char]) { // real art: atlas frame at full 960x540 resolution, anchor (belt x, sole row) on the ground
+    const pose = FIGHT.animOf(st.char, st.anim).frames[st.frame], fr = SPR[st.char].meta.frames[pose], [sx, sy, w, h] = fr.rect;
+    const ax = st.flip ? w - 1 - fr.ax : fr.ax, dx = R(st.x * Z) - ax, dy = R(gy * Z) - fr.ay;
+    g.save(); g.setTransform(1, 0, 0, 1, 0, 0); if (st.flip) { g.translate(dx + w, dy); g.scale(-1, 1); } else g.translate(dx, dy);
+    g.drawImage(o.white ? white(st.char) : SPR[st.char].img, sx, sy, w, h, 0, 0, w, h); g.restore();
+    qa.draws.push([st.char, st.anim, st.frame, st.x, st.y, st.air ? 1 : 0, pose]); return;
+  }
   for (const [x, y, w, h, k] of rects) { g.fillStyle = o.white ? '#ffffff' : o.tint || col[k]; const X = s > 0 ? st.x + x : st.x - x - w + 1; g.fillRect(R(X), R(gy + y), w, h); }
   if (FIGHT.ANIMS[st.anim].frames[st.frame].glow) { g.fillStyle = C.acc2; const hx = st.x + s * 30; g.fillRect(R(hx - 3), R(gy - 50), 6, 6); }
   qa.draws.push([st.char, st.anim, st.frame, st.x, st.y, st.air ? 1 : 0]);
@@ -215,7 +224,7 @@ function fightScene(t, s) {
   if (f.standoff && t >= f.standoff[0] && t < f.standoff[1]) { // leaf + wind, both bars flash low
     const d = t - f.standoff[0]; g.fillStyle = '#ff7ad9'; g.fillRect(R(W - d * 70), R(80 + Math.sin(d * 3) * 20), 3, 2); g.fillStyle = '#ffffff22'; for (let i = 0; i < 10; i++) g.fillRect(R((hash(i) * W - d * 200 * (1 + hash(i + 1))) % W + W) % W, R(hash(i + 4) * 200), 18, 1); }
   SHAKE = X.shake ? R((hash(Math.floor(t * 30)) - 0.5) * 2 * X.shake) : 0;
-  if (X.freeze) { const im = g.getImageData(0, 0, W, H), p = im.data; for (let i = 0; i < p.length; i += 4) { const l = (p[i] * 3 + p[i + 1] * 6 + p[i + 2]) / 10; const v = l > 110 ? [18, 6, 42] : [255, 63, 210]; p[i] = v[0]; p[i + 1] = v[1]; p[i + 2] = v[2]; } g.putImageData(im, 0, 0); text(g, 'FREEZE FRAME', W / 2, 40, '#fff', 2, 'center'); }
+  if (X.freeze) { const im = g.getImageData(0, 0, W * Z, H * Z), p = im.data; for (let i = 0; i < p.length; i += 4) { const l = (p[i] * 3 + p[i + 1] * 6 + p[i + 2]) / 10; const v = l > 110 ? [18, 6, 42] : [255, 63, 210]; p[i] = v[0]; p[i + 1] = v[1]; p[i + 2] = v[2]; } g.putImageData(im, 0, 0); g.setTransform(Z, 0, 0, Z, 0, 0); text(g, 'FREEZE FRAME', W / 2, 40, '#fff', 2, 'center'); }
   if (window.__qa) qa.fight = f.id;
 }
 function bossIntro(t, s) {
@@ -246,17 +255,17 @@ function lyrics(c, t, cw, y) {
 }
 // ---------- router ----------
 function drawWorld(t) {
-  const s = E.sceneAt(t); g.setTransform(1, 0, 0, 1, 0, 0); g.globalAlpha = 1; SHAKE = 0; qa.draws = []; qa.scene = s.name;
+  const s = E.sceneAt(t); g.setTransform(Z, 0, 0, Z, 0, 0); g.globalAlpha = 1; SHAKE = 0; qa.draws = []; qa.scene = s.name;
   ({ title: titleScene, cut: cutScene, select: selectScene, map: mapScene, vs: vsScene, fight: fightScene, boss_intro: bossIntro, ending: endingScene })[s.name](t, s);
   return s;
 }
 function frame() {
   const t = Music.time(), s = drawWorld(t);
   out.setTransform(1, 0, 0, 1, 0, 0); out.fillStyle = '#000';
-  if (!VERT) { out.fillRect(0, 0, 480, 270); out.drawImage(wc, SHAKE, SHAKE ? -SHAKE >> 1 : 0); if (s.name !== 'title') lyrics(out, t, 480, 261); }
+  if (!VERT) { out.fillRect(0, 0, 960, 540); out.drawImage(wc, SHAKE * Z, SHAKE ? -SHAKE : 0); out.setTransform(Z, 0, 0, Z, 0, 0); if (s.name !== 'title') lyrics(out, t, 480, 261); }
   else { // Short: HUD band on top / fight crop in the middle / portrait + lyric panel at the bottom
-    out.fillStyle = '#0b0618'; out.fillRect(0, 0, 270, 480);
-    out.drawImage(wc, 105, 0, 270, 270, SHAKE, 100, 270, 270);
+    out.fillStyle = '#0b0618'; out.fillRect(0, 0, 540, 960);
+    out.drawImage(wc, 210, 0, 540, 540, SHAKE * Z, 200, 540, 540); out.setTransform(Z, 0, 0, Z, 0, 0);
     out.fillStyle = PAL.mag; out.fillRect(0, 98, 270, 2); out.fillRect(0, 370, 270, 2);
     if (s.name === 'fight' && !E.fights[s.fight].montage) hud(out, E.fights[s.fight], t, 270);
     else { logo(out, 'NEON DOJO', 135, 20, 3, CHROME); text(out, 'PROGRESSIVESLOP', 135, 60, PAL.cyan, 1, 'center'); }

@@ -400,3 +400,14 @@ First used by `shots/neon-dojo-fighter`. The game logic is a pure script, `stage
 - an exchange without an opponent attack, or a full fight where the opponent never lands a hit;
 - more than 3 hits per bar;
 - scenes off the downbeats.
+
+### Real fighter art (`uno_sprites.py`, first used for Uno in neon-dojo-fighter)
+- Source is one JPG per ASSET_LIST pose on #00FF00, in `channels/progressiveslop/assets/<shot>/source/<char>/`.
+- **Keying:** key the green, despill the edges, and keep only the large connected components.
+- **Landmarks:** head top, belt (the widest gold row), and the lowest pixel.
+- **Scale normalisation** uses the head width, since the round chrome head is rigid. The head-to-belt span is NOT used: leaning poses (kicks, hits) shrink it and over-scale by about 20%.
+- **Master upper body** (idle_a's head and torso) is pasted on the idle and walk frames, aligned on the belt. Block gets the master head only. Attacks, hit, KO and victory stay whole poses.
+- **Breathing idle:** idle_a with the upper body raised 1 and 2 px, with the belt rows stretched so nothing tears.
+- **Scale and palette:** downscale with a box filter to the 960x540 world (Uno is about 198 px tall, i.e. 2x2 blocks at 1080p), then apply one shared 56-colour palette and a dark outline.
+- **Anchors:** the anchor is (belt x, sole row), so the ground row is exact. Walk bob comes from the art's hip heights (`bob` in the atlas json).
+- The engine logic stays in 480x270 coordinates, drawn ×2. Sprite characters are listed in `FIGHT.SPRITE_ANIMS` and drawn from `stage/assets/px/<char>.png/json`. The QA checks atlas anchors, consecutive poses, master identity ≥97% and walk silhouette change, and prints the art flags.

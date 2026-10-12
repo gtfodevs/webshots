@@ -22,7 +22,23 @@ notes.push('pixel font: all text goes through text()/logo() on the 8px bitmap fo
 
 // 2. animations: no identical consecutive frames; master core identical (translation only)
 const core = (rs) => rs.filter((r) => r[5] === 'core'), norm = (rs) => { const x0 = Math.min(...rs.map((r) => r[0])), y0 = Math.min(...rs.map((r) => r[1])); return JSON.stringify(rs.map((r) => [r[0] - x0, r[1] - y0, r[2], r[3], r[4]])); };
+const SPR = {}; for (const c of Object.keys(F.SPRITE_ANIMS || {})) {
+  const mp = `${SD}/assets/px/${c}.json`; if (!existsSync(mp)) { fail(`${c}: sprite atlas ${mp} missing (run the sprite build)`); continue; }
+  SPR[c] = JSON.parse(readFileSync(mp, 'utf8'));
+  for (const [a, A] of Object.entries(F.SPRITE_ANIMS[c])) {
+    if (A.frames.length !== A.durations.length) fail(`${c}.${a}: durations/frames mismatch`);
+    A.frames.forEach((p, i) => { const fr = SPR[c].frames[p]; if (!fr) return fail(`${c}.${a}: pose ${p} not in the atlas`);
+      if (fr.ay !== fr.rect[3] - 1) fail(`${c}.${p}: anchor row ${fr.ay} is not the lowest pixel row ${fr.rect[3] - 1}`);
+      const j = i + 1 < A.frames.length ? i + 1 : (A.loop ? 0 : -1); if (j >= 0 && j !== i && A.frames[j] === p) fail(`${c}.${a}: frames ${i} and ${j} identical (${p})`); });
+  }
+  const rp = `out/${shot}/${c}-report.json`; if (existsSync(rp)) { const r = JSON.parse(readFileSync(rp, 'utf8'));
+    for (const [k, v] of Object.entries(r.master || {})) if (k.endsWith('_identity') && v < 0.97) fail(`${c}: master upper body identity ${k} ${v} < 0.97`);
+    for (const [k, v] of Object.entries(r.walk_change || {})) if (v < 0.03) fail(`${c}: walk ${k} silhouette change ${v} < 3%`);
+    (r.flags || []).forEach((f) => notes.push(`${c} ART FLAG: ${f}`)); }
+  notes.push(`${c}: sprite atlas, ${Object.keys(SPR[c].frames).length} poses`);
+}
 for (const c of Object.keys(F.CHARS)) {
+  if (SPR[c]) continue;
   let ref = null;
   for (const a of F.movesOf(c)) {
     const A = F.ANIMS[a], n = A.frames.length;
@@ -44,7 +60,9 @@ for (const f of Object.values(E.fights)) {
     for (const side of [1, 2]) {
       const st = E.fighterAt(f, side, t); used.add(`${st.char}.${st.anim}`);
       if (!F.movesOf(st.char).includes(st.anim)) fail(`${f.id} t=${t.toFixed(2)}: ${st.char} uses ${st.anim} (not in its move set)`);
-      const rs = F.poseRects(st.char, st.anim, st.frame), low = st.y + Math.max(...rs.map((r) => r[1] + r[3] - 1));
+      let low;
+      if (SPR[st.char]) { const pose = F.animOf(st.char, st.anim).frames[st.frame], fr = SPR[st.char].frames[pose]; low = st.y + (fr.rect[3] - 1 - fr.ay); if (fr.air && !st.air) fail(`${f.id}: ${st.char} air pose ${pose} drawn grounded`); }
+      else { const rs = F.poseRects(st.char, st.anim, st.frame); low = st.y + Math.max(...rs.map((r) => r[1] + r[3] - 1)); }
       if (!st.air && Math.abs(low - f.ground) > 1 && !gfail.has(st.char + st.anim)) { gfail.add(st.char + st.anim); fail(`${f.id} t=${t.toFixed(2)}: ${st.char} ${st.anim}[${st.frame}] lowest pixel y=${low}, ground ${f.ground} (floating ${f.ground - low}px)`); }
       if (st.air && st.anim !== 'ko_fall') fail(`${f.id}: ${st.char} airborne outside ko_fall`);
       const key = st.anim + st.frame + ':' + st.x; const id = side; if (st.anim === 'idle') { still[id] = key === lastKey[id] ? (still[id] || 0) + dt : 0; if (still[id] > 0.6) { fail(`${f.id} t=${t.toFixed(2)}: ${st.char} idle frozen >0.6s`); still[id] = -99; } } lastKey[id] = key;
