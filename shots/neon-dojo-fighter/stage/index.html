@@ -265,8 +265,12 @@ function fightScene(t, s) {
 function bossIntro(t, s) {
   g.fillStyle = '#000'; g.fillRect(0, 0, W, H);
   if (t < s.helm) { s.counts.forEach((c, i) => { if (t >= c) { const opp = ['tekko', 'kaze9', 'raijin', 'lotus'][i]; ph(g, 20 + i * 114, 60, 100, 110, 'BEATEN ' + CH[opp].name, '#2a2a50'); g.fillStyle = '#000'; for (let k = 0; k < 20; k++) g.fillRect(70 + i * 114 - k + (k % 3), 60 + k * 5, 2, 5); logo(g, String(i + 1), 70 + i * 114, 178, 3, FIRE); } }); return; }
-  if (t < s.belt) { const d = t - s.helm; ph(g, 90, 220 - R(Math.min(1, d / 1.2) * 190), 300, 190, 'BOSS CLOSE-UP: SHOGUN HELMET RISES, EYES IGNITE', '#4a0a18'); if (d > 1.2) { g.fillStyle = Math.floor(d * 10) % 2 ? '#ff2030' : '#ffb0b0'; g.fillRect(200, 110, 24, 5); g.fillRect(256, 110, 24, 5); } return; }
-  ph(g, 40, 30, 400, 190, 'SHOGUN.EXE HOLDS THE STOLEN DOJO BELT', '#4a0a18');
+  // real SHOGUN.EXE art: rises out of the dark (idle breath + flickering red glow), then the victory pose holding the belt
+  const redBg = (k) => { for (let y = 0; y < H; y += 2) { const v = y / H; g.fillStyle = `rgb(${R(20 + 70 * v * k)},${R(4 + 6 * v)},${R(10 + 14 * v)})`; g.fillRect(0, y, W, 2); } };
+  if (t < s.belt) { const d = t - s.helm, e = Math.min(1, d / 1.2); redBg(e);
+    fighter({ char: 'shogun', anim: 'idle', frame: FIGHT.frameAt('idle', t, 1), x: W / 2, y: 236 + R((1 - e * e) * 150), flip: true }, {}, t);
+    if (d > 1.2 && Math.floor(d * 10) % 2) { g.fillStyle = '#ff203055'; g.fillRect(0, 0, W, H); } return; }
+  redBg(1); fighter({ char: 'shogun', anim: 'victory', frame: t - s.belt > 0.12 ? 1 : 0, x: W / 2, y: 236, flip: true }, {}, t);
   if (t >= s.card) { const e = t - s.card; g.fillStyle = '#000000aa'; g.fillRect(0, 100, W, 50); logo(g, 'SHOGUN.EXE', W / 2 + (e < 0.15 ? R((hash(t * 99) - 0.5) * 8) : 0), 108, 4, FIRE); }
   if (t >= s.warn && Math.floor((t - s.warn) * 6) % 2 === 0) { g.fillStyle = '#e0102a'; g.fillRect(0, 230, W, 22); text(g, '!! WARNING !! A NEW CHALLENGER !! WARNING !!', W / 2, 237, '#fff', 1, 'center', null); }
 }

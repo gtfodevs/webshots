@@ -26,6 +26,7 @@
 
 **APPROVED LEAN PLAN (Jason, 2026-10-12):**
 - **Full set, 17 images each:** uno, aura, tekko, lotus, shogun = **85**.
+  - SHOGUN.EXE (processed): 16 sources incl. bonus `thrust_extra` (used as a boss `thrust` move); no ko_fall (synthesised from hit, tilted back), breath from idle_a. Scaled to 228 px (1.15x Uno). Red katana glow, slash arcs (punch_extend, special_release), charge aura (special_charge) and KO smoke (ko_down) are additive fx layers; cape, armour trim and blade steel stay on the body. kick_chamber is a copy of walk_pass (regen candidate). Walk _R = legs mirrored about the hip inside a leg window (cape tail and blade stay put). No shared master core: the cape breaks the paste seam.
 - **Montage-only, 4 images each:** kaze9, raijin = **8**.
   - `idle_a` (stance; it is also the master upper body, and the engine adds a ±1 px breath bob so the idle never freezes)
   - `attack` (their signature strike, extended)

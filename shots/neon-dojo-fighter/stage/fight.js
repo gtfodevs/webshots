@@ -49,7 +49,7 @@ F.ANIMS = {
   ko_down: { durations: [1000], frames: [P(0, [[0, 0], [0, 0]], [[0, 0], [0, 0]], { down: 1 })] },
   victory: { durations: [260, 900], frames: [P(3, [[0.3, 0], [-0.3, 0]], [[0.4, -0.6], [0.2, 0.4]]), P(1, [[0.25, 0], [-0.28, 0]], [[0.3, -1.1], [0.15, 0.45]])] },
 };
-F.ANIMS.attack = F.ANIMS.punch;
+F.ANIMS.attack = F.ANIMS.punch; F.ANIMS.thrust = F.ANIMS.punch;
 // Real sprite art (per-pose frames from <char>_sprites / uno_sprites.py, atlas stage/assets/px/<char>.json).
 // A char listed here is drawn from its atlas; anims name atlas poses. idle_br1/2 = master idle with the chest up 1/2 px.
 F.SPRITE_ANIMS = {
@@ -91,6 +91,21 @@ F.SPRITE_ANIMS = {
     ko_down: { frames: ['ko_down'], durations: [1000] },
     victory: { frames: ['idle_br1', 'victory'], durations: [120, 900] },
   },
+  // SHOGUN.EXE (boss, 1.15x Uno): red glow / slash arcs / charge aura / KO smoke are additive fx layers per pose;
+  // kick_chamber is a copy of walk_pass in the source set; thrust = bonus attack (punch_windup -> thrust_extra)
+  shogun: {
+    idle:    { loop: 1, frames: ['idle_a', 'idle_br1', 'idle_br2', 'idle_br1'], durations: [340, 200, 380, 200] },
+    walk:    { loop: 1, frames: ['walk_contact_R', 'walk_pass_R', 'walk_contact_L', 'walk_pass_L'], durations: [160, 140, 160, 140] },
+    punch:   { frames: ['punch_windup', 'punch_extend'], durations: [130, 240] },
+    thrust:  { frames: ['punch_windup', 'thrust_extra'], durations: [150, 260] },
+    kick:    { frames: ['kick_chamber', 'kick_extend'], durations: [130, 240] },
+    special: { frames: ['special_charge', 'special_release'], durations: [300, 380] },
+    block:   { frames: ['block'], durations: [400] },
+    hit:     { frames: ['hit'], durations: [350] },
+    ko_fall: { frames: ['ko_fall'], durations: [600] },
+    ko_down: { frames: ['ko_down'], durations: [1000] },
+    victory: { frames: ['idle_br1', 'victory'], durations: [120, 900] },
+  },
   // Aura: no idle_b (breath from the idle_a master); cyan energy is a separate additive fx layer per pose
   aura: {
     idle:    { loop: 1, frames: ['idle_a', 'idle_br1', 'idle_br2', 'idle_br1'], durations: [300, 180, 340, 180] },
@@ -108,7 +123,8 @@ F.SPRITE_ANIMS = {
 F.animOf = (c, a) => (F.SPRITE_ANIMS[c] && F.SPRITE_ANIMS[c][a]) || F.ANIMS[a];
 // lean plan: KAZE-9 and RAIJIN (montage-only) get idle / attack / hit / KO (ASSET_LIST.md)
 F.MOVESET = { full: ['idle', 'walk', 'punch', 'kick', 'special', 'block', 'hit', 'ko_fall', 'ko_down', 'victory'], montage: ['idle', 'attack', 'hit', 'ko_fall', 'ko_down'] };
-F.movesOf = (c) => (F.CHARS[c].montage ? F.MOVESET.montage : F.MOVESET.full);
+F.MOVESET.boss = F.MOVESET.full.concat(['thrust']);
+F.movesOf = (c) => (F.CHARS[c].montage ? F.MOVESET.montage : F.CHARS[c].boss ? F.MOVESET.boss : F.MOVESET.full);
 
 // ---------- pose -> rects (x relative to the foot anchor, y relative to the ground row; bottom row = 0) ----------
 // Rects are [x, y, w, h, colourKey, part]. part 'core' = master upper body (identical in every frame up to translation).
@@ -215,7 +231,7 @@ F.build = function (TL) {
   fight('boss', { p1: 'uno', p2: 'shogun', stage: 'temple', t0: snapBar(123.4), round: 'FINAL ROUND', pips: [2, 0], tag: [[snap(130.2), 'aura'], [snap(133.5), 'uno']], ex: [
     [[125.0, 2, 'punch', 'block', 3], [126.7, 2, 'special', 'ko_down', 18], [127.6, 1, 'kick', 'block', 2]],
     [[128.3, 2, 'kick', 'block', 3], [129.4, 1, 'punch', 'hit', 7]],
-    [[131.0, 2, 'punch', 'hit', 9], [131.7, 1, 'punch', 'hit', 12]],
+    [[131.0, 2, 'thrust', 'hit', 9], [131.7, 1, 'punch', 'hit', 12]],
     [[133.0, 2, 'special', 'block', 4], [134.4, 1, 'kick', 'hit', 9], [135.9, 2, 'punch', 'hit', 10]],
     [[140.8, 1, 'special', 'block', 4], [141.6, 2, 'kick', 'hit', 8]],
     [[143.0, 2, 'special', 'block', 4], [144.2, 1, 'special', 'ko', 99]]],

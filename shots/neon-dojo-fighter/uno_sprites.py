@@ -18,7 +18,7 @@ SRC = f'{ROOT}/channels/progressiveslop/assets/neon-dojo-fighter/source/{CH}'
 PX = f'{os.path.dirname(os.path.abspath(__file__))}/stage/assets/px'; os.makedirs(PX, exist_ok=True)
 REP = f'{ROOT}/out/neon-dojo-fighter'; os.makedirs(REP, exist_ok=True)
 POSES = ['idle_a', 'idle_b', 'walk_contact_L', 'walk_pass_L', 'walk_contact_R', 'walk_pass_R', 'punch_windup', 'punch_extend',
-         'kick_chamber', 'kick_extend', 'special_charge', 'special_release', 'block', 'hit', 'ko_fall', 'ko_down', 'victory']
+         'kick_chamber', 'kick_extend', 'special_charge', 'special_release', 'block', 'hit', 'ko_fall', 'ko_down', 'victory', 'thrust_extra']
 WALK = ['walk_contact_L', 'walk_pass_L', 'walk_contact_R', 'walk_pass_R']
 # per character: master frames (full upper body), head-only master frames, mirrored poses, idle_a height in
 # 960x540 world px, belt landmark ('gold' belt row or 'waist' for outfits without one), cyan effect handling
@@ -37,7 +37,16 @@ CFG = {
   'lotus': dict(master=WALK, head_only=['block'], mirror=set(), target=208, belt='waist', fx=set(), strip=set(),
                 legswap={'walk_contact_R', 'walk_pass_R'}, ccfx={'special_release', 'victory'}, air={'special_release'},
                 synth={'ko_fall': ('hit', 40), 'special_charge': ('block', 'crouch')}),
+  # SHOGUN.EXE (boss, ~1.15x Uno): red katana glow / slash arcs / charge aura / KO smoke -> additive fx layers;
+  # the red armour trim stays on the body (glow = red only OUTSIDE the dark armour silhouette); cape is body;
+  # kick_chamber is a copy of walk_pass (flagged); hit is grounded by the anchor; ko_fall from hit tilted back
+  'shogun': dict(master=[], head_only=[], no_rescale=True, legwin=0.16, mirror=set(), target=228, belt='waist', fx=set(), strip=set(),
+                 legswap={'walk_contact_R', 'walk_pass_R'},
+                 redfx={'idle_a', 'walk_contact_L', 'walk_pass_L', 'walk_contact_R', 'walk_pass_R', 'punch_windup', 'kick_chamber', 'kick_extend',
+                        'block', 'hit', 'victory', 'special_charge', 'punch_extend', 'special_release', 'thrust_extra'},
+                 arcs={'punch_extend', 'special_release'}, smoke={'ko_down'}, synth={'ko_fall': ('hit', 40)}),
 }[CH]
+REDFX, ARCS, SMOKE = CFG.get('redfx', set()), CFG.get('arcs', set()), CFG.get('smoke', set())
 CCFX, AIR = CFG.get('ccfx', set()), CFG.get('air', set())
 LEGSWAP, GHOST, SPARK, SYNTH = CFG.get('legswap', set()), CFG.get('ghost', set()), CFG.get('spark', set()), CFG.get('synth', {})
 POSES = [p for p in POSES if os.path.exists(f'{SRC}/{p}.jpg') or os.path.exists(f'{SRC}/{p}.png')]
@@ -45,7 +54,7 @@ MASTER = [p for p in CFG['master'] if p in POSES]; HEAD_ONLY = CFG['head_only'];
 FX, STRIP = CFG['fx'], CFG['strip']
 NCOL = 56
 
-def key(path, mirror=False, fx=False, strip=False, ghost=False, spark=False, ccfx=False):
+def key(path, mirror=False, fx=False, strip=False, ghost=False, spark=False, ccfx=False, redfx=False, arcs=False, smoke=False):
     im = np.asarray(Image.open(path).convert('RGB')).astype(np.int16)
     if mirror: im = im[:, ::-1]
     r, g, b = im[..., 0], im[..., 1], im[..., 2]
@@ -67,6 +76,29 @@ def key(path, mirror=False, fx=False, strip=False, ghost=False, spark=False, ccf
         a = a & ~gh; im = im.copy(); lum = (r + b) // 2
         im[..., 0][gh] = lum[gh] * 0.8; im[..., 1][gh] = lum[gh] * 0.95; im[..., 2][gh] = np.minimum(255, lum[gh] * 1.15)
         fxm = fxm | gh
+    if redfx:   # red energy: glow halo / slash arcs / charge aura OUTSIDE the dark armour silhouette -> fx; trim stays body
+        dk = a & (np.maximum(np.maximum(r, g), b) < 120)
+        bl = ndimage.binary_fill_holes(ndimage.binary_closing(dk, iterations=4)); lb, nb = ndimage.label(bl)
+        if nb: bl = lb == 1 + int(np.argmax(ndimage.sum(bl, lb, range(1, nb + 1))))
+        bodyr = ndimage.binary_dilation(bl, iterations=5)
+        red = a & (r > 150) & (r - g > 80) & (r - b > 50)
+        glow = red & ~bodyr
+        if arcs:   # slash arcs: the white-hot arc core (and the blade inside it) go to fx too
+            glow |= a & ~bodyr & ndimage.binary_dilation(glow, iterations=3) & (r > 200) & (g > 140) & (b > 140)
+        glow = ndimage.binary_dilation(glow, iterations=1) & a & ~(bodyr & ~red)
+        fxm = fxm | glow; a = a & ~glow
+    if smoke:   # KO smoke wisps are pale green-grey (would key out): pull them first, neutral grey, into fx
+        wisp = (r > 90) & (b > 90) & (g > r + 15) & ~(a & (np.maximum(np.maximum(r, g), b) < 120))
+        wisp = ndimage.binary_opening(wisp, iterations=1); im = im.copy(); gy_ = ((r + b) // 2 + 20)
+        for i in range(3): im[..., i][wisp] = np.minimum(255, gy_[wisp])
+        fxm = fxm | wisp; a = a & ~wisp
+    if smoke:   # KO smoke wisps: pale, low-saturation components separate from the body
+        lab0, n0 = ndimage.label(a); sz0 = ndimage.sum(a, lab0, range(1, n0 + 1)); big = 1 + int(np.argmax(sz0))
+        mx_, mn_ = np.maximum(np.maximum(r, g), b), np.minimum(np.minimum(r, g), b)
+        for i in range(1, n0 + 1):
+            if i == big: continue
+            cm = lab0 == i
+            if mx_[cm].mean() > 120 and (mx_ - mn_)[cm].mean() < 70: fxm |= cm; a &= ~cm
     if spark:   # baked-in hit spark (yellow/white burst): removed, the engine draws its own sparks
         y_ = a & (r > 190) & (g > 160) & (b < 150) & (r - b > 60)
         w_ = a & ndimage.binary_dilation(y_, iterations=6) & (r > 225) & (g > 225) & (b > 200)
@@ -114,7 +146,7 @@ raw = {}; L = {}; FXR = {}
 for p in POSES:
     f = f'{SRC}/{p}.jpg'
     if not os.path.exists(f): f = f'{SRC}/{p}.png'
-    raw[p], FXR[p] = key(f, p in MIRROR, p in FX, p in STRIP, p in GHOST, p in SPARK, p in CCFX); L[p] = landmarks(raw[p])
+    raw[p], FXR[p] = key(f, p in MIRROR, p in FX, p in STRIP, p in GHOST, p in SPARK, p in CCFX, p in REDFX, p in ARCS, p in SMOKE); L[p] = landmarks(raw[p])
 SRC_CUT = []   # source art touching the image border = the generator cut a limb off: regenerate
 for p in POSES:
     al = raw[p][..., 3] > 0; sides = {'top': al[:2].sum(), 'bottom': al[-2:].sum(), 'left': al[:, :2].sum(), 'right': al[:, -2:].sum()}
@@ -138,7 +170,7 @@ scale_src = {}
 for p in POSES:
     r_ = HW.get(p, med) / med
     # only rescale a clear outlier with a believable head reading (fists above the head fool the reading)
-    scale_src[p] = 1 / r_ if 0.85 < r_ < 1.15 and abs(r_ - 1) > 0.08 else 1.0
+    scale_src[p] = 1.0 if CFG.get('no_rescale') else 1 / r_ if (0.85 < r_ < 1.15 or p in CFG.get('force_scale', ())) and abs(r_ - 1) > 0.08 else 1.0
 # 1. normalise every pose to idle_a's head..belt span (source space)
 norm = {}
 for p in POSES:
@@ -174,7 +206,13 @@ for p in POSES:
         a[ty[ok], tx[ok]] = M[ys[ok], xs[ok]]
         report['master'][p] = 'head' if p in HEAD_ONLY else 'upper body'
     if p in LEGSWAP:   # mirror the lower body (below the belt) about the hip column so the leading leg alternates
-        Lp = L[p]; y0 = Lp['belt'] + 8; bx = Lp['beltx']; low = a[y0:].copy(); a[y0:] = 0
+        Lp = L[p]; y0 = Lp['belt'] + 8; bx = Lp['beltx']; low = a[y0:].copy()
+        if CFG.get('legwin'):   # only the legs column moves; cape tail + the bright blade stay put
+            hw_ = int((Lp['low'] - Lp['top']) * CFG['legwin']); lr, lg, lb_ = [low[..., i].astype(int) for i in range(3)]
+            win = np.zeros(low.shape[:2], bool); win[:, max(0, bx - hw_):bx + hw_] = True
+            win &= ~((lr > 170) & (lg > 120) & (lb_ > 120)) & ~((lr > 150) & (lr - lg > 80))
+            a[y0:][win] = 0; low[~win] = 0
+        else: a[y0:] = 0
         ys, xs = np.where(low[..., 3] > 0); nx = 2 * bx - xs; ok = (nx >= 0) & (nx < a.shape[1])
         a[y0 + ys[ok], nx[ok]] = low[ys[ok], xs[ok]]
         report['master'][p + '_legs'] = 'lower body mirrored about the hip'
