@@ -185,13 +185,23 @@ async function cmdRenderMusic() {
   const start = Number(flag('--start', cfg.start ?? 0));
   const end = Number(flag('--end', cfg.end ?? cfg.duration));
   const suffix = flag('--out', format === 'vertical' ? `${name}-vertical` : name);
-  const argo = join(ROOT, 'node_modules', '@argo-video', 'cli', 'bin', 'argo.js');
-  if (!existsSync(argo)) die('dependencies missing: run npm run setup');
-  const env = { WEBSHOT: name, WEBSHOTS_FORMAT: format, WEBSHOTS_START: String(start), WEBSHOTS_END: String(end) };
-  // Only the recording step: Argo's export would try to mix (non-existent) narration.
-  const code = await run(process.execPath, [argo, 'record', name, '-c', 'webshots.config.mjs'], env);
-  const raw = join(ROOT, '.argo', name, 'video.mp4');
-  if (code !== 0 || !existsSync(raw)) die(`recording failed (exit ${code}); see the log above`);
+  let raw;
+  if (!process.argv.includes('--realtime') && cfg.capture !== 'realtime') {
+    // Frame-exact capture on a virtual clock (lib/frame-runner.mjs): every frame is rendered, never dropped.
+    const { renderFrames } = await import('../lib/frame-runner.mjs');
+    mkdirSync(join(OUT, '.frames'), { recursive: true });
+    raw = join(OUT, '.frames', `${suffix}.mp4`);
+    await renderFrames({ name, out: raw, start, end, format, fps: Number(flag('--fps', cfg.fps ?? 30)) });
+    if (!existsSync(raw)) die('frame capture failed; see the log above');
+  } else {
+    const argo = join(ROOT, 'node_modules', '@argo-video', 'cli', 'bin', 'argo.js');
+    if (!existsSync(argo)) die('dependencies missing: run npm run setup');
+    const env = { WEBSHOT: name, WEBSHOTS_FORMAT: format, WEBSHOTS_START: String(start), WEBSHOTS_END: String(end) };
+    // Only the recording step: Argo's export would try to mix (non-existent) narration.
+    const code = await run(process.execPath, [argo, 'record', name, '-c', 'webshots.config.mjs'], env);
+    raw = join(ROOT, '.argo', name, 'video.mp4');
+    if (code !== 0 || !existsSync(raw)) die(`recording failed (exit ${code}); see the log above`);
+  }
   const [W, H] = format === 'vertical' ? [1080, 1920] : [1920, 1080];
   const len = end - start, fade = Number(cfg.fadeOut ?? 2), fin = Number(cfg.fadeIn ?? (start > 0 ? 0.5 : 0));
   const af = [`atrim=${start}:${end}`, 'asetpts=PTS-STARTPTS', `loudnorm=I=${cfg.loudness ?? -14}:TP=-1.0:LRA=11`, 'aresample=48000',

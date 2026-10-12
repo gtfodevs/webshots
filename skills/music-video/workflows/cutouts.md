@@ -9,3 +9,7 @@
   ```
 - [ ] Layers in stage: far in `data-depth="0.3"`, near + actors in `data-depth="1"`; slow pan on the far plate
 - [ ] Labeled contact sheet → user approval; manifest statuses updated
+
+## Rig + light maps (actor kit)
+- `python3 scripts/rig_actor.py cutouts/*.png -o rig.json --overrides rig.overrides.json`; draw the rig points on the contact sheet and fix wrong eyes/headphones/neck in the overrides (staff orbs and hats get mistaken for eyes).
+- `python3 scripts/bg_lightmap.py source/bg-<place>.jpg -o layers/bg-<place> --keys red,cyan,purple,magenta,white` per background.

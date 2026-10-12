@@ -48,14 +48,14 @@ export function musicShot(metaUrl: string): void {
     await narration.startRecording(page);
     const t0 = Date.now() - start * 1000;
     await page.evaluate((s) => (window as any).Music?.start(s), start);
-    page.evaluate((n) => (window as any).scene(n), first.scene);
+    page.evaluate((n) => (window as any).scene(n), first.scene).catch(() => {});
     for (const { scene, at } of plan) {
       if (at <= start) continue;
       if (at >= end) break;
       const wait = at * 1000 - (Date.now() - t0);
       if (wait > 0) await page.waitForTimeout(wait);
       narration.mark(scene);
-      page.evaluate((n) => (window as any).scene(n), scene);
+      page.evaluate((n) => (window as any).scene(n), scene).catch(() => {}); // never await: cuts must not drift
     }
     await page.waitForTimeout(Math.max(0, end * 1000 - (Date.now() - t0)));
   });

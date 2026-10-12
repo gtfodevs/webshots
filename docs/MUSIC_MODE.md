@@ -1,6 +1,6 @@
 # Music mode: design
 
-Status: v1 shipped (this branch). Showcase: `shots/kingdom-come` → `out/kingdom-come.mp4` and the Shorts cut `out/kingdom-come-vertical.mp4`.
+Status: v1 shipped, plus the actor animation layer and frame-exact capture (v1.1). Showcase: `shots/kingdom-come-v4` (ProgressiveSlop brand, rigged actors) → `out/kingdom-come-v4.mp4` and the Short `out/kingdom-come-v4-short.mp4`. `shots/kingdom-come` is the older v3 (pose-swap actors).
 
 ## Goals
 
@@ -35,10 +35,11 @@ song.mp3 + lyrics.txt
 stage/timeline.json ──────────────┐
 shots/<name>/<name>.scenes.json   │  (scene → bar / time)
 shots/<name>/<name>.music.json    │  (soundtrack, loudness, fades, cut, format, storyline)
-stage/index.html  ◄── /kit.js (scenes) + /music.js (clock, hooks, camera, presets, lyrics, comic)
-   │  lib/music-runner.ts  (Playwright: starts the song clock and the recording together; schedules cuts on wall time)
+stage/index.html  ◄── /kit.js (scenes) + /music.js (clock, hooks, camera, presets, lyrics, comic) + /actors.js (rigged actors, animated backgrounds)
+   │  lib/frame-runner.mjs (default: virtual clock, one screenshot per frame, never drops a frame)
+   │  or lib/music-runner.ts (--realtime: wall-clock capture through Argo)
    ▼
-.argo/<name>/video.mp4 (2× capture, silent)
+out/.frames/<name>.mp4 (2× capture, silent)
    │  npm run render: ffmpeg mux — trim to cut, loudnorm to target LUFS, fades, scale to 1920×1080 or 1080×1920
    ▼
 out/<name>.mp4   /   out/<name>-vertical.mp4
@@ -46,7 +47,9 @@ out/<name>.mp4   /   out/<name>-vertical.mp4
 
 ### Clock and sync
 
-The recorder starts the capture, then calls `Music.start(start)` and schedules each scene at its bar time against wall time (no accumulated drift). Inside the page, everything reads `Music.time()`; hooks fire from a requestAnimationFrame loop. Durations are expressed in beats (`Music.beats(n)`) so entrances land on beats when a scene starts on a bar. In `npm run check`, `Music.freeze(t)` pins the clock a few beats into each scene so screenshots (and lyrics) are deterministic.
+**Frame-exact capture (default).** `lib/frame-runner.mjs` installs a virtual clock before any page script runs: `performance.now`, `Date.now`, `requestAnimationFrame`, `setTimeout/setInterval` and all CSS/Web animations run on it. For every output frame it advances the clock by exactly 1/fps, switches scenes at their bar times, and takes one screenshot, piped to ffmpeg. GSAP, the song clock, actor loops and particles therefore get every frame, however heavy the page is (wall-clock capture of the rigged-actor stage only reached ~8 unique fps; frame-exact gives the full 30). Cost: about 0.15-0.6 s of render time per frame on the box (a 3-minute song is roughly 30-50 min). `--realtime` (or `"capture": "realtime"` in `<name>.music.json`) falls back to the old wall-clock recorder.
+
+**Wall-clock capture (`--realtime`).** The recorder starts the capture, then calls `Music.start(start)` and schedules each scene at its bar time against wall time (no accumulated drift). Inside the page, everything reads `Music.time()`; hooks fire from a requestAnimationFrame loop. Durations are expressed in beats (`Music.beats(n)`) so entrances land on beats when a scene starts on a bar. In `npm run check`, `Music.freeze(t)` pins the clock a few beats into each scene so screenshots (and lyrics) are deterministic.
 
 ### Analysis (scripts/analyze_music.py)
 
@@ -64,6 +67,7 @@ The recorder starts the capture, then calls `Music.start(start)` and schedules e
 - Camera: one `#camera` wrapper; `cam.to({x,y,zoom,rot}, beats)`, `cam.punch()`, `cam.shake()`, `cam.reset()`. Layers with `data-depth` get parallax offsets automatically.
 - Particles: `embers`, `sparkles`, `confetti`, `dust`; spawn rate follows the energy curve; `.burst()`.
 - Presets: `fx.slam/pop/float/pulse/squash/wobble/shatter` (shatter clones an element into clipped shards; `reverse:true` assembles).
+- Safe area: `Music.safe(el)` shifts a comic element back inside its host and the visible viewport (bubbles and captions call it automatically; in vertical Shorts the 16:9 stage is cropped).
 - Lyrics: `Music.lyrics({ styleFor(line) → style, hot: /regex/ })`. Words appear at their sung time; hot words are accented; slam words punch the camera.
 - Themes: `Music.theme('fantasy')` sets `--m-ink`, `--m-a/b/c`, `--m-paper`, `--m-font`, `--m-sfx`.
 
@@ -123,9 +127,48 @@ Asset quality is the bottleneck, so assets get their own approved stage between 
 
 1. **List.** From the storyline, write `channels/<channel>/assets/<shot>/manifest.json`: every cast member (neutral pose + 2-4 expressions/poses each), 4-5 wide backgrounds, and key props. Each entry carries its generation prompt, style references, output paths and a `status`.
 2. **Generate in style.** Prompts are built from the channel `style.json` (palette, line, proportions, mood) + the song cover as a reference image. Characters are generated full-body on a plain flat background in a neutral 3/4 pose; backgrounds are wide (21:9) and composed in separable depth bands (sky / far / mid / foreground) so they can be layered. Use the highest quality setting; keep seeds/references fixed across a cast so they match.
-3. **Cut and layer.** Character sheets (N poses side by side) → one transparent PNG per pose with `python3 scripts/cutout_sheet.py sheet.jpg --count 4 --names a,b,c,d -o cutouts/<who>` (splits on background gaps, rembg isnet + alpha matting, largest-blob cleanup, trim). Poses beat parts: acting = pose swaps on beats + squash/stretch + hops, which reads as animation and never shows seams. Backgrounds → at least 2 layers: the full plate (far, depth ~0.3) and a feathered foreground band (near, depth 1), plus a slow Ken Burns pan; true depth splits (depth model + inpaint) are a later upgrade. Each output is listed in the manifest.
+3. **Cut, rig and layer.** Character sheets → one transparent PNG per pose with `python3 scripts/cutout_sheet.py sheet.jpg --count 4 --names a,b,c,d -o cutouts/<who>` (splits on background gaps, rembg isnet + alpha matting, largest-blob cleanup, trim). Grids: `--rows 2 --count 3`. Crowded line-ups where figures touch: `--boxes "x0,y0,x1,y1"` per figure plus `--erase` rectangles for a neighbour's overlap, and `--model birefnet-general` for chrome-on-grey (isnet loses chrome against grey backgrounds). Small sheets: `--upscale 2`. Run one figure per process with birefnet (it needs ~4 GB). Then rig every cutout: `python3 scripts/rig_actor.py cutouts/*.png -o rig.json --overrides rig.overrides.json` (eyes, headphones, neck, shoulders, hip, feet, spell glow; fix any wrong guess in the overrides file and re-run). Brand fixes are scripted too (`scripts/pendant_one.py` stamps Uno's gold "1"). Backgrounds → light maps: `python3 scripts/bg_lightmap.py bg-<place>.jpg -o layers/bg-<place> --keys red,cyan,purple,magenta,white` writes one glow PNG per colour family (only the glowing pixels, on black) and `<place>.fx.json` with sparkle points; the stage screen-blends and pulses them (see *Actor animation layer*). Optional far/near band split for parallax as before. Each output is listed in the manifest.
 4. **Approve.** Render a labeled contact sheet of every asset; a human approves or asks for re-rolls per item (`status: approved | reroll`). Nothing is animated until the set is approved and visually consistent.
-5. **Animate.** Stages use the approved PNG parts and layers (as `<image>`/`<img>` layers with `data-depth`) with the same music runtime, presets and comic style.
+5. **Animate.** Stages turn the approved cutouts into rigged actors (`/actors.js`) and the backgrounds into animated plates, with the same music runtime, presets and comic style.
+
+## Actor animation layer (lib/actor-kit.js, served as /actors.js)
+
+The v3 lesson: pose swaps on the beat read as "jerking around stills". Every character on screen must be alive all the time, each running its own loops, independently and offset, with poses mixed in as accents.
+
+**Rig, not cut.** Each actor is one cutout drawn by WebGL on a 24×32 vertex mesh. From the rig points the vertex shader derives smooth per-vertex weights, so parts move independently with no seams:
+
+| Part | Weight | Motion |
+| --- | --- | --- |
+| head | above the neck, near the head column | bob, tilt, nod (rides on the breathing torso) |
+| chest/torso | neck → hip | breathing (stretch up from the hip, chest widens) |
+| arms + cape/robe edges | outside the torso column, shoulder → hip | rotate about left/right shoulder pivots |
+| hem (cape, gown, robe) | hip → feet, growing to the feet | travelling sine wave + flare |
+| hair | beside the head, head → hip | wave with lag (Aura) |
+| wings | upper back (dragon) | flap |
+| whole body | from the feet | lean, rock |
+
+The fragment shader adds a chrome glint sweep (each actor on its own 8-beat cycle), a sword gleam limited to the blade (`gleamTop`), hit flashes and a beat-reactive rim light. A 2D overlay canvas per actor draws light: eye glow (slow pulse, flares on accents, deterministic blinks every 2.4-5.5 s per actor), headphone pulses on the actor's own beat, staff orbs, and stateless spiral magic particles at the rig's spell point. A JS twin of the head transform keeps eyes and headphones locked to the warped head.
+
+**Independence.** Every parameter is a pure function of the song clock, so frozen check frames are deterministic and capture is frame-exact. Each actor has a `seed` (phase) and `sub` (beat subdivision: Uno nods on half-time, Aura on quarters, the jester on eighths); the beat envelope is quantized to 16ths per actor, so actors hit at different points of the beat but stay on the grid. Beat envelopes have a short eased attack, so big mesh moves never snap in one frame.
+
+**Named animations** (`Actors.anims`, add your own with `Actors.addAnim(name, fn)`), layered on top of the always-on `idle` (breathing, micro head bob, slow cloth sway, blink): `groove`, `walk` (step bounce, lean, alternating arm swing, rock), `cheer`, `react` (decaying shudder), `attack` (anticipation → lunge → recover, blade gleam), `cast` (arm pulses, magic particles, eye glow), `dance`, `twirl`, `menace`, `bounce` (jester), `gallop` (horse), `hover` (dragon, wings), `sleep` (eyes dim), `guard`, `flex`. Short additive accents: `Actors.accent(a, 'flare'|'recoil'|'nod'|'flex'|'shiver', beats)`.
+
+**Pose-to-pose.** `Actors.transition(a, pose, { smear: 'up'|'left'|'right'|'spin'|'none' })`: anticipation squat → swap with a fading, stretched ghost of the old pose + comic speed lines → elastic overshoot. `Actors.hop()`, `Actors.flash()`, `Actors.impact(host, x, y, {text})` (comic star burst + lettering), `Actors.anchor(a, 'chest'|'head'|'feet')`.
+
+**Mix and match per moment.** The scene plan picks, per character and per beat of the story, a loop (`a.play('walk')`), a pose (`Actors.transition`) and accents, e.g. Uno `attack` + sword pose while the knights `react` and Aura `cast`s, each on its own phase.
+
+```js
+await Actors.load('assets/cast/rig.json'); Actors.start();
+Actors.define('uno', { poses: { stand: 'uno-stand', sword: 'uno-sword' }, sub: 0.5, gleamTop: { sword: 0.3 } });
+const uno = Actors.actor(castEl, 'uno', { x: 430, y: 615, h: 430, pose: 'stand', seed: 0.1 }).play('groove');
+tl.add(() => { Actors.transition(uno, 'sword', { smear: 'up' }); uno.play('attack'); }, AT(34.9)); // on the lyric
+```
+
+Call `Actors.clear()` when a scene starts (frees the WebGL contexts; Chrome keeps ~16).
+
+**Animated backgrounds.** `Actors.bg(plateEl, '<place>', opts)` loads the plate, its glow maps and sparkle points: `glow: [keys]` screen-blended and pulsed (`pulse: 'beat'|'bar'`), `shimmer: [keys]` (a moving mask sweep, e.g. fountain/crystal light), `twinkle: [keys]` (star glints on the brightest points), `fountain: {x,y}` (rising droplets), `lasers: [{x,y,from,to,color,beats}]` (beat-synced sweeps), `disco: {x,y}` (spinning ball + floor spots), `eyes: [[x,y]]` (a big creature's eyes flaring on downbeats). Coordinates are source-image pixels.
+
+**QA for motion.** Besides the check sheet, render a few seconds and sample consecutive frames: crop one actor, diff frame n vs n+k (`ImageChops.difference`), and confirm that the head, arms/cape and hem light up differently and that no frame is a duplicate (`ffmpeg -vf mpdecimate` should keep ~all frames). When extracting frames with `select`, add `-fps_mode vfr` or ffmpeg duplicates them.
 
 ## Chorus routine (the recurring hook)
 
@@ -135,7 +178,8 @@ Every chorus cuts (on a bar line, usually for the chorus's last 4-6 bars) to the
 - **Running gag:** one cast member (the villain) changes participation each chorus: refuses → taps once per bar → does only the downbeats → dances fully while denying it → front and center loving it. Each chorus also gets one new line (bubble) and at most one new prop, nothing else changes.
 - **Story context:** the routine can reflect story state (cracked drum still dancing, villain dancing in his cage), but the move itself never changes.
 - **Shorts:** build the vertical cut around one or two routines; the routine is the most re-watchable part.
-- Implementation: `routine(n)` in `shots/kingdom-come/stage/index.html`, scenes `dance1..dance5`, driven by `Music.onBeat` with a beat-in-bar counter.
+- **Progressive cast (v4 variant):** instead of a villain gag, the cast joins one or two at a time (#1 Uno + Aura, #2 + Jester, #3 + Wizard + Knights, #4 + Dragon + Horse, #5 everyone, the reformed villain front and center). The leads do the 4-beat move with smear transitions; everyone else keeps their own loop at their own phase and only shares the downbeat hop.
+- Implementation: `routine(n)` in `shots/kingdom-come-v4/stage/index.html` (and v3's in `shots/kingdom-come`), scenes `dance1..dance5`, driven by `Music.onBeat` with a beat-in-bar counter.
 
 ## Pipeline (how an assistant makes one)
 
@@ -143,7 +187,7 @@ Every chorus cuts (on a bar line, usually for the chorus's last 4-6 bars) to the
 1. `npm run new -- <name> --music song.mp3 --lyrics lyrics.txt` → copies the song, runs the analysis, writes `timeline.json`, one placeholder scene per section, and `<name>.music.json`.
 2. Read the lyrics and the section list; write the **storyline** (cast + arc) into `<name>.music.json`.
 2b. **Asset prep** (see above): list → generate in style → cut/layer → approve.
-3. Use the approved cutouts as actors (`actor(host, who, {x, y, s, pose})` in `shots/kingdom-come/stage/index.html`: stacked pose `<img>`s, feet-anchored so squash/hop happen from the ground). Hand-drawn SVG cast is the fallback when no asset set exists.
+3. Use the approved cutouts as rigged actors (`/actors.js`, see *Actor animation layer*; worked example `shots/kingdom-come-v4/stage/index.html`). Every character on screen runs its own loop; poses are accents with smear transitions. Hand-drawn SVG cast is the fallback when no asset set exists.
 3b. Build the **chorus routine** once and play it in every chorus (see below).
 4. Build scenes: choruses as big beat-driven set pieces (comic splash pages, slams), verses as plot (parallax pans, panels, bubbles). Put entrances on beats (`B(n)`), cuts on bars.
 5. `npm run check -- <name>`; review the contact sheet (lyrics are frozen a few beats in).
@@ -153,8 +197,8 @@ Every chorus cuts (on a bar line, usually for the chorus's last 4-6 bars) to the
 ## Roadmap
 
 - **v1 (now):** soundtrack mux, beat/bar/section/energy timeline, Whisper lyric alignment, runtime hooks, camera/parallax/particles/presets, lyric styles, themes, comic style, vertical format, `new --music`.
-- **v1.1:** frame-exact capture (virtual time instead of wall time), so heavy scenes can never drop frames; per-word lyric editing file (`lyrics.fix.json`); automatic Shorts window picker (energy × lyric density × arc beat).
-- **v1.2:** cast library (`lib/cast/*.svg`) with poses and mouth shapes; lip-flap from vocal energy; reusable backdrops (castle, city, beach, space).
+- **v1.1:** ✅ frame-exact capture (virtual time); ✅ actor animation layer (rigged mesh actors, light overlays, named animations, smear transitions, animated backgrounds); ✅ comic safe-area clamp (`Music.safe`, used by bubbles and captions, so Shorts never clip them); per-word lyric editing file (`lyrics.fix.json`); automatic Shorts window picker (energy × lyric density × arc beat).
+- **v1.2:** lip-flap / visor glow from vocal energy; arm rigs from per-pose masks (true limb pivots instead of side weights); cast library with poses and mouth shapes; reusable backdrops (castle, city, beach, space).
 - **v2:** `clip` layers slaved to the song clock (AI video, stock); a `3d` layer slot with a three.js adapter; stem separation (demucs) for drum-locked vs vocal-locked motion.
 - **v1.1 (sourcing):** scheduled `suno:sync` for whole profiles; Grok Imagine importer; palette sampling from covers into per-song `style.json`.
 - **Later:** a "party channel" batch mode: drop a folder of Suno songs, get drafts of both formats with storyline suggestions for review.

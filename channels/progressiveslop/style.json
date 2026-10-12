@@ -1,0 +1,27 @@
+{
+ "channel": "ProgressiveSlop",
+ "display_name": "Progressive🆂🅻🅾🅿",
+ "suno_profile": "https://suno.com/@progressiveslop",
+ "tagline": "Uno and Aura — hip-hop fun, dressed up.",
+ "credit": "Credit ProgressiveSlop on the title card and the end card (with the tagline).",
+ "summary": "Glossy, hyper-detailed chrome 3D illustration in neon purple, magenta and cyan. Everything is a robot: polished silver chrome bodies, glowing red eyes, headphones for ears. Uno and Aura are the recurring leads; each song changes the setting, never the brand.",
+ "rules": [
+  "Everything is a robot. No living creatures: no humans, animals or plants that are alive (crystal/chrome trees are fine).",
+  "All robots are polished silver chrome with glowing red eyes and headphones for ears.",
+  "Look: glossy, hyper-detailed chrome 3D illustration; neon purple, magenta and cyan lighting; reflective floors.",
+  "The setting changes with each song's theme; the brand (chrome robots, Uno and Aura, palette) stays the same.",
+  "Uno's pendant must read as a gold \"1\" (stamp it with scripts/pendant_one.py if a generation draws a cross)."
+ ],
+ "leads": {
+  "Uno": "the strong male lead: big heroic build, smooth round bald chrome head, glowing red eyes, headphones, purple fur cloak, gold chain with a \"1\" pendant. Protector.",
+  "Aura": "the beautiful, graceful lady: chrome body, long dark hair streaked crimson, crimson and silver gown, glowing red eyes, headphones. Brings grace and magic (cyan spell light)."
+ },
+ "palette": { "ink": "#12062a", "night": "#0b0618", "purple": "#7b2cff", "magenta": "#ff3fd2", "cyan": "#5ee7ff", "chrome": ["#f2f4ff", "#b9c3e6", "#6d6f9a"], "eyes": "#ff2a2a", "gold": "#ffcf5a", "crimson": "#b3122e", "paper": "#f6f2ff" },
+ "type": { "title": "Cinzel Decorative 900 with a chrome gradient fill, ink stroke and magenta glow", "brand": "Orbitron 900, white with magenta/cyan neon glow", "sfx": "Bangers, stroked + offset ink shadow, magenta/cyan", "lyrics_chorus": "Bangers slam, magenta with cyan glow", "lyrics_verse": "Comic Neue in a pale caption box with a magenta drop shadow", "captions": "cyan narration boxes" },
+ "comic": "Comic-book layer on top of the chrome art: panels and gutters, halftone, SFX lettering, speech bubbles, impact stars, speed lines.",
+ "motion": "Every character on screen is alive all the time (actor kit: breathing, head bob on its own phase, eye glow pulses and blinks, headphone pulses, cloth/hair sway, chrome glints); pose changes use anticipation, smear and overshoot; backgrounds have subtle light motion.",
+ "do": ["Uno and Aura in every song", "a recurring cast per song with a small arc", "cuts on bars", "a repeating chorus routine", "the song's cover somewhere (credits)"],
+ "dont": ["living creatures", "flat 2D cartoon or chibi styles", "non-chrome characters", "eyes that are not red", "more than 3 typefaces", "text over faces"],
+ "references": ["assets/kingdom-come-v4/source/style-sheet.jpg (approved style anchor)", "assets/kingdom-come-v4/source/uno-sheet.jpg", "assets/kingdom-come-v4/source/aura-sheet.jpg"],
+ "imagine_import": "imagine/manifest.json"
+}

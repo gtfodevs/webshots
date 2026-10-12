@@ -1,6 +1,6 @@
 # Character sheet
-References: style anchor sheet + cover art.
+References: style anchor sheet + channel `style.json` (+ cover art for the setting).
 
-> Character design sheet matching the reference knight's exact art style (same chibi proportions, thick dark outlines, cel shading, ember sparks). <character description>. Four poses side by side: <poses>. Plain solid light gray background, no text.
+> Character design sheet matching the reference sheet's exact art style (same chrome 3D rendering, lighting and proportions). <character description; ProgressiveSlop: a polished silver chrome robot with glowing red eyes and headphones for ears>. Six poses in a 3x2 grid: <poses>. Full body, feet visible, poses not touching, plain solid light gray background, no text.
 
-Replace "knight" with the anchor character. Poses come from story beats (e.g. "lit, flame out, cracked, joyful flame").
+Pick poses that the actor kit can mix: a neutral stand, a walk, an action (sword/cast), a reaction or attitude (lean, kiss), and two dance poses. Keep figures separated so `cutout_sheet.py --rows 2 --count 3` can split them; a line-up of side characters needs `--boxes` when they overlap.

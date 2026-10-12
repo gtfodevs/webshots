@@ -1,0 +1,51 @@
+{
+ "soundtrack": "stage/assets/song.m4a",
+ "duration": 170.816,
+ "start": 0,
+ "end": 170.816,
+ "loudness": -14,
+ "fadeOut": 1.5,
+ "theme": "fantasy",
+ "shorts": {
+  "start": 99.033,
+  "end": 141.317,
+  "note": "chorus 4 in the lair -> ROUTINE #4 -> verse 4 showdown -> chorus 5 relight -> ROUTINE #5 (everyone)"
+ },
+ "storyline": {
+  "cast": {
+   "Uno": "the strong chrome lead and protector (purple fur cloak, gold \"1\" chain)",
+   "Aura": "graceful chrome lady, brings the magic (crimson-streaked hair, crimson and silver gown)",
+   "Wizard": "sends them on the quest",
+   "Jester": "comic relief, tags along",
+   "Sorcerer": "villain who stole the kingdom's music and light; won over by the dance",
+   "Dragon, Horse, Knights": "companions picked up along the way"
+  },
+  "arc": {
+   "setup": [
+    "open",
+    "spark"
+   ],
+   "journey": [
+    "quest",
+    "wake",
+    "beasts",
+    "flight"
+   ],
+   "conflict": [
+    "plot",
+    "shatter"
+   ],
+   "payoff": [
+    "lair",
+    "relight",
+    "party"
+   ],
+   "coda": [
+    "credits",
+    "end"
+   ]
+  },
+  "routine": "great hall (bg-hall-party), same 4-beat move each chorus; cast joins progressively: #1 Uno+Aura, #2 +Jester, #3 +Wizard+Knights, #4 +Dragon+Horse, #5 everyone with the Sorcerer front and center"
+ },
+ "brand": "channels/progressiveslop/style.json"
+}
