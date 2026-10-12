@@ -14,7 +14,12 @@ AN['ko'] = {'frames': ['hit', 'ko_fall', 'ko_down'], 'durations': [200, 450, 120
 for k in ('ko_fall', 'ko_down'): AN.pop(k)
 for name, a in AN.items():
     fr = [M['frames'][p] for p in a['frames']]
-    left = max(f['ax'] for f in fr) + 20; right = max(f['rect'][2] - f['ax'] for f in fr) + 20; top = max(f['ay'] for f in fr) + 16
+    # canvas = union of body AND fx extents around the anchor (+ margin) so extended limbs / energy never clip
+    ext = []
+    for f in fr:
+        ext.append((-f['ax'], f['rect'][2] - f['ax'], -f['ay'] - (20 if f.get('air') else 0)))
+        if 'fx' in f: ext.append((f['fx']['ox'] - f['ax'], f['fx']['ox'] + f['fx']['rect'][2] - f['ax'], f['fx']['oy'] - f['ay'] - (20 if f.get('air') else 0)))
+    left = -min(e[0] for e in ext) + 24; right = max(e[1] for e in ext) + 24; top = -min(e[2] for e in ext) + 20
     W, H = left + right, top + 14; ims = []
     for p, f in zip(a['frames'], fr):
         im = Image.new('RGBA', (W, H), (26, 12, 54, 255)); d = ImageDraw.Draw(im); d.rectangle([0, top + 1, W, H], fill=(18, 8, 40, 255)); d.line([0, top + 1, W, top + 1], fill=(255, 63, 210, 255))
@@ -23,6 +28,8 @@ for name, a in AN.items():
         im.alpha_composite(spr, (left - f['ax'], top - f['ay'] - lift))
         if 'fx' in f:
             fx, fy, fw, fh = f['fx']['rect']; e = A.crop((fx, fy, fx + fw, fy + fh)); im.alpha_composite(e, (left - f['ax'] + f['fx']['ox'], top - f['ay'] - lift + f['fx']['oy']))
+        al = (__import__('numpy').asarray(im.convert('RGBA'))[..., :3] != (26, 12, 54)).any(2)  # render-frame check: nothing on the canvas edge
+        if al[:top][0].any() or al[:top, 0].any() or al[:top, -1].any(): raise SystemExit(f'{c} {name} {p}: sprite touches the GIF canvas edge (clipped)')
         ims.append(im.convert('RGB').resize((W * S, H * S), Image.NEAREST))
     ims[0].save(f'{OUT}/{c}_{name}.gif', save_all=True, append_images=ims[1:], duration=a['durations'], loop=0, disposal=2)
     print(name, len(ims), 'frames')

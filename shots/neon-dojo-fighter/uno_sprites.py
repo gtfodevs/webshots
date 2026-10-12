@@ -81,6 +81,13 @@ for p in POSES:
     f = f'{SRC}/{p}.jpg'
     if not os.path.exists(f): f = f'{SRC}/{p}.png'
     raw[p], FXR[p] = key(f, p in MIRROR, p in FX, p in STRIP); L[p] = landmarks(raw[p])
+SRC_CUT = []   # source art touching the image border = the generator cut a limb off: regenerate
+for p in POSES:
+    al = raw[p][..., 3] > 0; sides = {'top': al[:2].sum(), 'bottom': al[-2:].sum(), 'left': al[:, :2].sum(), 'right': al[:, -2:].sum()}
+    if FXR.get(p) is not None:
+        fa_ = FXR[p][..., 3] > 0; sides = {k: v + {'top': fa_[:2].sum(), 'bottom': fa_[-2:].sum(), 'left': fa_[:, :2].sum(), 'right': fa_[:, -2:].sum()}[k] for k, v in sides.items()}
+    cut = [k for k, v in sides.items() if v > 3]
+    if cut: SRC_CUT.append(f'{p}: source art touches the image {"/".join(cut)} edge (cut off) - regenerate with margin')
 upright = [p for p in POSES if p not in ('ko_fall', 'ko_down')]
 def head_w(a, Lm):  # the round chrome head is rigid: widest contiguous run through the head column, top 45 rows
     al = a[..., 3] > 0; best = 0
@@ -117,7 +124,7 @@ def core_mask(arr, Lm, head_only=False):
         cx = Lm['headx'] if y < Lm['top'] + H * 0.15 else Lm['beltx']
         m[y, max(0, cx - w):cx + w] = True
     return m & a
-report = {'char': CH, 'head_w': HW, 'scale_src': {k: round(v, 3) for k, v in scale_src.items()}, 'flags': [], 'master': {}}
+report = {'char': CH, 'source_cut': SRC_CUT, 'head_w': HW, 'scale_src': {k: round(v, 3) for k, v in scale_src.items()}, 'flags': [], 'master': {}}
 comp = {}
 for p in POSES:
     a = norm[p].copy()
@@ -178,14 +185,18 @@ for kk in (1, 2):
 wa, wb = frames['idle_a']['img'].shape[1], (frames['idle_b']['img'].shape[1] if 'idle_b' in frames else frames['idle_a']['img'].shape[1])
 if 'idle_b' in frames and abs(wa - wb) > 0.1 * wa: report['flags'].append(f'idle_b: stance width {wb}px vs idle_a {wa}px - the feet jump between breath frames; breath built from idle_a (master) instead. Regenerate idle_b as idle_a with chest/shoulders up ~1%')
 # 5. atlas
-pad = 2; W = sum(f['img'].shape[1] + pad + (f['fx']['img'].shape[1] + pad if 'fx' in f else 0) for f in frames.values()); H = max([f['img'].shape[0] for f in frames.values()] + [f['fx']['img'].shape[0] for f in frames.values() if 'fx' in f])
-atlas = np.zeros((H, W, 4), np.uint8); meta = {'char': CH, 'world': [960, 540], 'frames': {}}; x = 0
+# every atlas cell carries a 3px transparent margin (BP) so no opaque pixel ever touches its rect edge;
+# a pixel on the cell border means the art was cut (fighter_qa fails on it)
+BP = 3; pad = 2
+W = sum(f['img'].shape[1] + 2 * BP + pad + (f['fx']['img'].shape[1] + 2 * BP + pad if 'fx' in f else 0) for f in frames.values())
+H = max([f['img'].shape[0] for f in frames.values()] + [f['fx']['img'].shape[0] for f in frames.values() if 'fx' in f]) + 2 * BP
+atlas = np.zeros((H, W, 4), np.uint8); meta = {'char': CH, 'world': [960, 540], 'cell_pad': BP, 'frames': {}}; x = 0
 for p, f in frames.items():
-    h, w = f['img'].shape[:2]; atlas[:h, x:x + w] = f['img']
-    meta['frames'][p] = dict(rect=[x, 0, w, h], ax=f['ax'], ay=f['ay'], hip=f['hip'], air=p == 'ko_fall', down=p == 'ko_down'); x += w + pad
+    h, w = f['img'].shape[:2]; atlas[BP:BP + h, x + BP:x + BP + w] = f['img']
+    meta['frames'][p] = dict(rect=[x, 0, w + 2 * BP, h + 2 * BP], ax=f['ax'] + BP, ay=f['ay'] + BP, hip=f['hip'], air=p == 'ko_fall', down=p == 'ko_down'); x += w + 2 * BP + pad
     if 'fx' in f:
-        fi = f['fx']['img']; fh, fw = fi.shape[:2]; atlas[:fh, x:x + fw] = fi
-        meta['frames'][p]['fx'] = dict(rect=[x, 0, fw, fh], ox=f['fx']['ox'], oy=f['fx']['oy']); x += fw + pad
+        fi = f['fx']['img']; fh, fw = fi.shape[:2]; atlas[BP:BP + fh, x + BP:x + BP + fw] = fi
+        meta['frames'][p]['fx'] = dict(rect=[x, 0, fw + 2 * BP, fh + 2 * BP], ox=f['fx']['ox'], oy=f['fx']['oy']); x += fw + 2 * BP + pad
 # bob table for the walk: hip height relative to idle_a (positive = lower)
 meta['bob'] = {p: frames['idle_a']['hip'] - frames[p]['hip'] for p in POSES if p.startswith(('walk', 'idle'))}
 Image.fromarray(atlas).save(f'{PX}/{CH}.png'); json.dump(meta, open(f'{PX}/{CH}.json', 'w'), indent=1)

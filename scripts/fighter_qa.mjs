@@ -5,6 +5,7 @@
 // a master core that changes between frames, too many hits per bar, montage-only fighters using moves they don't have.
 import { readFileSync, existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import vm from 'node:vm';
+import { spawnSync } from 'node:child_process';
 const shot = process.argv[2], SD = `shots/${shot}/stage`, OUT = `out/${shot}/qa`; mkdirSync(OUT, { recursive: true });
 const ctx = {}; vm.createContext(ctx); vm.runInContext(readFileSync(`${SD}/fight.js`, 'utf8'), ctx); const F = ctx.FIGHT;
 const TL = JSON.parse(readFileSync(`${SD}/timeline.json`, 'utf8')); const E = F.build(TL);
@@ -28,13 +29,26 @@ const SPR = {}; for (const c of Object.keys(F.SPRITE_ANIMS || {})) {
   for (const [a, A] of Object.entries(F.SPRITE_ANIMS[c])) {
     if (A.frames.length !== A.durations.length) fail(`${c}.${a}: durations/frames mismatch`);
     A.frames.forEach((p, i) => { const fr = SPR[c].frames[p]; if (!fr) return fail(`${c}.${a}: pose ${p} not in the atlas`);
-      if (fr.ay !== fr.rect[3] - 1) fail(`${c}.${p}: anchor row ${fr.ay} is not the lowest pixel row ${fr.rect[3] - 1}`);
+      const cp = SPR[c].cell_pad || 0; if (fr.ay !== fr.rect[3] - 1 - cp) fail(`${c}.${p}: anchor row ${fr.ay} is not the lowest content row ${fr.rect[3] - 1 - cp}`);
       const j = i + 1 < A.frames.length ? i + 1 : (A.loop ? 0 : -1); if (j >= 0 && j !== i && A.frames[j] === p) fail(`${c}.${a}: frames ${i} and ${j} identical (${p})`); });
   }
+  // cut-off art: no opaque pixel may touch its atlas cell edge, the lowest opaque row must be the anchor row
+  const py = spawnSync('python3', ['-c', `
+import json, sys, numpy as np
+from PIL import Image
+m = json.load(open(sys.argv[1])); A = np.asarray(Image.open(sys.argv[2]).convert('RGBA'))[..., 3] > 0; bad = []
+for p, f in m['frames'].items():
+    for kind, r in [('body', f['rect'])] + ([('fx', f['fx']['rect'])] if 'fx' in f else []):
+        x, y, w, h = r; c = A[y:y + h, x:x + w]
+        e = [k for k, v in (('top', c[0]), ('bottom', c[-1]), ('left', c[:, 0]), ('right', c[:, -1])) if v.any()]
+        if e: bad.append(f'{p} {kind}: opaque pixels touch the cell {"/".join(e)} edge (clipped)')
+        if kind == 'body' and c.any() and int(np.where(c.any(1))[0].max()) != f['ay']: bad.append(f'{p}: lowest opaque row {int(np.where(c.any(1))[0].max())} != anchor {f["ay"]}')
+print(json.dumps(bad))`, mp, mp.replace('.json', '.png')], { encoding: 'utf8' });
+  if (py.status !== 0) fail(`${c}: atlas edge check crashed: ${py.stderr.slice(-200)}`); else JSON.parse(py.stdout).forEach((m) => fail(`${c}.${m}`));
   const rp = `out/${shot}/${c}-report.json`; if (existsSync(rp)) { const r = JSON.parse(readFileSync(rp, 'utf8'));
     for (const [k, v] of Object.entries(r.master || {})) if (k.endsWith('_identity') && v < 0.97) fail(`${c}: master upper body identity ${k} ${v} < 0.97`);
     for (const [k, v] of Object.entries(r.walk_change || {})) if (v < 0.03) fail(`${c}: walk ${k} silhouette change ${v} < 3%`);
-    (r.flags || []).forEach((f) => notes.push(`${c} ART FLAG: ${f}`)); }
+    (r.flags || []).forEach((f) => notes.push(`${c} ART FLAG: ${f}`)); (r.source_cut || []).forEach((f) => fail(`${c} SOURCE CUT: ${f}`)); }
   notes.push(`${c}: sprite atlas, ${Object.keys(SPR[c].frames).length} poses`);
 }
 for (const c of Object.keys(F.CHARS)) {
@@ -61,9 +75,14 @@ for (const f of Object.values(E.fights)) {
       const st = E.fighterAt(f, side, t); used.add(`${st.char}.${st.anim}`);
       if (!F.movesOf(st.char).includes(st.anim)) fail(`${f.id} t=${t.toFixed(2)}: ${st.char} uses ${st.anim} (not in its move set)`);
       let low;
-      if (SPR[st.char]) { const pose = F.animOf(st.char, st.anim).frames[st.frame], fr = SPR[st.char].frames[pose]; low = st.y + (fr.rect[3] - 1 - fr.ay); if (fr.air && !st.air) fail(`${f.id}: ${st.char} air pose ${pose} drawn grounded`); }
+      if (SPR[st.char]) { const pose = F.animOf(st.char, st.anim).frames[st.frame], fr = SPR[st.char].frames[pose]; low = st.y + (fr.rect[3] - 1 - (SPR[st.char].cell_pad || 0) - fr.ay); if (fr.air && !st.air) fail(`${f.id}: ${st.char} air pose ${pose} drawn grounded`); }
       else { const rs = F.poseRects(st.char, st.anim, st.frame); low = st.y + Math.max(...rs.map((r) => r[1] + r[3] - 1)); }
       if (!st.air && Math.abs(low - f.ground) > 1 && !gfail.has(st.char + st.anim)) { gfail.add(st.char + st.anim); fail(`${f.id} t=${t.toFixed(2)}: ${st.char} ${st.anim}[${st.frame}] lowest pixel y=${low}, ground ${f.ground} (floating ${f.ground - low}px)`); }
+      if (SPR[st.char]) { const pose = F.animOf(st.char, st.anim).frames[st.frame], fr = SPR[st.char].frames[pose], Z = 2;
+        const boxes = [[0, fr.rect[2], 0, fr.rect[3]]].concat(fr.fx ? [[fr.fx.ox, fr.fx.ox + fr.fx.rect[2], fr.fx.oy, fr.fx.oy + fr.fx.rect[3]]] : []);
+        for (const [x0, x1, y0, y1] of boxes) { const ax = st.flip ? fr.rect[2] - 1 - fr.ax : fr.ax, dx = Math.round(st.x * Z) - ax, dy = Math.round(st.y * Z) - fr.ay;
+          const L = st.flip ? dx + fr.rect[2] - x1 : dx + x0, Rr = st.flip ? dx + fr.rect[2] - x0 : dx + x1;
+          if ((L < 0 || Rr > 960 || dy + y0 < 0) && !gfail.has('clip' + st.char + pose)) { gfail.add('clip' + st.char + pose); fail(`${f.id} t=${t.toFixed(2)}: ${st.char} ${pose} drawn outside the screen (x ${L}..${Rr}, top ${dy + y0}) - limb clipped`); } } }
       if (st.air && st.anim !== 'ko_fall') fail(`${f.id}: ${st.char} airborne outside ko_fall`);
       const key = st.anim + st.frame + ':' + st.x; const id = side; if (st.anim === 'idle') { still[id] = key === lastKey[id] ? (still[id] || 0) + dt : 0; if (still[id] > 0.6) { fail(`${f.id} t=${t.toFixed(2)}: ${st.char} idle frozen >0.6s`); still[id] = -99; } } lastKey[id] = key;
     }
