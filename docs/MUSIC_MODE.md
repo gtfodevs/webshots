@@ -371,3 +371,32 @@ The "floating" look in the forest came from the near-ground layer being raw pipe
 - Walk speed: the art's stride gives about 39 px/beat (about 89 px/s), which is brisk. Generate shorter-stride poses, or use 2 beats per step (8 frames per 2 beats) for a calmer march.
 - Hips stretched 2–3 px on the down frames, and a slight sword kink at the hilt seam.
 - Forest walkway is plain. Add slab variation and occasional roots in front of the feet.
+
+## Fighting-game shots (SF2 style): `stage/fight.js` + fighter QA
+
+First used by `shots/neon-dojo-fighter`. The game logic is a pure script, `stage/fight.js`, that sets `globalThis.FIGHT`. It is shared by the page and by `scripts/fighter_qa.mjs`, and `npm run check` runs that QA whenever `stage/fight.js` exists.
+- **`FIGHT.build(timeline)`** returns `scenes` (contiguous, each starting on a downbeat), `fights`, `sceneAt(t)`, `fighterAt(fight, side, t)`, `hud(fight, t)` and `fx(fight, t)`. Every one of these is a pure function of the song clock.
+- **Fights** are lists of *exchanges*. Each event is `[sec, side, move, result, dmg]`, snapped to beats; `result` is `hit`, `block`, `ko` or `ko_down`.
+  - The opponent (side 2) swings in every exchange, and lands at least one hit in every full fight.
+  - At most 3 hits connect per bar.
+- **Sprite-state machine** priority: KO > victory > hit > block > attack > walk (approach and retreat) > idle-breath.
+  - Hit-stop (4 frames, or 6 on a special or KO) warps the animation clock, not the song.
+- **HUD:** SF2 bars with a white damage trail (lags 0.45 s, then drains over 0.35 s), a 99 timer counting down one tick every 2 beats, round pips, and banners (ROUND n / FIGHT! / K.O. / YOU WIN / PERFECT).
+- **FX:** 3-frame sparks (small, big, block), screen shake of 2–4 px, a combo counter (connecting hits by the same side within 1.4 s), a super cut-in band with speed lines (single or double), and a two-colour palette-invert freeze frame.
+- **Placeholder figures:** `poseRects(char, anim, frame)` builds the shared-master figure from rects.
+  - The core (torso, belt, head, eyes) is identical in every frame up to translation; the limbs come from per-pose foot and hand targets solved with two-bone IK.
+  - Feet are 3 px soles whose bottom row is the anchor row, and shins are clipped so they never poke through.
+  - The real per-pose art replaces `poseRects` with atlas frames built the same way.
+- **Montage-only fighters** have a lean move set (`FIGHT.MOVESET.montage`: idle / attack / hit / KO); the engine maps any other move onto those.
+- **The Short** is laid out as three bands: the HUD band on top, a 270×270 crop of the fight in the middle (world x 105..375, so keep fighters inside it), and portraits plus the lyric line at the bottom.
+
+**QA (`scripts/fighter_qa.mjs`)** fails on:
+- canvas `fillText` / `strokeText` / `ctx.font`, web fonts, or DOM text (the HUD must use the bitmap font);
+- identical consecutive frames in any animation (including the loop wrap);
+- a master core that differs between frames;
+- a fighter whose lowest pixel is more than 1 px off the stage ground (sampled at 30 fps across every fight; only `ko_fall` may be airborne);
+- an idle frozen for more than 0.6 s;
+- a montage fighter using a move it has no art for;
+- an exchange without an opponent attack, or a full fight where the opponent never lands a hit;
+- more than 3 hits per bar;
+- scenes off the downbeats.

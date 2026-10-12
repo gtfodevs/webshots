@@ -221,3 +221,8 @@ The "floating" look in the forest came from the near-ground layer being raw pipe
 - Walk speed: the art's stride gives about 39 px/beat (about 89 px/s), which is brisk. Generate shorter-stride poses, or use 2 beats per step (8 frames per 2 beats) for a calmer march.
 - Hips stretched 2–3 px on the down frames, and a slight sword kink at the hilt seam.
 - Forest walkway is plain. Add slab variation and occasional roots in front of the feet.
+
+## Fighting-game shots (SF2 style)
+- Put the logic in a pure `stage/fight.js` (scenes, exchanges, state machine, HUD, FX) shared by the page and `scripts/fighter_qa.mjs`. `npm run check` runs that QA automatically.
+- Script fights as exchanges. The CPU must swing back in EVERY exchange and land hits in full fights. Keep it to 3 or fewer hits per bar, with hit-stop and short flashes.
+- Build the engine with placeholder rect figures first (shared-master core, IK limbs, soles on the ground row), then swap in per-pose art. See docs/MUSIC_MODE.md, "Fighting-game shots".

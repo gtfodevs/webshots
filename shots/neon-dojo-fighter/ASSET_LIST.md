@@ -24,16 +24,21 @@
 | 15–16 | ko_fall (airborne back), ko_down (lying flat) | KO |
 | 17 | victory | win screen / ending |
 
-**Total: 7 fighters × 17 = 119 images.**
-- Fighters: uno, aura, tekko, kaze9, raijin, lotus, shogun.
-- Leaner fallback: opponents TEKKO, KAZE-9, RAIJIN and LOTUS appear only in the montage, so they can skip walk_pass_L/R and victory. That makes 14 each, for a total of **107**.
+**APPROVED LEAN PLAN (Jason, 2026-10-12):**
+- **Full set, 17 images each:** uno, aura, tekko, lotus, shogun = **85**.
+- **Montage-only, 4 images each:** kaze9, raijin = **8**.
+  - `idle_a` (stance; it is also the master upper body, and the engine adds a ±1 px breath bob so the idle never freezes)
+  - `attack` (their signature strike, extended)
+  - `hit`
+  - `ko_down`
 
-## Special effects (#00FF00, 2–3 frames each = 14 images)
+  The engine maps punch/kick/special to `attack`, and ko_fall to a tilted `hit`. walk, block and victory are never used for these two (QA enforces this through `FIGHT.MOVESET.montage`).
+- **Fighter poses total: 93.**
+
+## Special effects (#00FF00, 5 effects × 2–3 frames = 12 images: Uno slash 3, Aura orb 3, piston 2, lotus 2, katana 2; KAZE-9 / RAIJIN effects are dropped: their `attack` pose carries the effect)
 - Uno: purple sword-slash arc
 - Aura: cyan magic orb
 - Piston palm blur
-- Wind afterimage streak
-- Thunder bolt
 - Lotus petal swirl
 - Red katana wave
 
@@ -42,8 +47,8 @@
 - big hit
 - block spark (blue)
 
-## Portraits: 7 images, plus 7 KO'd variants
-One bust portrait per fighter for select and VS, facing right (mirrored in-engine). Each also has a "beaten" variant: cracked, eyes dim. **Total: 14.**
+## Portraits: 7 bust portraits + 4 beaten variants = 11
+One bust per fighter for select and VS, facing right (mirrored in-engine). Beaten variants (cracked, eyes dim) only for the four rivals in the "Count it out" beat: tekko, kaze9, raijin, lotus.
 
 ## Cutscene close-ups: 13 images (2-frame loops are made in-engine with a palette or offset)
 1. Neo-Kyoto rain skyline (wide)
@@ -65,7 +70,7 @@ One bust portrait per fighter for select and VS, facing right (mirrored in-engin
 - Aura eyes band
 - SHOGUN eyes band (speed lines are drawn in-engine)
 
-## Stage backgrounds: 6 stages × 2 images = 12
+## Stage backgrounds: 5 stages × 2 images + 1 map = 11
 For each stage: (a) a far/mid background with no floor; (b) a floor strip with a clear ground line, for grounding.
 - **Neon Rooftop Dojo:** night, lanterns, city.
 - **Rain Alley Night Market:** noodle stalls, a cheering crowd.
@@ -80,11 +85,20 @@ For each stage: (a) a far/mid background with no floor; (b) a floor strip with a
 - K.O. emblem
 - Sensei Gearhart NPC: 1 standing pose for cutscenes
 
-## Grand total
-| Version | Count |
+## Grand total (approved lean plan)
+| Group | Images |
 |---|---|
-| Full | **≈188 images** |
-| Lean fallback | ≈176 images |
+| Fighter poses (5 × 17 + 2 × 4) | 93 |
+| Special effects | 12 |
+| Hit sparks | 3 |
+| Portraits | 11 |
+| Cutscene close-ups | 13 |
+| Super cut-in panels | 3 |
+| Stage backgrounds | 11 |
+| UI / misc | 4 |
+| **Total** | **150** |
+
+Drop-in: put each pose as `channels/progressiveslop/assets/neon-dojo-fighter/source/<char>/<pose>.png`. The pose names are exactly as listed above (`idle_a`, `idle_b`, `walk_contact_L`, …).
 
 ## Engine work (parallel, placeholder boxes OK)
 - Health bars with a damage trail; timer; round pips

@@ -1,46 +1,273 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=1280, height=720"><title>Neon Dojo</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bangers&family=Cinzel+Decorative:wght@700;900&family=Inter:wght@700;900&display=swap">
+<html lang="en"><head><meta charset="utf-8"><title>Neon Dojo · SF2-style fighter · ProgressiveSlop</title>
+<!--
+  Neon Dojo fighter (pixel-game music shot, docs/MUSIC_MODE.md). ONE low-res canvas (480x270, 270x480 for the
+  Short) drawn every frame from the song clock. Game logic is in fight.js (pure, shared with scripts/fighter_qa.mjs):
+  scene list, fight scripts (exchanges), the sprite-state machine, HUD and FX. PLACEHOLDER PASS: fighters are
+  rect figures built with the shared-master method (fixed core + per-pose limbs); portraits / stages / close-ups
+  are labelled boxes. Text is the 8px bitmap font only. Sections are stubs so `npm run check` sees the scene list.
+-->
 <style>
-  html,body{margin:0;width:1280px;height:720px;overflow:hidden;background:#140c26;color:#fff;font-family:Inter,sans-serif}
-  #camera{position:absolute;left:0;top:0;width:1280px;height:720px;transform-origin:0 0}
-  .scene{position:absolute;inset:0;opacity:0;visibility:hidden;overflow:hidden}
-  .layer{position:absolute;inset:-60px}  /* bleed so camera moves never show edges */
-  .ph{position:absolute;left:0;right:0;top:330px;text-align:center;font:400 72px Bangers,sans-serif}
-  /* Vertical (Shorts) reflow: the 16:9 stage becomes the middle band of a 9:16 frame. */
-  html[data-format=vertical],html[data-format=vertical] body{width:720px;height:1280px}
-  html[data-format=vertical] #camera{top:370px;left:-120px;transform:scale(.75)}
+ html,body{margin:0;width:100vw;height:100vh;overflow:hidden;background:#000}
+ #g{position:absolute;left:0;top:0;width:100vw;height:100vh;image-rendering:pixelated}
+ .scene{display:none}
 </style></head><body>
-<div id="camera">
-  <section class="scene" id="s-s1-intro"><div class="layer" data-depth="0.3"><div class="ph">s1-intro · 0.0s</div></div></section>
-  <section class="scene" id="s-s2-1"><div class="layer" data-depth="0.3"><div class="ph">s2-1 · 7.1s</div></div></section>
-  <section class="scene" id="s-s3-prechorus"><div class="layer" data-depth="0.3"><div class="ph">s3-prechorus · 60.1s</div></div></section>
-  <section class="scene" id="s-s4-chorus"><div class="layer" data-depth="0.3"><div class="ph">s4-chorus · 68.7s</div></div></section>
-  <section class="scene" id="s-s5-2"><div class="layer" data-depth="0.3"><div class="ph">s5-2 · 80.7s</div></div></section>
-  <section class="scene" id="s-s6-prechorus"><div class="layer" data-depth="0.3"><div class="ph">s6-prechorus · 108.0s</div></div></section>
-  <section class="scene" id="s-s7-chorus"><div class="layer" data-depth="0.3"><div class="ph">s7-chorus · 123.4s</div></div></section>
-  <section class="scene" id="s-s8-bridge"><div class="layer" data-depth="0.3"><div class="ph">s8-bridge · 137.1s</div></div></section>
-  <section class="scene" id="s-s9-chorus"><div class="layer" data-depth="0.3"><div class="ph">s9-chorus · 150.8s</div></div></section>
-  <section class="scene" id="s-s10-chorus"><div class="layer" data-depth="0.3"><div class="ph">s10-chorus · 159.3s</div></div></section>
-</div>
-<script src="/vendor/gsap.min.js"></script><script src="/vendor/DrawSVGPlugin.min.js"></script><script src="/vendor/MotionPathPlugin.min.js"></script>
-<script src="/kit.js"></script><script src="/music.js"></script>
+<canvas id="g"></canvas>
+<section class="scene" id="s-title"></section><section class="scene" id="s-cut"></section><section class="scene" id="s-select"></section>
+<section class="scene" id="s-map"></section><section class="scene" id="s-vs"></section><section class="scene" id="s-fight"></section>
+<section class="scene" id="s-boss_intro"></section><section class="scene" id="s-ending"></section>
+<script src="/vendor/gsap.min.js"></script>
+<script src="/kit.js"></script>
+<script src="/music.js"></script>
+<script src="fight.js"></script>
 <script>
-document.documentElement.dataset.format = new URLSearchParams(location.search).get('format') || 'landscape';
 (async () => {
-  await Music.load('timeline.json');
-  Music.theme('fantasy');
-  Music.lyrics({ style: 'karaoke' });
-Webshot.scene('s1-intro', (tl, el) => { tl.add(Music.fx.pop(el.querySelector('.ph'))); });
-Webshot.scene('s2-1', (tl, el) => { tl.add(Music.fx.pop(el.querySelector('.ph'))); });
-Webshot.scene('s3-prechorus', (tl, el) => { tl.add(Music.fx.pop(el.querySelector('.ph'))); });
-Webshot.scene('s4-chorus', (tl, el) => { tl.add(Music.fx.pop(el.querySelector('.ph'))); });
-Webshot.scene('s5-2', (tl, el) => { tl.add(Music.fx.pop(el.querySelector('.ph'))); });
-Webshot.scene('s6-prechorus', (tl, el) => { tl.add(Music.fx.pop(el.querySelector('.ph'))); });
-Webshot.scene('s7-chorus', (tl, el) => { tl.add(Music.fx.pop(el.querySelector('.ph'))); });
-Webshot.scene('s8-bridge', (tl, el) => { tl.add(Music.fx.pop(el.querySelector('.ph'))); });
-Webshot.scene('s9-chorus', (tl, el) => { tl.add(Music.fx.pop(el.querySelector('.ph'))); });
-Webshot.scene('s10-chorus', (tl, el) => { tl.add(Music.fx.pop(el.querySelector('.ph'))); });
-  Webshot.start();
+const VERT = new URLSearchParams(location.search).get('format') === 'vertical' || document.documentElement.dataset.format === 'vertical';
+const W = 480, H = 270, R = Math.round;
+const cv = document.getElementById('g'); cv.width = VERT ? 270 : 480; cv.height = VERT ? 480 : 270;
+const out = cv.getContext('2d'); out.imageSmoothingEnabled = false;
+const wc = document.createElement('canvas'); wc.width = W; wc.height = H;
+const g = wc.getContext('2d'); g.imageSmoothingEnabled = false;
+const TL = await Music.load('timeline.json');
+const E = FIGHT.build(TL), CH = FIGHT.CHARS, ST = FIGHT.STAGES;
+const img = (src) => new Promise((ok) => { const i = new Image(); i.onload = () => ok(i); i.src = src; });
+const font = await img('assets/px/font8.png');
+const hash = (n) => { const x = Math.sin(n * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const beatIdx = (t) => { let n = -1; for (const b of TL.beats) { if (b > t) break; n++; } return n; };
+const PAL = { ink: '#12062a', mag: '#ff3fd2', cyan: '#5ee7ff', gold: '#ffe36b', white: '#ffffff', red: '#e0102a', lilac: '#bfb3ff' };
+
+// ---------- bitmap font ----------
+const tints = new Map();
+function tint(col) { if (tints.has(col)) return tints.get(col); const k = document.createElement('canvas'); k.width = font.width; k.height = 8; const x = k.getContext('2d'); x.drawImage(font, 0, 0); x.globalCompositeOperation = 'source-in'; x.fillStyle = col; x.fillRect(0, 0, k.width, 8); tints.set(col, k); return k; }
+const textW = (s, sc = 1) => String(s).length * 8 * sc;
+function text(c, s, x, y, col = '#fff', sc = 1, align = 'left', shadow = PAL.ink) {
+  s = String(s).replace(/[\u2018\u2019]/g, "'").replace(/[^\x20-\x7e]/g, ''); let X = align === 'center' ? x - textW(s, sc) / 2 : align === 'right' ? x - textW(s, sc) : x; X = R(X); y = R(y);
+  const draw = (ox, oy, k) => { for (let i = 0; i < s.length; i++) { const ch = s.charCodeAt(i) - 32; if (ch <= 0 || ch > 94) continue; c.drawImage(k, ch * 8, 0, 8, 8, X + i * 8 * sc + ox, y + oy, 8 * sc, 8 * sc); } };
+  if (shadow) draw(sc, sc, tint(shadow)); draw(0, 0, tint(col));
+}
+const CHROME = ['#ffffff', '#e8ecff', '#c9d0f0', '#9aa4d8', '#ff7ae0', '#ff3fd2', '#c41ea8', '#7a1070'];
+const FIRE = ['#fff6c0', '#ffe36b', '#ffc23a', '#ff8a2a', '#ff4a2a', '#e0102a', '#a00a22', '#600818'];
+function logo(c, s, cx, y, sc, bands = CHROME) {
+  const X = R(cx - textW(s, sc) / 2);
+  for (const [ox, oy] of [[-1, 0], [1, 0], [0, -1], [0, 1], [2, 2], [3, 3], [-1, -1], [1, 1]]) text(c, s, X + ox, y + oy, PAL.ink, sc, 'left', null);
+  for (let r = 0; r < 8; r++) { const k = tint(bands[r]); for (let i = 0; i < s.length; i++) { const ch = s.charCodeAt(i) - 32; if (ch <= 0) continue; c.drawImage(k, ch * 8, r, 8, 1, X + i * 8 * sc, y + r * sc, 8 * sc, sc); } }
+}
+function wrap(s, max) { const o = []; let line = ''; for (const w of s.split(' ')) { if ((line + ' ' + w).trim().length > max) { o.push(line.trim()); line = w; } else line += ' ' + w; } if (line.trim()) o.push(line.trim()); return o; }
+function frameBox(c, x, y, w, h, edge = PAL.mag) { c.fillStyle = PAL.ink; c.fillRect(x, y, w, h); c.fillStyle = edge; c.fillRect(x + 1, y + 1, w - 2, h - 2); c.fillStyle = '#1d0b45'; c.fillRect(x + 2, y + 2, w - 4, h - 4); }
+function ph(c, x, y, w, h, label, col = '#3a1a70') { // labelled placeholder box (replaced by generated art)
+  c.fillStyle = col; c.fillRect(x, y, w, h); c.fillStyle = '#ffffff22';
+  for (let i = -h; i < w; i += 12) for (let k = 0; k < h; k++) if (i + k >= 0 && i + k < w && k % 2 === 0) c.fillRect(x + i + k, y + k, 1, 1);
+  c.fillStyle = PAL.ink; c.fillRect(x, y, w, 1); c.fillRect(x, y + h - 1, w, 1); c.fillRect(x, y, 1, h); c.fillRect(x + w - 1, y, 1, h);
+  if (label) wrap(label, Math.max(4, Math.floor((w - 6) / 8))).forEach((ln, i) => text(c, ln, x + w / 2, y + 4 + i * 10, '#fff', 1, 'center'));
+}
+
+// ---------- placeholder fighter (shared-master rects) + contact shadow ----------
+const COL = (C) => ({ chrome: C.chrome, dark: '#4a4e66', limb: '#8a90a8', foot: '#2a2c3a', acc: C.acc, acc2: C.acc2, eye: '#ff2030', fist: C.chrome });
+const qa = (window.__qa = window.__qa || { draws: [] });
+function fighter(st, o = {}) {
+  const C = CH[st.char], rects = FIGHT.poseRects(st.char, st.anim, st.frame), col = COL(C), s = st.flip ? -1 : 1;
+  const gy = o.ground ?? st.y; // contact shadow on the stage ground even when airborne
+  g.fillStyle = '#0000007a'; const sw = R(C.w * 1.6 + 10); g.fillRect(R(st.x - sw / 2), (o.groundRow ?? st.y) - 1 + (st.air ? 0 : 0), sw, 3); g.fillRect(R(st.x - sw / 2) + 3, (o.groundRow ?? st.y) + 2, sw - 6, 1);
+  for (const [x, y, w, h, k] of rects) { g.fillStyle = o.white ? '#ffffff' : o.tint || col[k]; const X = s > 0 ? st.x + x : st.x - x - w + 1; g.fillRect(R(X), R(gy + y), w, h); }
+  if (FIGHT.ANIMS[st.anim].frames[st.frame].glow) { g.fillStyle = C.acc2; const hx = st.x + s * 30; g.fillRect(R(hx - 3), R(gy - 50), 6, 6); }
+  qa.draws.push([st.char, st.anim, st.frame, st.x, st.y, st.air ? 1 : 0]);
+}
+
+// ---------- stage backgrounds (placeholder art: sky band, skyline, floor with a hard ground line) ----------
+function stageBg(k, t, cam = 0) {
+  const S = ST[k], G = S.ground;
+  for (let y = 0; y < G; y++) { const a = y / G; g.fillStyle = a < 0.5 ? S.sky[0] : S.sky[1]; if ((y % 4 === 0) && a > 0.45 && a < 0.55) g.fillStyle = S.sky[1]; g.fillRect(0, y, W, 1); }
+  for (let i = 0; i < 40; i++) { g.fillStyle = '#ffffff55'; g.fillRect(R(hash(i) * W), R(hash(i + 3) * 90), 1, 1); }
+  const off = R(cam * 0.4);
+  for (let i = 0; i < 14; i++) { const x = ((i * 41 - off) % 560 + 560) % 560 - 40, h = 40 + R(hash(i + 11) * 70); g.fillStyle = '#0c0420'; g.fillRect(x, G - 30 - h, 30, h + 30); g.fillStyle = S.acc; for (let w = 0; w < 6; w++) if (hash(i * 9 + w + Math.floor(t)) > 0.5) g.fillRect(x + 4 + (w % 3) * 9, G - 24 - h + 10 + (w >> 1) * 14, 3, 2); }
+  g.fillStyle = '#1a0c36'; g.fillRect(0, G + 1, W, H - G - 1); g.fillStyle = S.acc; g.fillRect(0, G + 1, W, 1);
+  g.fillStyle = '#2a1458'; for (let x = -((cam) % 32); x < W; x += 32) g.fillRect(R(x), G + 3, 1, H - G - 3);
+  g.fillStyle = '#ffffff10'; g.fillRect(0, G + 8, W, 1);
+  text(g, 'PLACEHOLDER STAGE: ' + S.name, W / 2, G + 5, '#8a7ab8', 1, 'center', null);
+}
+
+// ---------- HUD: SF2 bars with a damage trail, 99 timer, round pips, names ----------
+function hpBar(c, x, y, w, hp, trail, right) {
+  c.fillStyle = PAL.ink; c.fillRect(x - 1, y - 1, w + 2, 12);
+  c.fillStyle = '#c41e1e'; c.fillRect(x, y, w, 10);
+  const tw = R(w * trail / 100), hw = R(w * hp / 100);
+  c.fillStyle = '#ffffff'; right ? c.fillRect(x + w - tw, y, tw, 10) : c.fillRect(x, y, tw, 10);
+  c.fillStyle = '#ffd400'; right ? c.fillRect(x + w - hw, y, hw, 10) : c.fillRect(x, y, hw, 10);
+  c.fillStyle = '#fff6a0'; right ? c.fillRect(x + w - hw, y + 1, hw, 2) : c.fillRect(x, y + 1, hw, 2);
+  c.fillStyle = '#b08a00'; right ? c.fillRect(x + w - hw, y + 8, hw, 2) : c.fillRect(x, y + 8, hw, 2);
+}
+function hud(c, f, t, cw) {
+  const h = E.hud(f, t), mid = cw / 2, bw = R(cw / 2 - 30);
+  hpBar(c, 8, 12, bw, h.p1.hp, h.p1.trail, false); hpBar(c, cw - 8 - bw, 12, bw, h.p2.hp, h.p2.trail, true);
+  frameBox(c, mid - 16, 6, 32, 22, PAL.gold); text(c, String(h.timer).padStart(2, '0'), mid, 10, h.timer < 20 && Math.floor(t * 4) % 2 ? PAL.red : PAL.white, 2, 'center');
+  text(c, h.p1.name, 8, 26, PAL.white); text(c, h.p2.name, cw - 8, 26, PAL.white, 1, 'right');
+  for (let i = 0; i < 2; i++) { c.fillStyle = i < h.pips[0] ? PAL.gold : '#3a2a60'; c.fillRect(8 + bw - 10 - i * 10, 27, 7, 7); c.fillStyle = i < h.pips[1] ? PAL.gold : '#3a2a60'; c.fillRect(cw - 8 - bw + 3 + i * 10, 27, 7, 7); }
+  text(c, '1P', 8, 2, PAL.mag, 1, 'left', null); text(c, 'CPU', cw - 8, 2, PAL.cyan, 1, 'right', null);
+}
+
+// ---------- FX ----------
+function spark(s) {
+  const n = s.kind === 'big' ? 16 : s.kind === 'block' ? 8 : 10, r = (s.kind === 'big' ? 6 : 4) + s.frame * (s.kind === 'big' ? 6 : 4), col = s.kind === 'block' ? PAL.cyan : s.frame === 0 ? '#ffffff' : PAL.gold;
+  g.fillStyle = col; if (s.frame === 0) g.fillRect(s.x - 3, s.y - 3, 7, 7);
+  for (let i = 0; i < n; i++) { const a = i / n * Math.PI * 2 + s.frame * 0.3; g.fillRect(R(s.x + Math.cos(a) * r), R(s.y + Math.sin(a) * r), s.frame === 2 ? 1 : 2, s.frame === 2 ? 1 : 2); }
+}
+function banner(s, t) {
+  const big = s === 'K.O.' ? 6 : s === 'FIGHT!' ? 5 : 4;
+  const col = s === 'K.O.' ? FIRE : s === 'FIGHT!' ? FIRE : CHROME;
+  logo(g, s, W / 2, 92, big, col);
+}
+function cutin(c, t) { // super cut-in framing: dark band + speed lines + sliding eye-band portrait placeholder
+  const d = t - c.t0, left = c.t1 - t, k = Math.min(1, d / 0.12, left / 0.12), bh = R(70 * k); if (bh < 2) return;
+  const cy = 120, y0 = cy - (bh >> 1);
+  g.fillStyle = '#0b0618'; g.fillRect(0, y0, W, bh);
+  for (let i = 0; i < 34; i++) { const yy = y0 + R(hash(i * 3.1) * bh), len = 20 + R(hash(i * 7.7) * 70); const xx = R(((hash(i) * W * 2 - d * 900 * (0.6 + hash(i + 2))) % (W + len) + W + len) % (W + len)) - len; g.fillStyle = i % 3 ? '#3a2470' : PAL.cyan; g.fillRect(xx, yy, len, 1); }
+  g.fillStyle = PAL.mag; g.fillRect(0, y0, W, 1); g.fillRect(0, y0 + bh - 1, W, 1);
+  g.save(); g.beginPath(); g.rect(0, y0 + 1, W, bh - 2); g.clip();
+  const slide = R((1 - Math.min(1, d / 0.18)) * 220);
+  const who = c.who === 'double' ? ['uno', 'aura'] : [c.who];
+  who.forEach((w, i) => { const x = 60 + i * 200 - slide, ww = who.length > 1 ? 160 : 260; ph(g, x, y0 + 4, ww, bh - 8, 'CUT-IN ' + CH[w].name + ' EYES', '#2a0f52');
+    const ex = x + ww / 2; g.fillStyle = '#ff2030'; if (Math.floor(d * 12) % 4) { g.fillRect(ex - 30, cy, 16, 5); g.fillRect(ex + 14, cy, 16, 5); } });
+  g.restore();
+  text(g, who.length > 1 ? 'DOUBLE SUPER!' : 'SUPER!', W / 2, y0 + bh + 4, PAL.gold, 2, 'center');
+}
+
+// ---------- scenes ----------
+function titleScene(t, s) {
+  g.fillStyle = '#0b0618'; g.fillRect(0, 0, W, H);
+  for (let i = 0; i < 70; i++) { g.fillStyle = i % 3 ? '#5a4aa0' : '#ffffff'; g.fillRect(R(hash(i) * W), R((hash(i + 5) * H + t * 6 * (1 + hash(i))) % H), 1, 1); }
+  if (t < TL.downbeats[1]) { const k = Math.floor(t * 20) % 2; g.fillStyle = k ? '#1d0b45' : '#0b0618'; g.fillRect(0, 0, W, H); text(g, 'PROGRESSIVESLOP SYSTEM 32', W / 2, 120, PAL.cyan, 1, 'center'); text(g, 'CHECKING ROM... OK', W / 2, 134, '#8a7ab8', 1, 'center'); return; }
+  const d = t - TL.downbeats[1], drop = R(Math.max(0, 1 - d / 0.15) * -80);
+  logo(g, 'NEON', W / 2, 46 + drop, 6, CHROME); logo(g, 'DOJO', W / 2, 100 + drop, 6, FIRE);
+  text(g, 'CHAMPION EDITION', W / 2, 158, PAL.cyan, 1, 'center');
+  const credit = t >= s.coin ? 1 : 0;
+  if (!credit) { if (Math.floor(t * 2) % 2 === 0) text(g, 'INSERT COIN', W / 2, 184, PAL.gold, 2, 'center'); }
+  else if (Math.floor(t * 8) % 2) text(g, 'PRESS START', W / 2, 184, PAL.mag, 2, 'center');
+  const sx = W / 2, sy = 222; g.fillStyle = '#2a1270'; g.fillRect(sx - 9, sy - 2, 18, 8); g.fillStyle = PAL.ink; g.fillRect(sx - 6, sy, 12, 2);
+  if (t > s.coin - 0.5 && t < s.coin) { const k = (t - s.coin + 0.5) / 0.5; g.fillStyle = PAL.gold; g.fillRect(sx - 3, R(sy - 120 * (1 - k * k)) - 6, 6, 6); }
+  text(g, 'CREDIT ' + credit, W - 10, 258, '#fff', 1, 'right'); text(g, '(C) PROGRESSIVESLOP 2026', W / 2, 258, '#8a7ab8', 1, 'center', null);
+  text(g, '1UP', 10, 6, PAL.mag); text(g, 'HI 0999990', W - 10, 6, PAL.cyan, 1, 'right');
+  const end = s.t1, w = clamp((t - (end - 0.25)) / 0.25, 0, 1); if (w > 0) { g.fillStyle = '#fff'; g.fillRect(0, 0, R(W * w), H); }
+}
+const PANEL_LABEL = { city: 'WIDE: NEO-KYOTO RAIN SKYLINE', uno_eyes: 'CLOSE-UP: UNO EYES POWER ON + PENDANT GLINT', flashback: 'FLASHBACK: YOUNG UNO BOWS TO SENSEI GEARHART', shogun_fire: 'SHOGUN SILHOUETTE IN THE DOJO FIRE, RED VISOR', fist: 'CLOSE-UP: UNO FIST CLENCHED, SPARKS', aura_magic: 'CLOSE-UP: AURA HAIR + CYAN PALM MAGIC', aura_chains: 'AURA BREAKS SERVER-CABLE CHAINS', rooftop: 'TWO-SHOT: UNO + AURA ROOFTOP BACKS, BLIMP' };
+function cutScene(t, s) {
+  const d = t - s.t0, sepia = s.panel === 'flashback' || s.panel === 'shogun_fire';
+  g.fillStyle = '#000'; g.fillRect(0, 0, W, H);
+  const push = R(d * 3); // slow push-in
+  ph(g, 20 - push, 16 - push, 440 + 2 * push, 170 + push, 'PLACEHOLDER ' + PANEL_LABEL[s.panel], sepia ? '#4a2440' : '#2a1a62');
+  // 2-frame loop accents (eyes blink / glint / magic flicker) so the panel never freezes
+  const f2 = Math.floor(d * 6) % 2;
+  if (/eyes|fire|fist|chains/.test(s.panel)) { g.fillStyle = f2 ? '#ff2030' : '#a00a1a'; g.fillRect(200, 110, 26, 6); g.fillRect(254, 110, 26, 6); }
+  if (s.panel === 'uno_eyes' && d > E.barLen) { g.fillStyle = PAL.gold; const k = Math.floor(d * 10) % 4; g.fillRect(238 - k, 150, 4 + 2 * k, 1); g.fillRect(240, 148 - k, 1, 4 + 2 * k); }
+  if (s.panel === 'aura_magic' || s.panel === 'aura_chains') { g.fillStyle = PAL.cyan; for (let i = 0; i < 8; i++) g.fillRect(R(300 + Math.cos(i + d * 4) * (10 + f2 * 3)), R(140 + Math.sin(i + d * 4) * (10 + f2 * 3)), 2, 2); }
+  // letterbox + typewriter subtitle
+  g.fillStyle = '#000'; g.fillRect(0, 0, W, 12); g.fillRect(0, 196, W, H - 196);
+  frameBox(g, 16, 202, 448, 40); const n = Math.floor(Math.max(0, d - 0.15) * 28);
+  wrap(s.txt.slice(0, n), 52).forEach((ln, i) => text(g, ln, 26, 212 + i * 12, '#fff'));
+  if (d < 0.1 || s.t1 - t < 0.08) { g.fillStyle = '#000'; g.fillRect(0, 0, W, H); }
+}
+function selectScene(t, s) {
+  g.fillStyle = '#0b0618'; g.fillRect(0, 0, W, H); ph(g, 0, 150, W, 120, '', '#1a1040');
+  logo(g, 'PLAYER SELECT', W / 2, 10, 2, CHROME);
+  const R0 = FIGHT.ROSTER, cols = 4, pw = 54, phh = 46, x0 = W / 2 - (cols * (pw + 6)) / 2;
+  const lock = t >= s.lock, b = Math.max(0, beatIdx(t) - beatIdx(s.t0)), cur = lock ? R0.indexOf(s.pick) : [1, 2, 6, 5, 3, 4, 0][b % 7];
+  R0.forEach((c, i) => { const x = R(x0 + (i % cols) * (pw + 6) + (i >= 4 ? (pw + 6) / 2 : 0)), y = 36 + Math.floor(i / cols) * (phh + 6);
+    ph(g, x, y, pw, phh, CH[c].name.slice(0, 6), CH[c].hero ? '#3a1a70' : CH[c].boss ? '#5a0a22' : '#2a2a50');
+    if (i === cur) { g.fillStyle = lock && Math.floor(t * 12) % 2 ? '#fff' : PAL.mag; g.fillRect(x - 2, y - 2, pw + 4, 2); g.fillRect(x - 2, y + phh, pw + 4, 2); g.fillRect(x - 2, y, 2, phh); g.fillRect(x + pw, y, 2, phh); text(g, '1P', x + 2, y + phh - 10, PAL.mag); } });
+  const c = R0[cur]; ph(g, 20, 160, 110, 100, 'PORTRAIT ' + CH[c].name, '#3a1a70'); text(g, CH[c].name, 140, 170, PAL.gold, 2); text(g, lock ? 'LOCKED IN!' : 'CHOOSE YOUR FIGHTER', 140, 196, lock ? PAL.mag : '#fff');
+  text(g, 'TIME ' + String(Math.max(0, 9 - b)).padStart(2, '0'), W - 10, 10, PAL.cyan, 1, 'right');
+}
+function mapScene(t, s) {
+  g.fillStyle = '#071226'; g.fillRect(0, 0, W, H); ph(g, 30, 30, 420, 200, 'PLACEHOLDER WORLD MAP (NEON ASIA)', '#10306a');
+  const pts = [[120, 170], [200, 120], [300, 150], [380, 90]], k = clamp((t - s.t0) / (s.t1 - s.t0 - 0.3), 0, 1);
+  g.fillStyle = PAL.mag; for (let i = 0; i < 60; i++) { const q = i / 60; if (q > k) break; const seg = Math.min(2, Math.floor(q * 3)), u = q * 3 - seg; const [a, b] = [pts[seg], pts[seg + 1]]; if (i % 2 === 0) g.fillRect(R(a[0] + (b[0] - a[0]) * u), R(a[1] + (b[1] - a[1]) * u), 2, 2); }
+  pts.forEach(([x, y], i) => { g.fillStyle = i === 3 ? PAL.gold : PAL.cyan; g.fillRect(x - 3, y - 3, 6, 6); });
+  const seg = Math.min(2, Math.floor(k * 3)), u = k * 3 - seg, a = pts[seg], b = pts[seg + 1]; g.fillStyle = '#fff'; g.fillRect(R(a[0] + (b[0] - a[0]) * u) - 4, R(a[1] + (b[1] - a[1]) * u) - 2, 9, 4);
+  text(g, 'NEXT: ' + ST[s.to].name, W / 2, 240, PAL.gold, 1, 'center');
+}
+function vsScene(t, s) {
+  const d = t - s.t0, k = clamp(d / 0.35, 0, 1), sl = R((1 - k) * 260);
+  g.fillStyle = '#0b0618'; g.fillRect(0, 0, W, H);
+  for (let y = 0; y < H; y++) { const x = R(W / 2 + (y - H / 2) * 0.35); g.fillStyle = '#2a0f52'; g.fillRect(0 - sl, y, x, 1); g.fillStyle = '#4a0a22'; g.fillRect(x + sl, y, W - x, 1); }
+  const left = s.p1; left.forEach((c, i) => ph(g, 20 + i * 70 - sl, 40 + i * 20, left.length > 1 ? 130 : 180, 170, 'VS PORTRAIT ' + CH[c].name, '#3a1a70'));
+  ph(g, 280 + sl, 40, 180, 170, 'VS PORTRAIT ' + CH[s.p2].name, '#5a0a22');
+  text(g, left.map((c) => CH[c].name).join(' + '), 24 - sl, 220, PAL.gold, 2); text(g, CH[s.p2].name, 456 + sl, 220, PAL.gold, 2, 'right');
+  if (t >= s.slam) { const e = t - s.slam, sc = e < 0.08 ? 8 : 6; logo(g, 'VS', W / 2, 100 - (sc - 6) * 4, sc, FIRE); if (e < 0.1) { g.fillStyle = '#ffffffaa'; g.fillRect(0, 0, W, H); } }
+  text(g, 'STAGE: ' + ST[(s.p2 === 'tekko' ? 'rooftop' : s.p2 === 'lotus' ? 'garden' : 'temple')].name, W / 2, 252, PAL.cyan, 1, 'center');
+}
+let SHAKE = 0;
+function fightScene(t, s) {
+  const f = E.fights[s.fight], X = E.fx(f, t);
+  stageBg(f.stage, t);
+  // crowd bounce on "room start to get loud"
+  if (f.id === 'f2') for (let i = 0; i < 18; i++) { const j = t > 101.9 && t < 106 ? (beatIdx(t) + i) % 2 * 3 : 0; g.fillStyle = '#2a1a50'; g.fillRect(14 + i * 26, f.ground - 26 - j, 12, 26 + j); g.fillStyle = '#ff2030'; g.fillRect(17 + i * 26, f.ground - 22 - j, 2, 1); g.fillRect(22 + i * 26, f.ground - 22 - j, 2, 1); }
+  const a = E.fighterAt(f, 1, t), b = E.fighterAt(f, 2, t);
+  const flash = (st) => f.events.some((e) => e.side !== st.side && e.res !== 'block' && t - e.t >= 0 && t - e.t < 0.05);
+  // the attacker draws in front
+  const order = f.events.find((e) => Math.abs(t - e.t) < 0.4)?.side === 2 ? [a, b] : [b, a];
+  for (const st of order) fighter(st, { white: flash(st), groundRow: f.ground });
+  X.sparks.forEach(spark);
+  if (X.combo) text(g, X.combo.n + ' HITS', X.combo.side === 1 ? 10 : W - 10, 60, PAL.gold, 2, X.combo.side === 1 ? 'left' : 'right');
+  if (!VERT && !f.montage) hud(g, f, t, W);
+  if (f.montage) { text(g, CH[f.p1].name + ' VS ' + CH[f.p2].name, W / 2, 10, PAL.cyan, 1, 'center'); hpBar(g, 8, 22, 200, E.hp(f, 1, t), E.hp(f, 1, t), false); hpBar(g, W - 208, 22, 200, E.hp(f, 2, t), E.hp(f, 2, t), true); }
+  if (X.banner) banner(X.banner, t);
+  if (X.cutin) cutin(X.cutin, t);
+  if (f.standoff && t >= f.standoff[0] && t < f.standoff[1]) { // leaf + wind, both bars flash low
+    const d = t - f.standoff[0]; g.fillStyle = '#ff7ad9'; g.fillRect(R(W - d * 70), R(80 + Math.sin(d * 3) * 20), 3, 2); g.fillStyle = '#ffffff22'; for (let i = 0; i < 10; i++) g.fillRect(R((hash(i) * W - d * 200 * (1 + hash(i + 1))) % W + W) % W, R(hash(i + 4) * 200), 18, 1); }
+  SHAKE = X.shake ? R((hash(Math.floor(t * 30)) - 0.5) * 2 * X.shake) : 0;
+  if (X.freeze) { const im = g.getImageData(0, 0, W, H), p = im.data; for (let i = 0; i < p.length; i += 4) { const l = (p[i] * 3 + p[i + 1] * 6 + p[i + 2]) / 10; const v = l > 110 ? [18, 6, 42] : [255, 63, 210]; p[i] = v[0]; p[i + 1] = v[1]; p[i + 2] = v[2]; } g.putImageData(im, 0, 0); text(g, 'FREEZE FRAME', W / 2, 40, '#fff', 2, 'center'); }
+  if (window.__qa) qa.fight = f.id;
+}
+function bossIntro(t, s) {
+  g.fillStyle = '#000'; g.fillRect(0, 0, W, H);
+  if (t < s.helm) { s.counts.forEach((c, i) => { if (t >= c) { const opp = ['tekko', 'kaze9', 'raijin', 'lotus'][i]; ph(g, 20 + i * 114, 60, 100, 110, 'BEATEN ' + CH[opp].name, '#2a2a50'); g.fillStyle = '#000'; for (let k = 0; k < 20; k++) g.fillRect(70 + i * 114 - k + (k % 3), 60 + k * 5, 2, 5); logo(g, String(i + 1), 70 + i * 114, 178, 3, FIRE); } }); return; }
+  if (t < s.belt) { const d = t - s.helm; ph(g, 90, 220 - R(Math.min(1, d / 1.2) * 190), 300, 190, 'BOSS CLOSE-UP: SHOGUN HELMET RISES, EYES IGNITE', '#4a0a18'); if (d > 1.2) { g.fillStyle = Math.floor(d * 10) % 2 ? '#ff2030' : '#ffb0b0'; g.fillRect(200, 110, 24, 5); g.fillRect(256, 110, 24, 5); } return; }
+  ph(g, 40, 30, 400, 190, 'SHOGUN.EXE HOLDS THE STOLEN DOJO BELT', '#4a0a18');
+  if (t >= s.card) { const e = t - s.card; g.fillStyle = '#000000aa'; g.fillRect(0, 100, W, 50); logo(g, 'SHOGUN.EXE', W / 2 + (e < 0.15 ? R((hash(t * 99) - 0.5) * 8) : 0), 108, 4, FIRE); }
+  if (t >= s.warn && Math.floor((t - s.warn) * 6) % 2 === 0) { g.fillStyle = '#e0102a'; g.fillRect(0, 230, W, 22); text(g, '!! WARNING !! A NEW CHALLENGER !! WARNING !!', W / 2, 237, '#fff', 1, 'center', null); }
+}
+function endingScene(t, s) {
+  g.fillStyle = '#1a0626'; g.fillRect(0, 0, W, H);
+  const i = Math.floor((t - s.t0) / E.barLen), V = ['BELT RETURNED TO THE REBUILT DOJO', 'SENSEI GEARHART NODS', 'TEKKO, LOTUS, KAZE-9, RAIJIN BOW', 'ROOFTOP SUNRISE'];
+  if (t < s.crawl) { ph(g, 30, 20, 420, 180, 'ENDING: ' + V[i % 4], '#4a1446'); return; }
+  stageBg('rooftop', t, (t - s.t0) * 20);
+  if (t < s.walk) { const d = t - s.crawl; ['UNO AND AURA TOOK BACK THE BELT.', 'THE DOJO LIGHTS AGAIN.', 'THEY DID NOT ARGUE. THEY JUST WALKED.'].forEach((ln, k) => { if (d > k * 0.8) text(g, ln, W / 2, 60 + k * 14, '#fff', 1, 'center'); });
+    fighter({ char: 'uno', anim: 'idle', frame: FIGHT.frameAt('idle', t, 1), x: 200, y: ST.rooftop.ground, flip: false }); fighter({ char: 'aura', anim: 'idle', frame: FIGHT.frameAt('idle', t + 0.4, 1), x: 250, y: ST.rooftop.ground, flip: false }); return; }
+  const d = t - s.walk; // walk-off (walk cycle, feet pinned on the ground)
+  fighter({ char: 'uno', anim: 'walk', frame: FIGHT.frameAt('walk', d, 1), x: R(200 + d * 70), y: ST.rooftop.ground }); fighter({ char: 'aura', anim: 'walk', frame: FIGHT.frameAt('walk', d + 0.12, 1), x: R(250 + d * 70), y: ST.rooftop.ground });
+  if (t >= s.over) { g.fillStyle = '#000000cc'; g.fillRect(0, 70, W, 70); logo(g, 'GAME OVER', W / 2, 78, 4, CHROME); text(g, 'THANKS FOR PLAYING', W / 2, 116, PAL.cyan, 1, 'center'); if (Math.floor(t * 2) % 2) text(g, 'INSERT COIN', W / 2, 128, PAL.gold, 1, 'center'); }
+}
+// ---------- lyrics (pixel font, sung words lit) ----------
+const LY = TL.lyrics.map((l) => ({ ...l, text: l.text.replace(/^\((Man|Woman)\)\s*/, ''), words: (l.words || []).filter((w) => !/^\(/.test(w.w)) }));
+function lyrics(c, t, cw, y) {
+  const l = LY.find((x) => t >= x.t - 0.05 && t < (x.end ?? x.t + 3) + 0.2); if (!l || !l.text) return;
+  const sung = l.words.filter((w) => (w.t ?? w.s) <= t + 0.04).length, lines = wrap(l.text, Math.floor((cw - 12) / 8)); let k = 0;
+  lines.forEach((ln, j) => { let x = cw / 2 - textW(ln) / 2; ln.split(' ').forEach((w) => { text(c, w, x, y + j * 10, k < sung ? (/woman/i.test(l.tag) || /chorus/.test(l.tag) ? PAL.mag : PAL.white) : '#6a5a98'); x += textW(w + ' '); k++; }); });
+}
+// ---------- router ----------
+function drawWorld(t) {
+  const s = E.sceneAt(t); g.setTransform(1, 0, 0, 1, 0, 0); g.globalAlpha = 1; SHAKE = 0; qa.draws = []; qa.scene = s.name;
+  ({ title: titleScene, cut: cutScene, select: selectScene, map: mapScene, vs: vsScene, fight: fightScene, boss_intro: bossIntro, ending: endingScene })[s.name](t, s);
+  return s;
+}
+function frame() {
+  const t = Music.time(), s = drawWorld(t);
+  out.setTransform(1, 0, 0, 1, 0, 0); out.fillStyle = '#000';
+  if (!VERT) { out.fillRect(0, 0, 480, 270); out.drawImage(wc, SHAKE, SHAKE ? -SHAKE >> 1 : 0); if (s.name !== 'title') lyrics(out, t, 480, 261); }
+  else { // Short: HUD band on top / fight crop in the middle / portrait + lyric panel at the bottom
+    out.fillStyle = '#0b0618'; out.fillRect(0, 0, 270, 480);
+    out.drawImage(wc, 105, 0, 270, 270, SHAKE, 100, 270, 270);
+    out.fillStyle = PAL.mag; out.fillRect(0, 98, 270, 2); out.fillRect(0, 370, 270, 2);
+    if (s.name === 'fight' && !E.fights[s.fight].montage) hud(out, E.fights[s.fight], t, 270);
+    else { logo(out, 'NEON DOJO', 135, 20, 3, CHROME); text(out, 'PROGRESSIVESLOP', 135, 60, PAL.cyan, 1, 'center'); }
+    if (s.name === 'fight') { const f = E.fights[s.fight], h = E.hud(f, t); [[f.tagged ? f.tagged(t) : f.p1, 6], [f.p2, 186]].forEach(([c, x]) => ph(out, x, 378, 78, 56, CH[c].name, CH[c].boss ? '#5a0a22' : '#3a1a70')); text(out, 'VS', 135, 400, PAL.gold, 2, 'center'); }
+    lyrics(out, t, 270, 444);
+  }
+  requestAnimationFrame(frame);
+}
+['title', 'cut', 'select', 'map', 'vs', 'fight', 'boss_intro', 'ending'].forEach((n) => Webshot.scene(n, () => {}));
+requestAnimationFrame(frame);
+Webshot.start();
 })();
-</script></body></html>
+</script>
+</body></html>

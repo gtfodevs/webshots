@@ -153,6 +153,10 @@ async function cmdCheck() {
     console.log('\nPixel QA (scripts/pixel_qa.py):');
     try { await run('python3', ['scripts/pixel_qa.py', name]); } catch { problems.push(`pixel QA failed - see out/${name}/qa/qa-report.json`); }
   }
+  if (existsSync(join(shotDir(name), 'stage', 'fight.js'))) {
+    console.log('\nFighter QA (scripts/fighter_qa.mjs):');
+    try { await run('node', ['scripts/fighter_qa.mjs', name]); } catch { problems.push(`fighter QA failed - see out/${name}/qa/fighter-qa.json`); }
+  }
   if (problems.length) {
     console.log(`\n${problems.length} problem(s):`);
     [...new Set(problems)].forEach((p) => console.log(`  - ${p}`));
