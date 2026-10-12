@@ -35,5 +35,25 @@ if os.path.exists(src):
     crowd = (Y >= 300) & (Y < 372) & ~((X > 240) & (X < 308)) & ~((X > 650) & (X < 722)); layer(crowd, 'crowd')
     layer((Y >= 368) & (Y < 422), 'rail')
     json.dump({'ground': 476, 'floor_top': 422, 'lanterns': [[33, 258, 16], [77, 284, 12], [117, 289, 11], [315, 254, 17], [657, 254, 17], [843, 288, 11], [882, 284, 12], [927, 258, 16]],
-               'speeds': {'sky': 0.1, 'skyline': 0.3, 'gate': 0.6, 'floor': 1.0}}, open(os.path.join(OUT, 'stage-rooftop.json'), 'w'), indent=1)
+               'layers': [['sky', 0.1], ['skyline', 0.3], ['gate', 0.6], ['crowd', 0.6, 'bob'], ['rail', 0.6], ['floor', 1.0]]}, open(os.path.join(OUT, 'stage-rooftop.json'), 'w'), indent=1)
     print('stage rooftop ok')
+
+# ---------- stage art: lotus temple (fight 2) ----------
+src = os.path.join(SD, 'lotus_temple.jpg')
+if os.path.exists(src):
+    im = np.asarray(Image.open(src).convert('RGB').resize((960, 540), Image.LANCZOS))
+    Y, X = np.mgrid[0:540, 0:960]
+    def layer(mask, name):
+        out = np.zeros((540, 960, 4), np.uint8); out[..., :3] = im; out[..., 3] = mask * 255
+        Image.fromarray(out).save(os.path.join(OUT, f'stage-temple-{name}.png'))
+    Image.fromarray(im).save(os.path.join(OUT, 'stage-temple-sky.png'))
+    trees = ((Y < 262) & ((X < 240) | (X > 640))) | ((Y >= 120) & (Y < 262)) | ((X > 330) & (X < 680) & (Y >= 40) & (Y < 262))
+    mid = (Y >= 225) & (Y < 425)
+    layer(trees & ~mid, 'trees'); layer(mid, 'mid'); layer(Y >= 425, 'floor')
+    layer((Y >= 244) & (Y < 292) & (X > 312) & (X < 642), 'monks')
+    json.dump({'ground': 476, 'floor_top': 425,
+               'layers': [['sky', 0.1], ['trees', 0.3], ['mid', 0.6], ['monks', 0.6, 'bob'], ['floor', 1.0]],
+               'shimmer': [0, 330, 960, 92, 0.6], 'petals': 22,
+               'lanterns': [[127, 235, 10], [281, 231, 8], [504, 204, 9], [775, 244, 10], [856, 244, 10]]},
+              open(os.path.join(OUT, 'stage-temple.json'), 'w'), indent=1)
+    print('stage temple ok')

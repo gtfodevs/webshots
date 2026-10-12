@@ -24,7 +24,7 @@ F.STAGES = {
   rooftop: { name: 'NEON ROOFTOP DOJO', ground: 238, art: 'rooftop', sky: ['#120630', '#3a0f5c'], acc: '#ff3fd2' },
   alley:   { name: 'RAIN ALLEY NIGHT MARKET', ground: 240, sky: ['#071226', '#123a5c'], acc: '#5ee7ff' },
   yard:    { name: 'NEO TRAIN YARD', ground: 236, sky: ['#0e0a1e', '#2c2a10'], acc: '#ffe36b' },
-  garden:  { name: 'PAGODA HOLOGRAM GARDEN', ground: 238, sky: ['#1a0626', '#4a1446'], acc: '#ff7ad9' },
+  garden:  { name: 'MOONLIT LOTUS TEMPLE', ground: 238, art: 'temple', sky: ['#1a0626', '#4a1446'], acc: '#ff7ad9' },
   temple:  { name: 'SERVER TEMPLE THRONE', ground: 242, sky: ['#14040a', '#420a18'], acc: '#ff2a3a' },
 };
 
