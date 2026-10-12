@@ -26,6 +26,19 @@ Ideas to try:
 
 ![Why do farts stink? (excerpt)](docs/why-farts-stink.gif)
 
+## 🎵 Music mode
+
+Give it a song instead of a script and it makes a beat-synced, story-driven cartoon music video (no narration):
+
+```bash
+npm run new -- my-song --music song.mp3 --lyrics lyrics.txt   # analyzes beats, bars, sections, lyrics
+npm run check -- my-song
+npm run render -- my-song                                       # out/my-song.mp4, 1920x1080, -14 LUFS
+npm run render -- my-song --format vertical --start 40 --end 95 # out/my-song-vertical.mp4, Shorts 1080x1920
+```
+
+Needs `pip install --user librosa faster-whisper`. Design and API: [docs/MUSIC_MODE.md](docs/MUSIC_MODE.md). Example: `shots/kingdom-come`.
+
 ## 🤖 If you're the AI assistant
 
 Read **[`AGENTS.md`](AGENTS.md)** and follow it step by step. It covers setup, writing the narration, building the animation, the visual check, rendering and the hand-off. Keep the user out of the details: do the work, then give them the finished file.

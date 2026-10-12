@@ -1,0 +1,473 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=1280, height=720"><title>Kingdom Come</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bangers&family=Cinzel+Decorative:wght@700;900&family=Comic+Neue:wght@700&family=Inter:wght@700;900&display=swap">
+<!--
+  Kingdom Come v3: built ONLY from the approved AI asset set
+  (channels/progressiveslop/assets/kingdom-come: cutouts/ -> assets/cast, layers/ -> assets/bg).
+  Characters are transparent PNG poses; acting = pose swaps on beats + squash/stretch + bob.
+  Every chorus ends in the CHORUS ROUTINE (see routine()), the recurring signature dance.
+-->
+<style>
+ html,body{margin:0;width:1280px;height:720px;overflow:hidden;background:#141024;color:#fff;font-family:Inter,sans-serif}
+ #camera{position:absolute;left:0;top:0;width:1280px;height:720px;transform-origin:0 0}
+ .scene{position:absolute;inset:0;opacity:0;visibility:hidden;overflow:hidden}
+ .layer{position:absolute;left:-60px;top:-60px;width:1400px;height:840px}
+ .plate{position:absolute;left:-47px;top:0;width:1494px;height:840px}
+ .plate.wide{width:1800px;height:1012px;top:-110px;left:-100px}
+ .near{position:absolute;left:-47px;width:1494px}
+ .ui{position:absolute;inset:0}
+ /* actors: .act sits at the feet point; .bob is squashed/hopped from the feet; poses are stacked imgs */
+ .act{position:absolute;width:0;height:0}
+ .act .flip,.act .bob{position:absolute;left:0;top:0;width:0;height:0}
+ .act .body{position:absolute;left:0;top:0;transform:translate(-50%,-100%) scale(var(--s,1));transform-origin:50% 100%;display:grid;place-items:end center}
+ .act .body img{grid-area:1/1;visibility:hidden;filter:drop-shadow(0 6px 0 rgba(20,10,40,.35))}
+ .act .body img.on{visibility:visible}
+ .shadow{position:absolute;left:-70px;top:-14px;width:140px;height:26px;border-radius:50%;background:rgba(10,5,25,.35);filter:blur(3px)}
+ .tint{position:absolute;inset:0;pointer-events:none}
+ .spot{position:absolute;top:-80px;width:360px;height:900px;margin-left:-180px;transform-origin:50% 0;background:linear-gradient(rgba(255,255,255,.35),rgba(255,255,255,0));clip-path:polygon(42% 0,58% 0,100% 100%,0 100%);mix-blend-mode:screen}
+ .stamp{position:absolute;left:0;right:0;top:26px;text-align:center;font:400 64px/1 Bangers,sans-serif;letter-spacing:.06em;color:#ffc83d;-webkit-text-stroke:4px #1b1030;paint-order:stroke fill;text-shadow:6px 6px 0 #1b1030}
+ .stamp small{display:block;font-size:26px;color:#fff;letter-spacing:.1em;margin-top:6px}
+ .cage{position:absolute;left:-105px;top:-330px;width:210px;height:330px;border:10px solid #2a2440;border-width:14px 10px;border-radius:10px 10px 4px 4px;background:repeating-linear-gradient(90deg,transparent 0 30px,#3a3358 30px 40px);box-sizing:border-box}
+ .beacon{position:absolute;width:300px;height:300px;margin:-150px 0 0 -150px;border-radius:50%;background:radial-gradient(#fff6c0,rgba(255,190,80,.7) 30%,rgba(255,120,30,0) 70%);mix-blend-mode:screen}
+ .bolt{position:absolute;inset:0;background:#d9c2ff;mix-blend-mode:screen;opacity:0}
+ .title-k{text-align:center;font:900 84px/0.95 "Cinzel Decorative",serif;color:#ffc83d;text-shadow:0 6px 0 #1b1030,0 0 40px rgba(255,140,40,.6);-webkit-text-stroke:2px #1b1030}
+ .title-by{text-align:center;font:400 30px Bangers,sans-serif;letter-spacing:.12em;color:#fff;text-shadow:3px 3px 0 #1b1030}
+ .c-panel img.bgp{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+ .cr-n{position:absolute;left:0;right:0;bottom:0;padding:8px 0 10px;background:#fff6e0;border-top:5px solid #1b1030;text-align:center;font:400 40px/1 Bangers,sans-serif;letter-spacing:.06em;color:#1b1030;z-index:3}
+ .cr-n small{display:block;font:700 18px "Comic Neue",sans-serif;letter-spacing:0;margin-top:4px}
+ .m-lyr.slam{top:auto!important;bottom:26px;transform:none!important}
+ .m-lyr.slam .w{font-size:70px!important}
+ .m-lyr.comic{bottom:22px}
+ /* Vertical (Shorts): title band on top, the stage in the middle, lyrics below. */
+ html[data-format=vertical],html[data-format=vertical] body{width:720px;height:1280px}
+ html[data-format=vertical] #camera{top:330px;left:-120px;transform:scale(.75)}
+ html[data-format=vertical] #camera.comic{left:0;transform:scale(.5625)!important;top:420px}
+ #vhead{display:none}
+ html[data-format=vertical] #vhead{display:block;position:absolute;left:0;right:0;top:40px;text-align:center;z-index:90}
+ html[data-format=vertical] .m-lyr{bottom:120px!important;padding:0 30px}
+ html[data-format=vertical] .m-lyr.slam .w{font-size:60px!important}
+ html[data-format=vertical] .m-lyr.comic .w{font-size:34px}
+ html[data-format=vertical] .stamp{font-size:52px}
+ html[data-format=vertical] .c-caption{left:140px!important}
+</style></head><body>
+<div id="vhead"><div class="title-k" style="font-size:70px">KINGDOM<br>COME</div><div class="title-by" style="font-size:26px;margin-top:10px">Progressive Slop</div></div>
+<div id="camera">
+
+<section class="scene" id="s-open">
+ <div class="layer" data-depth="0.3"><img class="plate" src="assets/bg/bg-kingdom-far.jpg" alt=""></div>
+ <div class="layer" data-depth="1"><img class="near" src="assets/bg/bg-kingdom-near.png" alt="" style="top:588px"><div class="cast"></div></div>
+ <div class="tint" id="op-dark" style="background:rgba(20,10,50,0)"></div>
+ <div class="ui"><div id="op-title"><div class="title-k" style="position:absolute;left:0;right:0;top:110px">KINGDOM COME</div><div class="title-by" style="position:absolute;left:0;right:0;top:220px">Progressive Slop</div></div></div>
+</section>
+
+<section class="scene" id="s-spark">
+ <div class="c-page">
+  <div class="c-panel c-halftone" id="sp-p1" style="left:24px;top:24px;width:600px;height:672px"><img class="bgp" src="assets/bg/bg-kingdom-far.jpg" style="object-position:45% 50%;filter:brightness(.6)"><div class="cast"></div></div>
+  <div class="c-panel c-halftone" id="sp-p2" style="left:640px;top:24px;width:616px;height:672px"><img class="bgp" src="assets/bg/bg-kingdom-far.jpg" style="object-position:80% 50%"><div class="cast"></div></div>
+ </div>
+</section>
+
+<section class="scene" id="s-dance1"><div class="danceflr"></div></section>
+<section class="scene" id="s-dance2"><div class="danceflr"></div></section>
+<section class="scene" id="s-dance3"><div class="danceflr"></div></section>
+<section class="scene" id="s-dance4"><div class="danceflr"></div></section>
+<section class="scene" id="s-dance5"><div class="danceflr"></div></section>
+
+<section class="scene" id="s-quest">
+ <div class="layer" data-depth="0.25"><img class="plate wide" src="assets/bg/bg-forest-far.jpg" alt=""></div>
+ <div class="layer" data-depth="1"><img class="near" src="assets/bg/bg-forest-near.png" alt="" style="top:622px"><div class="cast"></div></div>
+ <div class="ui"></div>
+</section>
+
+<section class="scene" id="s-wake">
+ <div class="layer" data-depth="0.3"><img class="plate" src="assets/bg/bg-forest-far.jpg" alt=""></div>
+ <div class="layer" data-depth="1"><img class="near" src="assets/bg/bg-forest-near.png" alt="" style="top:622px"><div class="cast"></div></div>
+ <div class="ui"></div>
+</section>
+
+<section class="scene" id="s-beasts">
+ <div class="layer" data-depth="0.3"><img class="plate wide" src="assets/bg/bg-forest-far.jpg" alt="" style="filter:brightness(.55) hue-rotate(200deg) saturate(1.3)"></div>
+ <div class="tint" id="bs-dawn" style="background:linear-gradient(transparent,rgba(255,170,80,.45));opacity:0"></div>
+ <div class="layer" data-depth="1"><img class="near" src="assets/bg/bg-forest-near.png" alt="" style="top:622px;filter:brightness(.55) hue-rotate(200deg)"><div class="cast"></div></div>
+ <div class="ui"></div>
+</section>
+
+<section class="scene" id="s-flight">
+ <div class="layer" data-depth="0.15"><img class="plate wide" id="fl-far" src="assets/bg/bg-kingdom-far.jpg" alt="" style="width:2600px;height:1462px;top:-60px"></div>
+ <div class="layer" data-depth="1"><div class="cast"></div></div>
+ <div class="ui"></div>
+</section>
+
+<section class="scene" id="s-plot">
+ <div class="c-page">
+  <div class="c-panel c-halftone" id="pl-p1" style="left:24px;top:24px;width:760px;height:430px"><img class="bgp" src="assets/bg/bg-lair-far.jpg"><div class="cast"></div></div>
+  <div class="c-panel c-halftone" id="pl-p2" style="left:800px;top:24px;width:456px;height:430px"><img class="bgp" src="assets/bg/bg-kingdom-far.jpg" style="object-position:30% 50%"><div class="cast"></div></div>
+  <div class="c-panel c-halftone" id="pl-p3" style="left:24px;top:470px;width:1232px;height:226px"><img class="bgp" src="assets/bg/bg-town-party-far.jpg" style="object-position:50% 80%;filter:brightness(.45) saturate(.6)"><div class="cast"></div></div>
+ </div>
+</section>
+
+<section class="scene" id="s-shatter">
+ <div class="layer" data-depth="0.3"><img class="plate" src="assets/bg/bg-lair-far.jpg" alt=""></div>
+ <div class="layer" data-depth="1"><img class="near" src="assets/bg/bg-lair-near.png" alt="" style="top:638px"><div class="cast"></div></div>
+ <div class="bolt" id="sh-bolt"></div>
+ <div class="ui"></div>
+</section>
+
+<section class="scene" id="s-lair">
+ <div class="layer" data-depth="0.3"><img class="plate" src="assets/bg/bg-lair-far.jpg" alt=""></div>
+ <div class="layer" data-depth="1"><img class="near" src="assets/bg/bg-lair-near.png" alt="" style="top:638px"><div class="beacon" id="lr-beacon" style="left:700px;top:330px"></div><div class="cast"></div></div>
+ <div class="ui"></div>
+</section>
+
+<section class="scene" id="s-relight">
+ <div class="layer" data-depth="0.3"><img class="plate" src="assets/bg/bg-town-party-far.jpg" alt=""></div>
+ <div class="layer" data-depth="1"><img class="near" src="assets/bg/bg-town-party-near.png" alt="" style="top:672px"><div class="cast"></div></div>
+ <div class="tint" id="rl-dark" style="background:#140c2c"></div>
+ <div class="ui"></div>
+</section>
+
+<section class="scene" id="s-party">
+ <div class="layer" data-depth="0.3"><img class="plate" src="assets/bg/bg-town-party-far.jpg" alt=""></div>
+ <div class="layer" data-depth="1"><img class="near" src="assets/bg/bg-town-party-near.png" alt="" style="top:672px"><div class="spots"></div><div class="cast"></div></div>
+ <div class="ui"></div>
+</section>
+
+<section class="scene" id="s-credits">
+ <div class="c-page" id="cr-page"></div>
+</section>
+
+<section class="scene" id="s-end">
+ <div class="layer" data-depth="0.3"><img class="plate" src="assets/bg/bg-town-party-far.jpg" alt="" style="filter:brightness(.45) blur(2px)"></div>
+ <div class="layer" data-depth="1"><div class="cast"></div></div>
+ <div class="ui"><div id="en-title" class="title-k" style="position:absolute;left:0;right:0;top:400px;font-size:96px">KINGDOM COME</div>
+  <div id="en-by" class="title-by" style="position:absolute;left:0;right:0;top:515px">Progressive Slop · made with Suno · animated with webshots</div></div>
+</section>
+
+</div>
+<script src="/vendor/gsap.min.js"></script>
+<script src="/kit.js"></script><script src="/music.js"></script>
+<script>
+const FMT = document.documentElement.dataset.format = new URLSearchParams(location.search).get('format') || 'landscape';
+const V = FMT === 'vertical';
+const B = (n) => Music.beats(n);
+const C = Music.comic, F = Music.fx, cam = Music.cam;
+const q = (s, el = document) => el.querySelector(s), qa = (s, el = document) => [...el.querySelectorAll(s)];
+const SFX = (el, text, o) => C.sfx(el, text, o);
+let beatOffs = [];
+const onBeatScene = (fn) => beatOffs.push(Music.onBeat(fn));
+function enter(el) {
+  beatOffs.forEach((off) => off()); beatOffs = [];
+  qa('.c-sfx,.c-bubble,.c-caption').forEach((n) => { n._off && n._off(); n.remove(); });
+  qa('.cast', el).forEach((c) => (c.innerHTML = ''));
+  cam.reset();
+  document.getElementById('camera').classList.toggle('comic', !!el.querySelector('.c-page'));
+}
+
+/* ---------- actors from the approved cutouts ---------- */
+const POSES = {
+  kael: ['neutral', 'sword', 'surprised', 'cheer'], pip: ['lit', 'out', 'cracked', 'joy'],
+  bramble: ['neutral', 'asleep', 'flying', 'laugh'], grimwick: ['smug', 'twirl', 'shocked', 'caged'],
+  mumbles: ['cursed', 'casting', 'mending', 'dancing'],
+};
+/** actor(host, who, {x, y, s, pose, flip}) -> element with .pose(name), .bob, .flipEl */
+function actor(host, who, { x = 640, y = 640, s = 0.7, pose, flip = false, extra = [], shadow = true } = {}) {
+  const a = document.createElement('div'); a.className = 'act ' + who; a.style.left = x + 'px'; a.style.top = y + 'px';
+  const poses = [...POSES[who], 'dance', ...extra];
+  a.innerHTML = `${shadow ? '<div class="shadow"></div>' : ''}<div class="flip"><div class="bob"><div class="body" style="--s:${s}">${poses.map((p) => `<img data-p="${p}" src="assets/cast/${p === 'dance' ? 'dance-' + who : who + '-' + p}.png">`).join('')}</div></div></div>`;
+  host.appendChild(a);
+  a.bob = q('.bob', a); a.flipEl = q('.flip', a);
+  a.pose = (p) => { qa('img', a).forEach((i) => i.classList.toggle('on', i.dataset.p === p)); a.cur = p; return a; };
+  a.pose(pose || poses[0]);
+  if (flip) gsap.set(a.flipEl, { scaleX: -1 });
+  return a;
+}
+/** squash on landing, stretch on take-off (from the feet) */
+const squash = (a, amt = 0.14, beats = 0.5) => gsap.fromTo(a.bob, { scaleY: 1 - amt, scaleX: 1 + amt * 0.8 }, { scaleY: 1, scaleX: 1, duration: B(beats), ease: 'elastic.out(1,.45)', transformOrigin: '0 0' });
+const hop = (a, px = 40, beats = 0.5) => gsap.timeline()
+  .to(a.bob, { y: -px, scaleY: 1.08, scaleX: 0.94, duration: B(beats / 2), ease: 'power2.out', transformOrigin: '0 0' })
+  .to(a.bob, { y: 0, scaleY: 1, scaleX: 1, duration: B(beats / 2), ease: 'power2.in' })
+  .add(() => squash(a, 0.12, 0.4));
+/** bob on every beat (bigger on downbeats) */
+const bobOnBeat = (acts, px = 12) => onBeatScene((b) => acts.forEach((a, i) => gsap.fromTo(a.bob, { y: 0 }, { y: -px * (b.downbeat ? 1.6 : 1), duration: B(0.5), yoyo: true, repeat: 1, ease: 'power2.out', delay: i * 0.03, transformOrigin: '0 0' })));
+/** swap between poses on beats: seq = ['a','b'] every `every` beats */
+const swapOnBeat = (a, seq, every = 1) => { let k = 0; onBeatScene((b) => { if (b.i % every) return; a.pose(seq[k++ % seq.length]); squash(a, 0.1, 0.4); }); };
+let beatInBar = 0; Music.onBeat((b) => { beatInBar = b.downbeat ? 0 : beatInBar + 1; });
+
+/* ---------- THE CHORUS ROUTINE ----------
+   Same stage, same lights, same 4-beat move every chorus so it becomes the hook:
+     beat 1 (downbeat): DANCE pose + KICK (hop + tilt), camera punch, spotlights swing
+     beat 2: ALT pose, mirror flip
+     beat 3: DANCE pose, flip back, small hop
+     beat 4: ALT pose, squash
+   Grimwick's participation level rises each chorus (the running gag). */
+const ALT = { kael: 'cheer', pip: 'joy', bramble: 'laugh', mumbles: 'dancing', grimwick: 'twirl' };
+const GRIM = [
+  null,
+  { gag: 'no.', pose: 'smug', join: () => false, x: 1130, note: 'refuses, arms crossed' },
+  { gag: '...ugh. fine. ONE tap.', pose: 'smug', join: (k) => k === 0 && 'tap', x: 1130 },
+  { gag: 'only the downbeats. for dignity.', pose: 'smug', join: (k) => (k === 0 ? 'full' : k === 2 ? 'tap' : false), x: 1120 },
+  { gag: 'this proves NOTHING', pose: 'twirl', join: () => 'full', x: 1100 },
+  { gag: 'I LOVE THIS SONG!!', pose: 'dance', join: () => 'full', x: 640, center: true, cage: true },
+];
+function routine(n) {
+  Webshot.scene('dance' + n, (tl, el, idle) => {
+    enter(el);
+    const floor = q('.danceflr', el), g = GRIM[n], last = n === 5;
+    floor.innerHTML = `<div class="layer" data-depth="0.3"><img class="plate" src="assets/bg/${last ? 'bg-town-party' : 'bg-kingdom'}-far.jpg" alt="" style="filter:${last ? 'none' : 'brightness(.5) saturate(1.2)'}"></div>
+      <div class="tint" style="background:radial-gradient(ellipse at 50% 90%,rgba(255,79,163,.25),rgba(20,10,50,.55))"></div>
+      <div class="layer" data-depth="1"><img class="near" src="assets/bg/${last ? 'bg-town-party' : 'bg-kingdom'}-near.png" alt="" style="top:${last ? 672 : 588}px"><div class="spots"></div><div class="cast"></div></div>
+      <div class="ui"><div class="stamp">THE KINGDOM COME<small>— official chorus routine #${n} —</small></div></div>`;
+    const cast = q('.cast', floor), spots = q('.spots', floor), ui = q('.ui', floor);
+    [300, 640, 980].forEach((x, i) => { const s = document.createElement('div'); s.className = 'spot'; s.style.left = x + 60 + 'px'; spots.appendChild(s); gsap.set(s, { rotation: (i - 1) * 14 }); });
+    const xs = V ? (g.center ? [330, 470, 810, 950] : [300, 440, 590, 740]) : (g.center ? [190, 380, 900, 1090] : [200, 400, 600, 800]);
+    const who = ['kael', 'pip', 'bramble', 'mumbles'];
+    const ds = who.map((w, i) => actor(cast, w, { x: xs[i] + 60, y: 665, s: w === 'bramble' ? 0.78 : 0.74, pose: 'dance' }));
+    const gx = V ? (g.center ? 640 : 860) : g.x;
+    const gw = actor(cast, 'grimwick', { x: gx + 60, y: 665, s: g.center ? 0.85 : 0.74, pose: g.pose });
+    if (g.cage) { const c = document.createElement('div'); c.className = 'cage'; gw.appendChild(c); gsap.set(c, { scale: 0.92, transformOrigin: '50% 100%' }); }
+    if (n >= 4) gsap.set(gw, { zIndex: 2 });
+    tl.from(q('.stamp', ui), { scale: 2.2, autoAlpha: 0, rotation: -6, duration: B(0.5), ease: 'power4.in' }, 0);
+    tl.add(() => { cam.shake(10, 0.5); SFX(ui, n === 1 ? 'DANCE BREAK!' : 'AGAIN!', { x: V ? 420 : 940, y: 150, size: 64, rot: 8, color: '#ff4fa3' }); }, B(0.5));
+    tl.add(() => C.bubble(ui, g.gag, { x: V ? 600 : gx - 330, y: g.center ? 170 : 210, tail: g.center ? 170 : 300 }), B(n === 1 ? 4 : 2));
+    if (n === 4) tl.add(() => C.caption(ui, '(the drum is cracked. the routine is sacred.)', { x: 24, y: 640 }), B(6));
+    if (n === 5) tl.add(() => Music.particles(ui, { kind: 'confetti', rate: 16 }), 0);
+    tl.add(() => {}, B(12));
+    const step = (k) => {
+      const kick = k === 0, flipOn = k === 1;
+      ds.forEach((d, i) => {
+        const w = who[i];
+        d.pose(k % 2 ? ALT[w] : 'dance');
+        gsap.to(d.flipEl, { scaleX: flipOn ? -1 : 1, duration: B(0.15) });
+        if (kick) { hop(d, 46); gsap.fromTo(d.bob, { rotation: -10 }, { rotation: 0, duration: B(0.8), ease: 'back.out(3)', transformOrigin: '0 0' }); }
+        else if (k === 2) hop(d, 22);
+        else squash(d, 0.16);
+      });
+      const j = g.join(k);
+      if (j === 'full') { gw.pose(k % 2 ? 'twirl' : 'dance'); gsap.to(gw.flipEl, { scaleX: flipOn ? -1 : 1, duration: B(0.15) }); kick ? hop(gw, n === 5 ? 70 : 46) : squash(gw, 0.16); if (n === 5 && kick) gsap.fromTo(gw.bob, { rotation: 0 }, { rotation: 360, duration: B(0.6), ease: 'power2.out', transformOrigin: '0 -150px' }); }
+      else if (j === 'tap') { gw.pose(n === 2 ? 'smug' : 'dance'); squash(gw, 0.07); }
+      else { gw.pose(g.pose); if (n === 4) gw.pose('twirl'); }
+      if (kick) { cam.punch(0.035, 1); qa('.spot', spots).forEach((s, i) => gsap.to(s, { rotation: (beatOffs.length + i) % 2 ? 18 : -18, duration: B(0.9), ease: 'power2.inOut' })); }
+    };
+    onBeatScene(() => step(beatInBar % 4));
+  });
+}
+[1, 2, 3, 4, 5].forEach(routine);
+
+(async () => {
+await Music.load('timeline.json');
+Music.theme('fantasy');
+Music.lyrics({ styleFor: (l) => (/chorus/.test(l.tag) ? 'slam' : 'comic'), hot: 'kingdom|drum|fire|whole|dragons|legend|arrow|wizard|justice|balance|shattered' });
+
+// 1 OPEN: dusk kingdom, unlit beacon. Title slams; Pip glows; Grimwick strolls in and snuffs him.
+Webshot.scene('open', (tl, el, idle) => {
+  enter(el); const cast = q('.cast', el), ui = q('.ui', el);
+  const pip = actor(cast, 'pip', { x: 520, y: 650, s: 0.62, pose: 'lit' });
+  const gw = actor(cast, 'grimwick', { x: 1200, y: 650, s: 0.72, pose: 'twirl', flip: false });
+  cam.set({ zoom: 1.08, x: 40 }); tl.add(() => cam.to({ zoom: 1, x: 0 }, 8), 0);
+  tl.from('#op-title .title-k', { scale: 2.5, autoAlpha: 0, duration: B(0.5), ease: 'power4.in' }, B(0.2)).from('#op-title .title-by', { y: 30, autoAlpha: 0, duration: B(1) }, B(1));
+  tl.add(() => SFX(ui, 'THOOM', { x: 120, y: 330, size: 80, rot: -8 }), B(1));
+  tl.to('#op-title', { autoAlpha: 0, y: -40, duration: B(1) }, B(7));
+  tl.from(gw, { x: 300, duration: B(2), ease: 'power2.out' }, B(8));
+  tl.to(gw, { left: 820, duration: B(2), ease: 'power1.inOut' }, B(8));
+  tl.add(() => C.bubble(ui, 'mine now. hah!', { x: 780, y: 240, tail: 220 }), B(10));
+  tl.add(() => { pip.pose('out'); squash(pip, 0.25, 1); gw.pose('smug'); SFX(ui, 'FWOOSH', { x: 600, y: 300, size: 70, color: '#5ee7ff' }); gsap.to('#op-dark', { background: 'rgba(20,10,50,.45)', duration: B(1) }); }, B(13));
+  tl.add(() => C.caption(ui, 'The kingdom\'s fire went out.', { x: 24, y: 24 }), B(14));
+  tl.add(() => {}, B(19));
+  bobOnBeat([pip], 6);
+  idle(() => [gsap.to(gw.bob, { rotation: 3, yoyo: true, repeat: -1, duration: B(1), transformOrigin: '0 0' })]);
+});
+
+// 2 SPARK: comic page. Pip's last ember; Kael answers (surprised -> sword up).
+Webshot.scene('spark', (tl, el, idle) => {
+  enter(el);
+  const p1 = q('#sp-p1', el), p2 = q('#sp-p2', el);
+  const pip = actor(q('.cast', p1), 'pip', { x: 300, y: 650, s: 1.25, pose: 'out', shadow: false });
+  const kael = actor(q('.cast', p2), 'kael', { x: 320, y: 660, s: 1.3, pose: 'neutral', shadow: false });
+  tl.add(C.panels(q('.c-page', el), { beats: 4 }), 0);
+  tl.add(() => C.bubble(p1, 'psst... still got one spark.', { x: 150, y: 40, tail: 150 }), B(1));
+  tl.add(() => { kael.pose('surprised'); squash(kael, 0.2); SFX(p2, '!?', { x: 420, y: 60, size: 90, color: '#ffc83d' }); }, B(5));
+  tl.add(() => { kael.pose('sword'); hop(kael, 30); SFX(p2, 'SHING!', { x: 330, y: 120, size: 80, color: '#e8f0ff', rot: 8 }); }, B(9));
+  tl.add(() => C.bubble(p2, 'then we relight the WHOLE kingdom!', { x: 40, y: 30, tail: 220 }), B(10));
+  tl.add(() => { pip.pose('lit'); squash(pip, 0.2, 1); Music.particles(p1, { kind: 'embers', rate: 10 }); }, B(12));
+  tl.add(() => {}, B(15));
+});
+
+// 3 QUEST (verse 1): long forest pan; Kael & Pip march (pose swap per beat); Bramble snoozes.
+Webshot.scene('quest', (tl, el, idle) => {
+  enter(el); const cast = q('.cast', el), ui = q('.ui', el);
+  const kael = actor(cast, 'kael', { x: 420, y: 650, s: 0.62, pose: 'neutral' });
+  const pip = actor(cast, 'pip', { x: 260, y: 650, s: 0.5, pose: 'lit' });
+  const br = actor(cast, 'bramble', { x: 1280, y: 650, s: 0.8, pose: 'asleep' });
+  gsap.set('#s-quest .plate', { x: 0 }); tl.to('#s-quest .plate', { x: -240, duration: B(30), ease: 'none' }, 0);
+  tl.to([kael, pip], { left: '+=520', duration: B(28), ease: 'none' }, 0);
+  bobOnBeat([kael, pip], 10);
+  tl.add(() => C.caption(ui, 'Day 1. Shadowed forest. Dragon: very asleep.', { x: 24, y: 24 }), B(1));
+  tl.add(() => SFX(ui, 'zzz', { x: 1080, y: 360, size: 60, color: '#c9f0a8', beat: false, rot: 6 }), B(3));
+  tl.add(() => { kael.pose('sword'); SFX(ui, 'SHING!', { x: 640, y: 250, size: 96, color: '#e8f0ff' }); cam.shake(8, 0.5); }, B(17));
+  tl.add(() => C.bubble(ui, 'shh. heroes tiptoe.', { x: 760, y: 130, tail: 40 }), B(22));
+  tl.add(() => kael.pose('neutral'), B(21));
+  tl.add(() => {}, B(30));
+  idle(() => [gsap.to(br.bob, { scaleY: 1.05, scaleX: 0.97, yoyo: true, repeat: -1, duration: B(2), ease: 'sine.inOut', transformOrigin: '0 0' })]);
+});
+
+// 4 WAKE (chorus): Pip drums BOOM; Bramble blinks awake, laughs, joins.
+Webshot.scene('wake', (tl, el, idle) => {
+  enter(el); const cast = q('.cast', el), ui = q('.ui', el);
+  const pip = actor(cast, 'pip', { x: 360, y: 650, s: 0.62, pose: 'lit' });
+  const kael = actor(cast, 'kael', { x: 200, y: 650, s: 0.62, pose: 'neutral' });
+  const br = actor(cast, 'bramble', { x: 900, y: 650, s: 1.0, pose: 'asleep' });
+  tl.add(() => { pip.pose('joy'); hop(pip, 40); SFX(ui, 'BOOM', { x: 260, y: 160, size: 120, color: '#ff4fa3' }); cam.shake(14, 0.6); }, B(0.2));
+  tl.add(() => { br.pose('neutral'); squash(br, 0.2, 1); SFX(ui, 'BLINK', { x: 980, y: 140, size: 64, color: '#ffc83d', style: 'pop' }); }, B(3));
+  tl.add(() => { br.pose('laugh'); hop(br, 30); C.bubble(ui, 'nice beat. i\'m in.', { x: 820, y: 170, tail: 60 }); kael.pose('cheer'); }, B(6));
+  tl.add(() => {}, B(11));
+  onBeatScene((b) => { if (pip.cur === 'joy' || pip.cur === 'lit') { pip.pose(b.i % 2 ? 'lit' : 'joy'); squash(pip, 0.12); } });
+});
+
+// 5 BEASTS (verse 2): night forest; Kael charges; nightmares (purple ink blasts) fall each bar; dawn.
+Webshot.scene('beasts', (tl, el, idle) => {
+  enter(el); const cast = q('.cast', el), ui = q('.ui', el);
+  const kael = actor(cast, 'kael', { x: 160, y: 650, s: 0.66, pose: 'sword' });
+  const gw = actor(cast, 'grimwick', { x: 1180, y: 650, s: 0.62, pose: 'smug', flip: true });
+  gsap.set('#s-beasts .plate', { x: 0 }); tl.to('#s-beasts .plate', { x: -220, duration: B(34), ease: 'none' }, 0);
+  tl.to(kael, { left: 820, duration: B(24), ease: 'none' }, B(1));
+  ['BONK!', 'THUD!', 'KA-POW!', 'WHAM!'].forEach((w, i) => tl.add(() => { SFX(ui, w, { x: 380 + i * 200, y: 230 + (i % 2) * 110, size: 76, rot: -12 + i * 8 }); cam.shake(10, 0.5); kael.pose(i % 2 ? 'cheer' : 'sword'); squash(kael, 0.18); Music.particles(ui, { kind: 'sparkles', burst: 18, area: { x: 380 + i * 200, y: 330, w: 120, h: 80 } }); }, B(2 + i * 4)));
+  tl.add(() => Music.particles(ui, { kind: 'embers', rate: 10 }), B(1));
+  tl.add(() => C.caption(ui, 'Every step: a legend. (The steps are on fire.)', { x: 24, y: 24 }), B(5));
+  tl.add(() => { gw.pose('shocked'); squash(gw, 0.2, 1); C.bubble(ui, 'my NIGHTMARES!', { x: 880, y: 260, tail: 260 }); }, B(16));
+  tl.to('#bs-dawn', { opacity: 1, duration: B(10) }, B(20));
+  tl.add(() => { gw.pose('twirl'); }, B(26));
+  tl.add(() => {}, B(34));
+  bobOnBeat([kael], 8);
+});
+
+// 6 FLIGHT (chorus): Kael rides Bramble over the kingdom; Pip's flame on board.
+Webshot.scene('flight', (tl, el, idle) => {
+  enter(el); const cast = q('.cast', el), ui = q('.ui', el);
+  const rig = document.createElement('div'); rig.style.cssText = 'position:absolute;left:0;top:0'; cast.appendChild(rig);
+  const br = actor(rig, 'bramble', { x: 700, y: 640, s: 1.05, pose: 'flying', shadow: false });
+  const kael = actor(rig, 'kael', { x: 660, y: 470, s: 0.42, pose: 'cheer', shadow: false });
+  const pip = actor(rig, 'pip', { x: 750, y: 480, s: 0.32, pose: 'joy', shadow: false });
+  gsap.set(br, { zIndex: 0 }); gsap.set([kael, pip], { zIndex: 2 });
+  tl.fromTo('#fl-far', { x: 0 }, { x: -700, duration: B(14), ease: 'none' }, 0);
+  tl.from(rig, { x: -1000, duration: B(2), ease: 'power3.out' }, 0);
+  tl.add(() => SFX(ui, 'WHOOOSH', { x: 880, y: 120, size: 90, color: '#5ee7ff' }), B(1.5));
+  tl.add(() => Music.particles(ui, { kind: 'sparkles', rate: 8 }), B(2));
+  tl.add(() => C.bubble(ui, 'is this... a legend?', { x: 300, y: 150, tail: 300 }), B(5));
+  tl.add(() => {}, B(11));
+  swapOnBeat(kael, ['cheer', 'sword'], 2);
+  idle(() => [gsap.to(rig, { y: -26, yoyo: true, repeat: -1, duration: B(2), ease: 'sine.inOut' }), gsap.to(rig, { rotation: -2, yoyo: true, repeat: -1, duration: B(4), ease: 'sine.inOut' })]);
+});
+
+// 7 PLOT (verse 3): comic page. Grimwick schemes with cursed Mumbles; Kael's "arrow" (sword SHING) pops his pride; town sleeps.
+Webshot.scene('plot', (tl, el, idle) => {
+  enter(el);
+  const p1 = q('#pl-p1', el), p2 = q('#pl-p2', el), p3 = q('#pl-p3', el);
+  const gw = actor(q('.cast', p1), 'grimwick', { x: 260, y: 440, s: 0.95, pose: 'twirl', shadow: false });
+  const mm = actor(q('.cast', p1), 'mumbles', { x: 580, y: 440, s: 0.9, pose: 'cursed', shadow: false, flip: true });
+  const kael = actor(q('.cast', p2), 'kael', { x: 230, y: 440, s: 0.95, pose: 'neutral', shadow: false });
+  const br = actor(q('.cast', p3), 'bramble', { x: 980, y: 230, s: 0.5, pose: 'asleep', shadow: false });
+  const pip = actor(q('.cast', p3), 'pip', { x: 820, y: 230, s: 0.45, pose: 'lit', shadow: false });
+  tl.add(C.panels(q('.c-page', el), { beats: 8 }), 0);
+  tl.add(() => C.bubble(p1, 'mwahaha. phase two: shatter the drum.', { x: 300, y: 20, tail: 40 }), B(1));
+  tl.add(() => { mm.pose('casting'); squash(mm, 0.15); }, B(5));
+  tl.add(() => { kael.pose('sword'); hop(kael, 30); SFX(p2, 'TWANG!', { x: 140, y: 40, size: 70, color: '#e8f0ff' }); }, B(9));
+  tl.add(() => { gw.pose('shocked'); squash(gw, 0.25, 1); SFX(p1, 'POP!', { x: 120, y: 120, size: 120, color: '#ffc83d' }); C.caption(p1, 'his PRIDE: popped.', { x: 16, y: 370 }); cam.shake(12, 0.5); }, B(10));
+  tl.add(() => C.caption(p3, 'Meanwhile, the realm sleeps. Protected.', { x: 24, y: 20 }), B(18));
+  tl.add(() => { gw.pose('twirl'); mm.pose('cursed'); }, B(22));
+  tl.add(() => {}, B(34));
+  idle(() => [gsap.to(br.bob, { scaleY: 1.05, yoyo: true, repeat: -1, duration: B(2), transformOrigin: '0 0' })]);
+});
+
+// 8 SHATTER (chorus): conflict. Mumbles' bolt cracks Pip on a downbeat.
+Webshot.scene('shatter', (tl, el, idle) => {
+  enter(el); const cast = q('.cast', el), ui = q('.ui', el);
+  const pip = actor(cast, 'pip', { x: 520, y: 650, s: 0.66, pose: 'lit' });
+  const mm = actor(cast, 'mumbles', { x: 960, y: 650, s: 0.74, pose: 'cursed', flip: true });
+  const gw = actor(cast, 'grimwick', { x: 1170, y: 650, s: 0.7, pose: 'twirl', flip: true });
+  tl.from([mm, gw], { x: 400, duration: B(1), ease: 'back.out(1.4)', stagger: B(0.5) }, 0);
+  tl.add(() => C.bubble(ui, 'Mumbles! the drum!', { x: 820, y: 160, tail: 260 }), B(1.5));
+  tl.add(() => { mm.pose('casting'); squash(mm, 0.15); }, B(3.5));
+  tl.to('#sh-bolt', { opacity: 0.85, duration: 0.05 }, B(4)).to('#sh-bolt', { opacity: 0, duration: B(0.5) }, B(4.5));
+  tl.add(() => { pip.pose('cracked'); squash(pip, 0.3, 1); SFX(ui, 'KRAAAK!', { x: 420, y: 200, size: 130, color: '#b48cff' }); cam.shake(22, 1); gw.pose('smug'); }, B(4));
+  tl.add(() => C.caption(ui, 'Gonna make the SHATTERED whole...', { x: 24, y: 24 }), B(6));
+  tl.add(() => {}, B(11));
+  idle(() => [gsap.to(pip.bob, { x: 3, yoyo: true, repeat: -1, duration: 0.06 })]);
+});
+
+// 9 LAIR (verse 4): Kael faces the wizard; beacon light breaks the curse; Mumbles mends Pip.
+Webshot.scene('lair', (tl, el, idle) => {
+  enter(el); const cast = q('.cast', el), ui = q('.ui', el);
+  const kael = actor(cast, 'kael', { x: 300, y: 650, s: 0.7, pose: 'neutral' });
+  const pip = actor(cast, 'pip', { x: 640, y: 650, s: 0.58, pose: 'cracked' });
+  const mm = actor(cast, 'mumbles', { x: 1000, y: 650, s: 0.78, pose: 'cursed', flip: true });
+  gsap.set('#lr-beacon', { scale: 0 });
+  tl.add(() => cam.to({ zoom: 1.08 }, 8), 0);
+  tl.add(() => C.caption(ui, 'The wizard\'s cursed lair.', { x: 24, y: 24 }), B(0.5));
+  tl.add(() => { kael.pose('sword'); C.bubble(ui, 'not. one. single. fear.', { x: 160, y: 200, tail: 80 }); }, B(8));
+  tl.to('#lr-beacon', { scale: 1.4, duration: B(1), ease: 'back.out(2)' }, B(12));
+  tl.add(() => SFX(ui, 'SHWAAAA', { x: 560, y: 120, size: 84, color: '#fff6c0' }), B(12));
+  tl.add(() => { mm.pose('casting'); squash(mm, 0.2); }, B(14));
+  tl.add(() => { mm.pose('mending'); SFX(ui, 'BALANCE!', { x: 900, y: 150, size: 70, color: '#5ee7ff', style: 'pop' }); }, B(17));
+  tl.add(() => C.bubble(ui, 'oops. let me fix that drum.', { x: 760, y: 200, tail: 220 }), B(22));
+  tl.add(() => { pip.pose('lit'); hop(pip, 40); Music.particles(ui, { kind: 'sparkles', burst: 30, area: { x: 560, y: 450, w: 160, h: 160 } }); SFX(ui, 'TING!', { x: 600, y: 330, size: 60, color: '#ffc83d' }); }, B(27));
+  tl.add(() => {}, B(34));
+  idle(() => [gsap.to('#lr-beacon', { scale: 1.6, yoyo: true, repeat: -1, duration: B(1), ease: 'sine.inOut' })]);
+});
+
+// 10 RELIGHT (chorus): payoff. Pip lights the beacon: dark -> fireworks town. Grimwick ends up caged.
+Webshot.scene('relight', (tl, el, idle) => {
+  enter(el); const cast = q('.cast', el), ui = q('.ui', el);
+  const pip = actor(cast, 'pip', { x: 640, y: 650, s: 0.66, pose: 'lit' });
+  const kael = actor(cast, 'kael', { x: 380, y: 650, s: 0.62, pose: 'neutral' });
+  const br = actor(cast, 'bramble', { x: 940, y: 650, s: 0.7, pose: 'neutral', flip: true });
+  const gw = actor(cast, 'grimwick', { x: 1180, y: 650, s: 0.6, pose: 'caged', flip: true });
+  gsap.set('#rl-dark', { opacity: 0.85 });
+  tl.add(() => { pip.pose('joy'); hop(pip, 60); SFX(ui, 'FWOOM!', { x: 520, y: 150, size: 130, color: '#ffb02e' }); cam.punch(0.1, 2); Music.particles(ui, { kind: 'embers', rate: 26 }); }, B(1));
+  tl.to('#rl-dark', { opacity: 0, duration: B(2) }, B(1));
+  tl.add(() => { kael.pose('cheer'); br.pose('laugh'); C.bubble(ui, 'WHOLE AGAIN, BABY!', { x: 520, y: 260, tail: 100 }); }, B(4));
+  tl.add(() => C.caption(ui, 'Grimwick: in time-out.', { x: 980, y: 300 }), B(7));
+  tl.add(() => {}, B(11));
+  bobOnBeat([kael, br, pip], 14);
+});
+
+// 11 PARTY (instrumental): everyone parties on the beat; caged Grimwick finally admits it.
+Webshot.scene('party', (tl, el, idle) => {
+  enter(el); const cast = q('.cast', el), ui = q('.ui', el), spots = q('.spots', el); spots.innerHTML = '';
+  [200, 640, 1080].forEach((x) => { const s = document.createElement('div'); s.className = 'spot'; s.style.left = x + 60 + 'px'; spots.appendChild(s); });
+  const ds = [['bramble', 230, 0.72, ['laugh', 'dance']], ['kael', 450, 0.62, ['cheer', 'dance']], ['pip', 640, 0.62, ['joy', 'dance']], ['mumbles', 840, 0.66, ['dancing', 'dance']]]
+    .map(([w, x, s, seq]) => { const a = actor(cast, w, { x: x + 60, y: 650, s, pose: seq[0] }); a.seq = seq; return a; });
+  const gw = actor(cast, 'grimwick', { x: 1130, y: 650, s: 0.62, pose: 'caged', flip: true });
+  tl.add(() => SFX(ui, 'PARTY!', { x: 520, y: 140, size: 140, color: '#ff4fa3' }), B(0.5));
+  tl.add(() => Music.particles(ui, { kind: 'confetti', rate: 14 }), 0);
+  onBeatScene((b) => { ds.forEach((d, i) => { d.pose(d.seq[b.i % 2]); hop(d, b.downbeat ? 40 : 20); gsap.to(d.flipEl, { scaleX: b.downbeat ? (b.bar % 2 ? -1 : 1) : undefined, duration: B(0.15) }); });
+    qa('.spot', spots).forEach((s, i) => gsap.to(s, { rotation: ((b.i + i) % 2 ? 1 : -1) * 20, duration: B(0.9) })); if (b.downbeat) cam.punch(0.025, 1); squash(gw, 0.06); });
+  tl.add(() => C.bubble(ui, '...fine. it slaps.', { x: 880, y: 220, tail: 220 }), B(12));
+  tl.add(() => {}, B(22));
+});
+
+// 12 CREDITS: one card per bar, cutouts on halftone.
+Webshot.scene('credits', (tl, el, idle) => {
+  enter(el); const page = q('#cr-page', el); page.innerHTML = '';
+  const cards = [['kael', 'cheer', 'KAEL', 'the very small knight', '#ffe2a8'], ['pip', 'joy', 'PIP', 'drum. on fire. emotionally.', '#ffd0e4'], ['bramble', 'laugh', 'BRAMBLE', 'professional napper', '#c9f0a8'],
+    ['mumbles', 'mending', 'MUMBLES', 'reformed wizard', '#d9c8ff'], ['grimwick', 'twirl', 'GRIMWICK', 'secretly loves the routine', '#c8b8e8']];
+  const pos = [[24, 24], [440, 24], [856, 24], [24, 370], [440, 370]];
+  cards.forEach(([w, p, n, sub, bg], i) => { const c = document.createElement('div'); c.className = 'c-panel c-halftone cr'; c.style.cssText = `left:${pos[i][0]}px;top:${pos[i][1]}px;width:400px;height:326px;background:${bg}`;
+    c.innerHTML = `<div class="cast"></div><div class="cr-n">${n}<small>${sub}</small></div>`; page.appendChild(c); actor(q('.cast', c), w, { x: 200, y: 262, s: 0.55, pose: p, shadow: false }); });
+  const last = document.createElement('div'); last.className = 'c-panel cr'; last.style.cssText = 'left:856px;top:370px;width:400px;height:326px;background:#1b1030';
+  last.innerHTML = '<img src="assets/cover.jpg" alt="" style="position:absolute;left:100px;top:20px;width:200px;height:200px;object-fit:cover;border:4px solid #fff"><div class="cr-n" style="color:#ffc83d;background:#1b1030">KINGDOM COME<small style="color:#fff">Progressive Slop · Suno</small></div>'; page.appendChild(last);
+  qa('.cr', page).forEach((c, i) => tl.fromTo(c, { scale: 0, rotation: (i % 2 ? 8 : -8) }, { scale: 1, rotation: 0, duration: B(1), ease: 'back.out(2.2)' }, B(i * 4)));
+  tl.add(() => {}, B(26));
+  onBeatScene((b) => qa('.act', page).forEach((a) => squash(a, b.downbeat ? 0.12 : 0.06)));
+});
+
+// 13 END
+Webshot.scene('end', (tl, el, idle) => {
+  enter(el); const cast = q('.cast', el);
+  const pip = actor(cast, 'pip', { x: 700, y: 440, s: 0.6, pose: 'joy', shadow: false });
+  tl.from(pip, { scale: 0, duration: B(1), ease: 'back.out(2)' }).from('#en-title', { scale: 2, autoAlpha: 0, duration: B(0.5), ease: 'power4.in' }).from('#en-by', { y: 20, autoAlpha: 0, duration: B(1) });
+  bobOnBeat([pip], 10);
+});
+
+Webshot.start();
+})();
+</script></body></html>

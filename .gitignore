@@ -5,3 +5,4 @@ test-results/
 playwright-report/
 .DS_Store
 ._*
+channels/*/songs/*/song.mp4

@@ -89,6 +89,32 @@ The first render downloads the voice model, and later renders reuse it.
 - You can't hear audio. If they ask about the sound, say so.
 - Offer one obvious next tweak: a different voice, shorter, funnier, or another topic.
 
+## Music mode (music videos, no narration)
+
+When the user gives you a **song** (mp3/m4a/wav, e.g. a Suno track) instead of a script, make a music video. Full design: `docs/MUSIC_MODE.md`.
+
+1. `pip install --user librosa faster-whisper` once (Python helpers), then
+   `npm run new -- <name> --music path/to/song.mp3 --lyrics lyrics.txt` (lyrics optional, `[Chorus]`-style tags help).
+   This copies the song into `stage/assets/`, writes `stage/timeline.json` (tempo, beats, bars, sections, energy, Whisper words, aligned lyric lines), one placeholder scene per section in `<name>.scenes.json` (`{"scene": "...", "at": seconds}` or `"bar": n`), and `<name>.music.json` (soundtrack, loudness -14 LUFS, fades, cut, `shorts` window, `storyline`).
+2. **Write a storyline before drawing:** a recurring cast (3-5 characters) and arc beats mapped to sections (setup → journey → conflict on a chorus → payoff → coda). Put it in `<name>.music.json`. Verses carry plot, choruses are big set pieces. Stay faithful to the lyrics.
+3. Prefer an approved AI asset set (cutout PNG poses + layered backgrounds, see the skill); otherwise draw the cast once as SVG `<symbol>`s and reuse them with `<use>`. Every chorus should end in the same **chorus routine** (docs/MUSIC_MODE.md).
+4. Build scenes with `/music.js` (load it after `/kit.js`; `await Music.load('timeline.json')` before `Webshot.start()`):
+   - durations in beats: `Music.beats(n)`; scenes start on bars, so entrances at `B(n)` land on beats;
+   - hooks: `Music.onBeat(b => ...)` (b.downbeat, b.energy), `onBar`, `onSection`, `onLyric`;
+   - camera: wrap scenes in `<div id="camera">`; layers with `data-depth` parallax; `Music.cam.to/punch/shake/reset`;
+   - presets: `Music.fx.slam/pop/float/pulse/squash/wobble/shatter`; particles: `Music.particles(el, {kind:'embers'|'sparkles'|'confetti'|'dust'})`;
+   - lyrics: `Music.lyrics({ styleFor: line => /chorus/.test(line.tag) ? 'slam' : 'comic', hot: 'fire|drum' })` (styles: karaoke, slam, ticker, comic);
+   - comic pages: `.c-page` + `.c-panel` (+ `.c-halftone`), `Music.comic.panels(page,{beats})`, `comic.sfx(host,'BOOM',{...})`, `comic.bubble(host,text,{x,y,tail})`, `comic.caption(host,text)`;
+   - themes: `Music.theme('fantasy'|'hiphop'|'synthwave'|'party')`.
+   Use a fixed viewport per frame; add `html[data-format=vertical]` CSS so the stage reflows for Shorts.
+5. `npm run check -- <name>` (lyrics are frozen a few beats into each scene for the screenshots) and review the contact sheet.
+6. `npm run render -- <name>` → `out/<name>.mp4` (1920×1080, song at -14 LUFS, no voice). Shorts: `npm run render -- <name> --format vertical --start 97.3 --end 141.3` → `out/<name>-vertical.mp4` (1080×1920, keep it ≤60 s).
+7. Verify sync: grab frames at a few known word times (`timeline.json` → `lyrics[].words[].t`) and confirm the word is on screen.
+
+Example: `shots/kingdom-come`.
+
+**Full step-by-step for any AI: `skills/music-video/SKILL.md`** (with `skills/music-video/workflows/*.md` checklists and `skills/music-video/prompts/*.md` image-prompt templates). Follow it for music videos: Suno sync → storyline → asset list → style anchor approval → generate assets → cutouts/layers → chorus routine → scenes → render 16:9 + Shorts → QA → export. Song-specific assets and renders belong in the channel folder (e.g. Jason's `progressive-slop`), not in this tool.
+
 ## Voices
 
 - **Kokoro (default; local, free, no account):**
@@ -118,6 +144,8 @@ The first render downloads the voice model, and later renders reuse it.
 npm run setup                          # once
 npm run doctor                         # what's installed / missing
 npm run new -- <name> --title "Title"
+npm run new -- <name> --music song.mp3 --lyrics lyrics.txt   # music video shot + timeline
+npm run render -- <name> --format vertical --start 97 --end 141   # music: Shorts 1080x1920 cut
 npm run check -- <name>                # -> out/<name>/check/sheet.png
 npm run render -- <name>               # -> out/<name>.mp4
 npm run preview -- <name>              # live stage at http://127.0.0.1:8231
@@ -125,6 +153,13 @@ npm run list
 ```
 
 ## Code map
+
+- `lib/music-kit.js` (served as `/music.js`): music-mode runtime (clock, hooks, camera, parallax, particles, presets, lyrics, comic)
+- `lib/music-runner.ts`: recorder for music shots (song clock + bar-scheduled cuts)
+- `scripts/analyze_music.py`: beats/bars/sections/energy + Whisper lyric alignment → timeline.json
+- `template-music/`: scaffold for `npm run new -- <name> --music`
+- `docs/MUSIC_MODE.md`: music mode design and roadmap
+
 
 - `lib/stage-kit.js`: the stage contract (`Webshot.scene`, `idle`, `Webshot.start`)
 - `lib/runner.ts`: the shared recorder (plays scenes in narration order and holds each until its line ends)

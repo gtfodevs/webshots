@@ -1,0 +1,48 @@
+{
+ "soundtrack": "stage/assets/song.m4a",
+ "duration": 170.816,
+ "start": 0,
+ "end": 170.816,
+ "loudness": -14,
+ "fadeOut": 1.5,
+ "theme": "fantasy",
+ "shorts": {
+  "start": 99.033,
+  "end": 141.317,
+  "note": "chorus 4 shatter -> ROUTINE #4 -> verse 4 -> chorus 5 relight -> ROUTINE #5 (Grimwick payoff)"
+ },
+ "storyline": {
+  "cast": {
+   "Kael": "small, brave rapper-knight (the male verses)",
+   "Pip": "the kingdom's living fire drum (the hook singer's drum)",
+   "Bramble": "a sleepy dragon who becomes Kael's ride",
+   "Grimwick": "a mustache-twirling villain who snuffs the fire",
+   "Mumbles": "Grimwick's cursed wizard, redeemed in verse 4"
+  },
+  "arc": {
+   "setup": [
+    "open",
+    "spark"
+   ],
+   "journey": [
+    "quest",
+    "wake",
+    "beasts",
+    "flight"
+   ],
+   "conflict": [
+    "plot",
+    "shatter"
+   ],
+   "payoff": [
+    "lair",
+    "relight",
+    "party"
+   ],
+   "coda": [
+    "credits",
+    "end"
+   ]
+  }
+ }
+}

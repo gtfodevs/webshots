@@ -1,0 +1,20 @@
+[
+ {"scene":"open","bar":0,"label":"chorus 1: the kingdom's fire goes out (setup)"},
+ {"scene":"spark","bar":5,"label":"chorus 1: Pip's last spark; Kael answers"},
+ {"scene":"dance1","bar":9,"label":"CHORUS ROUTINE #1: Grimwick refuses (arms crossed)"},
+ {"scene":"quest","bar":15,"label":"verse 1: forest journey past the sleeping dragon"},
+ {"scene":"wake","bar":23,"label":"chorus 2: the drum wakes Bramble"},
+ {"scene":"dance2","bar":26,"label":"CHORUS ROUTINE #2: Grimwick taps along"},
+ {"scene":"beasts","bar":31,"label":"verse 2: nightmares fall, legend steps"},
+ {"scene":"flight","bar":40,"label":"chorus 3: riding Bramble"},
+ {"scene":"dance3","bar":43,"label":"CHORUS ROUTINE #3: Grimwick does the downbeats"},
+ {"scene":"plot","bar":47,"label":"verse 3: Grimwick plots in the lair"},
+ {"scene":"shatter","bar":56,"label":"chorus 4: Mumbles shatters Pip (conflict)"},
+ {"scene":"dance4","bar":59,"label":"CHORUS ROUTINE #4: Grimwick fully dances, denies it"},
+ {"scene":"lair","bar":63,"label":"verse 4: curse breaks, Mumbles mends Pip"},
+ {"scene":"relight","bar":72,"label":"chorus 5: kingdom relit (payoff)"},
+ {"scene":"dance5","bar":75,"label":"CHORUS ROUTINE #5: Grimwick front and center (caged)"},
+ {"scene":"party","bar":80,"label":"instrumental: victory party"},
+ {"scene":"credits","bar":86,"label":"instrumental: cast roll call"},
+ {"scene":"end","bar":96,"label":"title"}
+]

@@ -1,9 +1,11 @@
 #!/usr/bin/env node
 // webshots CLI. Usually run through npm:
 //   npm run new -- <name> [--title "Video title"]   scaffold shots/<name> from the template
+//   npm run new -- <name> --music song.mp3 [--lyrics lyrics.txt]   scaffold a music shot + timeline
 //   npm run preview -- <name>                       serve the stage at http://127.0.0.1:8231
 //   npm run check -- <name>                         play every scene, screenshot it, find errors
 //   npm run render -- <name>                        narrate + record + export -> out/<name>.mp4
+//        [--format vertical] [--start 40 --end 95]   music shots: Shorts 1080x1920 / a time cut
 //   npm run list                                    list shots
 //   npm run doctor                                  check that everything needed is installed
 
@@ -41,7 +43,40 @@ function serve(port) {
   return new Promise((resolve) => server.listen(port, '127.0.0.1', () => resolve(server)));
 }
 
+function isMusic(n = name) { return existsSync(join(shotDir(n), `${n}.music.json`)); }
+function musicCfg() { return JSON.parse(readFileSync(join(shotDir(name), `${name}.music.json`), 'utf8')); }
+
+async function cmdNewMusic(audio) {
+  const dir = shotDir(name);
+  if (existsSync(dir)) die(`shots/${name} already exists`);
+  if (!existsSync(audio)) die(`no such audio file: ${audio}`);
+  cpSync(join(ROOT, 'template-music'), dir, { recursive: true });
+  renameSync(join(dir, 'NAME.demo.ts'), join(dir, `${name}.demo.ts`));
+  mkdirSync(join(dir, 'stage', 'assets'), { recursive: true });
+  const ext = audio.split('.').pop();
+  copyFileSync(audio, join(dir, 'stage', 'assets', `song.${ext}`));
+  const lyrics = flag('--lyrics');
+  if (lyrics) copyFileSync(lyrics, join(dir, 'lyrics.txt'));
+  console.log('Analyzing the song (beats, bars, sections, energy' + (lyrics ? ', lyrics' : '') + ')...');
+  const args = [join(ROOT, 'scripts', 'analyze_music.py'), join(dir, 'stage', 'assets', `song.${ext}`), '-o', join(dir, 'stage', 'timeline.json')];
+  if (lyrics) args.push('--lyrics', join(dir, 'lyrics.txt')); else if (rest.includes('--no-words')) args.push('--no-words');
+  if ((await run('python3', args)) !== 0) die('music analysis failed (pip install librosa faster-whisper)');
+  const tl = JSON.parse(readFileSync(join(dir, 'stage', 'timeline.json'), 'utf8'));
+  const scenes = tl.sections.map((s, i) => ({ scene: `s${i + 1}-${(s.label || 'part').split(' ').pop().replace(/[^a-z0-9]/gi, '')}`.toLowerCase(), at: s.t, label: s.label }));
+  writeFileSync(join(dir, `${name}.scenes.json`), JSON.stringify(scenes, null, 1));
+  writeFileSync(join(dir, `${name}.music.json`), JSON.stringify({ soundtrack: `stage/assets/song.${ext}`, duration: tl.duration, start: 0, end: tl.duration, loudness: -14, fadeOut: 2, theme: 'fantasy', lyricStyle: 'karaoke' }, null, 1));
+  // One placeholder scene per detected section so check/preview work immediately.
+  const html = join(dir, 'stage', 'index.html');
+  const title = flag('--title', name.replace(/-/g, ' ').replace(/^./, (c) => c.toUpperCase()));
+  const sections = scenes.map((s) => `  <section class="scene" id="s-${s.scene}"><div class="layer" data-depth="0.3"><div class="ph">${s.scene} · ${s.at.toFixed(1)}s</div></div></section>`).join('\n');
+  const defs = scenes.map((s) => `Webshot.scene('${s.scene}', (tl, el) => { tl.add(Music.fx.pop(el.querySelector('.ph'))); });`).join('\n');
+  writeFileSync(html, readFileSync(html, 'utf8').replaceAll('{{TITLE}}', title).replace('<!--SCENES-->', sections).replace('//SCENES', defs));
+  console.log(`Created music shot shots/${name}/: ${tl.tempo} BPM, ${tl.bars.length} bars, ${tl.sections.length} sections, ${(tl.lyrics || []).length} lyric lines.`);
+  console.log(`Next: edit stage/index.html (see docs/MUSIC_MODE.md), npm run check -- ${name}, npm run render -- ${name}`);
+}
+
 async function cmdNew() {
+  if (flag('--music')) return cmdNewMusic(flag('--music'));
   if (!name || !/^[a-z0-9]+(-[a-z0-9]+)*$/.test(name)) die('usage: npm run new -- <kebab-case-name> [--title "Title"]');
   const dir = shotDir(name);
   if (existsSync(dir)) die(`shots/${name} already exists`);
@@ -87,11 +122,16 @@ async function cmdCheck() {
   const defined = await page.evaluate(() => window.sceneNames || []).catch(() => []);
   for (const s of wanted) if (!defined.includes(s)) problems.push(`scene "${s}" is in ${name}.scenes.json but not defined on the stage`);
   for (const s of defined) if (!wanted.includes(s)) problems.push(`scene "${s}" is defined on the stage but has no narration in ${name}.scenes.json`);
+  let downbeats = [];
+  try { downbeats = JSON.parse(readFileSync(join(shotDir(name), 'stage', 'timeline.json'), 'utf8')).downbeats || []; } catch {}
+  const at = Object.fromEntries(manifest().map((s) => [s.scene, s.at ?? (s.bar != null ? downbeats[s.bar] ?? 0 : 0)]));
   let i = 0;
   for (const s of wanted.filter((x) => defined.includes(x))) {
     const t0 = Date.now();
     try {
       await page.evaluate((n) => window.scene(n), s);
+      // Music shots: freeze the song clock a few beats into the scene so lyrics show deterministically.
+      if (isMusic()) await page.evaluate((t) => window.Music && window.Music.freeze(t), at[s] + 6);
     } catch (e) {
       problems.push(`scene "${s}" failed: ${e.message}`);
     }
@@ -118,6 +158,7 @@ async function cmdCheck() {
 
 async function cmdRender() {
   needShot();
+  if (isMusic()) return cmdRenderMusic();
   const argo = join(ROOT, 'node_modules', '@argo-video', 'cli', 'bin', 'argo.js');
   if (!existsSync(argo)) die('dependencies missing: run npm run setup');
   const code = await run(process.execPath, [argo, 'pipeline', name, '-c', 'webshots.config.mjs'], { WEBSHOT: name });
@@ -134,6 +175,33 @@ async function cmdRender() {
     if (existsSync(f)) copyFileSync(f, join(OUT, `${name}.${ext}`));
   }
   console.log(`\nDone: out/${name}.mp4  (subtitles: out/${name}.srt)`);
+}
+
+// Music mode: record the stage against the song clock (no narration), then mux the soundtrack
+// (loudnorm to the target LUFS, fades, trimmed to the cut) onto the full-resolution capture.
+async function cmdRenderMusic() {
+  const cfg = musicCfg();
+  const format = flag('--format', cfg.format || 'landscape');
+  const start = Number(flag('--start', cfg.start ?? 0));
+  const end = Number(flag('--end', cfg.end ?? cfg.duration));
+  const suffix = flag('--out', format === 'vertical' ? `${name}-vertical` : name);
+  const argo = join(ROOT, 'node_modules', '@argo-video', 'cli', 'bin', 'argo.js');
+  if (!existsSync(argo)) die('dependencies missing: run npm run setup');
+  const env = { WEBSHOT: name, WEBSHOTS_FORMAT: format, WEBSHOTS_START: String(start), WEBSHOTS_END: String(end) };
+  // Only the recording step: Argo's export would try to mix (non-existent) narration.
+  const code = await run(process.execPath, [argo, 'record', name, '-c', 'webshots.config.mjs'], env);
+  const raw = join(ROOT, '.argo', name, 'video.mp4');
+  if (code !== 0 || !existsSync(raw)) die(`recording failed (exit ${code}); see the log above`);
+  const [W, H] = format === 'vertical' ? [1080, 1920] : [1920, 1080];
+  const len = end - start, fade = Number(cfg.fadeOut ?? 2), fin = Number(cfg.fadeIn ?? (start > 0 ? 0.5 : 0));
+  const af = [`atrim=${start}:${end}`, 'asetpts=PTS-STARTPTS', `loudnorm=I=${cfg.loudness ?? -14}:TP=-1.0:LRA=11`, 'aresample=48000',
+    fin ? `afade=t=in:d=${fin}` : null, fade ? `afade=t=out:st=${Math.max(0, len - fade)}:d=${fade}` : null].filter(Boolean).join(',');
+  const final = join(OUT, `${suffix}.mp4`);
+  const c2 = await run('ffmpeg', ['-y', '-loglevel', 'error', '-i', raw, '-i', join(shotDir(name), cfg.soundtrack),
+    '-map', '0:v:0', '-map', '1:a:0', '-t', String(len), '-vf', `scale=${W}:${H}:flags=lanczos,format=yuv420p${fade ? `,fade=t=out:st=${Math.max(0, len - fade)}:d=${fade}` : ''}`,
+    '-c:v', 'libx264', '-preset', 'slow', '-crf', '18', '-af', af, '-ac', '2', '-c:a', 'aac', '-b:a', '256k', '-movflags', '+faststart', final]);
+  if (c2 !== 0) die('ffmpeg could not mux the soundtrack');
+  console.log(`\nDone: out/${suffix}.mp4  (${format} ${W}x${H}, ${len.toFixed(1)}s, soundtrack at ${cfg.loudness ?? -14} LUFS)`);
 }
 
 function cmdList() {
