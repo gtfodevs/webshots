@@ -65,6 +65,19 @@ F.SPRITE_ANIMS = {
     ko_down: { frames: ['ko_down'], durations: [1000] },
     victory: { frames: ['idle_br1', 'victory'], durations: [120, 900] },
   },
+  // TEKKO: walk_*_R = walk_*_L with the lower body mirrored (sources were identical); ko_fall = hit tilted back 40 deg
+  tekko: {
+    idle:    { loop: 1, frames: ['idle_a', 'idle_br1', 'idle_br2', 'idle_br1'], durations: [320, 200, 360, 200] },
+    walk:    { loop: 1, frames: ['walk_contact_R', 'walk_pass_R', 'walk_contact_L', 'walk_pass_L'], durations: [150, 130, 150, 130] },
+    punch:   { frames: ['punch_windup', 'punch_extend'], durations: [130, 220] },
+    kick:    { frames: ['kick_chamber', 'kick_extend'], durations: [140, 240] },
+    special: { frames: ['special_charge', 'special_release'], durations: [280, 360] },
+    block:   { frames: ['block'], durations: [400] },
+    hit:     { frames: ['hit'], durations: [350] },
+    ko_fall: { frames: ['ko_fall'], durations: [600] },
+    ko_down: { frames: ['ko_down'], durations: [1000] },
+    victory: { frames: ['idle_br1', 'victory'], durations: [120, 900] },
+  },
   // Aura: no idle_b (breath from the idle_a master); cyan energy is a separate additive fx layer per pose
   aura: {
     idle:    { loop: 1, frames: ['idle_a', 'idle_br1', 'idle_br2', 'idle_br1'], durations: [300, 180, 340, 180] },

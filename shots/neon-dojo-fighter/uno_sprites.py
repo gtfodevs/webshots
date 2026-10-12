@@ -27,13 +27,19 @@ CFG = {
   'uno':  dict(master=['idle_b'] + WALK, head_only=['block'], mirror={'ko_fall'}, target=198, belt='gold', fx=set(), strip=set()),
   'aura': dict(master=WALK, head_only=['block'], mirror={'ko_fall'}, target=188, belt='waist',
                fx={'idle_a', 'punch_extend', 'kick_extend', 'special_charge', 'special_release', 'victory', 'kick_chamber', 'punch_windup'}, strip={'ko_fall'}),
+  # TEKKO: walk L/R sources are identical -> the _R frames get their lower body mirrored about the hip so the shuffle
+  # alternates; special_release afterimages are green-tinted chrome -> ghost fx layer; hit has a baked spark -> removed;
+  # no ko_fall source -> synthesised from hit, tilted back 40 degrees
+  'tekko': dict(master=WALK, head_only=['block'], mirror=set(), target=172, belt='dark', fx=set(), strip=set(),
+                legswap={'walk_contact_R', 'walk_pass_R'}, core='full', ghost={'special_release'}, spark={'hit'}, synth={'ko_fall': ('hit', 40)}),
 }[CH]
+LEGSWAP, GHOST, SPARK, SYNTH = CFG.get('legswap', set()), CFG.get('ghost', set()), CFG.get('spark', set()), CFG.get('synth', {})
 POSES = [p for p in POSES if os.path.exists(f'{SRC}/{p}.jpg') or os.path.exists(f'{SRC}/{p}.png')]
 MASTER = [p for p in CFG['master'] if p in POSES]; HEAD_ONLY = CFG['head_only']; MIRROR = CFG['mirror']; TARGET_H = CFG['target']
 FX, STRIP = CFG['fx'], CFG['strip']
 NCOL = 56
 
-def key(path, mirror=False, fx=False, strip=False):
+def key(path, mirror=False, fx=False, strip=False, ghost=False, spark=False):
     im = np.asarray(Image.open(path).convert('RGB')).astype(np.int16)
     if mirror: im = im[:, ::-1]
     r, g, b = im[..., 0], im[..., 1], im[..., 2]
@@ -49,6 +55,16 @@ def key(path, mirror=False, fx=False, strip=False):
             t = a & (b - r > 22) & (g - r > 12); gr = ((r + g + b) // 3); im = im.copy()
             for i in range(3): im[..., i][t] = gr[t]
             fxm[:] = False
+    if ghost:   # translucent afterimages over green: chrome with a green cast -> separate ghost fx (neutral grey-cyan)
+        gh = a & (g > r + 12) & (g > b + 8)
+        gh = ndimage.binary_opening(gh, iterations=1); gh = ndimage.binary_dilation(gh, iterations=1) & a
+        a = a & ~gh; im = im.copy(); lum = (r + b) // 2
+        im[..., 0][gh] = lum[gh] * 0.8; im[..., 1][gh] = lum[gh] * 0.95; im[..., 2][gh] = np.minimum(255, lum[gh] * 1.15)
+        fxm = fxm | gh
+    if spark:   # baked-in hit spark (yellow/white burst): removed, the engine draws its own sparks
+        y_ = a & (r > 190) & (g > 160) & (b < 150) & (r - b > 60)
+        w_ = a & ndimage.binary_dilation(y_, iterations=6) & (r > 225) & (g > 225) & (b > 200)
+        a = a & ~(y_ | w_)
     lab, n = ndimage.label(a); sizes = ndimage.sum(a, lab, range(1, n + 1))
     keep = np.isin(lab, 1 + np.where(sizes >= max(400, sizes.max() * 0.02))[0]); a = keep
     a = ndimage.binary_opening(a, iterations=1)
@@ -70,6 +86,16 @@ def landmarks(rgba):
     if CFG['belt'] == 'gold':
         cnt = [(gold[y].sum(), y) for y in band]; belt_n, belt = max(cnt)
         gx = np.where(gold[belt])[0]; bx = int(np.median(gx)) if len(gx) else int(xs.mean())
+    elif CFG['belt'] == 'dark':   # black mawashi: widest near-black row in the middle band
+        dk = a & (r < 75) & (g < 75) & (b < 80); band2 = range(int(top + H * 0.35), int(top + H * 0.75))
+        def run(row):   # longest contiguous dark run (the mawashi is one wide band; shading is broken up)
+            best = (0, 0); st = None
+            for i, v in enumerate(np.append(row, False)):
+                if v and st is None: st = i
+                elif not v and st is not None: best = max(best, (i - st, st)); st = None
+            return best
+        cnt = [(run(dk[y]), y) for y in band2]; (belt_n, bs), belt = max(cnt)
+        ox_ = np.where(a[belt])[0]; lab_, _ = ndimage.label(a[belt]); seg = np.where(lab_ == lab_[bs])[0]; bx = int((seg.min() + seg.max()) // 2)  # centre of the body segment holding the belt
     else:   # waist: 40% down the figure; centre of the body pixels near the head column (ignores arms)
         belt = int(top + H * 0.40); belt_n = 99; win = int(H * 0.10)
         cols = np.where(a[belt - 4:belt + 4, max(0, hx - win):hx + win].any(0))[0]
@@ -80,7 +106,7 @@ raw = {}; L = {}; FXR = {}
 for p in POSES:
     f = f'{SRC}/{p}.jpg'
     if not os.path.exists(f): f = f'{SRC}/{p}.png'
-    raw[p], FXR[p] = key(f, p in MIRROR, p in FX, p in STRIP); L[p] = landmarks(raw[p])
+    raw[p], FXR[p] = key(f, p in MIRROR, p in FX, p in STRIP, p in GHOST, p in SPARK); L[p] = landmarks(raw[p])
 SRC_CUT = []   # source art touching the image border = the generator cut a limb off: regenerate
 for p in POSES:
     al = raw[p][..., 3] > 0; sides = {'top': al[:2].sum(), 'bottom': al[-2:].sum(), 'left': al[:, :2].sum(), 'right': al[:, -2:].sum()}
@@ -119,6 +145,8 @@ def core_mask(arr, Lm, head_only=False):
     a = arr[..., 3] > 0; m = np.zeros_like(a); H = Lm['low'] - Lm['top']
     y1 = Lm['top'] + int(H * 0.17) if head_only else Lm['belt'] + 6
     hw = int(H * 0.085); tw = int(H * 0.14)
+    if CFG.get('core') == 'full' and not head_only:   # wide bodies (sumo): the whole upper body incl. guard arms
+        m[Lm['top']:y1, :] = True; return m & a
     for y in range(Lm['top'], y1):
         w = hw if y < Lm['top'] + H * 0.15 else tw
         cx = Lm['headx'] if y < Lm['top'] + H * 0.15 else Lm['beltx']
@@ -137,7 +165,17 @@ for p in POSES:
         ys, xs = np.where(mm); ty, tx = ys + dy, xs + dx; ok = (ty >= 0) & (ty < a.shape[0]) & (tx >= 0) & (tx < a.shape[1])
         a[ty[ok], tx[ok]] = M[ys[ok], xs[ok]]
         report['master'][p] = 'head' if p in HEAD_ONLY else 'upper body'
+    if p in LEGSWAP:   # mirror the lower body (below the belt) about the hip column so the leading leg alternates
+        Lp = L[p]; y0 = Lp['belt'] + 8; bx = Lp['beltx']; low = a[y0:].copy(); a[y0:] = 0
+        ys, xs = np.where(low[..., 3] > 0); nx = 2 * bx - xs; ok = (nx >= 0) & (nx < a.shape[1])
+        a[y0 + ys[ok], nx[ok]] = low[ys[ok], xs[ok]]
+        report['master'][p + '_legs'] = 'lower body mirrored about the hip'
     comp[p] = a
+for p, (srcp, ang) in SYNTH.items():   # e.g. ko_fall from hit, tilted back (counter-clockwise = head goes back/left)
+    im = Image.fromarray(comp[srcp]).rotate(ang, resample=Image.NEAREST, expand=True)
+    a = np.asarray(im).copy(); comp[p] = a; L[p] = landmarks(a); scale_src[p] = 1.0; norm[p] = a
+    if p not in POSES: POSES.append(p)
+    report['master'][p] = f'synthesised from {srcp}, rotated {ang} deg'
 # 3. downscale to the world size (box filter on premultiplied colour), alpha threshold, crop
 k = TARGET_H / (L['idle_a']['low'] - L['idle_a']['top'] + 1)
 small = {}

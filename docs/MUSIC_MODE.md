@@ -414,3 +414,15 @@ First used by `shots/neon-dojo-fighter`. The game logic is a pure script, `stage
 - **Per-character settings** live in the `CFG` dict in `uno_sprites.py`: which frames get the master, mirrored poses, target height, and the belt landmark (`gold` belt, or `waist` for outfits without one, e.g. Aura's gown).
 - **Baked-in energy** (cyan pixels with low red and high green and blue, plus the white-hot cores within 4 px of them) is pulled out of the body into a separate `fx` layer for each pose. The engine draws that layer additively with a 3-step flicker, so it reads as an effect and never counts toward the body's silhouette or ground row.
 - **`strip` poses** have the haze deleted instead, and chrome tinted by the haze is pulled back to neutral grey.
+- **Clipping guard:** every atlas cell has a 3 px transparent margin (`cell_pad`). `fighter_qa` fails when:
+  - any opaque body or fx pixel touches its cell edge;
+  - the source art touches the image border (`source_cut`, meaning regenerate);
+  - a drawn sprite (body + fx) leaves the 960x540 screen in a fight.
+  `tools_gifs.py` sizes the canvas from body AND fx extents, and aborts if anything lands on the canvas edge.
+- **TEKKO CFG options:**
+  - `belt='dark'`: the longest contiguous near-black run (the mawashi), with x at the centre of that body segment.
+  - `core='full'`: the whole upper body, including the guard arms, as the master for wide bodies.
+  - `legswap`: the lower body mirrored about the hip, for identical L/R walk sources.
+  - `ghost`: green-cast afterimages become a grey-cyan fx layer.
+  - `spark`: baked-in hit sparks removed.
+  - `synth`: e.g. ko_fall made from hit, rotated back 40°.
