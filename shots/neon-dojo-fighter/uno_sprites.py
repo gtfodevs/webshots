@@ -32,14 +32,20 @@ CFG = {
   # no ko_fall source -> synthesised from hit, tilted back 40 degrees
   'tekko': dict(master=WALK, head_only=['block'], mirror=set(), target=172, belt='dark', fx=set(), strip=set(),
                 legswap={'walk_contact_R', 'walk_pass_R'}, core='full', ghost={'special_release'}, spark={'hit'}, synth={'ko_fall': ('hit', 40)}),
+  # LOTUS: duplicate sources (punch_windup = idle_a, kick_chamber = walk_pass, special_charge = block) are flagged;
+  # special_charge is re-derived from block with a small crouch; petal ring / drifting petals = separate components -> fx
+  'lotus': dict(master=WALK, head_only=['block'], mirror=set(), target=208, belt='waist', fx=set(), strip=set(),
+                legswap={'walk_contact_R', 'walk_pass_R'}, ccfx={'special_release', 'victory'}, air={'special_release'},
+                synth={'ko_fall': ('hit', 40), 'special_charge': ('block', 'crouch')}),
 }[CH]
+CCFX, AIR = CFG.get('ccfx', set()), CFG.get('air', set())
 LEGSWAP, GHOST, SPARK, SYNTH = CFG.get('legswap', set()), CFG.get('ghost', set()), CFG.get('spark', set()), CFG.get('synth', {})
 POSES = [p for p in POSES if os.path.exists(f'{SRC}/{p}.jpg') or os.path.exists(f'{SRC}/{p}.png')]
 MASTER = [p for p in CFG['master'] if p in POSES]; HEAD_ONLY = CFG['head_only']; MIRROR = CFG['mirror']; TARGET_H = CFG['target']
 FX, STRIP = CFG['fx'], CFG['strip']
 NCOL = 56
 
-def key(path, mirror=False, fx=False, strip=False, ghost=False, spark=False):
+def key(path, mirror=False, fx=False, strip=False, ghost=False, spark=False, ccfx=False):
     im = np.asarray(Image.open(path).convert('RGB')).astype(np.int16)
     if mirror: im = im[:, ::-1]
     r, g, b = im[..., 0], im[..., 1], im[..., 2]
@@ -66,7 +72,9 @@ def key(path, mirror=False, fx=False, strip=False, ghost=False, spark=False):
         w_ = a & ndimage.binary_dilation(y_, iterations=6) & (r > 225) & (g > 225) & (b > 200)
         a = a & ~(y_ | w_)
     lab, n = ndimage.label(a); sizes = ndimage.sum(a, lab, range(1, n + 1))
-    keep = np.isin(lab, 1 + np.where(sizes >= max(400, sizes.max() * 0.02))[0]); a = keep
+    if ccfx:   # effect drawn as separate shapes (petal ring, drifting petals): every component but the body -> fx
+        body = lab == 1 + int(np.argmax(sizes)); fxm = fxm | (a & ~body & np.isin(lab, 1 + np.where(sizes >= 30)[0])); a = body
+    keep = np.isin(lab, 1 + np.where(sizes >= max(400, sizes.max() * 0.02))[0]) & a if not ccfx else a; a = keep
     a = ndimage.binary_opening(a, iterations=1)
     # despill: edge band pulls green down to max(r, b)
     edge = a & ~ndimage.binary_erosion(a, iterations=3)
@@ -106,7 +114,7 @@ raw = {}; L = {}; FXR = {}
 for p in POSES:
     f = f'{SRC}/{p}.jpg'
     if not os.path.exists(f): f = f'{SRC}/{p}.png'
-    raw[p], FXR[p] = key(f, p in MIRROR, p in FX, p in STRIP, p in GHOST, p in SPARK); L[p] = landmarks(raw[p])
+    raw[p], FXR[p] = key(f, p in MIRROR, p in FX, p in STRIP, p in GHOST, p in SPARK, p in CCFX); L[p] = landmarks(raw[p])
 SRC_CUT = []   # source art touching the image border = the generator cut a limb off: regenerate
 for p in POSES:
     al = raw[p][..., 3] > 0; sides = {'top': al[:2].sum(), 'bottom': al[-2:].sum(), 'left': al[:, :2].sum(), 'right': al[:, -2:].sum()}
@@ -171,9 +179,13 @@ for p in POSES:
         a[y0 + ys[ok], nx[ok]] = low[ys[ok], xs[ok]]
         report['master'][p + '_legs'] = 'lower body mirrored about the hip'
     comp[p] = a
-for p, (srcp, ang) in SYNTH.items():   # e.g. ko_fall from hit, tilted back (counter-clockwise = head goes back/left)
-    im = Image.fromarray(comp[srcp]).rotate(ang, resample=Image.NEAREST, expand=True)
-    a = np.asarray(im).copy(); comp[p] = a; L[p] = landmarks(a); scale_src[p] = 1.0; norm[p] = a
+for p, (srcp, ang) in SYNTH.items():   # ko_fall from hit, tilted back (counter-clockwise = head goes back/left); 'crouch' = upper body down 3%
+    if ang == 'crouch':
+        o = comp[srcp]; Ls = L[srcp]; c = int((Ls['low'] - Ls['top']) * 0.03); bl = Ls['belt']; a = o.copy(); a[:bl] = 0
+        up = o[:bl]; dst = a[c:bl + c]; m_ = up[..., 3] > 0; dst[m_] = up[m_]; FXR.pop(p, None)
+    else:
+        a = np.asarray(Image.fromarray(comp[srcp]).rotate(ang, resample=Image.NEAREST, expand=True)).copy()
+    a = a.copy(); comp[p] = a; L[p] = landmarks(a); scale_src[p] = 1.0; norm[p] = a
     if p not in POSES: POSES.append(p)
     report['master'][p] = f'synthesised from {srcp}, rotated {ang} deg'
 # 3. downscale to the world size (box filter on premultiplied colour), alpha threshold, crop
@@ -231,7 +243,7 @@ H = max([f['img'].shape[0] for f in frames.values()] + [f['fx']['img'].shape[0] 
 atlas = np.zeros((H, W, 4), np.uint8); meta = {'char': CH, 'world': [960, 540], 'cell_pad': BP, 'frames': {}}; x = 0
 for p, f in frames.items():
     h, w = f['img'].shape[:2]; atlas[BP:BP + h, x + BP:x + BP + w] = f['img']
-    meta['frames'][p] = dict(rect=[x, 0, w + 2 * BP, h + 2 * BP], ax=f['ax'] + BP, ay=f['ay'] + BP, hip=f['hip'], air=p == 'ko_fall', down=p == 'ko_down'); x += w + 2 * BP + pad
+    meta['frames'][p] = dict(rect=[x, 0, w + 2 * BP, h + 2 * BP], ax=f['ax'] + BP, ay=f['ay'] + BP, hip=f['hip'], air=p == 'ko_fall' or p in AIR, down=p == 'ko_down'); x += w + 2 * BP + pad
     if 'fx' in f:
         fi = f['fx']['img']; fh, fw = fi.shape[:2]; atlas[BP:BP + fh, x + BP:x + BP + fw] = fi
         meta['frames'][p]['fx'] = dict(rect=[x, 0, fw + 2 * BP, fh + 2 * BP], ox=f['fx']['ox'], oy=f['fx']['oy']); x += fw + 2 * BP + pad

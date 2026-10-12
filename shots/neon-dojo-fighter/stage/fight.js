@@ -78,6 +78,19 @@ F.SPRITE_ANIMS = {
     ko_down: { frames: ['ko_down'], durations: [1000] },
     victory: { frames: ['idle_br1', 'victory'], durations: [120, 900] },
   },
+  // LOTUS: duplicates in the source set (see ASSET flags); special_release is airborne (lift = px above the ground)
+  lotus: {
+    idle:    { loop: 1, frames: ['idle_a', 'idle_br1', 'idle_br2', 'idle_br1'], durations: [300, 180, 340, 180] },
+    walk:    { loop: 1, frames: ['walk_contact_R', 'walk_pass_R', 'walk_contact_L', 'walk_pass_L'], durations: [130, 110, 130, 110] },
+    punch:   { frames: ['punch_windup', 'punch_extend'], durations: [110, 220] },
+    kick:    { frames: ['kick_chamber', 'kick_extend'], durations: [120, 240] },
+    special: { frames: ['special_charge', 'special_release'], durations: [240, 380], lift: [0, 14] },
+    block:   { frames: ['block'], durations: [400] },
+    hit:     { frames: ['hit'], durations: [350] },
+    ko_fall: { frames: ['ko_fall'], durations: [600] },
+    ko_down: { frames: ['ko_down'], durations: [1000] },
+    victory: { frames: ['idle_br1', 'victory'], durations: [120, 900] },
+  },
   // Aura: no idle_b (breath from the idle_a master); cyan energy is a separate additive fx layer per pose
   aura: {
     idle:    { loop: 1, frames: ['idle_a', 'idle_br1', 'idle_br2', 'idle_br1'], durations: [300, 180, 340, 180] },
@@ -257,6 +270,7 @@ F.build = function (TL) {
     if (f.walkOff && side === 1 && f.ko && t > f.ko.t + 0.5) { pick('walk', t - f.ko.t, 1); x -= Math.round((t - f.ko.t - 0.5) * 60); st.flip = true; }
     if (f.standoff && t >= f.standoff[0] && t < f.standoff[1]) { pick('idle', t - f.standoff[0], 1); x = home + dir * 30; }
     if (st.anim === 'ko_fall') st.air = 1;
+    { const SA = F.SPRITE_ANIMS[me] && F.SPRITE_ANIMS[me][st.anim]; if (SA && SA.lift && SA.lift[st.frame]) { st.air = 1; st.lift = SA.lift[st.frame]; } }
     st.x = x; st.y = f.ground - (st.lift || 0);
     return st;
   }

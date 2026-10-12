@@ -83,7 +83,8 @@ for (const f of Object.values(E.fights)) {
         for (const [x0, x1, y0, y1] of boxes) { const ax = st.flip ? fr.rect[2] - 1 - fr.ax : fr.ax, dx = Math.round(st.x * Z) - ax, dy = Math.round(st.y * Z) - fr.ay;
           const L = st.flip ? dx + fr.rect[2] - x1 : dx + x0, Rr = st.flip ? dx + fr.rect[2] - x0 : dx + x1;
           if ((L < 0 || Rr > 960 || dy + y0 < 0) && !gfail.has('clip' + st.char + pose)) { gfail.add('clip' + st.char + pose); fail(`${f.id} t=${t.toFixed(2)}: ${st.char} ${pose} drawn outside the screen (x ${L}..${Rr}, top ${dy + y0}) - limb clipped`); } } }
-      if (st.air && st.anim !== 'ko_fall') fail(`${f.id}: ${st.char} airborne outside ko_fall`);
+      const SA = F.SPRITE_ANIMS && F.SPRITE_ANIMS[st.char] && F.SPRITE_ANIMS[st.char][st.anim];
+      if (st.air && st.anim !== 'ko_fall' && !(SA && SA.lift && SA.lift[st.frame])) fail(`${f.id}: ${st.char} airborne outside ko_fall`);
       const key = st.anim + st.frame + ':' + st.x; const id = side; if (st.anim === 'idle') { still[id] = key === lastKey[id] ? (still[id] || 0) + dt : 0; if (still[id] > 0.6) { fail(`${f.id} t=${t.toFixed(2)}: ${st.char} idle frozen >0.6s`); still[id] = -99; } } lastKey[id] = key;
     }
   }
