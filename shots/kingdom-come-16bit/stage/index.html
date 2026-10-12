@@ -303,7 +303,7 @@ function endScene(t, t0) {
   if (Math.floor(t * 2) % 2) text(g, 'THANK YOU FOR PLAYING', W / 2, 254, '#ff3fd2', 1, 'center');
 }
 function partyScene(t, t0) {
-  danceHall(t, t0 + 99, 'party');
+  danceHall(t, t0 - 99, 'party'); // no BONUS STAGE stamp in the party
   // confetti pixels
   for (let i = 0; i < 60; i++) { const x = R((hash(i) * W + Math.sin(t + i) * 8)), y = R(((hash(i + 5) * H) + t * (20 + hash(i) * 30)) % H); g.fillStyle = ['#ff3fd2', '#5ee7ff', '#ffe36b', '#fff'][i % 4]; g.fillRect(x, y, 2, 2); }
   const d = t - t0;
