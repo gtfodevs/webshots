@@ -14,46 +14,98 @@ g = np.asarray(gl) > 127
 Image.fromarray(np.dstack([np.full(g.shape + (3,), 255, np.uint8), (g * 255).astype(np.uint8)]), 'RGBA').save(os.path.join(OUT, 'font8.png'))
 print('font ok ->', OUT)
 
-# ---------- stage art: rooftop dojo (fight 1) -> parallax layers at 960x540 ----------
-# Layers (back to front): sky (full picture, also fills any edge a nearer layer exposes), skyline band,
-# gate + side pagodas + railing/crowd, crowd band (bobs 1px on the beat), railing band (covers the bob gap), floor.
+# ---------- stage art -> parallax layers at 960x540 (shared builder, used by EVERY stage) ----------
+# RULE (Jason): every animated background figure (crowd, monks, spectators...) is cut out INDIVIDUALLY and the
+# stage is rebuilt on an INPAINTED CLEAN PLATE, so a figure that bobs never drags or duplicates scenery.
+# Bands that bob are not allowed. fighter_qa.mjs checks every stage json for this automatically.
+from scipy import ndimage
 SD = os.path.join(ROOT, 'channels/progressiveslop/assets/neon-dojo-fighter/source/stages')
-src = os.path.join(SD, 'rooftop_dojo.jpg')
-if os.path.exists(src):
-    im = np.asarray(Image.open(src).convert('RGB').resize((960, 540), Image.LANCZOS))
-    def layer(mask, name):
-        out = np.zeros((540, 960, 4), np.uint8); out[..., :3] = im; out[..., 3] = mask * 255
-        Image.fromarray(out).save(os.path.join(OUT, f'stage-rooftop-{name}.png'))
-    Y, X = np.mgrid[0:540, 0:960]
-    gate = ((X >= 286) & (X <= 690) & (Y >= 95) & (Y < 300) & ~((X > 410) & (X < 560) & (Y > 222))) | (((X < 84) | (X > 876)) & (Y >= 30) & (Y < 300)) | ((Y >= 222) & (Y < 300) & ((X < 140) | (X > 820) | ((X > 280) & (X < 345)) | ((X > 630) & (X < 690))))
-    front = (Y >= 300) & (Y < 422)
-    floor = Y >= 422
-    skyline = (Y >= 120) & (Y < 300) & ~gate
-    np.asarray(Image.fromarray(im)).copy()
-    Image.fromarray(im).save(os.path.join(OUT, 'stage-rooftop-sky.png'))
-    layer(skyline, 'skyline'); layer(gate | front, 'gate'); layer(floor, 'floor')
-    crowd = (Y >= 300) & (Y < 372) & ~((X > 240) & (X < 308)) & ~((X > 650) & (X < 722)); layer(crowd, 'crowd')
-    layer((Y >= 368) & (Y < 422), 'rail')
-    json.dump({'ground': 476, 'floor_top': 422, 'lanterns': [[33, 258, 16], [77, 284, 12], [117, 289, 11], [315, 254, 17], [657, 254, 17], [843, 288, 11], [882, 284, 12], [927, 258, 16]],
-               'layers': [['sky', 0.1], ['skyline', 0.3], ['gate', 0.6], ['crowd', 0.6, 'bob'], ['rail', 0.6], ['floor', 1.0]]}, open(os.path.join(OUT, 'stage-rooftop.json'), 'w'), indent=1)
-    print('stage rooftop ok')
 
-# ---------- stage art: lotus temple (fight 2) ----------
-src = os.path.join(SD, 'lotus_temple.jpg')
-if os.path.exists(src):
+def inpaint(im, mask, iters=400):
+    """Clean plate: fill masked pixels by normalized diffusion from the surrounding scenery (no OpenCV needed)."""
+    out = im.astype(np.float32).copy(); known = (~mask).astype(np.float32)
+    acc = out * known[..., None]; w = known.copy(); k = np.ones((5, 5), np.float32)
+    fill = mask.copy()
+    for _ in range(iters):
+        if not fill.any(): break
+        num = np.stack([ndimage.convolve(acc[..., c], k, mode='nearest') for c in range(3)], -1); den = ndimage.convolve(w, k, mode='nearest')
+        ok = fill & (den > 0.5)
+        out[ok] = num[ok] / den[ok, None]; acc[ok] = out[ok]; w[ok] = 1; fill &= ~ok
+    return np.clip(out, 0, 255).astype(np.uint8)
+
+def find_figures(im, box, keep=(), min_area=250, min_h=24):
+    """Silver robot figures (low saturation, bright) inside box -> one mask per figure; wide merged blobs are split."""
+    x0, y0, x1, y1 = box; sub = im[y0:y1, x0:x1].astype(int); mx, mn = sub.max(2), sub.min(2)
+    m = (mx > 70) & (mx - mn < 60)
+    m = ndimage.binary_closing(m, iterations=2); m = ndimage.binary_fill_holes(m); m = ndimage.binary_opening(m, iterations=1)
+    lab, n = ndimage.label(m); objs = ndimage.find_objects(lab); comps = []
+    for i, sl in enumerate(objs):
+        cm = lab[sl] == i + 1; h, w = cm.shape
+        if cm.sum() < min_area or h < min_h: continue
+        cx, cy = x0 + (sl[1].start + sl[1].stop) / 2, y0 + (sl[0].start + sl[0].stop) / 2
+        if any(k[0] <= cx <= k[2] and k[1] <= cy <= k[3] for k in keep): continue   # declared static scenery
+        px = sub[sl][cm]
+        if px[:, 0].mean() > px[:, 2].mean() - 2: continue   # warm stone statues (lions) are static scenery, not figures
+        comps.append((sl, cm))
+    if not comps: return []
+    med = float(np.median([c[1].shape[1] for c in comps if c[1].shape[1] < 90] or [40]))
+    figs = []
+    for sl, cm in comps:
+        h, w = cm.shape; n_ = max(1, int(round(w / med)))
+        for j in range(n_):
+            cs = cm[:, j * w // n_:(j + 1) * w // n_]
+            if cs.sum() < min_area * 0.6: continue
+            ys, xs = np.where(cs); fx0 = sl[1].start + j * w // n_ + x0; fy0 = sl[0].start + y0
+            fm = np.zeros(im.shape[:2], bool); fm[fy0 + ys, fx0 + xs] = True
+            # extend down through the railing gaps: the figure's dimmer lower body is part of the same cutout
+            lx0, lx1 = fx0 + xs.min(), fx0 + xs.max() + 1; ly = fy0 + ys.max()
+            seg = im[ly:y1, lx0:lx1].astype(int)
+            fm[ly:y1, lx0:lx1] |= (seg.max(2) > 35) & (seg.max(2) - seg.min(2) < 45) & (seg[..., 0] <= seg[..., 2] + 6)
+            figs.append(ndimage.binary_dilation(fm, iterations=3))
+    return figs
+
+def build_stage(key, srcname, cfg):
+    src = os.path.join(SD, srcname)
+    if not os.path.exists(src): return
     im = np.asarray(Image.open(src).convert('RGB').resize((960, 540), Image.LANCZOS))
     Y, X = np.mgrid[0:540, 0:960]
-    def layer(mask, name):
-        out = np.zeros((540, 960, 4), np.uint8); out[..., :3] = im; out[..., 3] = mask * 255
-        Image.fromarray(out).save(os.path.join(OUT, f'stage-temple-{name}.png'))
-    Image.fromarray(im).save(os.path.join(OUT, 'stage-temple-sky.png'))
-    trees = ((Y < 262) & ((X < 240) | (X > 640))) | ((Y >= 120) & (Y < 262)) | ((X > 330) & (X < 680) & (Y >= 40) & (Y < 262))
+    figs = [f for box in cfg.get('figure_boxes', []) for f in find_figures(im, box, cfg.get('static', []))]
+    for k in cfg.get('static', []):   # static scenery is never part of a figure cutout
+        for f in figs: f[k[1]:k[3], k[0]:k[2]] = False
+    allf = np.zeros(im.shape[:2], bool)
+    for f in figs: f &= ~allf; allf |= f   # exclusive masks: each pixel belongs to exactly one figure
+    plate = inpaint(im, ndimage.binary_dilation(allf, iterations=1)) if figs else im
+    def save(arr_rgb, mask, name):
+        out = np.zeros((540, 960, 4), np.uint8); out[..., :3] = arr_rgb; out[..., 3] = mask * 255
+        Image.fromarray(out).save(os.path.join(OUT, f'stage-{key}-{name}.png'))
+    layers = []
+    for name, sp, mask in cfg['layers'](X, Y):
+        if mask is None: Image.fromarray(plate).save(os.path.join(OUT, f'stage-{key}-{name}.png'))
+        else: save(im, mask & ~allf, name) if name in cfg.get('occluders', []) else save(plate, mask, name)   # occluders keep the original art
+        layers.append([name, sp])
+    meta_f = []
+    for i, f in enumerate(figs):   # each figure: its own crop of the ORIGINAL art + rect, drawn over the clean plate
+        ys, xs = np.where(f); fx0, fy0, fx1, fy1 = xs.min(), ys.min(), xs.max() + 1, ys.max() + 1
+        out = np.zeros((fy1 - fy0, fx1 - fx0, 4), np.uint8); out[..., :3] = im[fy0:fy1, fx0:fx1]; out[..., 3] = f[fy0:fy1, fx0:fx1] * 255
+        Image.fromarray(out).save(os.path.join(OUT, f'stage-{key}-fig{i}.png'))
+        meta_f.append([int(fx0), int(fy0), int(fx1 - fx0), int(fy1 - fy0), i % 2])
+    meta = dict(cfg['meta'], layers=layers, plate=True, figures=meta_f, figure_layer=cfg['figure_layer'], figure_speed=cfg['figure_speed'],
+                occluders=cfg.get('occluders', []))
+    json.dump(meta, open(os.path.join(OUT, f'stage-{key}.json'), 'w'), indent=1)
+    print(f'stage {key} ok: {len(figs)} figures cut out over an inpainted plate')
+
+def rooftop_layers(X, Y):
+    gate = ((X >= 286) & (X <= 690) & (Y >= 95) & (Y < 300) & ~((X > 410) & (X < 560) & (Y > 222))) | (((X < 84) | (X > 876)) & (Y >= 30) & (Y < 300)) | ((Y >= 222) & (Y < 300) & ((X < 140) | (X > 820) | ((X > 280) & (X < 345)) | ((X > 630) & (X < 690))))
+    return [('sky', 0.1, None), ('skyline', 0.3, (Y >= 120) & (Y < 300) & ~gate), ('gate', 0.6, gate | ((Y >= 300) & (Y < 422))),
+            ('rail', 0.6, (Y >= 368) & (Y < 422)), ('floor', 1.0, Y >= 422)]
+build_stage('rooftop', 'rooftop_dojo.jpg', dict(layers=rooftop_layers, figure_boxes=[[20, 296, 940, 420]], figure_layer='gate', figure_speed=0.6,
+            occluders=['rail'], static=[[246, 300, 302, 420], [660, 300, 708, 420]],   # stone lions don't move   # drawn after the figures: the railing stays in front of the crowd
+            meta={'ground': 476, 'floor_top': 422, 'lanterns': [[33, 258, 16], [77, 284, 12], [117, 289, 11], [315, 254, 17], [657, 254, 17], [843, 288, 11], [882, 284, 12], [927, 258, 16]]}))
+
+def temple_layers(X, Y):
     mid = (Y >= 225) & (Y < 425)
-    layer(trees & ~mid, 'trees'); layer(mid, 'mid'); layer(Y >= 425, 'floor')
-    layer((Y >= 244) & (Y < 292) & (X > 312) & (X < 642), 'monks')
-    json.dump({'ground': 476, 'floor_top': 425,
-               'layers': [['sky', 0.1], ['trees', 0.3], ['mid', 0.6], ['monks', 0.6, 'bob'], ['floor', 1.0]],
-               'shimmer': [0, 330, 960, 92, 0.6], 'petals': 22,
-               'lanterns': [[127, 235, 10], [281, 231, 8], [504, 204, 9], [775, 244, 10], [856, 244, 10]]},
-              open(os.path.join(OUT, 'stage-temple.json'), 'w'), indent=1)
-    print('stage temple ok')
+    trees = ((Y < 262) & ((X < 240) | (X > 640))) | ((Y >= 120) & (Y < 262)) | ((X > 330) & (X < 680) & (Y >= 40) & (Y < 262))
+    return [('sky', 0.1, None), ('trees', 0.3, trees & ~mid), ('mid', 0.6, mid), ('floor', 1.0, Y >= 425)]
+build_stage('temple', 'lotus_temple.jpg', dict(layers=temple_layers, figure_boxes=[[312, 236, 642, 314]], figure_layer='mid', figure_speed=0.6,
+            meta={'ground': 476, 'floor_top': 425, 'shimmer': [0, 330, 960, 92, 0.6], 'petals': 22,
+                  'lanterns': [[127, 235, 10], [281, 231, 8], [504, 204, 9], [775, 244, 10], [856, 244, 10]]}))

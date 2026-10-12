@@ -132,6 +132,7 @@ Always keep chrome, red eyes and headphones. Don't put a gold chest plate or "1"
 - [ ] Real parallax: 4+ layers plus foreground, distinct speeds, no mirroring.
 - [ ] Hit flashes last 1–2 frames, and hits are few.
 - [ ] No chroma fringe: key ≈ #E8157A, matte eroded, edges despilled.
+- [ ] Animated background figures (crowds, monks, spectators, anything that bobs or moves) are cut out one by one over an inpainted clean plate. Never bob a whole band. This is the default in `build_stage()` and fighter QA checks it on every stage.
 
 ### v3: connected cut-out rigs (replaces spliced legs)
 

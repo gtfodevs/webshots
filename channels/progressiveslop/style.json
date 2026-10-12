@@ -23,5 +23,6 @@
  "do": ["Uno and Aura in every song", "a recurring cast per song with a small arc", "cuts on bars", "a repeating chorus routine", "the song's cover somewhere (credits)"],
  "dont": ["living creatures", "flat 2D cartoon or chibi styles", "non-chrome characters", "eyes that are not red", "more than 3 typefaces", "text over faces"],
  "references": ["assets/kingdom-come-v4/source/style-sheet.jpg (approved style anchor)", "assets/kingdom-come-v4/source/uno-sheet.jpg", "assets/kingdom-come-v4/source/aura-sheet.jpg"],
- "imagine_import": "imagine/manifest.json"
+ "imagine_import": "imagine/manifest.json",
+ "stage_rules": { "figure_cutouts": "individual", "note": "Every animated background figure (crowd, monks, spectators, anything that bobs or moves) is masked individually over an inpainted clean plate; whole-band bobbing is forbidden. Default in build_assets.build_stage(); enforced on every stage by fighter_qa.mjs." }
 }

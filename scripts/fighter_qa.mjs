@@ -5,6 +5,7 @@
 // a master core that changes between frames, too many hits per bar, montage-only fighters using moves they don't have.
 import { readFileSync, existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import vm from 'node:vm';
+import { readdirSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 const shot = process.argv[2], SD = `shots/${shot}/stage`, OUT = `out/${shot}/qa`; mkdirSync(OUT, { recursive: true });
 const ctx = {}; vm.createContext(ctx); vm.runInContext(readFileSync(`${SD}/fight.js`, 'utf8'), ctx); const F = ctx.FIGHT;
@@ -67,6 +68,36 @@ for (const c of Object.keys(F.CHARS)) {
 }
 
 // 3. sampled fights: grounded feet, legal moves, idle never frozen
+// ---- stage figure rule (every stage, automatic): animated background figures are individual cutouts over an inpainted clean plate
+{ const PX = `${SD}/assets/px`, keys = new Set(readdirSync(PX).filter((n) => /^stage-[^-]+\.json$/.test(n)).map((n) => n.slice(6, -5)));
+  for (const S of Object.values(F.STAGES || {})) if (S.art) { if (!keys.has(S.art)) fail(`stage ${S.art}: stage-${S.art}.json missing`); keys.add(S.art); }
+  if (/fx\s*===\s*'bob'/.test(src)) fail('stage code bobs whole layers (band bob); figures must be individual cutouts');
+  for (const k of keys) { const jp = `${PX}/stage-${k}.json`; if (!existsSync(jp)) continue; const M = JSON.parse(readFileSync(jp, 'utf8'));
+    (M.layers || []).forEach((l) => l[2] === 'bob' && fail(`stage ${k}: layer ${l[0]} bobs as a band; cut its figures out individually`));
+    if (!M.plate) fail(`stage ${k}: not built on an inpainted clean plate (plate:true missing)`);
+    if (!Array.isArray(M.figures)) { fail(`stage ${k}: no figures list (declare figures:[] only if the stage has no animated figures)`); continue; }
+    if (M.figures.length && !(M.layers || []).some((l) => l[0] === M.figure_layer)) fail(`stage ${k}: figure_layer ${M.figure_layer} is not a layer`);
+    const py = spawnSync('python3', ['-c', `
+import json,sys,numpy as np
+from PIL import Image
+k,px=sys.argv[1],sys.argv[2]; M=json.load(open(f'{px}/stage-{k}.json')); out=[]
+plate=np.asarray(Image.open(f"{px}/stage-{k}-{M['layers'][0][0]}.png").convert('RGB')).astype(int)
+masks=[]
+for i,(x,y,w,h,p) in enumerate(M['figures']):
+    try: f=np.asarray(Image.open(f'{px}/stage-{k}-fig{i}.png').convert('RGBA')).astype(int)
+    except Exception: out.append(f'fig{i}: png missing'); continue
+    a=f[...,3]>0
+    if f.shape[:2]!=(h,w): out.append(f'fig{i}: size {f.shape[1]}x{f.shape[0]} != rect {w}x{h}')
+    if a.mean()>0.92: out.append(f'fig{i}: cutout is a filled rectangle, not a figure mask')
+    d=np.abs(plate[y:y+h,x:x+w][a]-f[...,:3][a]).mean()
+    if d<10: out.append(f'fig{i}: plate under the figure still shows it (diff {d:.1f}); inpaint the clean plate')
+    m=np.zeros(plate.shape[:2],bool); m[y:y+h,x:x+w]=a; masks.append((i,m))
+for (i,a) in masks:
+    for (j,b) in masks:
+        if j>i and (a&b).sum()>0.2*min(a.sum(),b.sum()): out.append(f'fig{i}/fig{j}: masks overlap >20% (not individual figures)')
+print(json.dumps(out))`, k, PX], { encoding: 'utf8' });
+    if (py.status !== 0) fail(`stage ${k}: figure check crashed: ${py.stderr.slice(-200)}`); else JSON.parse(py.stdout).forEach((m) => fail(`stage ${k}: ${m}`));
+    notes.push(`stage ${k}: ${M.figures.length} figure cutouts over a clean plate`); } }
 const dt = 1 / 30;
 for (const f of Object.values(E.fights)) {
   const used = new Set(), gfail = new Set(); let lastKey = {}, still = {};
