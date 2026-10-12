@@ -57,6 +57,10 @@ function frameOf(anim, t, o = {}) {
   const a = S[anim]; const n = a.frames.length;
   if (o.frame != null) return Math.min(n - 1, o.frame);
   if (o.beat) { const b = beatIdx(t); return ((b * o.beat + Math.floor(beatPhase(t) * o.beat) + (o.seed | 0)) % n + n) % n; }
+  if (a.durations && !o.fps) {               // hand-timed loops (holds at the top / bottom of a breath)
+    const tot = a.durations.reduce((p, q) => p + q, 0); let ms = (((t - (o.t0 || 0)) * 1000 + (o.seed || 0) * 137) % tot + tot) % tot, i = 0;
+    while (ms >= a.durations[i]) { ms -= a.durations[i]; i++; } return Math.min(n - 1, i);
+  }
   const k = Math.floor((t - (o.t0 || 0)) * (o.fps || a.fps) + (o.seed || 0));
   return o.once ? clamp(k, 0, n - 1) : ((k % n) + n) % n;
 }
@@ -298,7 +302,7 @@ function drawFight(fname, bStart, t, G, opts = {}) {
   }
   // ---- heroes ----
   for (const id of ['aura', 'uno']) {
-    const ev = lastEv(evs, id, lb); const d = ev ? lb - ev[0] : 9; const hx = heroX(id); let x = hx, anim = id === 'uno' ? 'uno_side' : 'aura_walk', o = id === 'uno' ? { fps: 3 } : { frame: 0 }, air = 0;
+    const ev = lastEv(evs, id, lb); const d = ev ? lb - ev[0] : 9; const hx = heroX(id); let x = hx, anim = id === 'uno' ? 'uno_stand' : 'aura_walk', o = id === 'uno' ? {} : { frame: 0 }, air = 0;
     const act = ev && d < 1.0 ? ev[2] : 'idle';
     if (act === 'block') { anim = id === 'uno' ? 'uno_ready' : 'aura_shield'; o = { frame: 0 }; x = hx - R(clamp(d / 0.2, 0, 1) * 3); if (d < 0.25) fx.push(() => spr(g, 'spark', hx + 20, G - 30, t, { t0: T(ev[0]), once: true })); }
     else if (act === 'counter') { const tgt = ev[3]; const tx = (pos[tgt] ?? (tgt === 'B' ? 300 : 250)) - 34; const k = Math.sin(Math.PI * clamp(d / 0.8, 0, 1)); x = R(hx + (tx - hx) * k); anim = 'uno_counter'; o = { t0: T(ev[0]), once: true, fps: 12 }; }
@@ -315,23 +319,31 @@ function drawFight(fname, bStart, t, G, opts = {}) {
 }
 
 // a whole story stage: walk segments (scroll with planted feet) + fights; returns screen shake
+// walk schedule (from the frame-by-frame walk): uneven frame holds per step + per-frame scroll that pins the planted foot
+const WFRAC = S.uno_walk.step_frac || [0.25, 0.25, 0.25, 0.25];
+const WSCR = (S.uno_walk.step_scroll || [STRIDE / 4, STRIDE / 4, STRIDE / 4, STRIDE / 4]).reduce((p, d) => (p.push(p[p.length - 1] + d), p), [0]);
+function walkAt(bw) {            // bw = beats walked in this segment -> walk frame + distance travelled (px)
+  const st = Math.floor(bw), ph = bw - st; let k = 0, acc = 0;
+  while (k < 3 && ph >= acc + WFRAC[k]) { acc += WFRAC[k]; k++; }
+  return { frame: (st % 2) * 4 + k, dist: st * STRIDE + WSCR[k] };
+}
 function storyStage(name, t0, t) {
   const P = stagePlan(name, t0); const st = P.st; const G = GROUND[st.bg]; const B = beatPos(t);
   // walked beats so far (quantized to the 4-frames-per-beat walk cycle so the ground moves with the feet)
   let walked = 0, cur = null;
-  for (const s of P.segs) { if (B >= s.b) { cur = s; if (s.kind === 'walk') walked += Math.min(s.len, Math.floor((B - s.b) * 4) / 4); } }
+  for (const s of P.segs) { if (B >= s.b) { cur = s; if (s.kind === 'walk') walked += B - s.b >= s.len ? s.len * STRIDE : walkAt(B - s.b).dist; } }
   if (B < P.b0) cur = { kind: 'pre', b: P.b0 };
-  const cam = walked * STRIDE;
+  const cam = R(walked);
   let shake = 0;
   if (st.bg === 'forest') parallax(cam, st.dark); else bgStatic(st.bg);
   if (!cur || cur.kind === 'walk' || cur.kind === 'pre') {
     const walking = cur && cur.kind === 'walk';
-    const wb = walking ? Math.floor((B - cur.b) * 4) : 0;            // walk frame: 4 per beat, contact on the beat
+    const w = walking ? walkAt(B - cur.b) : { frame: 0, dist: 0 };   // contact on the beat, contacts held longer
     let ux = LAY.uno, ax = LAY.aura;
-    if (st.walkin && walking) { const rem = cur.len - Math.floor((B - cur.b) * 4) / 4; ux -= R(rem * STRIDE); ax -= R(rem * STRIDE); }
+    if (st.walkin && walking) { const rem = cur.len * STRIDE - w.dist; ux -= R(rem); ax -= R(rem); }
     else if (st.walkin && !walking) { ux -= st.walkin * STRIDE; ax -= st.walkin * STRIDE; }
-    ground('aura_walk', ax, G, t, walking ? { frame: (wb + 2) % 8 } : { frame: 0 });
-    ground('uno_walk', ux, G, t, walking ? { frame: wb % 8 } : { frame: 0 });
+    if (walking) ground('aura_walk', ax, G, t, { frame: (w.frame + 4) % 8 }); else ground('aura_walk', ax, G, t, { frame: 0 });
+    if (walking) ground('uno_walk', ux, G, t, { frame: w.frame }); else ground('uno_stand', ux, G, t);
     if (st.bg === 'forest') ground('jester_hop', ax - 50, G, t, walking ? { beat: 4 } : { frame: 0 });
   } else if (cur.kind === 'fight') shake = drawFight(cur.fight, cur.b, t, G);
   else if (cur.kind === 'boss_intro') {

@@ -169,3 +169,44 @@ Checklist additions:
 - [ ] Legs travel through the stride (thigh about ±30°, knee bend about 60° on the passing frame, feet lift), and the world scrolls at the stride so planted feet don't slide.
 - [ ] Generated creature frames are duplicates too: rig the bat and spider, and verify silhouette change and joint ranges with QA.
 - [ ] Use close-up cut-ins at key beats (6–10 in total), as separate larger art with their own loops.
+
+## THE sprite method (v4): per-pose art, shared master upper body, swapped limbs, shared palette, bob table
+
+Jason prefers frame-by-frame art in the original detailed style. Rigs read as "dumbed down", and raw AI poses "boil" because every frame redraws the head, torso and cloak slightly differently. Classic sprite practice fixes both (`shots/kingdom-come-16bit/walk_v4.py`):
+
+1. **Generate one image per pose** in the detailed style on pure #00FF00, same framing and scale, in cycle order.
+   - Walk: contact R, down R, passing R (knee up), up R, contact L, down L, passing L, up L.
+2. **Key and despill:**
+   - background = green dominance;
+   - keep the large components, erode the fringe ring by 1 px;
+   - clamp green to max(r, b).
+3. **Landmarks per frame:**
+   - head top and head-centre x;
+   - belt row = the widest gold row inside the torso column band;
+   - lowest pixel.
+
+   Normalize scale by belt-to-head distance, and confirm it with head width; one AI frame had its belt drawn higher, and head width showed the scale was actually identical.
+4. **One master upper body** from the cleanest frame: a core polygon around the head, headphones, torso, pendant, belt and shoulder cape, relative to (head x, belt).
+5. **Per frame, composite** (each layer box-downscaled to final size *separately*, then placed at integer offsets so master pixels stay identical):
+   - **Lower body** (from the belt line down: hips, legs, feet, blade, cloak hem) from that pose, grounded on one fixed ground row and x-aligned by its head x. If the pose's hips sit below the master belt, the hip row is stretched up so nothing detaches. The seam hides under the gold belt.
+   - **Arms, sword hilt and upper cloak edge** from that pose, minus the pose's own torso core, riding with the master torso.
+   - **Master core** on top at belt = ground − median leg length + `BOB[i]`.
+6. **Bob table:** a triangle, not a sine: `[1, 2, -1, 0]` per step (low on contact/down, high on passing), about 3 px at a 72 px sprite.
+7. **Timing:** hold contacts longer: `STEP_FRAC = [0.31, 0.23, 0.23, 0.23]` of a beat (≈140/100/100/100 ms at 10 fps).
+8. **Pin the planted foot:** measure the stance-foot x per frame from the art (`foot_travel`). The world scrolls by those per-frame deltas, so the scroll is uneven: `step_scroll = [6.75, 14, 14.25, 4.25]` px with both halves averaged, 39.25 px per beat. Residual slide is ≤ 2 px. The engine's `walkAt(beatsWalked)` returns the frame and distance; rigged walkers sharing the screen use the same schedule (`walk_targets(..., sched=)`).
+9. **One shared palette** (the shot's `pal2`), despeckle, and one 1 px outline after compositing.
+10. **Pack with `rig: True`** (shared canvas, union crop) so the torso never shifts between frames.
+11. **Animator review:** a 10 fps GIF with the holds, a strip, an onion skin (the torso must be one solid ghost, legs fanning) and a GIF crossing the real background.
+
+**Idle (breathing):** same master, with the lower body and arms from the most upright pose (passing). Chest and shoulders rise 1 px, the head follows a frame later, the cloak hem sways 1 px, and the sword is steady. 4 frames at 300/180/340/180 ms (`durations` in the meta; holds at top and bottom). It's the default whenever a story hero isn't moving (`uno_stand`).
+
+**QA:**
+- `master_core` walks: the head/torso core region must be ≥ 97% identical to frame 0 after the bob offset (currently 100%).
+- `idles`: must have ≥ 3 frames and change ≥ 1% between frames.
+
+Checklist additions:
+- [ ] Rigs look dumbed down: use the detailed frame-by-frame poses with the master upper body.
+- [ ] No boiling torso: head and torso pixels are identical apart from the bob; only legs, arms and the cloak hem change.
+- [ ] The bob is a triangle (2–3 px); contacts are held longer; frame 8 flows into frame 1.
+- [ ] Planted foot pinned: the scroll follows the measured foot travel.
+- [ ] Idle heroes breathe (never a frozen frame).

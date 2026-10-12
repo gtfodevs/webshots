@@ -91,24 +91,6 @@
   "walkB"
  ],
  "rig": {
-  "uno_walk": {
-   "hipA": [
-    50,
-    "thigh swing deg"
-   ],
-   "kneeA": [
-    45,
-    "knee bend deg"
-   ],
-   "liftA": [
-    3,
-    "foot lift px"
-   ],
-   "arm": [
-    30,
-    "arm swing deg"
-   ]
-  },
   "aura_walk": {
    "hipA": [
     50,
@@ -191,5 +173,8 @@
   "wolf_attack",
   "spider_walk",
   "bat_fly"
+ ],
+ "idles": [
+  "uno_stand"
  ]
 }

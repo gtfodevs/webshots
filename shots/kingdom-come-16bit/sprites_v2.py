@@ -605,3 +605,12 @@ def _pad(f): return _fit(f, SW_, SH_, f.shape[1] // 2, f.shape[0] // 2 + max(0, 
 anims['cut_uno_super'] = {'fps': 8, 'frames': [_pad(_us), _pad(_us2), _pad(_us2)], 'air': True}
 def _clr(f, x1=26): f = f.copy(); f[:, :x1] = 0; return f
 anims['cut_aura_super'] = {'fps': 8, 'frames': [_clr(_pad(_as)), _clr(_pad(_as2)), _clr(_pad(_as2))], 'air': True}
+
+# ================= v4: frame-by-frame Uno walk + breathing idle (master upper body, swapped limbs) =================
+exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'walk_v4.py')).read().replace('from pixel_sprites import', 'from pixel_sprites import build_palette as _bp; from pixel_sprites import'), _v4 := {'__file__': os.path.join(os.path.dirname(os.path.abspath(__file__)), 'walk_v4.py'), '__name__': 'walk_v4'})
+_wf, _wlog, _ = _v4['build_walk']()
+anims['uno_walk'] = {'rig': True, 'fps': 9, 'frames': _v4['finish'](_wf, pal2), 'stride': 39.25,
+                     'step_frac': _v4['STEP_FRAC'], 'step_scroll': [6.75, 14.0, 14.25, 4.25], 'bob': _v4['BOB'], 'master_core': True}
+_if, _idur = _v4['idle_frames']()
+anims['uno_stand'] = {'rig': True, 'fps': 5, 'frames': _v4['finish'](_if, pal2), 'durations': _idur}
+_json.dump(dict(_rig['RIG_LOG'], uno_walk_v4=_wlog), open(os.path.join(OUT, 'rig_log.json'), 'w'))

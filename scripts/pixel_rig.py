@@ -75,7 +75,7 @@ def rot(p, a, L):
 def ang(p, q):
     return math.degrees(math.atan2(q[0] - p[0], q[1] - p[1]))
 
-def walk_targets(n, S, L1, L2, ground, hip_x, lift, bob_amp=1.5, dip=1.0, ankle=2.3):
+def walk_targets(n, S, L1, L2, ground, hip_x, lift, bob_amp=1.5, dip=1.0, ankle=2.3, sched=None):
     """Biped walk: n frames, 2 steps per cycle, stride S final px per step.
     Leg A: stance frames 0..n/2-1 (foot from +S/2 to -S/2 relative to the hip, planted -> slides
     back S/(n/2) per frame = world scroll), swing frames n/2..n-1 (foot from -S/2 forward to +S/2,
@@ -85,7 +85,8 @@ def walk_targets(n, S, L1, L2, ground, hip_x, lift, bob_amp=1.5, dip=1.0, ankle=
     out = []
     for i in range(n):
         p = i % half
-        fx = S / 2 - S * p / half                       # stance foot offset from the hip
+        cf = (sched[p] if sched else p / half)            # fraction of the step travelled at this frame
+        fx = S / 2 - S * cf                             # stance foot offset from the hip
         hp = math.sqrt((0.975 * L) ** 2 - fx * fx) + ankle  # inverted-pendulum height over the stance foot
         h = 0.85 * hp + 0.15 * h0
         bob = (dip if p == 1 else 0) - (bob_amp if p == half // 2 + 1 else 0) * 0.5
@@ -93,8 +94,8 @@ def walk_targets(n, S, L1, L2, ground, hip_x, lift, bob_amp=1.5, dip=1.0, ankle=
         def foot(j):
             q = (j % n)
             if q < half:      # stance
-                return (hip_x + S / 2 - S * q / half, ground)
-            t = (q - half) / half
+                return (hip_x + S / 2 - S * (sched[q] if sched else q / half), ground)
+            t = (sched[q - half] if sched else (q - half) / half)
             return (hip_x - S / 2 + S * t, ground - lift * math.sin(math.pi * min(1, t * 1.15)) ** 0.8)
         out.append((hip, foot(i), foot(i + half)))
     return out

@@ -75,6 +75,27 @@ for a in CFG.get('connected', []):
         tb = m[y0 + int(hgt * 0.25): y0 + int(hgt * 0.45)].any(0); pb = m[y0 + int(hgt * 0.45): y0 + int(hgt * 0.6)].any(0)
         if (tb & pb).sum() < 4: F(f'{a}[{i}]: pelvis band overlaps torso by {(tb & pb).sum()} cols (<4)'); break
 
+# 1e. THE sprite method: walk frames share ONE master upper body -> head/torso pixels identical apart from the bob
+for a, v in M.items():
+    if not v.get('master_core'): continue
+    fr = frames(a); bob = v.get('bob', [0] * len(fr)); m0 = fr[0][..., 3] > 0
+    ys = np.where(m0.any(1))[0]; top = ys.min(); hx = int(np.where(m0[top:top + 6].any(0))[0].mean())
+    y0, y1, x0, x1 = top, top + 28, hx - 5, hx + 6
+    worst = 1.0
+    for i, f in enumerate(fr):
+        d = bob[i] - bob[0]
+        A0 = fr[0][y0:y1, x0:x1].astype(int); Ai = f[y0 + d:y1 + d, x0:x1].astype(int)
+        same = np.mean(np.all(A0 == Ai, axis=2)); worst = min(worst, same)
+        if same < CFG.get('min_core_same', 0.97): F(f'{a}[{i}]: upper-body core only {same:.0%} identical to frame 0 after the bob ({d:+d}px) - torso is boiling')
+    notes.append(f'{a}: master upper body identical across frames (worst {worst:.1%} of core pixels)')
+
+# 1f. idles must breathe (not frozen)
+for a in CFG.get('idles', []):
+    if a not in M: F(f'idle {a} missing'); continue
+    fr = frames(a); diffs = [np.mean(np.any(fr[i] != fr[(i + 1) % len(fr)], axis=2)) for i in range(len(fr))]
+    notes.append(f'{a}: {len(fr)} frames, per-frame change {", ".join(f"{d:.1%}" for d in diffs)}')
+    if len(fr) < 3 or max(diffs) < 0.01: F(f'idle {a} is frozen ({len(fr)} frames, max change {max(diffs):.1%})')
+
 # 2. detail: min height, colours, no blobs (opaque bbox fill + colour count)
 for a in CFG.get('characters', []):
     f = frames(a)[0]; op = f[..., 3] > 0; ys = np.where(op.any(1))[0]; h = ys.max() - ys.min() + 1

@@ -11,7 +11,7 @@ from pixel_robots import Painter, CHROME, DARKCHROME, ramp_of
 SRC = os.path.join(ROOT, 'channels/progressiveslop/assets/kingdom-come-16bit/source')
 WREF = np.array(Image.open(os.path.join(SRC, 'walk-design-ref-v3.jpg')).convert('RGB'))
 AREF = np.array(Image.open(os.path.join(SRC, 'animals-ref-v3.jpg')).convert('RGB'))
-N = 8; STRIDE = 30          # final px per step (one beat = 4 frames) == world scroll per beat
+N = 8; STRIDE = 39.25; SCHED = [0.0, 6.75 / 39.25, 20.75 / 39.25, 35.0 / 39.25]  # step schedule shared with Uno's v4 walk;          # final px per step (one beat = 4 frames) == world scroll per beat
 GOLDR = ramp_of((220, 170, 60)); CRIM = ramp_of((176, 22, 52)); SW = [(40, 40, 64), (120, 126, 156), (200, 206, 228), (246, 248, 255)]
 RIG_LOG = {}                # per anim: list of per-frame joint angles (for QA)
 
@@ -72,7 +72,7 @@ A_HIP = A.P(88, 112); A_SH = A.P(74, 64); A_SH2 = A.P(98, 62)
 
 def aura_frame(i, pal, W=72, H=72):
     ox, gy = 18, H - 2
-    T = walk_targets(N, STRIDE, 17.5, 16.8, gy, A_HIP[0] + ox, lift=5.0, bob_amp=1.0, dip=0.7)
+    T = walk_targets(N, STRIDE, 17.5, 16.8, gy, A_HIP[0] + ox, lift=5.0, bob_amp=1.0, dip=0.7, sched=SCHED)
     hip, fA, fB = T[i]; hipP = T[(i - 1) % N][0]
     dy = hip[1] - A_HIP[1]; phi = 2 * math.pi * i / N; off = lambda p: (p[0] + ox, p[1] + dy)
     fig = Painter(W, H, K); tor_a = 1.2 * math.sin(phi * 2)
