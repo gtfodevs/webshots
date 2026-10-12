@@ -1,7 +1,7 @@
 """Build the 16-bit sprite atlas + low-res backgrounds for kingdom-come-16bit.
    python3 shots/kingdom-come-16bit/build_assets.py   (reads channels/progressiveslop/assets/kingdom-come-16bit/source)
 Writes stage/assets/px/{sprites.png,sprites.json,bg-*.png} and the contact sheet out/kingdom-come-16bit/sprites.png."""
-import os, sys, json
+import os, sys, json, math
 import numpy as np
 from PIL import Image, ImageDraw
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
@@ -215,6 +215,7 @@ def coin(i):
     return outline(np.asarray(im))
 anims['coin'] = {'fps': 12, 'frames': [coin(i) for i in range(4)]}
 
+exec(open(os.path.join(os.path.dirname(__file__), 'sprites_v2.py')).read())
 atlas, meta = pack(anims, os.path.join(OUT, 'sprites.png'), os.path.join(OUT, 'sprites.json'))
 
 # ---------- backgrounds: 480x270 quantized, split into sky (far) + ground (near) bands ----------
@@ -225,6 +226,67 @@ for k, sy in SPLIT.items():
     mirror_tile(im.crop((0, 0, W, sy))).save(os.path.join(OUT, f'bg-{k}-far.png'))
     mirror_tile(im.crop((0, sy, W, H))).save(os.path.join(OUT, f'bg-{k}-near.png'))
 json.dump(SPLIT, open(os.path.join(OUT, 'bg.json'), 'w'))
+
+
+# ---------- forest parallax: 5 depth layers, seamless (wrap crossfade / periodic placement, no mirroring) ----------
+from pixel_robots import Painter as _P, ramp_of as _ramp
+def wrap_tile(im, ov=40):
+    """Seamless horizontal tile without mirroring: crossfade the last ov px into the first ov px."""
+    a = np.asarray(im.convert('RGBA')).astype(float); w = a.shape[1]
+    t = np.linspace(0, 1, ov)[None, :, None]
+    head = a[:, :ov] * t + a[:, w - ov:] * (1 - t)
+    out = np.concatenate([head, a[:, ov:w - ov]], 1)
+    return Image.fromarray(out[..., :3].astype(np.uint8), 'RGB').quantize(64, method=Image.MEDIANCUT, dither=Image.Dither.NONE).convert('RGBA')
+def periodic_layer(period, h, items, seed, pal_):
+    """Paint items (fn(fig, x)) at x positions, repeated at +-period so the tile wraps exactly."""
+    fig = _P(period, h, K=3)
+    for x, fn in items:
+        for dx in (-period, 0, period): fn(fig, x + dx)
+    a = fig.im.resize((period, h), Image.BOX); arr = np.asarray(a).astype(float)
+    al = arr[..., 3:4] / 255; rgb = np.where(al > 0, arr[..., :3] / np.maximum(al, 1e-6), 0)
+    o = np.dstack([np.clip(rgb, 0, 255), (al[..., 0] >= 0.45) * 255]).astype(np.uint8)
+    return Image.fromarray(quantize(o, pal_), 'RGBA')
+rng = np.random.default_rng(7)
+fbg = Image.open(os.path.join(OUT, 'bg-forest.png'))
+L0 = wrap_tile(fbg)                                   # 0.1x: the painted forest (sky/canopy/far trees)
+GY = SPLIT['forest']
+L3 = wrap_tile(fbg.crop((0, GY, W, H)))               # 1.0x: walkway floor
+HAZE = [(28, 14, 52), (44, 26, 78), (66, 44, 108), (92, 68, 140), (120, 96, 170), (150, 130, 200)]
+FGD = [(10, 6, 20), (22, 12, 38), (36, 22, 58), (52, 34, 80), (70, 50, 104), (90, 70, 130)]
+CRM, CRC = _ramp((200, 60, 200)), _ramp((70, 170, 220))
+FG_PAL = np.array(HAZE + FGD + CRM + CRC)
+def trunk(fig, x, hz=HAZE, top=30, bot=GY + 2, w=6):
+    r = np.random.default_rng(int(x) % 97 + 3)   # same tree for every repeat of x (seamless)
+    pts = [(x + math.sin(k * 1.3 + x) * 5, bot - k * (bot - top - 30) / 6) for k in range(7)]
+    for a, b in zip(pts, pts[1:]): fig.capsule(a, b, w - 0.3 * pts.index(a), hz)
+    tx, ty = pts[-1]
+    for side in (-1, 1): fig.capsule((tx, ty), (tx + side * 18, ty - 14), 2.4, hz)
+    for k in range(14):   # crystal canopy: little shaded shards
+        cx, cy = tx + r.uniform(-30, 30), ty - 14 + r.uniform(-16, 10); s_ = r.uniform(3, 6)
+        fig.poly([(cx, cy - s_), (cx + s_ * 0.6, cy), (cx, cy + s_), (cx - s_ * 0.6, cy)], CRM if k % 2 else CRC)
+P1 = 640
+L1 = periodic_layer(P1, GY + 4, [(x, (lambda f, xx, x0=x: trunk(f, xx))) for x in range(40, P1, 110)], 1, FG_PAL)    # 0.3x mid trees
+def crystals(fig, x, base=GY + 3):
+    for k in range(3):
+        cx = x + k * 7 - 7; hgt = rng.uniform(8, 20)
+        rmp = _ramp((60, 200, 235)) if (k + int(x)) % 2 else _ramp((230, 50, 180))
+        fig.poly([(cx - 3, base), (cx + 3, base), (cx + 1, base - hgt), (cx - 1, base - hgt + 1)], rmp)
+    fig.sphere(x + 10, base - 3, 7, 4, ramp=HAZE)
+P2 = 560
+L2 = periodic_layer(P2, GY + 6, [(x, crystals) for x in range(30, P2, 70)], 2, FG_PAL)                                 # 0.6x bush/crystal row
+FGD = [(10, 6, 20), (22, 12, 38), (36, 22, 58), (52, 34, 80), (70, 50, 104), (90, 70, 130)]
+def pillar(fig, x):
+    if int(x) % 3 == 0:
+        fig.capsule((x, H + 4), (x + 3, 120), 8, FGD); fig.capsule((x + 3, 124), (x + 30, 96), 3, FGD)  # trunk + branch
+    else:
+        for k in range(4): fig.poly([(x + k * 6 - 9, H + 2), (x + k * 6 - 4, H + 2), (x + k * 6 - 6, H - 16 - k * 5 % 11)], FGD if k % 2 else _ramp((50, 20, 80)))
+P4 = 900
+L4 = periodic_layer(P4, H, [(x, pillar) for x in (40, 470, 702)], 3, FG_PAL)  # placed so no pillar covers a fight (fight cams 28/56/84 px)                                        # 1.4x foreground
+for i, L in enumerate([L0, L1, L2, L3, L4]): L.save(os.path.join(OUT, f'forest-L{i}.png'))
+json.dump({'ground': {'kingdom': 200, 'forest': 204, 'lair': 222, 'hall': 228},
+           'depth_rows': {'hall': [184, 186, 190, 192, 196, 198, 204, 206, 214], 'kingdom': [190, 196, 206]},  # back-row floor lines for crowds (perspective floors)
+           'forest_layers': [{'img': f'forest-L{i}.png', 'speed': sp, 'y': y} for i, (sp, y) in enumerate([(0.1, 0), (0.3, 0), (0.6, 0), (1.0, GY), (1.4, 0)])]},
+          open(os.path.join(OUT, 'world.json'), 'w'), indent=1)
 
 # ---------- contact sheet (x4, nearest, labelled) ----------
 sheet_rows = []

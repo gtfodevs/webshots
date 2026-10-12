@@ -148,6 +148,11 @@ async function cmdCheck() {
       '-vf', `scale=640:-1,tile=${cols}x${rows}`, '-frames:v', '1', join(dir, 'sheet.png')]);
   }
   console.log(`\nScreenshots: out/${name}/check/  (contact sheet: out/${name}/check/sheet.png)`);
+  // Pixel-game shots: run the pixel QA (walk frames, detail, fringe, pendant, NPC recolours, enemy attacks, ground lines, parallax).
+  if (existsSync(join(shotDir(name), 'stage', 'qa.json'))) {
+    console.log('\nPixel QA (scripts/pixel_qa.py):');
+    try { await run('python3', ['scripts/pixel_qa.py', name]); } catch { problems.push(`pixel QA failed - see out/${name}/qa/qa-report.json`); }
+  }
   if (problems.length) {
     console.log(`\n${problems.length} problem(s):`);
     [...new Set(problems)].forEach((p) => console.log(`  - ${p}`));

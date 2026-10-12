@@ -1,0 +1,13 @@
+{
+ "key": [232, 21, 122],
+ "loops": {"uno_walk": 6, "aura_walk": 6, "knight_march": 6, "wolf_run": 5, "spider_walk": 4, "bat_fly": 4, "serpent_idle": 4, "uno_idle": 2, "aura_idle": 2, "wizard_idle": 2, "jester_hop": 3, "crowd0": 2, "crowd1": 2, "crowd2": 2},
+ "characters": ["uno_walk", "aura_walk", "knight_march", "wolf_run", "spider_walk", "bat_fly", "serpent_idle", "boss_idle", "wizard_idle", "jester_hop", "crowd0", "crowd1", "crowd2", "crowd3", "crowd4", "crowd5"],
+ "min_h": 40, "min_colors": 10, "max_fringe": 25,
+ "heroes": ["uno_idle", "aura_idle"],
+ "npcs": ["wizard_idle", "jester_hop", "crowd0", "crowd1", "crowd2", "crowd3", "crowd4", "crowd5"],
+ "max_iou": 0.72,
+ "enemies": ["knight", "wolf", "spider", "bat", "serpent", "boss"],
+ "ground_exempt": ["spark", "coin", "shockwave", "knight_down", "knight_dissolve", "uno_roll", "uno_walk_old", "knight_walk"],
+ "stills": {"walkA": 28.9, "walkB": 29.341, "knight": 31.6, "wolf": 35.8, "spider": 58.9, "serpent": 89.9, "boss_orbs": 113.9, "boss_slam": 117.6, "hall": 75.0, "kingdom": 18.0},
+ "parallax_pair": ["walkA", "walkB"]
+}

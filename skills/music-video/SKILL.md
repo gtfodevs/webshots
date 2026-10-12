@@ -75,3 +75,60 @@ Stop for human approval at the two marked gates. Everything else runs autonomous
 - Lyrics: verse lines in an RPG text box typed per sung word; chorus lines as 2x arcade text.
 - Review: consecutive-frame strips per character (loops advance), a nearest-neighbour zoom crop (crisp 4x4 blocks, no fringe).
 - Speed: set `"lowres": true` in `pixel` (1x capture + one neighbour upscale, ~2x faster); review with frozen-clock stills (`Music.freeze(t)` + screenshot) before any long render; run the landscape and Short renders concurrently; see "Speed and quality notes" in `docs/MUSIC_MODE.md` (timings, reusable kit, chunked renders).
+
+### Walk cycles, combat choreography and pixel QA (v2 method)
+
+**Walk cycle.** Don't trust AI-generated walk frames; they come back near-identical. Use the sheet only for the upper body and build the legs yourself (`scripts/pixel_robots.py`):
+- 8 frames: contact, down, pass, up for each leg, with alternating legs.
+- 1 px bob `BOB8=[0,1,0,-1,0,1,0,-1]`.
+- IK legs painted at 3x as chrome capsules, then downscaled, quantized and outlined.
+- Secondary motion: the cloak tail sways a frame behind; Aura's hair moves on its mask only; her gown hem shears in whole-pixel row blocks.
+- Characters face their direction of travel.
+
+**Footfalls.** Play 4 walk frames per beat, with contact on the beat. Quantize the camera to 1/4 beat × `STRIDE` px per beat (14 here), so the scroll equals the stride and the planted foot doesn't slide.
+
+**Feet anchoring.** `pack()` aligns every frame by its feet: the lowest opaque pixel sits on the bottom row, centred. Anims marked `air` are aligned by frame bottom instead. Each background declares a ground line in `world.json` (`ground`, plus `depth_rows` for perspective crowds). Draw grounded sprites with `ground()`, which adds a 2-row contact shadow. Exempt sprites (jumps, bats, the hovering boss) pass `{air:1}`.
+
+**Combat choreography.** Fights live in `stage/choreo.json` as event lists measured in beats (`[beat, actor, action, ...]`):
+- Every enemy attack is preceded by a telegraph, about one beat earlier.
+- The hero answers with block, parry, shield, hop or roll, then counters on the next beat or half-beat.
+- Then: hit, a knockback of 1–2 frames, down, and a pixel dissolve.
+- Heroes sometimes take a hit (recoil, HP −0.08).
+- The boss cycles orbs, ground slam (a shockwave the heroes jump over) and summon (bats). It only takes damage in the opening after each attack.
+- Keep hit flashes to 2 frames and hits few. Put big moments on bar downbeats.
+
+**Parallax.** Use at least 4 layers plus a foreground layer, e.g. 0.1/0.3/0.6/1.0/1.4x, with whole-pixel offsets. Make tiles by crossfading wrap, not mirroring. Place foreground pillars where they won't cover a fight (compute them from the fight camera positions).
+
+**Unique NPCs.** Never recolour the heroes. Mix silhouettes and heads:
+- body: round, lanky or boxy;
+- head: dome, square, visor or antenna;
+- plus props and outfits.
+Always keep chrome, red eyes and headphones. Don't put a gold chest plate or "1" pendant on NPCs; that belongs to Uno.
+
+**Pixel QA.** `scripts/pixel_qa.py <shot>` runs automatically from `npm run check` when `stage/qa.json` exists. It fails on:
+- near-identical or too few distinct loop frames;
+- sprites under the minimum height or colour count;
+- key-colour fringe pixels;
+- gold chest pixels on NPCs;
+- NPC-vs-hero silhouette IoU above 0.72;
+- enemies without telegraph or attack frames, or fights without a telegraphed enemy attack;
+- `fillText`, DOM text, or non-uniform 4x4 blocks (blur);
+- grounded sprites off a ground line by more than 1 px;
+- parallax layers whose measured shift between two walk frames isn't distinct and increasing;
+- mirror-tiled layers.
+
+`scripts/pixel_stills.mjs <shot> <dir> label=sec...` grabs exact stills plus draw logs. `scripts/pixel_preview.py` writes 4x strips and GIFs.
+
+### Corrections checklist (Jason's feedback, check every pixel video)
+- [ ] No crude Atari-style sprites. Characters are 48–74 px with shading and outlines, and animals are at least 40 px.
+- [ ] Walk frames are not identical: 6–8 distinct frames, alternating legs, bob, secondary motion, no foot sliding.
+- [ ] Enemies are not passive. They telegraph, attack, take knockback, go down and dissolve. Heroes block, dodge, counter and sometimes get hit.
+- [ ] No HTML or smooth text anywhere. Only the bitmap pixel font, with nearest-neighbour scaling only.
+- [ ] Title is arcade style: INSERT COIN, coin drop on a beat, CREDIT 0→1, PRESS START, © PROGRESSIVESLOP.
+- [ ] Robot animal enemies (wolves, spiders, bats, serpent), chrome with red eyes, with move loops and telegraph/attack frames.
+- [ ] Brand: everything is a robot (silver chrome, red eyes, headphone ears). Uno: round bald head, purple cloak, gold "1" chain, sword. Aura: dark hair with crimson streaks, crimson gown, cyan magic.
+- [ ] NPCs are unique designs, not hero recolours, and have no "1" pendant.
+- [ ] Nothing floats: feet on the ground line, with contact shadows.
+- [ ] Real parallax: 4+ layers plus foreground, distinct speeds, no mirroring.
+- [ ] Hit flashes last 1–2 frames, and hits are few.
+- [ ] No chroma fringe: key ≈ #E8157A, matte eroded, edges despilled.

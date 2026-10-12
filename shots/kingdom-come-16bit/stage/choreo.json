@@ -1,0 +1,36 @@
+{
+ "_doc": "Fight choreography in beats (relative to the fight start). Actors: uno, aura, and the enemy ids. Every enemy attack is preceded by a telegraph; heroes answer with block/roll/jump/shield/hop or take the hit (recoil); damage only lands in openings after an attack. Checked by scripts/pixel_qa.py.",
+ "layout": {"uno": 196, "aura": 148},
+ "fights": {
+  "knight_block": {"enemies": {"k": "knight"}, "events": [
+    [0, "k", "enter"], [2, "k", "telegraph"], [3, "k", "attack", "uno"], [3, "uno", "block"],
+    [4, "k", "telegraph"], [4.5, "k", "attack", "uno"], [4.5, "uno", "block"], [5, "uno", "counter", "k"], [5.25, "k", "hit"], [5.75, "k", "down"], [6.5, "k", "dissolve"]]},
+  "wolf_shield": {"enemies": {"w": "wolf"}, "events": [
+    [0, "w", "enter"], [1.5, "w", "telegraph"], [2.5, "w", "attack", "aura"], [2.5, "aura", "shield"], [3.5, "w", "telegraph"], [4.5, "w", "attack", "uno"], [4.5, "uno", "recoil"],
+    [5, "aura", "bolt", "w"], [5.5, "w", "hit"], [6, "uno", "counter", "w"], [6.25, "w", "hit"], [6.5, "w", "down"], [7, "w", "dissolve"]]},
+  "spider_roll": {"enemies": {"s": "spider"}, "events": [
+    [0, "s", "enter"], [2, "s", "telegraph"], [3, "s", "attack", "uno"], [3, "uno", "roll"],
+    [4, "uno", "counter", "s"], [4.25, "s", "hit"], [5, "s", "telegraph"], [6, "s", "attack", "aura"], [6, "aura", "hop"], [6.75, "aura", "bolt", "s"], [7.25, "s", "down"], [7.5, "s", "dissolve"]]},
+  "bat_hop": {"enemies": {"b": "bat"}, "events": [
+    [0, "b", "enter"], [1.5, "b", "telegraph"], [2.5, "b", "attack", "aura"], [2.5, "aura", "hop"], [3.5, "b", "telegraph"], [4.5, "b", "attack", "aura"], [4.5, "aura", "recoil"],
+    [5.5, "aura", "bolt", "b"], [6, "b", "hit"], [6.25, "uno", "counter", "b"], [6.5, "b", "down"], [7, "b", "dissolve"]]},
+  "knight_shield": {"enemies": {"k": "knight"}, "events": [
+    [0, "k", "enter"], [2, "k", "telegraph"], [3, "k", "attack", "aura"], [3, "aura", "shield"], [4, "aura", "bolt", "k"], [4.5, "k", "hit"],
+    [5, "k", "telegraph"], [6, "k", "attack", "uno"], [6, "uno", "block"], [6.5, "uno", "counter", "k"], [6.75, "k", "down"], [7.5, "k", "dissolve"]]},
+  "serpent": {"enemies": {"z": "serpent"}, "events": [
+    [0, "z", "enter"], [2, "z", "telegraph"], [3, "z", "attack", "aura"], [3, "aura", "shield"], [5, "z", "telegraph"], [6, "z", "attack", "uno"], [6, "uno", "roll"],
+    [7, "uno", "counter", "z"], [7.25, "z", "hit"], [8, "aura", "bolt", "z"], [8.5, "z", "hit"], [9, "z", "down"], [10, "z", "dissolve"]]},
+  "boss": {"enemies": {"B": "boss", "b1": "bat", "b2": "bat"}, "hover": "B", "events": [
+    [0, "B", "telegraph"], [1, "B", "orb", "uno"], [1.5, "B", "orb", "aura"], [2, "uno", "block"], [2.5, "aura", "shield"], [3.5, "uno", "counter", "B"], [3.75, "B", "hit"], [4.5, "aura", "bolt", "B"], [5, "B", "hit"],
+    [8, "B", "telegraph"], [9, "B", "slam"], [10, "uno", "jump"], [10.25, "aura", "hop"], [11.5, "uno", "counter", "B"], [11.75, "B", "hit"], [12.5, "aura", "bolt", "B"], [13, "B", "hit"],
+    [16, "B", "summon"], [17, "b1", "enter"], [17, "b2", "enter"], [18, "b1", "telegraph"], [19, "b1", "attack", "aura"], [19, "aura", "recoil"], [19.5, "b2", "telegraph"], [20.5, "b2", "attack", "uno"], [20.5, "uno", "block"],
+    [21, "uno", "counter", "b2"], [21.25, "b2", "down"], [21.5, "aura", "bolt", "b1"], [22, "b1", "down"], [22.5, "b1", "dissolve"], [22, "b2", "dissolve"], [23, "uno", "counter", "B"], [23.25, "B", "hit"],
+    [24, "B", "telegraph"], [25, "B", "orb", "uno"], [26, "uno", "block"], [26.5, "uno", "counter", "B"], [26.75, "B", "hit"], [27, "aura", "bolt", "B"], [27.5, "B", "down"]]}
+ },
+ "stages": {
+  "stage2": {"bg": "forest", "start": 4, "segments": [["walk", 4], ["fight", "knight_block", 8], ["walk", 2], ["fight", "wolf_shield", 8], ["walk", 6]]},
+  "stage3": {"bg": "forest", "dark": true, "start": 4, "segments": [["walk", 2], ["fight", "spider_roll", 8], ["walk", 2], ["fight", "bat_hop", 8], ["walk", 2], ["fight", "knight_shield", 8], ["walk", 2]]},
+  "stage4": {"bg": "lair", "start": 4, "walkin": 8, "segments": [["walk", 8], ["fight", "serpent", 12], ["boss_intro", 12]]},
+  "boss": {"bg": "lair", "start": 4, "segments": [["fight", "boss", 32]]}
+ }
+}

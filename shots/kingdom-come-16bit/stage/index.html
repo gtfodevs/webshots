@@ -62,7 +62,8 @@ function frameOf(anim, t, o = {}) {
 }
 function spr(c, anim, x, y, t, o = {}) {
   const a = S[anim]; const [sx, sy, w, h] = a.frames[frameOf(anim, t, o)];
-  const dx = R(x - w / 2), dy = R(y - h);
+  const dx = R(x - w / 2), dy = R(y - h + 1);
+  if (window.__qa && window.__qa.log) window.__qa.draws.push([anim, frameOf(anim, t, o), dx, dy, R(y), o.air ? 1 : 0]);
   if (o.white) { c.drawImage(whiteAtlas(), sx, sy, w, h, dx, dy, w, h); return; }
   if (o.flip) { c.save(); c.translate(dx + w, dy); c.scale(-1, 1); c.drawImage(atlas, sx, sy, w, h, 0, 0, w, h); c.restore(); }
   else c.drawImage(atlas, sx, sy, w, h, dx, dy, w, h);
@@ -117,7 +118,11 @@ function tintAll(col) { g.fillStyle = col; g.fillRect(0, 0, W, H); }
 
 // ---------- HUD ----------
 const KILLS = []; // [time, points]
-function score(t) { let s = Math.max(0, beatIdx(t)) * 10; for (const [k, p] of KILLS) if (t >= k) s += p; return s; }
+let NKILL = 0, NBOSSHIT = 0;
+function initKills() { if (KILLS.length) return; for (const [name, t0] of SC) { if (!CH.stages[name]) continue; const P = stagePlan(name, t0);
+  for (const sg of P.segs) if (sg.fight) for (const e of CH.fights[sg.fight].events) { const tt = timeOfBeat(sg.b + e[0]);
+    if (e[2] === 'down') { KILLS.push([tt, e[1] === 'B' ? 5000 : 100]); if (e[1] !== 'B') NKILL++; } if (e[2] === 'hit') { KILLS.push([tt, 250]); if (e[1] === 'B') NBOSSHIT++; } } } }
+function score(t) { initKills(); let s = Math.max(0, beatIdx(t)) * 10; for (const [k, p] of KILLS) if (t >= k) s += p; return s; }
 function hud(t, extra) {
   text(g, '1UP', HL, 6, '#ff3fd2'); text(g, String(score(t)).padStart(7, '0'), HL, 16, '#fff');
   if (!VERT) text(g, 'HI 9999990', HR, 6, '#5ee7ff', 1, 'right');
@@ -173,97 +178,178 @@ function danceHall(t, t0, who) {
   const n = ROUTINE_CROWD[who] || 8;
   // crowd: two rows flanking the heroes (centre x 160..320 stays clear), each dancer on its own phase
   const SLOTS = [[130, 214], [350, 214], [92, 206], [388, 206], [54, 214], [426, 214], [150, 198], [330, 198], [112, 196], [368, 196], [20, 204], [460, 204], [74, 196], [406, 196], [36, 192], [444, 192], [140, 186], [340, 186], [100, 184], [380, 184], [60, 184], [420, 184], [172, 192], [308, 192]];
-  SLOTS.slice(0, n).map((p, i) => [...p, i]).sort((a, b) => a[1] - b[1]).forEach(([x, y, i]) => spr(g, 'crowd' + ((i + (i >> 1)) % 4), x, y, t, { beat: 1, seed: i % 3 }));
-  if (who === 'dance5' || who === 'party') { spr(g, 'wizard_idle', 70, 226, t, { beat: 1 }); spr(g, 'knight_idle', 410, 226, t, { beat: 1 }); spr(g, 'jester_hop', 128, 228, t, { beat: 2 }); spr(g, 'knight_idle', 362, 228, t, { beat: 1, seed: 1 }); }
+  SLOTS.slice(0, n).map((p, i) => [...p, i]).sort((a, b) => a[1] - b[1]).forEach(([x, y, i]) => ground('crowd' + ((i + (i >> 1)) % 6), x, y, t, { beat: 1, seed: i % 3 }));
+  if (who === 'dance5' || who === 'party') { ground('wizard_idle', 70, 226, t, { beat: 1 }); ground('jester_hop', 128, 228, t, { beat: 2 }); ground('crowd5', 410, 226, t, { beat: 1 }); ground('crowd4', 362, 228, t, { beat: 1, seed: 1 }); }
   // THE routine: 8 frames per bar (2 per beat), identical every chorus
-  spr(g, 'uno_dance', 200, 228, t, { beat: 2 });
-  spr(g, 'aura_dance', 284, 228, t, { beat: 2 });
+  ground('uno_dance', 200, GROUND.hall, t, { beat: 2 });
+  ground('aura_dance', 284, GROUND.hall, t, { beat: 2 });
   if (t - t0 < Music.barLen) { const blink = Math.floor((t - t0) * 6) % 2; if (blink) text(g, 'BONUS STAGE', W / 2, 40, '#ffe36b', 2, 'center'); }
   hud(t, 'DANCE PARTY');
 }
 
-// ---------- forest side-scroll with encounters ----------
-function scrollScene(t, t0, t1, enc, opts) {
-  const speed = 42, P = 1.8;
-  const paused = (tt) => enc.reduce((s, e) => s + clamp(tt - e.t, 0, P), 0);
-  const cam = (tt) => speed * (tt - t0 - paused(tt));
-  const c = cam(t);
-  bgScroll('forest', c);
-  if (opts.dark) tintAll('rgba(30,0,70,0.38)');
-  const feet = 202, ux = 168, ax = 120;
-  let unoAnim = 'uno_walk', unoO = {}, auraAnim = 'aura_walk', auraO = {};
-  const fighting = enc.find((e) => t >= e.t && t < e.t + P);
-  if (fighting) { unoAnim = 'uno_idle'; auraAnim = 'aura_idle'; }
-  for (const e of enc) {
-    const kx = R(ux + 92 + (cam(e.t) - c)); // knight stands in the world; enters from the right
-    if (kx > W + 30) continue;
-    const d = t - e.t, hitT = 0.55;
-    if (d >= 0 && d < P) { if (e.by === 'aura') { auraAnim = 'aura_cast'; auraO = { t0: e.t, once: true, fps: 10 }; } else { unoAnim = 'uno_slash'; unoO = { t0: e.t, once: true, fps: 12 }; } }
-    if (d < hitT) spr(g, 'knight_idle', kx, feet, t, { seed: e.t });
-    else if (d < hitT + 0.5) { const fl = Math.floor(d * 20) % 2; spr(g, 'knight_idle', kx + R((d - hitT) * 40), feet - R((d - hitT) * 30), t, { white: !!fl }); }
-    if (d >= hitT && d < hitT + 0.35) spr(g, 'spark', kx, feet - 22, t, { t0: e.t + hitT, once: true });
-    if (d >= hitT && d < hitT + 1.0) text(g, '+100', kx, feet - 64 - R((d - hitT) * 16), '#ffe36b', 1, 'center');
-    if (e.by === 'aura' && d > 0.25 && d < hitT) { const bx = R(ax + 20 + (kx - ax - 20) * (d - 0.25) / (hitT - 0.25)); g.fillStyle = '#5ee7ff'; g.fillRect(bx - 3, feet - 34, 6, 3); g.fillStyle = '#fff'; g.fillRect(bx - 1, feet - 34, 3, 3); }
-  }
-  spr(g, auraAnim, ax, feet, t, auraO);
-  spr(g, unoAnim, ux, feet, t, unoO);
-  if (!fighting) spr(g, 'jester_hop', 70, feet + 2, t, { beat: 1 });
-  else spr(g, 'jester_hop', 70, feet + 2, t, { frame: 0 });
-  fgPlants(c, t);
+// ---------- world: ground lines, parallax layers, choreography ----------
+const WORLD = await (await fetch('assets/px/world.json')).json();
+const GROUND = WORLD.ground;                       // floor row per background; grounded sprites stand ON it
+const FL = []; for (const L of WORLD.forest_layers) FL.push({ ...L, im: await img('assets/px/' + L.img) });
+const CH = await (await fetch('choreo.json')).json();
+function parallax(cam, dark) {                     // 5 layers at 0.1/0.3/0.6/1.0/1.4x, whole-pixel offsets
+  const offs = [];
+  FL.forEach((L, i) => { if (i === 4) return; const tw = L.im.width, o = ((R(cam * L.speed) % tw) + tw) % tw; offs.push(o);
+    for (let x = -o; x < W; x += tw) g.drawImage(L.im, x, L.y); });
+  if (dark) tintAll('rgba(24,0,60,0.42)');
+  return offs;
 }
-const ENC2 = [29.0, 32.6, 36.3].map((t, i) => ({ t, by: i === 1 ? 'aura' : 'uno' }));
-const ENC3 = [57.2, 59.9, 62.2, 64.9, 67.5].map((t, i) => ({ t, by: i % 2 ? 'aura' : 'uno' }));
-[...ENC2, ...ENC3].forEach((e) => KILLS.push([e.t + 0.55, 100]));
+function parallaxFG(cam) { const L = FL[4], tw = L.im.width, o = ((R(cam * L.speed) % tw) + tw) % tw; for (let x = -o; x < W; x += tw) g.drawImage(L.im, x, 0); return o; }
+if (window.__qa) window.__qa.layers = (cam) => FL.map((L) => R(cam * L.speed));
 
-// ---------- boss fight ----------
-const BOSS_T0 = bar(63), BOSS_END = bar(70) + 0.2;
-const HITS = []; for (let n = 64; n < 70; n++) { HITS.push({ t: bar(n), by: n % 2 ? 'aura' : 'uno' }); HITS.push({ t: bar(n) + Music.barLen / 2, by: n % 2 ? 'uno' : 'aura' }); }
-HITS.forEach((h) => KILLS.push([h.t + 0.3, 250])); KILLS.push([BOSS_END + 1.5, 5000]);
-const ORBS = []; for (let n = 64; n < 70; n++) ORBS.push(bar(n) + Music.barLen * 0.25);
-function shakeAt(t) {
-  for (const h of HITS) if (t >= h.t + 0.3 && t < h.t + 0.5) return 2;
-  if (t >= BOSS_END && t < BOSS_END + 2.2) return 3;
-  for (const o of ORBS) if (t >= o + 0.55 && t < o + 0.7) return 1;
-  return 0;
+// ---------- choreography engine ----------
+const LAY = CH.layout;
+const BL = () => Music.beatLen;
+function stagePlan(name, t0) {                    // absolute beat index where each segment starts
+  const st = CH.stages[name]; const b0 = beatIdx(t0 + 0.01) + st.start; let b = b0; const segs = [];
+  for (const s of st.segments) { segs.push({ kind: s[0], fight: s[0] === 'fight' ? s[1] : null, len: s[s.length - 1], b }); b += s[s.length - 1]; }
+  return { st, b0, segs };
 }
-function bossScene(t, intro) {
-  const sh = intro ? 0 : shakeAt(t); const ox = sh ? R((hash(Math.floor(t * 30)) - 0.5) * 2 * sh) : 0, oy = sh ? R((hash(Math.floor(t * 30) + 7) - 0.5) * 2 * sh) : 0;
-  bgStatic('lair', ox - 0, oy);
-  const feet = 216;
-  const hitsDone = HITS.filter((h) => t >= h.t + 0.3).length;
-  const hp = intro ? clamp((t - bar(52)) / 2.5, 0, 1) : 1 - hitsDone / HITS.length;
-  // heroes
-  const U0 = VERT ? 190 : 150, AX = VERT ? 146 : 108;
-  let ux = U0, uAnim = 'uno_idle', uO = {}, aAnim = 'aura_idle', aO = {};
-  const bx = VERT ? 336 : 360, by = feet + R(Math.sin(t * 2.2) * 3) - 6;
-  let bossHurt = false;
-  if (intro) { // walk in, WARNING, boss descends
-    const wk = clamp((t - bar(47) - Music.barLen) / 5, 0, 1);
-    ux = R(-30 + wk * (U0 + 30)); if (wk < 1) { uAnim = 'uno_walk'; aAnim = 'aura_walk'; }
+const beatPos = (t) => { const i = beatIdx(t); return i + beatPhase(t); };   // fractional song beat
+const timeOfBeat = (b) => { const i = Math.floor(b); const a = BT[i] ?? BT[BT.length - 1], c = BT[i + 1] ?? a + BL(); return a + (c - a) * (b - i); };
+const STRIDE = 14;                                  // px per beat; = walk stride, so feet stay planted
+
+// actor state at local beat lb from an event list
+function lastEv(evs, id, lb) { let e = null; for (const x of evs) if (x[1] === id && x[0] <= lb) if (!e || x[0] >= e[0]) e = x; return e; }
+function heroHP(t) { let hp = 1; for (const [name, t0] of SC) { const st = CH.stages[name]; if (!st || t < t0) continue; const P = stagePlan(name, t0);
+  for (const s of P.segs) if (s.fight) for (const e of CH.fights[s.fight].events) if (e[2] === 'recoil' && timeOfBeat(s.b + e[0]) <= t) hp -= 0.08; } return Math.max(0.2, hp); }
+const flash = (t, tHit) => t >= tHit && t < tHit + 2 / 30;    // hit flash: exactly 2 frames
+
+// pixel dissolve: blocks drop out progressively + rising pixel particles
+const dz = document.createElement('canvas'), dzc = dz.getContext('2d');
+function dissolve(anim, x, y, t, p, seed) {
+  const a = S[anim]; const [sx, sy, w, h] = a.frames[0]; dz.width = w; dz.height = h; dzc.clearRect(0, 0, w, h); dzc.drawImage(atlas, sx, sy, w, h, 0, 0, w, h);
+  for (let by = 0; by < h; by += 2) for (let bx = 0; bx < w; bx += 2) if (hash(bx * 31 + by * 7 + seed) < p * 1.15 - (by / h) * 0.15) dzc.clearRect(bx, by, 2, 2);
+  g.drawImage(dz, R(x - w / 2), R(y - h + 1));
+  for (let i = 0; i < 26; i++) { const px = R(x - w / 2 + hash(i + seed) * w), py = R(y - h * hash(i * 3 + seed) - p * 30 * (0.5 + hash(i + 9))); if (hash(i * 7) < p + 0.2 && p < 0.95) { g.fillStyle = ['#e8ecff', '#9aa3cf', '#ff3fd2', '#5ee7ff'][i % 4]; g.fillRect(px, py, 2, 2); } }
+}
+function shadow(x, y, w) { g.fillStyle = 'rgba(10,0,24,0.45)'; const hw = R(w * 0.32); g.fillRect(R(x) - hw, y + 1, hw * 2, 1); g.fillRect(R(x) - hw + 2, y + 2, hw * 2 - 4, 1); }
+function ground(anim, x, G, t, o = {}) {           // grounded sprite: shadow + feet on the floor row
+  const a = S[anim]; shadow(x, G, Math.min(a.w, 40)); spr(g, anim, x, G, t, o);
+}
+
+const ENEMY = {   // per type: anims, range x, entry
+  knight: { walk: 'knight_march', idle: 'knight_idle', tel: 'knight_telegraph', atk: 'knight_attack', hit: 'knight_hit', down: 'knight_down', dis: 'knight_dissolve', x: 254, lunge: 14 },
+  wolf: { walk: 'wolf_run', idle: 'wolf_run', tel: 'wolf_telegraph', atk: 'wolf_attack', hit: 'wolf_hit', down: 'wolf_down', dis: 'wolf_down', x: 262, lunge: 0, leap: true },
+  spider: { walk: 'spider_walk', idle: 'spider_walk', tel: 'spider_telegraph', atk: 'spider_attack', hit: 'spider_hit', down: 'spider_down', dis: 'spider_down', x: 258, lunge: 10 },
+  bat: { walk: 'bat_fly', idle: 'bat_fly', tel: 'bat_telegraph', atk: 'bat_attack', hit: 'bat_hit', down: 'bat_down', dis: 'bat_down', x: 262, fly: 44, swoop: true },
+  serpent: { walk: 'serpent_idle', idle: 'serpent_idle', tel: 'serpent_telegraph', atk: 'serpent_attack', hit: 'serpent_hit', down: 'serpent_down', dis: 'serpent_down', x: 336, rise: true, breath: true },
+};
+function heroX(id) { return LAY[id]; }
+
+function drawFight(fname, bStart, t, G, opts = {}) {
+  const F = CH.fights[fname], evs = F.events, lb = beatPos(t) - bStart, T = (b) => timeOfBeat(bStart + b);
+  let shake = 0; const fx = [];          // deferred effects drawn on top
+  // ---- enemies ----
+  const pos = {};
+  for (const [id, type] of Object.entries(F.enemies)) {
+    if (type === 'boss') continue;
+    const E = ENEMY[type]; const ent = evs.find((e) => e[1] === id && e[2] === 'enter'); if (!ent || lb < ent[0]) continue;
+    const ev = lastEv(evs, id, lb); const d = lb - ev[0]; const act = ev[2];
+    const nxt = evs.filter((e) => e[1] === id && e[0] > ev[0]).sort((a, b) => a[0] - b[0])[0];
+    let x = E.x + (id === 'b2' ? 30 : 0), y = G, anim = E.idle, o = { t0: T(ev[0]) }, air = !!E.fly;
+    if (act === 'enter') {               // walk/run/fly in at its own stride (no sliding: 14 px per beat)
+      const until = nxt ? nxt[0] - ev[0] : 2; const rem = Math.max(0, until - d);
+      x = E.x + (id === 'b2' ? 30 : 0) + R(rem * STRIDE * (E.fly ? 2 : 1)); anim = E.walk; o = E.fly || E.rise ? {} : { beat: 4 };
+      if (E.rise) { anim = E.idle; y = G + R(Math.max(0, 1 - d / 1.5) * 60); x = E.x; }
+    } else if (act === 'telegraph') { anim = E.tel; o = { t0: T(ev[0]), fps: 8 }; }
+    else if (act === 'attack') {
+      anim = E.atk; o = { t0: T(ev[0]), once: true };
+      const tx = heroX(ev[3]) + 20; const k = Math.sin(Math.PI * clamp(d / 0.7, 0, 1));
+      if (E.leap) { x = R(E.x + (tx - E.x) * k); y = G - R(k * 18); air = true; }
+      else if (E.swoop) { x = R(E.x + (tx - E.x) * k); y = G - E.fly + R(k * (E.fly - 18)); }
+      else if (E.breath) { if (d < 0.9) fx.push(() => spr(g, 'fire', R(E.x - 40 - d * 60), G - 52 + R(d * 26), t, { t0: T(ev[0]) })); }
+      else x = R(E.x - E.lunge * k);
+      if (d > 0.45 && d < 0.6) fx.push(() => spr(g, 'spark', heroX(ev[3]) + 14, G - 30, t, { t0: T(ev[0] + 0.45), once: true }));
+    } else if (act === 'hit') { anim = E.hit; o = { frame: 0, white: flash(t, T(ev[0])) }; x = E.x + R(clamp(d / 0.3, 0, 1) * 8); shake = d < 0.15 ? 1 : shake;
+      if (d < 0.35) fx.push(() => spr(g, 'spark', E.x - 6, G - 26, t, { t0: T(ev[0]), once: true })); }
+    else if (act === 'down') { anim = E.down; o = { frame: 0 }; x = E.x + 12; air = false; }
+    else if (act === 'dissolve') { if (d < 1) { const xx = E.x + 12; fx.push(() => dissolve(E.dis, xx, E.fly ? G - 6 : G, t, clamp(d, 0, 1), id.charCodeAt(0))); } continue; }
+    if (E.fly && act !== 'down' && act !== 'attack') y = G - E.fly + R(Math.sin(t * 6 + id.length) * 2);
+    pos[id] = x;
+    if (E.fly && act !== 'down') spr(g, anim, x, y, t, o); else if (air) spr(g, anim, x, y, t, o); else ground(anim, x, G, t, o);
   }
-  for (const h of HITS) { const d = t - h.t; if (d < 0 || d > 0.9 || intro) continue;
-    if (h.by === 'uno') { uAnim = 'uno_slash'; uO = { t0: h.t, once: true, fps: 12 }; ux = R(U0 + (bx - 60 - U0) * Math.sin(Math.PI * clamp(d / 0.8, 0, 1))); }
-    else { aAnim = 'aura_cast'; aO = { t0: h.t, once: true, fps: 10 }; if (d < 0.3) { const px = R(AX + 30 + (bx - AX - 50) * d / 0.3); g.fillStyle = '#5ee7ff'; g.fillRect(px - 4, feet - 36, 8, 4); g.fillStyle = '#fff'; g.fillRect(px - 1, feet - 36, 4, 4); } }
-    if (d >= 0.3 && d < 0.5) bossHurt = true; }
-  const dead = !intro && t >= BOSS_END;
-  const showBoss = intro ? t >= bar(52) : !(dead && t > BOSS_END + 2.0);
-  if (showBoss) {
-    const yy = intro ? R(by - clamp(1 - (t - bar(52)) / 1.5, 0, 1) * 160) : by;
-    const flick = dead ? Math.floor(t * 20) % 2 : 0;
-    if (!(dead && flick)) spr(g, bossHurt || (dead && Math.floor(t * 12) % 2) ? 'boss_hurt' : 'boss_idle', bx + ox, yy + oy, t, bossHurt || dead ? { frame: 0, white: true } : {});
+  // ---- boss ----
+  if (F.hover) {
+    const ev = lastEv(evs, F.hover, lb) || [0, F.hover, 'idle']; const d = lb - ev[0]; const bx = 340, by = G - 8 + R(Math.sin(t * 2.4) * 3);
+    const hits = evs.filter((e) => e[1] === F.hover && e[2] === 'hit'); const done = hits.filter((e) => e[0] <= lb).length;
+    let anim = 'boss_idle', o = {};
+    if (ev[2] === 'telegraph' && d < 1) { anim = 'boss_telegraph'; if (Math.floor(t * 12) % 2) fx.push(() => { g.fillStyle = '#ff3fd2'; g.fillRect(bx - 34, by - 96, 3, 3); }); }
+    else if (ev[2] === 'orb' && d < 0.6) anim = 'boss_telegraph';
+    else if (ev[2] === 'slam' && d < 1.2) anim = 'boss_slam';
+    else if (ev[2] === 'summon' && d < 1.5) anim = 'boss_summon';
+    else if (ev[2] === 'hit' && d < 0.5) { anim = 'boss_hurt'; o = { frame: 0, white: flash(t, T(ev[0])) }; shake = d < 0.2 ? 2 : shake; if (d < 0.35) fx.push(() => spr(g, 'spark', bx - 20, by - 40, t, { t0: T(ev[0]), once: true })); }
+    if (ev[2] === 'down') {
+      if (d < 2.5) { if (!(d > 1 && Math.floor(t * 20) % 2)) ground('boss_kneel', bx, G, t, { frame: 0 }); for (let i = 0; i < 10; i++) { const et = i * 0.22; if (d >= et && d < et + 0.34) fx.push(() => spr(g, 'spark', bx + R((hash(i) - 0.5) * 60), G - 10 - R(hash(i + 3) * 60), t, { t0: T(ev[0] + et), once: true })); } shake = d < 2 ? 2 : 0; }
+      else if (d < 3.5) dissolve('boss_kneel', bx, G, t, clamp(d - 2.5, 0, 1), 77);
+    } else spr(g, anim, bx, by, t, o);
+    // projectiles and shockwaves
+    for (const e of evs) if (e[1] === F.hover) {
+      const d2 = lb - e[0];
+      if (e[2] === 'orb' && d2 >= 0 && d2 < 1.15) { const tx = heroX(e[3]) + 10; if (d2 < 1) { const k = d2; fx.push(() => spr(g, 'orb', R(bx - 40 + (tx - bx + 40) * k), R(by - 60 + (G - 28 - by + 60) * k), t)); } else fx.push(() => spr(g, 'spark', tx, G - 26, t, { t0: T(e[0] + 1), once: true })); }
+      if (e[2] === 'slam' && d2 >= 0.2 && d2 < 2.4) { const sx = R(bx - 30 - (d2 - 0.2) * 130); fx.push(() => spr(g, 'shockwave', sx, G, t, { fps: 10 })); if (d2 < 0.5) shake = 3; }
+    }
+    window.__bossHP = 1 - done / hits.length;
   }
-  // boss orbs (dodged)
-  if (!intro && !dead) for (const o of ORBS) { const d = t - o; if (d < 0 || d > 0.7) continue; const px = R(bx - 20 - d / 0.55 * (bx - AX - 40)), py = R(feet - 40 + d / 0.55 * 34); if (d < 0.55) { g.fillStyle = '#ff3fd2'; g.fillRect(px - 3, py - 3, 7, 7); g.fillStyle = '#fff'; g.fillRect(px - 1, py - 1, 3, 3); } else spr(g, 'spark', px, py + 8, t, { t0: o + 0.55, once: true }); }
-  for (const h of HITS) { const d = t - h.t - 0.3; if (d >= 0 && d < 0.35 && !intro) spr(g, 'spark', bx - 8 + R(hash(h.t) * 16), by - 40 + R(hash(h.t + 1) * 20), t, { t0: h.t + 0.3, once: true }); }
-  if (dead) for (let i = 0; i < 14; i++) { const et = BOSS_END + i * 0.14; const d = t - et; if (d >= 0 && d < 0.34) spr(g, 'spark', bx + R((hash(i) - 0.5) * 50), by - 10 - R(hash(i + 3) * 60), t, { t0: et, once: true }); }
-  if (dead && t > BOSS_END + 2 && t < BOSS_END + 2.3) { g.fillStyle = '#fff'; g.globalAlpha = 1 - (t - BOSS_END - 2) / 0.3; g.fillRect(0, 0, W, H); g.globalAlpha = 1; }
-  if (dead && (aAnim === 'aura_idle')) { uAnim = t > BOSS_END + 2 ? 'uno_cheer' : 'uno_idle'; aAnim = t > BOSS_END + 2 ? 'aura_twirl' : 'aura_idle'; }
-  spr(g, aAnim, AX, feet, t, aO); spr(g, uAnim, ux, feet, t, uO);
-  hud(t, intro ? '' : 'FINAL STAGE');
-  hpBar(HL, 32, VERT ? 90 : 100, dead ? 1 : 1 - 0.12 * Math.min(3, ORBS.filter((o) => t > o + 0.55).length) / 3, '#5ee7ff', 'UNO+AURA');
-  if (showBoss || intro && t > bar(52)) hpBar(VERT ? HR - 90 : W - 128, 32, VERT ? 90 : 120, dead ? 0 : hp, '#ff3fd2', 'SORCERER', true);
-  if (intro && t > bar(50) && t < bar(52) + 0.5 && Math.floor(t * 4) % 2) { g.fillStyle = '#c0102a'; g.fillRect(0, 84, W, 26); text(g, '! WARNING !', W / 2, 89, '#fff', 2, 'center', '#3a0010'); }
-  if (dead && t > BOSS_END + 2.1) { logo(g, 'YOU WIN!', W / 2, 70, 4, ['#fff', '#fff', '#ffe36b', '#ffe36b', '#ffb43a', '#ff3fd2', '#ff3fd2', '#7a34c8']); text(g, 'BOSS BONUS 5000', W / 2, 112, '#5ee7ff', 1, 'center'); }
+  // ---- heroes ----
+  for (const id of ['aura', 'uno']) {
+    const ev = lastEv(evs, id, lb); const d = ev ? lb - ev[0] : 9; const hx = heroX(id); let x = hx, anim = id === 'uno' ? 'uno_side' : 'aura_walk', o = id === 'uno' ? { fps: 3 } : { frame: 0 }, air = 0;
+    const act = ev && d < 1.0 ? ev[2] : 'idle';
+    if (act === 'block') { anim = id === 'uno' ? 'uno_ready' : 'aura_shield'; o = { frame: 0 }; x = hx - R(clamp(d / 0.2, 0, 1) * 3); if (d < 0.25) fx.push(() => spr(g, 'spark', hx + 20, G - 30, t, { t0: T(ev[0]), once: true })); }
+    else if (act === 'counter') { const tgt = ev[3]; const tx = (pos[tgt] ?? (tgt === 'B' ? 300 : 250)) - 34; const k = Math.sin(Math.PI * clamp(d / 0.8, 0, 1)); x = R(hx + (tx - hx) * k); anim = 'uno_counter'; o = { t0: T(ev[0]), once: true, fps: 12 }; }
+    else if (act === 'roll') { anim = 'uno_roll'; o = { frame: 0 }; x = R(hx - Math.sin(Math.PI * clamp(d / 0.8, 0, 1)) * 26); }
+    else if (act === 'recoil') { anim = id === 'uno' ? 'uno_recoil' : 'aura_recoil'; o = { frame: 0, white: flash(t, T(ev[0])) }; x = hx - R(clamp(d / 0.25, 0, 1) * 6); }
+    else if (act === 'shield') { anim = 'aura_shield'; o = { frame: 0 }; }
+    else if (act === 'bolt') { anim = 'aura_bolt'; o = { t0: T(ev[0]), once: true, fps: 10 };
+      const tgt = ev[3]; const tx = tgt === 'B' ? 320 : (pos[tgt] ?? 250); if (d > 0.15 && d < 0.5) { const k = (d - 0.15) / 0.35; fx.push(() => { const px = R(hx + 24 + (tx - hx - 24) * k); g.fillStyle = '#5ee7ff'; g.fillRect(px - 5, G - 36, 10, 3); g.fillStyle = '#fff'; g.fillRect(px - 1, G - 36, 4, 3); }); } }
+    else if (act === 'hop' || act === 'jump') { anim = id === 'uno' ? 'uno_ready' : 'aura_hop'; o = { frame: 0 }; air = R(Math.sin(Math.PI * clamp(d / 0.8, 0, 1)) * 22); }
+    if (air) { shadow(x, G, 30); spr(g, anim, x, G - air, t, { ...o, air: 1 }); } else ground(anim, x, G, t, o);
+  }
+  fx.forEach((f) => f());
+  return shake;
+}
+
+// a whole story stage: walk segments (scroll with planted feet) + fights; returns screen shake
+function storyStage(name, t0, t) {
+  const P = stagePlan(name, t0); const st = P.st; const G = GROUND[st.bg]; const B = beatPos(t);
+  // walked beats so far (quantized to the 4-frames-per-beat walk cycle so the ground moves with the feet)
+  let walked = 0, cur = null;
+  for (const s of P.segs) { if (B >= s.b) { cur = s; if (s.kind === 'walk') walked += Math.min(s.len, Math.floor((B - s.b) * 4) / 4); } }
+  if (B < P.b0) cur = { kind: 'pre', b: P.b0 };
+  const cam = walked * STRIDE;
+  let shake = 0;
+  if (st.bg === 'forest') parallax(cam, st.dark); else bgStatic(st.bg);
+  if (!cur || cur.kind === 'walk' || cur.kind === 'pre') {
+    const walking = cur && cur.kind === 'walk';
+    const wb = walking ? Math.floor((B - cur.b) * 4) : 0;            // walk frame: 4 per beat, contact on the beat
+    let ux = LAY.uno, ax = LAY.aura;
+    if (st.walkin && walking) { const rem = cur.len - Math.floor((B - cur.b) * 4) / 4; ux -= R(rem * STRIDE); ax -= R(rem * STRIDE); }
+    else if (st.walkin && !walking) { ux -= st.walkin * STRIDE; ax -= st.walkin * STRIDE; }
+    ground('aura_walk', ax, G, t, walking ? { frame: (wb + 2) % 8 } : { frame: 0 });
+    ground('uno_walk', ux, G, t, walking ? { frame: wb % 8 } : { frame: 0 });
+    if (st.bg === 'forest') ground('jester_hop', ax - 50, G, t, walking ? { beat: 4 } : { frame: 0 });
+  } else if (cur.kind === 'fight') shake = drawFight(cur.fight, cur.b, t, G);
+  else if (cur.kind === 'boss_intro') {
+    const lb = B - cur.b; ground('aura_walk', LAY.aura, G, t, { frame: 0 }); ground('uno_ready', LAY.uno, G, t, { frame: 0 });
+    if (lb < 4 && Math.floor(t * 4) % 2) { g.fillStyle = '#c0102a'; g.fillRect(0, 84, W, 26); text(g, '! WARNING !', W / 2, 89, '#fff', 2, 'center', '#3a0010'); }
+    if (lb >= 4) { const k = clamp((lb - 4) / 4, 0, 1); spr(g, 'boss_idle', 340, G - 8 - R((1 - k) * 170), t); }
+    if (lb >= 6) hpBar(VERT ? HR - 90 : W - 128, 32, VERT ? 90 : 120, clamp((lb - 6) / 3, 0, 1), '#ff3fd2', 'SORCERER', true);
+  }
+  if (st.bg === 'forest') parallaxFG(cam);
+  hpBar(HL, 32, VERT ? 90 : 100, heroHP(t), '#5ee7ff', 'UNO+AURA');
+  if (name === 'boss') hpBar(VERT ? HR - 90 : W - 128, 32, VERT ? 90 : 120, window.__bossHP ?? 1, '#ff3fd2', 'SORCERER', true);
+  window.__cam = cam;
+  return shake;
+}
+function bossWin(t, t0) { // after the boss falls: YOU WIN
+  const P = stagePlan('boss', t0); const end = timeOfBeat(P.segs[0].b + 27.5 + 3.5);
+  if (t > end) { logo(g, 'YOU WIN!', W / 2, 70, 4, ['#fff', '#fff', '#ffe36b', '#ffe36b', '#ffb43a', '#ff3fd2', '#ff3fd2', '#7a34c8']); text(g, 'BOSS BONUS 5000', W / 2, 112, '#5ee7ff', 1, 'center'); }
+  return end;
 }
 
 // ---------- title / end ----------
@@ -295,7 +381,7 @@ function titleScene(t) {
 function endScene(t, t0) {
   g.fillStyle = '#0b0618'; g.fillRect(0, 0, W, H); stars(t);
   logo(g, 'THE END', W / 2, 40, 5, CHROME);
-  [[70, 190], [120, 196], [160, 186], [320, 186], [360, 196], [410, 190]].forEach(([x, y], i) => spr(g, 'crowd' + (i % 4), x, y, t, { beat: 1, seed: i }));
+  [[70, 190], [120, 196], [160, 186], [320, 186], [360, 196], [410, 190]].forEach(([x, y], i) => spr(g, 'crowd' + (i % 6), x, y, t, { beat: 1, seed: i }));
   spr(g, 'uno_cheer', 196, 182, t); spr(g, 'aura_twirl', 284, 182, t);
   text(g, 'FINAL SCORE ' + String(score(t)).padStart(7, '0'), W / 2, 214, '#ffe36b', 1, 'center');
   text(g, 'A PROGRESSIVESLOP PRODUCTION', W / 2, 228, '#5ee7ff', 1, 'center');
@@ -308,7 +394,7 @@ function partyScene(t, t0) {
   for (let i = 0; i < 60; i++) { const x = R((hash(i) * W + Math.sin(t + i) * 8)), y = R(((hash(i + 5) * H) + t * (20 + hash(i) * 30)) % H); g.fillStyle = ['#ff3fd2', '#5ee7ff', '#ffe36b', '#fff'][i % 4]; g.fillRect(x, y, 2, 2); }
   const d = t - t0;
   if (d < 6) { g.fillStyle = '#0b0618cc'; g.fillRect(90, 54, 300, 74); logo(g, 'STAGE CLEAR', W / 2, 62, 3, CHROME);
-    const rows = [['ENEMIES', ENC2.length + ENC3.length], ['BOSS HITS', HITS.length], ['DANCE BEATS', Math.max(0, beatIdx(t))]];
+    const rows = [['ENEMIES', NKILL], ['BOSS HITS', NBOSSHIT], ['DANCE BEATS', Math.max(0, beatIdx(t))]];
     rows.forEach(([k, v], i) => { if (d > 0.6 + i * 0.5) { text(g, k, 110, 94 + i * 10, '#fff'); text(g, String(v), 370, 94 + i * 10, '#ffe36b', 1, 'right'); } }); }
 }
 
@@ -317,12 +403,13 @@ const SC = [['title', 0], ['stage1', 6], ['dance1', 10], ['stage2', 15], ['dance
 function sceneAt(t) { let s = SC[0]; for (const x of SC) if (t >= x[1] - 0.001) s = x; return s; }
 function drawWorld(t) {
   const [name, t0] = sceneAt(t);
+  if (window.__qa) window.__qa.scene = name;
   g.setTransform(1, 0, 0, 1, 0, 0); g.globalAlpha = 1;
   if (name === 'title') titleScene(t);
   else if (name === 'stage1') {
     bgStatic('kingdom');
-    spr(g, 'wizard_idle', 330, 198, t); spr(g, 'jester_hop', 270, 200, t, { beat: 2 });
-    spr(g, 'aura_idle', 128, 200, t); spr(g, 'uno_idle', 180, 200, t, { seed: 2 });
+    ground('wizard_idle', 330, GROUND.kingdom, t); ground('jester_hop', 270, GROUND.kingdom, t, { beat: 2 });
+    ground('aura_idle', 128, GROUND.kingdom, t); ground('uno_idle', 180, GROUND.kingdom, t, { seed: 2 });
     const d = t - t0 - Music.barLen;
     if (d > 0) { box(g, 60, 30, 360, 40); text(g, 'WIZARD', 68, 24, '#ffe36b');
       const msg = 'The Sorcerer stole our music and light! Uno, Aura: bring it home!'; const n = Math.floor(d * 22);
@@ -331,10 +418,14 @@ function drawWorld(t) {
     stageCard(t, t0, 'STAGE 1', 'THE CHROME KINGDOM');
   }
   else if (name.startsWith('dance')) danceHall(t, t0, name);
-  else if (name === 'stage2') { scrollScene(t, t0 + Music.barLen, 0, ENC2, {}); hud(t, 'CRYSTAL FOREST'); stageCard(t, t0, 'STAGE 2', 'THE CRYSTAL FOREST'); }
-  else if (name === 'stage3') { scrollScene(t, t0 + Music.barLen, 0, ENC3, { dark: true }); hud(t, 'DARK WOODS'); stageCard(t, t0, 'STAGE 3', 'THE DARK WOODS'); }
-  else if (name === 'stage4') { bossScene(t, true); stageCard(t, t0, 'STAGE 4', "THE SORCERER'S LAIR"); }
-  else if (name === 'boss') { bossScene(t, false); stageCard(t, t0, 'FINAL', 'DEFEAT THE SORCERER'); }
+  else if (name === 'stage2' || name === 'stage3' || name === 'stage4' || name === 'boss') {
+    const sh = storyStage(name, t0, t);
+    if (sh) { const im = g.getImageData(0, 0, W, H); const ox = R((hash(Math.floor(t * 30)) - 0.5) * 2 * sh), oy = R((hash(Math.floor(t * 30) + 7) - 0.5) * 2 * sh); g.putImageData(im, ox, oy); }
+    if (name === 'boss') bossWin(t, t0);
+    hud(t, { stage2: 'CRYSTAL FOREST', stage3: 'DARK WOODS', stage4: "SORCERER'S LAIR", boss: 'FINAL STAGE' }[name]);
+    const C = { stage2: ['STAGE 2', 'THE CRYSTAL FOREST'], stage3: ['STAGE 3', 'THE DARK WOODS'], stage4: ['STAGE 4', "THE SORCERER'S LAIR"], boss: ['FINAL', 'DEFEAT THE SORCERER'] }[name];
+    stageCard(t, t0, C[0], C[1]);
+  }
   else if (name === 'party') partyScene(t, t0);
   else if (name === 'end') endScene(t, t0);
   return name;

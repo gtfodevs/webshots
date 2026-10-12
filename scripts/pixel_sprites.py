@@ -139,24 +139,45 @@ def pad_to(rgba, w, h):
     return out
 
 
+def feet_of(f):
+    """(feet centre x, lowest opaque row) of a frame: the anchor for grounded sprites."""
+    ys, xs = np.where(f[..., 3] > 0)
+    yb = ys.max(); sel = ys >= yb - 2
+    return float(xs[sel].mean()), int(yb)
+
+
 def pack(anims, path_png, path_json, gap=1):
-    """anims: {name: {"fps": n, "frames": [rgba...], "loop": True}} -> atlas png + json.
-    Frames of one animation share a size; anchor = bottom centre."""
+    """anims: {name: {"fps": n, "frames": [rgba...], ...}} -> atlas png + json.
+    Frames of one animation share a canvas; every frame is aligned by its FEET (centre of the lowest
+    opaque rows) at x = w/2 and its lowest opaque pixel on the canvas bottom row, unless the anim sets
+    "air": True (flyers/jump arcs keep their own vertical placement, aligned by the frame bottom)."""
     rows, W, H = [], 0, 0
     for name, a in anims.items():
-        fw = max(f.shape[1] for f in a['frames']); fh = max(f.shape[0] for f in a['frames'])
-        rows.append((name, a, fw, fh))
-        W = max(W, (fw + gap) * len(a['frames'])); H += fh + gap
+        fr = a['frames']; air = a.get('air', False)
+        info = [feet_of(f) for f in fr]
+        lefts = [fx for fx, _ in info]; rights = [f.shape[1] - fx for f, (fx, _) in zip(fr, info)]
+        half = int(np.ceil(max(max(lefts), max(rights)))) + 1
+        if air: hgt = max(f.shape[0] for f in fr)
+        else: hgt = max(yb + 1 for _, yb in info)
+        placed = []
+        for f, (fx, yb) in zip(fr, info):
+            c = np.zeros((hgt, 2 * half, 4), np.uint8)
+            x = int(round(half - fx)); y = (hgt - f.shape[0]) if air else (hgt - 1 - yb)
+            sy0, dy0 = max(0, -y), max(0, y); sx0, dx0 = max(0, -x), max(0, x)
+            hh = min(f.shape[0] - sy0, hgt - dy0); ww = min(f.shape[1] - sx0, 2 * half - dx0)
+            src = f[sy0:sy0 + hh, sx0:sx0 + ww]; m = src[..., 3] > 0
+            c[dy0:dy0 + hh, dx0:dx0 + ww][m] = src[m]
+            placed.append(c)
+        rows.append((name, a, placed, 2 * half, hgt))
+        W = max(W, (2 * half + gap) * len(placed)); H += hgt + gap
     atlas = np.zeros((H, W, 4), np.uint8)
     meta, y = {}, 0
-    for name, a, fw, fh in rows:
+    for name, a, placed, fw, fh in rows:
         rects = []
-        for i, f in enumerate(a['frames']):
-            f = pad_to(f, fw, fh)
-            x = i * (fw + gap)
-            atlas[y:y + fh, x:x + fw] = f
-            rects.append([x, y, fw, fh])
-        meta[name] = {'fps': a.get('fps', 10), 'w': fw, 'h': fh, 'frames': rects, 'seq': a.get('seq')}
+        for i, f in enumerate(placed):
+            x = i * (fw + gap); atlas[y:y + fh, x:x + fw] = f; rects.append([x, y, fw, fh])
+        meta[name] = {k: v for k, v in a.items() if k != 'frames'}
+        meta[name].update({'fps': a.get('fps', 10), 'w': fw, 'h': fh, 'frames': rects})
         y += fh + gap
     Image.fromarray(atlas, 'RGBA').save(path_png)
     json.dump(meta, open(path_json, 'w'), indent=0)
