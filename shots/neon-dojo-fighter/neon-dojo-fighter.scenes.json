@@ -1,0 +1,52 @@
+[
+ {
+  "scene": "s1-intro",
+  "at": 0,
+  "label": "intro"
+ },
+ {
+  "scene": "s2-1",
+  "at": 7.059,
+  "label": "verse 1"
+ },
+ {
+  "scene": "s3-prechorus",
+  "at": 60.14,
+  "label": "pre-chorus"
+ },
+ {
+  "scene": "s4-chorus",
+  "at": 68.685,
+  "label": "chorus"
+ },
+ {
+  "scene": "s5-2",
+  "at": 80.666,
+  "label": "verse 2"
+ },
+ {
+  "scene": "s6-prechorus",
+  "at": 108.042,
+  "label": "pre-chorus"
+ },
+ {
+  "scene": "s7-chorus",
+  "at": 123.437,
+  "label": "chorus"
+ },
+ {
+  "scene": "s8-bridge",
+  "at": 137.091,
+  "label": "bridge"
+ },
+ {
+  "scene": "s9-chorus",
+  "at": 150.767,
+  "label": "final chorus"
+ },
+ {
+  "scene": "s10-chorus",
+  "at": 159.289,
+  "label": "chorus"
+ }
+]

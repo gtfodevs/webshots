@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=1280, height=720"><title>Neon Dojo</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bangers&family=Cinzel+Decorative:wght@700;900&family=Inter:wght@700;900&display=swap">
+<style>
+  html,body{margin:0;width:1280px;height:720px;overflow:hidden;background:#140c26;color:#fff;font-family:Inter,sans-serif}
+  #camera{position:absolute;left:0;top:0;width:1280px;height:720px;transform-origin:0 0}
+  .scene{position:absolute;inset:0;opacity:0;visibility:hidden;overflow:hidden}
+  .layer{position:absolute;inset:-60px}  /* bleed so camera moves never show edges */
+  .ph{position:absolute;left:0;right:0;top:330px;text-align:center;font:400 72px Bangers,sans-serif}
+  /* Vertical (Shorts) reflow: the 16:9 stage becomes the middle band of a 9:16 frame. */
+  html[data-format=vertical],html[data-format=vertical] body{width:720px;height:1280px}
+  html[data-format=vertical] #camera{top:370px;left:-120px;transform:scale(.75)}
+</style></head><body>
+<div id="camera">
+  <section class="scene" id="s-s1-intro"><div class="layer" data-depth="0.3"><div class="ph">s1-intro · 0.0s</div></div></section>
+  <section class="scene" id="s-s2-1"><div class="layer" data-depth="0.3"><div class="ph">s2-1 · 7.1s</div></div></section>
+  <section class="scene" id="s-s3-prechorus"><div class="layer" data-depth="0.3"><div class="ph">s3-prechorus · 60.1s</div></div></section>
+  <section class="scene" id="s-s4-chorus"><div class="layer" data-depth="0.3"><div class="ph">s4-chorus · 68.7s</div></div></section>
+  <section class="scene" id="s-s5-2"><div class="layer" data-depth="0.3"><div class="ph">s5-2 · 80.7s</div></div></section>
+  <section class="scene" id="s-s6-prechorus"><div class="layer" data-depth="0.3"><div class="ph">s6-prechorus · 108.0s</div></div></section>
+  <section class="scene" id="s-s7-chorus"><div class="layer" data-depth="0.3"><div class="ph">s7-chorus · 123.4s</div></div></section>
+  <section class="scene" id="s-s8-bridge"><div class="layer" data-depth="0.3"><div class="ph">s8-bridge · 137.1s</div></div></section>
+  <section class="scene" id="s-s9-chorus"><div class="layer" data-depth="0.3"><div class="ph">s9-chorus · 150.8s</div></div></section>
+  <section class="scene" id="s-s10-chorus"><div class="layer" data-depth="0.3"><div class="ph">s10-chorus · 159.3s</div></div></section>
+</div>
+<script src="/vendor/gsap.min.js"></script><script src="/vendor/DrawSVGPlugin.min.js"></script><script src="/vendor/MotionPathPlugin.min.js"></script>
+<script src="/kit.js"></script><script src="/music.js"></script>
+<script>
+document.documentElement.dataset.format = new URLSearchParams(location.search).get('format') || 'landscape';
+(async () => {
+  await Music.load('timeline.json');
+  Music.theme('fantasy');
+  Music.lyrics({ style: 'karaoke' });
+Webshot.scene('s1-intro', (tl, el) => { tl.add(Music.fx.pop(el.querySelector('.ph'))); });
+Webshot.scene('s2-1', (tl, el) => { tl.add(Music.fx.pop(el.querySelector('.ph'))); });
+Webshot.scene('s3-prechorus', (tl, el) => { tl.add(Music.fx.pop(el.querySelector('.ph'))); });
+Webshot.scene('s4-chorus', (tl, el) => { tl.add(Music.fx.pop(el.querySelector('.ph'))); });
+Webshot.scene('s5-2', (tl, el) => { tl.add(Music.fx.pop(el.querySelector('.ph'))); });
+Webshot.scene('s6-prechorus', (tl, el) => { tl.add(Music.fx.pop(el.querySelector('.ph'))); });
+Webshot.scene('s7-chorus', (tl, el) => { tl.add(Music.fx.pop(el.querySelector('.ph'))); });
+Webshot.scene('s8-bridge', (tl, el) => { tl.add(Music.fx.pop(el.querySelector('.ph'))); });
+Webshot.scene('s9-chorus', (tl, el) => { tl.add(Music.fx.pop(el.querySelector('.ph'))); });
+Webshot.scene('s10-chorus', (tl, el) => { tl.add(Music.fx.pop(el.querySelector('.ph'))); });
+  Webshot.start();
+})();
+</script></body></html>
