@@ -154,6 +154,14 @@ def pack(anims, path_png, path_json, gap=1):
     rows, W, H = [], 0, 0
     for name, a in anims.items():
         fr = a['frames']; air = a.get('air', False)
+        if a.get('rig'):   # rigged frames share one canvas (hip fixed): crop the union bbox, keep relative placement
+            hh_, ww_ = max(f.shape[0] for f in fr), max(f.shape[1] for f in fr)
+            fr = [np.pad(f, ((0, hh_ - f.shape[0]), (0, ww_ - f.shape[1]), (0, 0))) for f in fr]
+            um = np.any([f[..., 3] > 0 for f in fr], axis=0); ys, xs = np.where(um)
+            placed = [f[ys.min():ys.max() + 1, xs.min():xs.max() + 1].copy() for f in fr]
+            rows.append((name, a, placed, placed[0].shape[1], placed[0].shape[0]))
+            W = max(W, (placed[0].shape[1] + gap) * len(placed)); H += placed[0].shape[0] + gap
+            continue
         info = [feet_of(f) for f in fr]
         lefts = [fx for fx, _ in info]; rights = [f.shape[1] - fx for f, (fx, _) in zip(fr, info)]
         half = int(np.ceil(max(max(lefts), max(rights)))) + 1
@@ -176,7 +184,7 @@ def pack(anims, path_png, path_json, gap=1):
         rects = []
         for i, f in enumerate(placed):
             x = i * (fw + gap); atlas[y:y + fh, x:x + fw] = f; rects.append([x, y, fw, fh])
-        meta[name] = {k: v for k, v in a.items() if k != 'frames'}
+        meta[name] = {k: v for k, v in a.items() if k not in ('frames', 'rig')}
         meta[name].update({'fps': a.get('fps', 10), 'w': fw, 'h': fh, 'frames': rects})
         y += fh + gap
     Image.fromarray(atlas, 'RGBA').save(path_png)

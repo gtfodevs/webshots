@@ -282,3 +282,40 @@ Always keep chrome, red eyes and headphones. Don't put a gold chest plate or "1"
 - [ ] Real parallax: 4+ layers plus foreground, distinct speeds, no mirroring.
 - [ ] Hit flashes last 1–2 frames, and hits are few.
 - [ ] No chroma fringe: key ≈ #E8157A, matte eroded, edges despilled.
+
+### v3: connected cut-out rigs (replaces spliced legs)
+
+Splicing redrawn legs onto a fixed upper-body crop detaches the hips and leaves the torso rigid; Jason called it "zombies". AI sheets can't fix this either: every generated walk frame is the same mid-stride pose. Use a 2D cut-out rig instead (`scripts/pixel_rig.py` plus the shot's `rig_v3.py`):
+
+- **Parts.** Cut the head (with headphones), the torso and pelvis, and the cloak, hair or gown from a clean side-view ref on #00FF00 (`RefParts`, at 4x the final size). Paint limbs as chrome segments with round joint caps that overlap (hip sphere, knee cap, elbow, wrist) so joints never gap. Aura's gown is a painted panel whose slit edge follows the near knee; her shin steps out through it.
+- **Walk motion.**
+  - 8-frame cycle with 2 steps of `STRIDE` px each.
+  - The stance foot is solved by IK, planted and sliding back STRIDE/4 per frame, exactly as fast as the world scrolls.
+  - The swing foot arcs forward and lifts 5 px.
+  - The pelvis follows an inverted-pendulum bob, with a 1 px dip after contact.
+  - Arms swing opposite the legs (±22–24°).
+  - The torso counter-rotates ±1.5°, the head lags one frame, and cloak and hair shear with a one-frame lag.
+  - Measured on Uno: thigh −12..+42°, knee up to 70°.
+- **Rendering.** Composite the whole pose at 4x, then box-downscale, quantize and outline **once**. The single outline is what makes it read as one sprite.
+- **Packing.** Rig anims pack with `rig: True`: one shared canvas cropped to the union bbox, so the hip stays fixed. Never re-align rig frames by their feet; that makes the body slide, which shows up clearly in the onion skin.
+- **Quadrupeds.** The wolf gallop has spine flex (chest and rear rotate opposite, ±7°), front and hind pairs in opposite phase (±40°), knee bend on the swing, and head and tail on offset sines. Telegraph is a crouch, attack is the full lunge. The spider uses an alternating tetrapod gait (legs 0 and 2 of one side with 1 and 3 of the other) and a body bob. The bat has membrane wings rigged up / mid / down / mid (−45..+70°), and the body rises on the downstroke.
+- **Animator self-check.** Before showing anything, export 4x strips, GIFs, an onion skin (`pixel_rig.onion`) and one GIF of the walk across the scrolling background. Ask: do the hips stay on the torso, do the legs pass through a full stride, do the feet stay planted against the ground?
+
+### Close-up cut-ins
+These are RPG / fighting-game portrait panels. Each is larger pixel art cut from the refs at about 1x source scale; never upscale the small sprites. Each gets a 2–4 frame loop: eye flare, blink, pendant glint, hair shear, cyan charge, jaw snarl. Super-move cut-ins use a full pose with a speed-line band.
+- They're listed in `choreo.json` as `cutins: [[sec, anim, beats, style]]` and snapped to beats.
+- Keep them to 2–8 beats, about 6–10 per video, at the boss intro, before the boss, on big hits and on chorus drops.
+- Never cover a telegraphed attack: put a snarl before the lunge, not on it.
+
+### QA additions (pixel_qa.py)
+- Neighbouring loop frames must change silhouette (mask XOR/union) by at least 3%.
+- Rig joint ranges are checked from `rig_log.json`: thigh swing ≥ 50°, knee ≥ 45°, foot lift ≥ 3 px, arm ≥ 30°, wing ≥ 90°, spine flex ≥ 10°.
+- Paired legs must alternate (correlation < 0).
+- Every rigged frame must be one connected component (≥ 97%) with no row gaps.
+- The pelvis band must overlap the torso band by at least 4 columns.
+
+Checklist additions:
+- [ ] Spliced legs look like zombies: use connected rigs with one outline. Torso and pelvis are one part, joints overlap, and the hip stays fixed in the frame (onion-skin check).
+- [ ] Legs travel through the stride (thigh about ±30°, knee bend about 60° on the passing frame, feet lift), and the world scrolls at the stride so planted feet don't slide.
+- [ ] Generated creature frames are duplicates too: rig the bat and spider, and verify silhouette change and joint ranges with QA.
+- [ ] Use close-up cut-ins at key beats (6–10 in total), as separate larger art with their own loops.

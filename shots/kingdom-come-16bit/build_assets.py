@@ -281,7 +281,7 @@ def pillar(fig, x):
     else:
         for k in range(4): fig.poly([(x + k * 6 - 9, H + 2), (x + k * 6 - 4, H + 2), (x + k * 6 - 6, H - 16 - k * 5 % 11)], FGD if k % 2 else _ramp((50, 20, 80)))
 P4 = 900
-L4 = periodic_layer(P4, H, [(x, pillar) for x in (40, 470, 702)], 3, FG_PAL)  # placed so no pillar covers a fight (fight cams 28/56/84 px)                                        # 1.4x foreground
+L4 = periodic_layer(P4, H, [(x, pillar) for x in (30, 640, 790)], 3, FG_PAL)  # placed so no pillar covers a fight (fight cams 60/120/180 px)                                        # 1.4x foreground
 for i, L in enumerate([L0, L1, L2, L3, L4]): L.save(os.path.join(OUT, f'forest-L{i}.png'))
 json.dump({'ground': {'kingdom': 200, 'forest': 204, 'lair': 222, 'hall': 228},
            'depth_rows': {'hall': [184, 186, 190, 192, 196, 198, 204, 206, 214], 'kingdom': [190, 196, 206]},  # back-row floor lines for crowds (perspective floors)

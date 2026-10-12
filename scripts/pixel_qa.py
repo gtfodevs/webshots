@@ -28,6 +28,53 @@ for a, need in LOOPS.items():
     notes.append(f'{a}: {len(dist)}/{len(fr)} distinct frames (need {need})')
     if len(dist) < need: F(f'{a}: only {len(dist)} distinct frames (need {need})')
 
+# 1b. motion: neighbouring frames must differ in SILHOUETTE (mask XOR / union), not pixel noise; motion range
+from scipy import ndimage
+MIN_MASK = CFG.get('min_mask_change', 0.03)
+for a, need in LOOPS.items():
+    if need < 4: continue
+    fr = frames(a); ms = [f[..., 3] > 0 for f in fr]
+    for i in range(len(ms)):
+        p, q = ms[i], ms[(i + 1) % len(ms)]
+        if p.shape != q.shape: continue
+        ch = (p ^ q).sum() / max(1, (p | q).sum())
+        if ch < MIN_MASK: F(f'{a}: frames {i}->{(i+1)%len(ms)} silhouette change {ch:.1%} < {MIN_MASK:.0%} (duplicate pose)')
+    bw = [np.ptp(np.where(m.any(0))[0]) for m in ms]; bh = [np.ptp(np.where(m.any(1))[0]) for m in ms]
+    rng = max(max(bw) - min(bw), max(bh) - min(bh))
+    notes.append(f'{a}: bbox motion range {rng}px, min neighbour silhouette change {min(((ms[i] ^ ms[(i+1)%len(ms)]).sum() / max(1,(ms[i] | ms[(i+1)%len(ms)]).sum())) for i in range(len(ms))):.1%}')
+    if rng < CFG.get('min_bbox_range', 2) and a not in CFG.get('rig', {}): F(f'{a}: motion range only {rng}px across the loop')
+
+# 1c. rig joints: angle ranges, alternation, wings
+RL = json.load(open(f'{PX}/rig_log.json')) if os.path.exists(f'{PX}/rig_log.json') else {}
+for a, req in CFG.get('rig', {}).items():
+    L = RL.get(a)
+    if not L: F(f'{a}: no rig log (not rigged?)'); continue
+    for key, (lo_rng, what) in req.items():
+        if key == 'alternate':
+            x = np.array([r[what[0]] for r in L]); y = np.array([r[what[1]] for r in L])
+            c = np.corrcoef(x - x.mean(), y - y.mean())[0, 1]; notes.append(f'{a}: {what[0]} vs {what[1]} correlation {c:.2f} (alternating pairs need < 0)')
+            if not c < 0: F(f'{a}: {what[0]}/{what[1]} do not alternate (corr {c:.2f})')
+            continue
+        v = [r[key] for r in L]; rg = max(v) - min(v)
+        notes.append(f'{a}: {key} range {min(v):.0f}..{max(v):.0f} ({rg:.0f})')
+        if rg < lo_rng: F(f'{a}: {key} range {rg:.0f} < {lo_rng} ({what})')
+
+# 1d. connectivity: one connected sprite per frame (no detached limbs / joint gaps), pelvis-torso continuity
+for a in CFG.get('connected', []):
+    for i, f in enumerate(frames(a)):
+        m = f[..., 3] > 0; lab, n = ndimage.label(m, structure=np.ones((3, 3)))
+        if n == 0: continue
+        sizes = ndimage.sum(m, lab, range(1, n + 1)); frac = sizes.max() / m.sum()
+        if frac < CFG.get('min_connected', 0.97): F(f'{a}[{i}]: sprite splits into {n} pieces (largest {frac:.0%}) - joint gap / detached part'); break
+        ys = np.where(m.any(1))[0]; y0, y1 = ys.min(), ys.max(); hgt = y1 - y0
+        for yy in range(y0, y1):
+            c0 = np.where(m[yy])[0]; c1 = np.where(m[yy + 1])[0]
+            if not len(c0) or not len(c1) or (c0.max() < c1.min() or c1.max() < c0.min()):
+                F(f'{a}[{i}]: rows {yy}/{yy+1} do not overlap (torso and legs disconnected)'); break
+        # pelvis band (45-60% height) must overlap the torso band (25-45%) by >= 4 columns
+        tb = m[y0 + int(hgt * 0.25): y0 + int(hgt * 0.45)].any(0); pb = m[y0 + int(hgt * 0.45): y0 + int(hgt * 0.6)].any(0)
+        if (tb & pb).sum() < 4: F(f'{a}[{i}]: pelvis band overlaps torso by {(tb & pb).sum()} cols (<4)'); break
+
 # 2. detail: min height, colours, no blobs (opaque bbox fill + colour count)
 for a in CFG.get('characters', []):
     f = frames(a)[0]; op = f[..., 3] > 0; ys = np.where(op.any(1))[0]; h = ys.max() - ys.min() + 1
@@ -109,6 +156,7 @@ if '--no-browser' not in sys.argv and CFG.get('stills'):
                 sub[y0:y0+hh] = (Lr[..., 3] > 0) & (np.abs(I[y0:y0+hh] - Lr[..., :3]).sum(2) == 0); return sub
             sa = [(vis(IA, o).sum(), o) for o in range(tw)]; na, oa = max(sa)
             sb = [(vis(IB, (oa + s) % tw).sum(), s) for s in range(0, 60)]; nb, s = max(sb)
+            if nb < 200: notes.append(f'parallax layer {i} ({L["img"]}): not on screen in this pair ({nb} px) - skipped'); continue
             meas.append(s); notes.append(f'parallax layer {i} ({L["img"]}, speed {L["speed"]}): measured {s}px shift ({nb} matching px)')
         if len(set(meas)) < len(meas): F(f'parallax layers not distinct: measured shifts {meas}')
         if meas != sorted(meas): F(f'parallax shifts not increasing far->near: {meas}')

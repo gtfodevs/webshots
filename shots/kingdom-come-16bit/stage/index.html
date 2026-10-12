@@ -212,7 +212,7 @@ function stagePlan(name, t0) {                    // absolute beat index where e
 }
 const beatPos = (t) => { const i = beatIdx(t); return i + beatPhase(t); };   // fractional song beat
 const timeOfBeat = (b) => { const i = Math.floor(b); const a = BT[i] ?? BT[BT.length - 1], c = BT[i + 1] ?? a + BL(); return a + (c - a) * (b - i); };
-const STRIDE = 14;                                  // px per beat; = walk stride, so feet stay planted
+const STRIDE = S.uno_walk.stride || 30;            // px per beat (one step = 4 walk frames) = rigged walk stride, so planted feet don't slide
 
 // actor state at local beat lb from an event list
 function lastEv(evs, id, lb) { let e = null; for (const x of evs) if (x[1] === id && x[0] <= lb) if (!e || x[0] >= e[0]) e = x; return e; }
@@ -255,7 +255,7 @@ function drawFight(fname, bStart, t, G, opts = {}) {
     let x = E.x + (id === 'b2' ? 30 : 0), y = G, anim = E.idle, o = { t0: T(ev[0]) }, air = !!E.fly;
     if (act === 'enter') {               // walk/run/fly in at its own stride (no sliding: 14 px per beat)
       const until = nxt ? nxt[0] - ev[0] : 2; const rem = Math.max(0, until - d);
-      x = E.x + (id === 'b2' ? 30 : 0) + R(rem * STRIDE * (E.fly ? 2 : 1)); anim = E.walk; o = E.fly || E.rise ? {} : { beat: 4 };
+      x = E.x + (id === 'b2' ? 30 : 0) + R(rem * (S[E.walk].stride || STRIDE) * (E.fly ? 2 : 1)); anim = E.walk; o = E.fly || E.rise ? {} : { beat: 4 };
       if (E.rise) { anim = E.idle; y = G + R(Math.max(0, 1 - d / 1.5) * 60); x = E.x; }
     } else if (act === 'telegraph') { anim = E.tel; o = { t0: T(ev[0]), fps: 8 }; }
     else if (act === 'attack') {
@@ -430,9 +430,26 @@ function drawWorld(t) {
   else if (name === 'end') endScene(t, t0);
   return name;
 }
+// ---------- close-up cut-in panels (RPG / fighting-game portrait cut-ins), snapped to beats ----------
+const CUTS = (CH.cutins || []).map(([sec, anim, beats, style]) => { const b = Math.round(beatPos(sec)); return { t0: timeOfBeat(b), t1: timeOfBeat(b + beats), anim, style }; });
+function cutins(t) {
+  const c = CUTS.find((k) => t >= k.t0 && t < k.t1); if (!c) return;
+  const a = S[c.anim], fh = a.frames[0][3], d = t - c.t0, left = c.t1 - t;
+  const k = Math.min(1, d / 0.12, left / 0.12); const bh = R((fh + 10) * k); if (bh < 2) return;
+  const cy = 128, y0 = cy - (bh >> 1);
+  g.fillStyle = '#0b0618'; g.fillRect(0, y0, W, bh);
+  if (c.style === 'speed') { for (let i = 0; i < 34; i++) { const yy = y0 + R(hash(i * 3.1) * bh); const len = 20 + R(hash(i * 7.7) * 70); const xx = R(((hash(i) * W * 2 - d * 900 * (0.6 + hash(i + 2))) % (W + len) + W + len) % (W + len)) - len; g.fillStyle = i % 3 ? '#3a2470' : '#5ee7ff'; g.fillRect(xx, yy, len, 1); } }
+  else { for (let i = 0; i < 6; i++) { g.fillStyle = i % 2 ? '#1a0c36' : '#24104a'; g.fillRect(0, y0 + R(i * bh / 6), W, R(bh / 12)); } g.fillStyle = c.style === 'rage' ? '#5a0a22' : '#2a0f52'; g.fillRect(0, cy - 1, W, 2); }
+  g.fillStyle = '#ff3fd2'; g.fillRect(0, y0, W, 1); g.fillRect(0, y0 + bh - 1, W, 1);
+  const enemy = c.anim === 'cut_boss' || c.anim === 'cut_wolf'; const slide = R((1 - Math.min(1, d / 0.18)) * 200) * (enemy ? 1 : -1);
+  g.save(); g.beginPath(); g.rect(0, y0 + 1, W, bh - 2); g.clip();
+  spr(g, c.anim, (c.anim === 'cut_wolf' ? W - (a.w >> 1) : enemy ? 330 : 160) + slide, cy + (fh >> 1), t, { fps: a.fps, t0: c.t0 });
+  g.restore();
+  if (window.__qa) window.__qa.cut = c.anim;
+}
 function frame() {
   const t = Music.time();
-  drawWorld(t);
+  drawWorld(t); cutins(t);
   out.setTransform(1, 0, 0, 1, 0, 0);
   if (!VERT) { out.drawImage(wc, 0, 0); lyrics(t, out, W, 0, H - 6); }
   else { // vertical game screen: logo band / centre 270x270 crop of the world / lyric band

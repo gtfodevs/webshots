@@ -514,3 +514,94 @@ for name, fn, poses in (('wolf', wolf_frame, {'run': 6, 'telegraph': 2, 'lunge':
                                  'air': name == 'bat' or (name == 'wolf' and pose == 'lunge')}
 anims['wolf_run']['stride'] = 10
 anims['fire'] = {'fps': 12, 'frames': [fire_frame(k) for k in range(2)], 'air': True}
+
+# ================= v3: connected cut-out rigs override the spliced v2 walks / creature loops =================
+_rig = {'__file__': os.path.join(os.path.dirname(os.path.abspath(__file__)) if '__file__' in dir() else 'shots/kingdom-come-16bit', 'rig_v3.py'), '__name__': 'rig_v3'}
+exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'rig_v3.py')).read().replace("if __name__ == '__main__':", "if False:"), _rig)
+anims['uno_walk'] = {'rig': True, 'fps': 9, 'frames': _rig['walk'](_rig['uno_frame'], pal2), 'stride': _rig['STRIDE']}
+anims['aura_walk'] = {'rig': True, 'fps': 9, 'frames': _rig['walk'](_rig['aura_frame'], pal2), 'stride': _rig['STRIDE']}
+_kf, _ks = _rig['knight_walk'](anims['knight_idle']['frames'][0], pal2)
+anims['knight_march'] = {'rig': True, 'fps': 9, 'frames': _kf, 'stride': _ks, 'enemy': True}
+_W = _rig['wolf_pose']; _S = _rig['spider_pose']; _B = _rig['bat_pose']
+anims['wolf_run'] = {'rig': True, 'fps': 10, 'frames': [_W('run', i, pal2) for i in range(6)], 'enemy': True}
+anims['wolf_telegraph'] = {'rig': True, 'fps': 4, 'frames': [_W('telegraph', i, pal2) for i in range(2)], 'enemy': True}
+anims['wolf_attack'] = {'fps': 8, 'frames': [_W('attack', 0, pal2)], 'air': True, 'enemy': True}
+anims['wolf_hit'] = {'rig': True, 'fps': 8, 'frames': [_W('hit', 0, pal2)], 'enemy': True}
+anims['wolf_down'] = {'rig': True, 'fps': 8, 'frames': [_W('down', 0, pal2)], 'enemy': True}
+anims['spider_walk'] = {'rig': True, 'fps': 8, 'frames': [_S('walk', i, pal2) for i in range(4)], 'enemy': True}
+anims['spider_telegraph'] = {'rig': True, 'fps': 4, 'frames': [_S('telegraph', i, pal2) for i in range(2)], 'enemy': True}
+for _p in ('attack', 'hit', 'down'): anims['spider_' + _p] = {'rig': True, 'fps': 8, 'frames': [_S(_p, 0, pal2)], 'enemy': True}
+anims['bat_fly'] = {'rig': True, 'fps': 10, 'frames': [_B('fly', i, pal2) for i in range(4)], 'air': True, 'enemy': True}
+anims['bat_telegraph'] = {'rig': True, 'fps': 4, 'frames': [_B('telegraph', i, pal2) for i in range(2)], 'air': True, 'enemy': True}
+for _p in ('attack', 'hit', 'down'): anims['bat_' + _p] = {'fps': 8, 'frames': [_B(_p, 0, pal2)], 'air': True, 'enemy': True}
+import json as _json
+_json.dump(_rig['RIG_LOG'], open(os.path.join(OUT, 'rig_log.json'), 'w'))
+
+# ================= v3: close-up cut-in panels (larger pixel art from the refs, own 2-4 frame loops) =================
+from PIL import Image as _I
+def _big(src_rgb, box, scale):
+    k = _rig['key_green'](src_rgb[box[1]:box[3], box[0]:box[2]])
+    im = _I.fromarray(k).resize((round(k.shape[1] * scale), round(k.shape[0] * scale)), _I.BOX)
+    a = np.array(im); a[..., 3] = (a[..., 3] > 140) * 255; return a
+def _eyes(f, top=0.6):
+    r, g, b = [f[..., i].astype(int) for i in range(3)]
+    m = (r > 170) & (g < 90) & (b < 110) & (f[..., 3] > 0); m[int(f.shape[0] * top):] = False
+    ys, xs = np.where(m); return (int(xs.mean()), int(ys.mean())) if len(xs) else (f.shape[1] // 2, f.shape[0] // 3)
+def _fit(f, W, H, cx, cy):
+    out = np.zeros((H, W, 4), np.uint8); x0, y0 = cx - W // 2, cy - H // 2
+    sx0, sy0 = max(0, x0), max(0, y0); sx1, sy1 = min(f.shape[1], x0 + W), min(f.shape[0], y0 + H)
+    out[sy0 - y0:sy1 - y0, sx0 - x0:sx1 - x0] = f[sy0:sy1, sx0:sx1]; return out
+def _glow(f, e, rad, col, strength):
+    f = f.copy(); yy, xx = np.mgrid[0:f.shape[0], 0:f.shape[1]]; d = np.hypot(xx - e[0], (yy - e[1]) * 1.4)
+    ring = (d < rad) & (f[..., 3] > 0); t = np.clip(1 - d / rad, 0, 1)[..., None] * strength
+    f[..., :3] = np.where(ring[..., None], np.clip(f[..., :3] * (1 - t) + np.array(col) * t, 0, 255), f[..., :3]).astype(np.uint8)
+    core = d < max(1.5, rad * 0.22); f[core & (f[..., 3] > 0), :3] = (255, 230, 230); return f
+def _blink(f, e, w=6):
+    f = f.copy(); r, g, b = [f[..., i].astype(int) for i in range(3)]
+    red = (r > 150) & (g < 110) & (abs(np.arange(f.shape[1])[None, :] - e[0]) < w + 3) & (abs(np.arange(f.shape[0])[:, None] - e[1]) < 5)
+    f[red, :3] = (40, 30, 54); return f
+def _star(f, p, s, col=(255, 255, 230)):
+    f = f.copy()
+    for d in range(-s, s + 1):
+        for (x, y) in ((p[0] + d, p[1]), (p[0], p[1] + d)):
+            if 0 <= x < f.shape[1] and 0 <= y < f.shape[0]: f[y, x] = (*col, 255)
+    return f
+def _shear(f, x1, offs):
+    f = f.copy(); part = f[:, :x1].copy(); f[:, :x1, 3] = 0
+    for y in range(f.shape[0]):
+        dx = int(round(offs * (1 - y / f.shape[0]) * math.sin(y / 7.0)))
+        row = np.roll(part[y], dx, axis=0)
+        if dx > 0: row[:dx] = 0
+        elif dx < 0: row[dx:] = 0
+        m = row[:, 3] > 0; f[y, :x1][m] = row[m]
+    return f
+CQ = lambda f: outline(despeckle(quantize(f, pal2), 4))
+CW, CH_ = 150, 96
+# Uno: face + pendant, eyes flare, pendant glints
+_u = _big(_rig['WREF'], (540, 60, 620, 210), 1.0); _e = _eyes(_u, 0.4); _u = _fit(_u, CW, CH_, _e[0] - 30, _e[1] + 34); _e = _eyes(_u, 0.6)
+_pend = (_e[0] + 4, _e[1] + 46)
+anims['cut_uno'] = {'fps': 6, 'frames': [CQ(_u), CQ(_glow(_u, _e, 9, (255, 40, 70), 0.8)), CQ(_star(_glow(_u, _e, 13, (255, 60, 90), 0.95), _pend, 5)), CQ(_blink(_u, _e))], 'air': True}
+# Aura: face, hair blowing, cyan glow under the face
+_a = _big(_rig['WREF'], (500, 380, 620, 500), 1.0); _e2 = _eyes(_a, 0.5); _a = _fit(_a, CW, CH_, _e2[0] - 18, _e2[1] + 22); _e2 = _eyes(_a, 0.6)
+def _cy(f, k):
+    f = f.copy(); yy, xx = np.mgrid[0:f.shape[0], 0:f.shape[1]]; c = (_e2[0] + 30, f.shape[0] - 10); d = np.hypot(xx - c[0], yy - c[1])
+    m = d < 6 + k * 3; f[m] = (94, 231, 255, 255); f[d < 3 + k] = (240, 255, 255, 255); return f
+anims['cut_aura'] = {'fps': 6, 'frames': [CQ(_cy(_shear(_a, _e2[0] - 18, 2 + 2 * k), k)) for k in range(3)] + [CQ(_blink(_cy(_shear(_a, _e2[0] - 18, 3), 1), _e2))], 'air': True}
+# boss: eyes glowing / rage
+_b = E2(2, 1, 1.25); _e3 = _eyes(_b, 0.4); _b = _fit(_b, CW, CH_, _e3[0], _e3[1] + 16); _e3 = _eyes(_b, 0.6)
+anims['cut_boss'] = {'fps': 6, 'frames': [CQ(_glow(_b, _e3, 8 + 6 * k, (255, 30, 60), 0.6 + 0.15 * k)) for k in range(3)] + [CQ(_glow(_b, _e3, 14, (255, 140, 160), 1.0))], 'air': True}
+# wolf snarl: attack-frame head, jaw opens, eye glints
+_w = _big(_rig['AREF'], (340, 201, 470, 320), 1.05); _e4 = _eyes(_w, 0.6); _w = _fit(_w, CW, CH_, _e4[0] + 14, _e4[1] + 14); _e4 = _eyes(_w, 0.7)
+def _jaw(f, d):
+    f = f.copy(); y0 = _e4[1] + 14; x1 = _e4[0] + 26; part = f[y0:, :x1].copy(); f[y0:, :x1] = 0
+    f[y0 + d:, :x1] = part[:f.shape[0] - y0 - d] if d else part; return f
+anims['cut_wolf'] = {'fps': 8, 'frames': [CQ(_jaw(_w, 0)), CQ(_jaw(_w, 2)), CQ(_glow(_jaw(_w, 4), _e4, 8, (255, 40, 60), 0.9))], 'air': True}
+# super-move cut-ins (full pose, big): Uno slash, Aura spell
+_us = R2(2, 5) if False else outline(Q(ref(ha, hkey, hrows, 2, 4, 0.72)))
+_us2 = outline(Q(ref(ha, hkey, hrows, 2, 5, 0.72)))
+_as = outline(Q(ref(ha, hkey, hrows, 3, 4, 0.72))); _as2 = outline(Q(ref(ha, hkey, hrows, 3, 5, 0.72)))
+SW_, SH_ = 160, 104
+def _pad(f): return _fit(f, SW_, SH_, f.shape[1] // 2, f.shape[0] // 2 + max(0, (f.shape[0] - SH_) // 2))
+anims['cut_uno_super'] = {'fps': 8, 'frames': [_pad(_us), _pad(_us2), _pad(_us2)], 'air': True}
+def _clr(f, x1=26): f = f.copy(); f[:, :x1] = 0; return f
+anims['cut_aura_super'] = {'fps': 8, 'frames': [_clr(_pad(_as)), _clr(_pad(_as2)), _clr(_pad(_as2))], 'air': True}
