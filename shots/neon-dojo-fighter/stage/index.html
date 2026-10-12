@@ -103,7 +103,9 @@ function fighter(st, o = {}, t = Music.time()) {
   if (SPR[st.char]) { // real art: atlas frame at full 960x540 resolution, anchor (belt x, sole row) on the ground
     const pose = FIGHT.animOf(st.char, st.anim).frames[st.frame], fr = SPR[st.char].meta.frames[pose], [sx, sy, w, h] = fr.rect;
     const ax = st.flip ? w - 1 - fr.ax : fr.ax, dx = R(st.x * Z) - ax, dy = R(gy * Z) - fr.ay;
-    g.save(); g.setTransform(1, 0, 0, 1, 0, 0); if (st.flip) { g.translate(dx + w, dy); g.scale(-1, 1); } else g.translate(dx, dy);
+    g.save(); g.setTransform(1, 0, 0, 1, 0, 0);
+    if (o.k) { const px = R(st.x * Z), py = R(gy * Z); g.translate(px, py); g.scale(o.k, o.k); g.translate(-px, -py); } // close-up scale (nearest)
+    if (st.flip) { g.translate(dx + w, dy); g.scale(-1, 1); } else g.translate(dx, dy);
     g.drawImage(o.white ? white(st.char) : SPR[st.char].img, sx, sy, w, h, 0, 0, w, h);
     if (fr.fx && !o.white) { // energy layer: additive, flickers on a 3-step cycle so it reads as effect, not body
       const [fx, fy, fw, fh] = fr.fx.rect, fl = Math.floor(t * 20) % 3; g.globalCompositeOperation = 'lighter'; g.globalAlpha = fl === 0 ? 1 : fl === 1 ? 0.7 : 0.45;
@@ -268,9 +270,9 @@ function bossIntro(t, s) {
   // real SHOGUN.EXE art: rises out of the dark (idle breath + flickering red glow), then the victory pose holding the belt
   const redBg = (k) => { for (let y = 0; y < H; y += 2) { const v = y / H; g.fillStyle = `rgb(${R(20 + 70 * v * k)},${R(4 + 6 * v)},${R(10 + 14 * v)})`; g.fillRect(0, y, W, 2); } };
   if (t < s.belt) { const d = t - s.helm, e = Math.min(1, d / 1.2); redBg(e);
-    fighter({ char: 'shogun', anim: 'idle', frame: FIGHT.frameAt('idle', t, 1), x: W / 2, y: 236 + R((1 - e * e) * 150), flip: true }, {}, t);
+    fighter({ char: 'shogun', anim: 'idle', frame: FIGHT.frameAt('idle', t, 1), x: W / 2, y: 330 + R((1 - e * e) * 150), flip: true }, { k: 2 }, t);
     if (d > 1.2 && Math.floor(d * 10) % 2) { g.fillStyle = '#ff203055'; g.fillRect(0, 0, W, H); } return; }
-  redBg(1); fighter({ char: 'shogun', anim: 'victory', frame: t - s.belt > 0.12 ? 1 : 0, x: W / 2, y: 236, flip: true }, {}, t);
+  redBg(1); fighter({ char: 'shogun', anim: 'victory', frame: t - s.belt > 0.12 ? 1 : 0, x: W / 2, y: 330, flip: true }, { k: 2 }, t);
   if (t >= s.card) { const e = t - s.card; g.fillStyle = '#000000aa'; g.fillRect(0, 100, W, 50); logo(g, 'SHOGUN.EXE', W / 2 + (e < 0.15 ? R((hash(t * 99) - 0.5) * 8) : 0), 108, 4, FIRE); }
   if (t >= s.warn && Math.floor((t - s.warn) * 6) % 2 === 0) { g.fillStyle = '#e0102a'; g.fillRect(0, 230, W, 22); text(g, '!! WARNING !! A NEW CHALLENGER !! WARNING !!', W / 2, 237, '#fff', 1, 'center', null); }
 }
