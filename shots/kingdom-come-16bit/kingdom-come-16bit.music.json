@@ -46,7 +46,8 @@
  "brand": "channels/progressiveslop/style.json",
  "pixel": {
   "w": 480,
-  "h": 270
+  "h": 270,
+  "lowres": true
  },
  "style": "pixel-game"
 }

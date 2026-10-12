@@ -74,3 +74,4 @@ Stop for human approval at the two marked gates. Everything else runs autonomous
 - Story as game stages: arcade title (coin drop on a downbeat), `STAGE n` card per section, side-scroll walks with parallax, encounters, a boss fight with health bars/hit flashes/shake/sparks, `STAGE CLEAR` tally, THE END + channel credit. Every chorus = the same beat-locked dance routine (2 frames per beat), crowd grows each chorus.
 - Lyrics: verse lines in an RPG text box typed per sung word; chorus lines as 2x arcade text.
 - Review: consecutive-frame strips per character (loops advance), a nearest-neighbour zoom crop (crisp 4x4 blocks, no fringe).
+- Speed: set `"lowres": true` in `pixel` (1x capture + one neighbour upscale, ~2x faster); review with frozen-clock stills (`Music.freeze(t)` + screenshot) before any long render; run the landscape and Short renders concurrently; see "Speed and quality notes" in `docs/MUSIC_MODE.md` (timings, reusable kit, chunked renders).
