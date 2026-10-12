@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Kingdom Come 16-bit · ProgressiveSlop</title>
+<!--
+  Kingdom Come, 16-bit pass ("pixel game" style, docs/MUSIC_MODE.md). The whole video is ONE low-res
+  canvas (480x270, or 270x480 for Shorts) drawn every frame from the song clock. Sprites come from an
+  atlas built by ../build_assets.py; every position is an integer, smoothing is off, and the recorder
+  captures the viewport at an integer device scale (4x) so pixels stay exact blocks.
+  Sections are <section> stubs only so `npm run check` sees the scene list; drawing is time-driven.
+-->
+<style>
+ html,body{margin:0;width:100vw;height:100vh;overflow:hidden;background:#000}
+ #g{position:absolute;left:0;top:0;width:100vw;height:100vh;image-rendering:pixelated}
+ .scene{display:none}
+</style></head><body>
+<canvas id="g"></canvas>
+<section class="scene" id="s-title"></section><section class="scene" id="s-stage1"></section><section class="scene" id="s-dance1"></section>
+<section class="scene" id="s-stage2"></section><section class="scene" id="s-dance2"></section><section class="scene" id="s-stage3"></section>
+<section class="scene" id="s-dance3"></section><section class="scene" id="s-stage4"></section><section class="scene" id="s-dance4"></section>
+<section class="scene" id="s-boss"></section><section class="scene" id="s-dance5"></section><section class="scene" id="s-party"></section><section class="scene" id="s-end"></section>
+<script src="/vendor/gsap.min.js"></script>
+<script src="/kit.js"></script>
+<script src="/music.js"></script>
+<script>
+(async () => {
+const VERT = new URLSearchParams(location.search).get('format') === 'vertical' || document.documentElement.dataset.format === 'vertical';
+const W = 480, H = 270;                       // world (game screen)
+const cv = document.getElementById('g');
+cv.width = VERT ? 270 : 480; cv.height = VERT ? 480 : 270;
+const out = cv.getContext('2d'); out.imageSmoothingEnabled = false;
+const wc = document.createElement('canvas'); wc.width = W; wc.height = H;
+const g = wc.getContext('2d'); g.imageSmoothingEnabled = false;
+const R = Math.round;
+// safe HUD edges: in Shorts only world x 105..375 is shown
+const HL = VERT ? 113 : 8, HR = VERT ? 367 : 472;
+
+const TL = await Music.load('timeline.json');
+const DB = TL.downbeats, BT = TL.beats;
+const bar = (n) => DB[n];
+const img = (src) => new Promise((ok) => { const i = new Image(); i.onload = () => ok(i); i.src = src; });
+const S = await (await fetch('assets/px/sprites.json')).json();
+const atlas = await img('assets/px/sprites.png');
+const font = await img('assets/px/font8.png');
+const BG = {}; for (const k of ['kingdom', 'forest', 'lair', 'hall']) BG[k] = { full: await img(`assets/px/bg-${k}.png`), far: await img(`assets/px/bg-${k}-far.png`), near: await img(`assets/px/bg-${k}-near.png`) };
+const SPLIT = await (await fetch('assets/px/bg.json')).json();
+
+// ---------- deterministic helpers ----------
+const hash = (n) => { const x = Math.sin(n * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const beatIdx = (t) => { let lo = 0, hi = BT.length - 1; if (t < BT[0]) return -1; while (lo < hi) { const m = (lo + hi + 1) >> 1; BT[m] <= t ? lo = m : hi = m - 1; } return lo; };
+const beatPhase = (t) => { const i = beatIdx(t); if (i < 0) return 0; const a = BT[i], b = BT[i + 1] ?? a + Music.beatLen; return (t - a) / (b - a); };
+
+// ---------- sprites ----------
+// spr(ctx, anim, x, y, t, opts): anchor = bottom centre, integer pixels only.
+// Frame index: time-driven at the anim's fps (opts.t0 = loop start) or beat-driven (opts.beat: frames per beat).
+const flipCache = new Map();
+function frameOf(anim, t, o = {}) {
+  const a = S[anim]; const n = a.frames.length;
+  if (o.frame != null) return Math.min(n - 1, o.frame);
+  if (o.beat) { const b = beatIdx(t); return ((b * o.beat + Math.floor(beatPhase(t) * o.beat) + (o.seed | 0)) % n + n) % n; }
+  const k = Math.floor((t - (o.t0 || 0)) * (o.fps || a.fps) + (o.seed || 0));
+  return o.once ? clamp(k, 0, n - 1) : ((k % n) + n) % n;
+}
+function spr(c, anim, x, y, t, o = {}) {
+  const a = S[anim]; const [sx, sy, w, h] = a.frames[frameOf(anim, t, o)];
+  const dx = R(x - w / 2), dy = R(y - h);
+  if (o.white) { c.drawImage(whiteAtlas(), sx, sy, w, h, dx, dy, w, h); return; }
+  if (o.flip) { c.save(); c.translate(dx + w, dy); c.scale(-1, 1); c.drawImage(atlas, sx, sy, w, h, 0, 0, w, h); c.restore(); }
+  else c.drawImage(atlas, sx, sy, w, h, dx, dy, w, h);
+}
+let _white; function whiteAtlas() { if (_white) return _white; const k = document.createElement('canvas'); k.width = atlas.width; k.height = atlas.height; const x = k.getContext('2d'); x.drawImage(atlas, 0, 0); x.globalCompositeOperation = 'source-in'; x.fillStyle = '#fff'; x.fillRect(0, 0, k.width, k.height); return (_white = k); }
+
+// ---------- bitmap font ----------
+const tints = new Map();
+function tint(col) { if (tints.has(col)) return tints.get(col); const k = document.createElement('canvas'); k.width = font.width; k.height = 8; const x = k.getContext('2d'); x.drawImage(font, 0, 0); x.globalCompositeOperation = 'source-in'; x.fillStyle = col; x.fillRect(0, 0, k.width, 8); tints.set(col, k); return k; }
+const textW = (s, sc = 1) => s.length * 8 * sc;
+function text(c, s, x, y, col = '#fff', sc = 1, align = 'left', shadow = '#12062a') {
+  s = String(s); let X = align === 'center' ? x - textW(s, sc) / 2 : align === 'right' ? x - textW(s, sc) : x; X = R(X); y = R(y);
+  const draw = (ox, oy, k) => { for (let i = 0; i < s.length; i++) { const ch = s.charCodeAt(i) - 32; if (ch <= 0 || ch > 94) continue; c.drawImage(k, ch * 8, 0, 8, 8, X + i * 8 * sc + ox, y + oy, 8 * sc, 8 * sc); } };
+  if (shadow) draw(sc, sc, tint(shadow));
+  draw(0, 0, tint(col));
+}
+// Big logo text: per-row colour bands + 1px outline (16-bit title style)
+function logo(c, s, cx, y, sc, bands) {
+  const X = R(cx - textW(s, sc) / 2);
+  for (const [ox, oy] of [[-1, 0], [1, 0], [0, -1], [0, 1], [2, 2], [3, 3], [-1, -1], [1, 1]]) text(c, s, X + ox, y + oy, '#12062a', sc, 'left', null);
+  for (let r = 0; r < 8; r++) {
+    const k = tint(bands[r]);
+    for (let i = 0; i < s.length; i++) { const ch = s.charCodeAt(i) - 32; if (ch <= 0) continue; c.drawImage(k, ch * 8, r, 8, 1, X + i * 8 * sc, y + r * sc, 8 * sc, sc); }
+  }
+}
+function wrap(s, max) { const out = []; let line = ''; for (const w of s.split(' ')) { if ((line + ' ' + w).trim().length > max) { out.push(line.trim()); line = w; } else line += ' ' + w; } if (line.trim()) out.push(line.trim()); return out; }
+function box(c, x, y, w, h) { // classic RPG window
+  c.fillStyle = '#12062a'; c.fillRect(x, y, w, h);
+  c.fillStyle = '#e8ecff'; c.fillRect(x + 1, y + 1, w - 2, h - 2);
+  c.fillStyle = '#2a1270'; c.fillRect(x + 2, y + 2, w - 4, h - 4);
+  c.fillStyle = '#1d0b52'; for (let yy = y + 3; yy < y + h - 3; yy += 2) c.fillRect(x + 3, yy, w - 6, 1);
+  c.fillStyle = '#5ee7ff'; c.fillRect(x + 3, y + 3, w - 6, 1);
+}
+
+// ---------- backgrounds ----------
+function bgStatic(k, dx = 0, dy = 0) { g.drawImage(BG[k].full, R(dx), R(dy)); }
+function bgScroll(k, cam) { // 2-band parallax: far band 0.35x, near band (floor) 1x; mirrored loop textures (960 px)
+  const sy = SPLIT[k], far = BG[k].far, near = BG[k].near, tw = far.width;
+  const f = R(cam * 0.35) % tw, n = R(cam) % tw;
+  g.drawImage(far, -f, 0); g.drawImage(far, tw - f, 0);
+  g.drawImage(near, -n, sy); g.drawImage(near, tw - n, sy);
+}
+function fgPlants(cam, t, col = '#1a0838') { // nearest parallax layer: dark crystal silhouettes at 1.6x
+  const off = R(cam * 1.6);
+  for (let i = 0; i < 40; i++) {
+    const wx = i * 97 + R(hash(i) * 40), x = ((wx - off) % 1200 + 1200) % 1200 - 60; const h = 14 + R(hash(i + 9) * 22);
+    g.fillStyle = col; g.fillRect(x, H - h, 6, h); g.fillRect(x - 4, H - h + 6, 4, h - 6); g.fillRect(x + 6, H - h + 10, 5, h - 10);
+    g.fillStyle = i % 2 ? '#ff3fd2' : '#5ee7ff'; g.fillRect(x + 2, H - h, 2, 2);
+  }
+}
+function tintAll(col) { g.fillStyle = col; g.fillRect(0, 0, W, H); }
+
+// ---------- HUD ----------
+const KILLS = []; // [time, points]
+function score(t) { let s = Math.max(0, beatIdx(t)) * 10; for (const [k, p] of KILLS) if (t >= k) s += p; return s; }
+function hud(t, extra) {
+  text(g, '1UP', HL, 6, '#ff3fd2'); text(g, String(score(t)).padStart(7, '0'), HL, 16, '#fff');
+  if (!VERT) text(g, 'HI 9999990', HR, 6, '#5ee7ff', 1, 'right');
+  if (extra) text(g, extra, VERT ? 300 : W / 2, VERT ? 16 : 6, '#ffe36b', 1, 'center');
+}
+function hpBar(x, y, w, v, col, label, right) {
+  g.fillStyle = '#12062a'; g.fillRect(x - 1, y - 1, w + 2, 8);
+  g.fillStyle = '#3a1c4a'; g.fillRect(x, y, w, 6);
+  g.fillStyle = col; const f = R(w * clamp(v, 0, 1)); g.fillRect(right ? x + w - f : x, y, f, 6);
+  g.fillStyle = '#ffffff55'; g.fillRect(right ? x + w - f : x, y, f, 1);
+  text(g, label, right ? x + w : x, y + 9, '#fff', 1, right ? 'right' : 'left');
+}
+function stageCard(t, t0, n, name) { // full-screen card for one bar
+  const d = t - t0; if (d < 0 || d > Music.barLen) return;
+  g.fillStyle = '#0b0618'; g.fillRect(0, 0, W, H);
+  const k = R(clamp(d / 0.25, 0, 1) * 24);
+  g.fillStyle = '#ff3fd2'; g.fillRect(0, 118 - k, W, 2); g.fillRect(0, 150 + k, W, 2);
+  logo(g, n, W / 2, 104, 3, ['#ffffff', '#ffffff', '#e8ecff', '#bff6ff', '#5ee7ff', '#5ee7ff', '#7a34c8', '#7a34c8']);
+  if (d > 0.35) text(g, name, W / 2, 138, '#ffe36b', 1, 'center');
+}
+
+// ---------- lyrics ----------
+const LY = TL.lyrics;
+function lyricAt(t) { for (const l of LY) if (t >= l.t - 0.05 && t < Math.max(l.end + 0.4, l.t + 1.2)) return l; return null; }
+function lyrics(t, c, cw, chh, by) { // c = output ctx, cw = width, by = bottom
+  const l = lyricAt(t); if (!l || t < bar(6)) return;
+  const sung = l.words.filter((w) => w.t <= t + 0.04).length;
+  const words = l.text.split(' ');
+  if (/chorus/.test(l.tag)) { // arcade text: big magenta, word by word
+    const sc = 2, max = Math.floor((cw - 16) / 16);
+    const lines = wrap(l.text, max); let k = 0;
+    lines.forEach((ln, j) => { const ws = ln.split(' '); let x = cw / 2 - textW(ln, sc) / 2;
+      ws.forEach((w) => { const on = k < Math.max(1, sung); const col = on ? (w.toLowerCase().startsWith('kingdom') || w.toLowerCase() === 'come' ? '#ff3fd2' : '#ffffff') : null;
+        if (col) text(c, w, x, by - (lines.length - j) * 20, col, sc, 'left', '#12062a'); x += textW(w + ' ', sc); k++; }); });
+  } else { // RPG text box, typed per sung word
+    const bw = cw - 16, bh = VERT ? 58 : 40, x = 8, y = by - bh;
+    box(c, x, y, bw, bh);
+    text(c, 'UNO', x + 8, y - 6, '#ffe36b'); // name tag
+    const max = Math.floor((bw - 16) / 8);
+    const lines = wrap(words.slice(0, Math.max(1, sung)).join(' '), max);
+    lines.slice(-((bh - 12) / 12 | 0)).forEach((ln, j) => text(c, ln, x + 8, y + 8 + j * 12, '#fff'));
+    if (sung >= words.length && Math.floor(t * 3) % 2) text(c, '\x7f'.replace('\x7f', 'v'), x + bw - 14, y + bh - 10, '#5ee7ff', 1, 'left', null);
+  }
+}
+
+// ---------- shared cast moments ----------
+const ROUTINE_CROWD = { dance1: 4, dance2: 8, dance3: 12, dance4: 16, dance5: 24, party: 24 };
+function danceHall(t, t0, who) {
+  const b = Math.max(0, beatIdx(t)), ph = beatPhase(t);
+  bgStatic('hall');
+  // beat light: floor flash on every beat (flat colour band, pixel-exact)
+  const p = Math.exp(-5 * ph); g.globalAlpha = 0.18 * p; g.fillStyle = b % 2 ? '#5ee7ff' : '#ff3fd2'; g.fillRect(0, 196, W, 74); g.globalAlpha = 1;
+  const n = ROUTINE_CROWD[who] || 8;
+  // crowd: two rows flanking the heroes (centre x 160..320 stays clear), each dancer on its own phase
+  const SLOTS = [[130, 214], [350, 214], [92, 206], [388, 206], [54, 214], [426, 214], [150, 198], [330, 198], [112, 196], [368, 196], [20, 204], [460, 204], [74, 196], [406, 196], [36, 192], [444, 192], [140, 186], [340, 186], [100, 184], [380, 184], [60, 184], [420, 184], [172, 192], [308, 192]];
+  SLOTS.slice(0, n).map((p, i) => [...p, i]).sort((a, b) => a[1] - b[1]).forEach(([x, y, i]) => spr(g, 'crowd' + ((i + (i >> 1)) % 4), x, y, t, { beat: 1, seed: i % 3 }));
+  if (who === 'dance5' || who === 'party') { spr(g, 'wizard_idle', 70, 226, t, { beat: 1 }); spr(g, 'knight_idle', 410, 226, t, { beat: 1 }); spr(g, 'jester_hop', 128, 228, t, { beat: 2 }); spr(g, 'knight_idle', 362, 228, t, { beat: 1, seed: 1 }); }
+  // THE routine: 8 frames per bar (2 per beat), identical every chorus
+  spr(g, 'uno_dance', 200, 228, t, { beat: 2 });
+  spr(g, 'aura_dance', 284, 228, t, { beat: 2 });
+  if (t - t0 < Music.barLen) { const blink = Math.floor((t - t0) * 6) % 2; if (blink) text(g, 'BONUS STAGE', W / 2, 40, '#ffe36b', 2, 'center'); }
+  hud(t, 'DANCE PARTY');
+}
+
+// ---------- forest side-scroll with encounters ----------
+function scrollScene(t, t0, t1, enc, opts) {
+  const speed = 42, P = 1.8;
+  const paused = (tt) => enc.reduce((s, e) => s + clamp(tt - e.t, 0, P), 0);
+  const cam = (tt) => speed * (tt - t0 - paused(tt));
+  const c = cam(t);
+  bgScroll('forest', c);
+  if (opts.dark) tintAll('rgba(30,0,70,0.38)');
+  const feet = 202, ux = 168, ax = 120;
+  let unoAnim = 'uno_walk', unoO = {}, auraAnim = 'aura_walk', auraO = {};
+  const fighting = enc.find((e) => t >= e.t && t < e.t + P);
+  if (fighting) { unoAnim = 'uno_idle'; auraAnim = 'aura_idle'; }
+  for (const e of enc) {
+    const kx = R(ux + 92 + (cam(e.t) - c)); // knight stands in the world; enters from the right
+    if (kx > W + 30) continue;
+    const d = t - e.t, hitT = 0.55;
+    if (d >= 0 && d < P) { if (e.by === 'aura') { auraAnim = 'aura_cast'; auraO = { t0: e.t, once: true, fps: 10 }; } else { unoAnim = 'uno_slash'; unoO = { t0: e.t, once: true, fps: 12 }; } }
+    if (d < hitT) spr(g, 'knight_idle', kx, feet, t, { seed: e.t });
+    else if (d < hitT + 0.5) { const fl = Math.floor(d * 20) % 2; spr(g, 'knight_idle', kx + R((d - hitT) * 40), feet - R((d - hitT) * 30), t, { white: !!fl }); }
+    if (d >= hitT && d < hitT + 0.35) spr(g, 'spark', kx, feet - 22, t, { t0: e.t + hitT, once: true });
+    if (d >= hitT && d < hitT + 1.0) text(g, '+100', kx, feet - 64 - R((d - hitT) * 16), '#ffe36b', 1, 'center');
+    if (e.by === 'aura' && d > 0.25 && d < hitT) { const bx = R(ax + 20 + (kx - ax - 20) * (d - 0.25) / (hitT - 0.25)); g.fillStyle = '#5ee7ff'; g.fillRect(bx - 3, feet - 34, 6, 3); g.fillStyle = '#fff'; g.fillRect(bx - 1, feet - 34, 3, 3); }
+  }
+  spr(g, auraAnim, ax, feet, t, auraO);
+  spr(g, unoAnim, ux, feet, t, unoO);
+  if (!fighting) spr(g, 'jester_hop', 70, feet + 2, t, { beat: 1 });
+  else spr(g, 'jester_hop', 70, feet + 2, t, { frame: 0 });
+  fgPlants(c, t);
+}
+const ENC2 = [29.0, 32.6, 36.3].map((t, i) => ({ t, by: i === 1 ? 'aura' : 'uno' }));
+const ENC3 = [57.2, 59.9, 62.2, 64.9, 67.5].map((t, i) => ({ t, by: i % 2 ? 'aura' : 'uno' }));
+[...ENC2, ...ENC3].forEach((e) => KILLS.push([e.t + 0.55, 100]));
+
+// ---------- boss fight ----------
+const BOSS_T0 = bar(63), BOSS_END = bar(70) + 0.2;
+const HITS = []; for (let n = 64; n < 70; n++) { HITS.push({ t: bar(n), by: n % 2 ? 'aura' : 'uno' }); HITS.push({ t: bar(n) + Music.barLen / 2, by: n % 2 ? 'uno' : 'aura' }); }
+HITS.forEach((h) => KILLS.push([h.t + 0.3, 250])); KILLS.push([BOSS_END + 1.5, 5000]);
+const ORBS = []; for (let n = 64; n < 70; n++) ORBS.push(bar(n) + Music.barLen * 0.25);
+function shakeAt(t) {
+  for (const h of HITS) if (t >= h.t + 0.3 && t < h.t + 0.5) return 2;
+  if (t >= BOSS_END && t < BOSS_END + 2.2) return 3;
+  for (const o of ORBS) if (t >= o + 0.55 && t < o + 0.7) return 1;
+  return 0;
+}
+function bossScene(t, intro) {
+  const sh = intro ? 0 : shakeAt(t); const ox = sh ? R((hash(Math.floor(t * 30)) - 0.5) * 2 * sh) : 0, oy = sh ? R((hash(Math.floor(t * 30) + 7) - 0.5) * 2 * sh) : 0;
+  bgStatic('lair', ox - 0, oy);
+  const feet = 216;
+  const hitsDone = HITS.filter((h) => t >= h.t + 0.3).length;
+  const hp = intro ? clamp((t - bar(52)) / 2.5, 0, 1) : 1 - hitsDone / HITS.length;
+  // heroes
+  const U0 = VERT ? 190 : 150, AX = VERT ? 146 : 108;
+  let ux = U0, uAnim = 'uno_idle', uO = {}, aAnim = 'aura_idle', aO = {};
+  const bx = VERT ? 336 : 360, by = feet + R(Math.sin(t * 2.2) * 3) - 6;
+  let bossHurt = false;
+  if (intro) { // walk in, WARNING, boss descends
+    const wk = clamp((t - bar(47) - Music.barLen) / 5, 0, 1);
+    ux = R(-30 + wk * (U0 + 30)); if (wk < 1) { uAnim = 'uno_walk'; aAnim = 'aura_walk'; }
+  }
+  for (const h of HITS) { const d = t - h.t; if (d < 0 || d > 0.9 || intro) continue;
+    if (h.by === 'uno') { uAnim = 'uno_slash'; uO = { t0: h.t, once: true, fps: 12 }; ux = R(U0 + (bx - 60 - U0) * Math.sin(Math.PI * clamp(d / 0.8, 0, 1))); }
+    else { aAnim = 'aura_cast'; aO = { t0: h.t, once: true, fps: 10 }; if (d < 0.3) { const px = R(AX + 30 + (bx - AX - 50) * d / 0.3); g.fillStyle = '#5ee7ff'; g.fillRect(px - 4, feet - 36, 8, 4); g.fillStyle = '#fff'; g.fillRect(px - 1, feet - 36, 4, 4); } }
+    if (d >= 0.3 && d < 0.5) bossHurt = true; }
+  const dead = !intro && t >= BOSS_END;
+  const showBoss = intro ? t >= bar(52) : !(dead && t > BOSS_END + 2.0);
+  if (showBoss) {
+    const yy = intro ? R(by - clamp(1 - (t - bar(52)) / 1.5, 0, 1) * 160) : by;
+    const flick = dead ? Math.floor(t * 20) % 2 : 0;
+    if (!(dead && flick)) spr(g, bossHurt || (dead && Math.floor(t * 12) % 2) ? 'boss_hurt' : 'boss_idle', bx + ox, yy + oy, t, bossHurt || dead ? { frame: 0, white: true } : {});
+  }
+  // boss orbs (dodged)
+  if (!intro && !dead) for (const o of ORBS) { const d = t - o; if (d < 0 || d > 0.7) continue; const px = R(bx - 20 - d / 0.55 * (bx - AX - 40)), py = R(feet - 40 + d / 0.55 * 34); if (d < 0.55) { g.fillStyle = '#ff3fd2'; g.fillRect(px - 3, py - 3, 7, 7); g.fillStyle = '#fff'; g.fillRect(px - 1, py - 1, 3, 3); } else spr(g, 'spark', px, py + 8, t, { t0: o + 0.55, once: true }); }
+  for (const h of HITS) { const d = t - h.t - 0.3; if (d >= 0 && d < 0.35 && !intro) spr(g, 'spark', bx - 8 + R(hash(h.t) * 16), by - 40 + R(hash(h.t + 1) * 20), t, { t0: h.t + 0.3, once: true }); }
+  if (dead) for (let i = 0; i < 14; i++) { const et = BOSS_END + i * 0.14; const d = t - et; if (d >= 0 && d < 0.34) spr(g, 'spark', bx + R((hash(i) - 0.5) * 50), by - 10 - R(hash(i + 3) * 60), t, { t0: et, once: true }); }
+  if (dead && t > BOSS_END + 2 && t < BOSS_END + 2.3) { g.fillStyle = '#fff'; g.globalAlpha = 1 - (t - BOSS_END - 2) / 0.3; g.fillRect(0, 0, W, H); g.globalAlpha = 1; }
+  if (dead && (aAnim === 'aura_idle')) { uAnim = t > BOSS_END + 2 ? 'uno_cheer' : 'uno_idle'; aAnim = t > BOSS_END + 2 ? 'aura_twirl' : 'aura_idle'; }
+  spr(g, aAnim, AX, feet, t, aO); spr(g, uAnim, ux, feet, t, uO);
+  hud(t, intro ? '' : 'FINAL STAGE');
+  hpBar(HL, 32, VERT ? 90 : 100, dead ? 1 : 1 - 0.12 * Math.min(3, ORBS.filter((o) => t > o + 0.55).length) / 3, '#5ee7ff', 'UNO+AURA');
+  if (showBoss || intro && t > bar(52)) hpBar(VERT ? HR - 90 : W - 128, 32, VERT ? 90 : 120, dead ? 0 : hp, '#ff3fd2', 'SORCERER', true);
+  if (intro && t > bar(50) && t < bar(52) + 0.5 && Math.floor(t * 4) % 2) { g.fillStyle = '#c0102a'; g.fillRect(0, 84, W, 26); text(g, '! WARNING !', W / 2, 89, '#fff', 2, 'center', '#3a0010'); }
+  if (dead && t > BOSS_END + 2.1) { logo(g, 'YOU WIN!', W / 2, 70, 4, ['#fff', '#fff', '#ffe36b', '#ffe36b', '#ffb43a', '#ff3fd2', '#ff3fd2', '#7a34c8']); text(g, 'BOSS BONUS 5000', W / 2, 112, '#5ee7ff', 1, 'center'); }
+}
+
+// ---------- title / end ----------
+const COIN_T = bar(4), START_T = bar(6) - 0.5;
+function stars(t, n = 90) { for (let i = 0; i < n; i++) { const x = R((hash(i) * W + t * (6 + hash(i + 1) * 20)) % W), y = R(hash(i + 2) * H); g.fillStyle = hash(i + 3) > 0.7 ? '#5ee7ff' : hash(i + 3) > 0.4 ? '#ff3fd2' : '#8a7ab8'; const tw = Math.floor(t * 4 + i) % 7 === 0; g.fillRect(x, y, tw ? 2 : 1, tw ? 2 : 1); } }
+const CHROME = ['#ffffff', '#e8ecff', '#c4cbe8', '#9aa3cf', '#ff7fe6', '#ff3fd2', '#b02ad0', '#7a34c8'];
+function titleScene(t) {
+  g.fillStyle = '#0b0618'; g.fillRect(0, 0, W, H); stars(t);
+  g.globalAlpha = 0.35; g.drawImage(BG.kingdom.far, 0, 40); g.globalAlpha = 1;
+  g.fillStyle = '#0b0618'; g.fillRect(0, 200, W, 70);
+  const flashStart = t > START_T && t < START_T + 0.5;
+  text(g, 'PROGRESSIVESLOP PRESENTS', W / 2, 30, '#5ee7ff', 1, 'center');
+  logo(g, 'KINGDOM', W / 2, 52, 5, CHROME);
+  logo(g, 'COME', W / 2, 102, 5, CHROME);
+  g.fillStyle = '#ff3fd2'; g.fillRect(118, 146, 244, 2); g.fillStyle = '#5ee7ff'; g.fillRect(118, 149, 244, 1);
+  text(g, 'UNO AND AURA - HIP-HOP FUN, DRESSED UP.', W / 2, 156, '#bff6ff', 1, 'center');
+  spr(g, 'uno_idle', 70, 214, t); spr(g, 'aura_idle', 410, 214, t, { flip: true });
+  const credit = t >= COIN_T ? 1 : 0;
+  if (!credit) { if (Math.floor(t * 2) % 2 === 0) text(g, 'INSERT COIN', W / 2, 176, '#ffe36b', 2, 'center'); }
+  else if (flashStart ? Math.floor(t * 16) % 2 : Math.floor(beatIdx(t)) % 2 === 0) text(g, 'PRESS START', W / 2, 176, flashStart ? '#ffffff' : '#ff3fd2', 2, 'center');
+  // coin drops into the slot, landing exactly on the bar-4 downbeat
+  const slotX = W / 2, slotY = 228; g.fillStyle = '#2a1270'; g.fillRect(slotX - 9, slotY - 2, 18, 8); g.fillStyle = '#12062a'; g.fillRect(slotX - 6, slotY, 12, 2);
+  if (t > COIN_T - 0.6 && t < COIN_T) { const k = (t - COIN_T + 0.6) / 0.6; spr(g, 'coin', slotX, R(slotY - 140 * (1 - k * k)) + 1, t); }
+  if (t >= COIN_T && t < COIN_T + 0.4) spr(g, 'spark', slotX, slotY + 4, t, { t0: COIN_T, once: true });
+  text(g, 'CREDIT ' + credit, W - 10, 258, credit && t < COIN_T + 0.6 && Math.floor(t * 10) % 2 ? '#ffe36b' : '#fff', 1, 'right');
+  text(g, '\xa9 PROGRESSIVESLOP 2026'.replace('\xa9', '(C)'), W / 2, 258, '#8a7ab8', 1, 'center', null);
+  text(g, '1UP', 10, 6, '#ff3fd2'); text(g, 'HI 9999990', W - 10, 6, '#5ee7ff', 1, 'right');
+}
+function endScene(t, t0) {
+  g.fillStyle = '#0b0618'; g.fillRect(0, 0, W, H); stars(t);
+  logo(g, 'THE END', W / 2, 40, 5, CHROME);
+  [[70, 190], [120, 196], [160, 186], [320, 186], [360, 196], [410, 190]].forEach(([x, y], i) => spr(g, 'crowd' + (i % 4), x, y, t, { beat: 1, seed: i }));
+  spr(g, 'uno_cheer', 196, 182, t); spr(g, 'aura_twirl', 284, 182, t);
+  text(g, 'FINAL SCORE ' + String(score(t)).padStart(7, '0'), W / 2, 214, '#ffe36b', 1, 'center');
+  text(g, 'A PROGRESSIVESLOP PRODUCTION', W / 2, 228, '#5ee7ff', 1, 'center');
+  text(g, 'UNO AND AURA - HIP-HOP FUN, DRESSED UP.', W / 2, 239, '#bff6ff', 1, 'center', null);
+  if (Math.floor(t * 2) % 2) text(g, 'THANK YOU FOR PLAYING', W / 2, 254, '#ff3fd2', 1, 'center');
+}
+function partyScene(t, t0) {
+  danceHall(t, t0 + 99, 'party');
+  // confetti pixels
+  for (let i = 0; i < 60; i++) { const x = R((hash(i) * W + Math.sin(t + i) * 8)), y = R(((hash(i + 5) * H) + t * (20 + hash(i) * 30)) % H); g.fillStyle = ['#ff3fd2', '#5ee7ff', '#ffe36b', '#fff'][i % 4]; g.fillRect(x, y, 2, 2); }
+  const d = t - t0;
+  if (d < 6) { g.fillStyle = '#0b0618cc'; g.fillRect(90, 54, 300, 74); logo(g, 'STAGE CLEAR', W / 2, 62, 3, CHROME);
+    const rows = [['ENEMIES', ENC2.length + ENC3.length], ['BOSS HITS', HITS.length], ['DANCE BEATS', Math.max(0, beatIdx(t))]];
+    rows.forEach(([k, v], i) => { if (d > 0.6 + i * 0.5) { text(g, k, 110, 94 + i * 10, '#fff'); text(g, String(v), 370, 94 + i * 10, '#ffe36b', 1, 'right'); } }); }
+}
+
+// ---------- scene router (time driven) ----------
+const SC = [['title', 0], ['stage1', 6], ['dance1', 10], ['stage2', 15], ['dance2', 23], ['stage3', 31], ['dance3', 40], ['stage4', 47], ['dance4', 56], ['boss', 63], ['dance5', 72], ['party', 78], ['end', 90]].map(([n, b]) => [n, b ? bar(b) : 0]);
+function sceneAt(t) { let s = SC[0]; for (const x of SC) if (t >= x[1] - 0.001) s = x; return s; }
+function drawWorld(t) {
+  const [name, t0] = sceneAt(t);
+  g.setTransform(1, 0, 0, 1, 0, 0); g.globalAlpha = 1;
+  if (name === 'title') titleScene(t);
+  else if (name === 'stage1') {
+    bgStatic('kingdom');
+    spr(g, 'wizard_idle', 330, 198, t); spr(g, 'jester_hop', 270, 200, t, { beat: 2 });
+    spr(g, 'aura_idle', 128, 200, t); spr(g, 'uno_idle', 180, 200, t, { seed: 2 });
+    const d = t - t0 - Music.barLen;
+    if (d > 0) { box(g, 60, 30, 360, 40); text(g, 'WIZARD', 68, 24, '#ffe36b');
+      const msg = 'The Sorcerer stole our music and light! Uno, Aura: bring it home!'; const n = Math.floor(d * 22);
+      wrap(msg.slice(0, n), 42).forEach((ln, j) => text(g, ln, 70, 40 + j * 12, '#fff')); }
+    hud(t, 'THE KINGDOM');
+    stageCard(t, t0, 'STAGE 1', 'THE CHROME KINGDOM');
+  }
+  else if (name.startsWith('dance')) danceHall(t, t0, name);
+  else if (name === 'stage2') { scrollScene(t, t0 + Music.barLen, 0, ENC2, {}); hud(t, 'CRYSTAL FOREST'); stageCard(t, t0, 'STAGE 2', 'THE CRYSTAL FOREST'); }
+  else if (name === 'stage3') { scrollScene(t, t0 + Music.barLen, 0, ENC3, { dark: true }); hud(t, 'DARK WOODS'); stageCard(t, t0, 'STAGE 3', 'THE DARK WOODS'); }
+  else if (name === 'stage4') { bossScene(t, true); stageCard(t, t0, 'STAGE 4', "THE SORCERER'S LAIR"); }
+  else if (name === 'boss') { bossScene(t, false); stageCard(t, t0, 'FINAL', 'DEFEAT THE SORCERER'); }
+  else if (name === 'party') partyScene(t, t0);
+  else if (name === 'end') endScene(t, t0);
+  return name;
+}
+function frame() {
+  const t = Music.time();
+  drawWorld(t);
+  out.setTransform(1, 0, 0, 1, 0, 0);
+  if (!VERT) { out.drawImage(wc, 0, 0); lyrics(t, out, W, 0, H - 6); }
+  else { // vertical game screen: logo band / centre 270x270 crop of the world / lyric band
+    out.fillStyle = '#0b0618'; out.fillRect(0, 0, 270, 480);
+    out.drawImage(wc, 105, 0, 270, 270, 0, 96, 270, 270);
+    out.fillStyle = '#ff3fd2'; out.fillRect(0, 94, 270, 2); out.fillRect(0, 366, 270, 2);
+    logo(out, 'KINGDOM', 135, 16, 3, CHROME); logo(out, 'COME', 135, 44, 3, CHROME);
+    text(out, 'PROGRESSIVESLOP', 135, 76, '#5ee7ff', 1, 'center');
+    lyrics(t, out, 270, 0, 470);
+  }
+  requestAnimationFrame(frame);
+}
+['title', 'stage1', 'dance1', 'stage2', 'dance2', 'stage3', 'dance3', 'stage4', 'dance4', 'boss', 'dance5', 'party', 'end'].forEach((n) => Webshot.scene(n, () => {}));
+requestAnimationFrame(frame);
+Webshot.start();
+})();
+</script>
+</body></html>

@@ -1,6 +1,6 @@
 # Music mode: design
 
-Status: v1 shipped, plus the actor animation layer and frame-exact capture (v1.1). Showcase: `shots/kingdom-come-v4` (ProgressiveSlop brand, rigged actors) → `out/kingdom-come-v4.mp4` and the Short `out/kingdom-come-v4-short.mp4`. `shots/kingdom-come` is the older v3 (pose-swap actors).
+Status: v1 shipped, plus the actor animation layer and frame-exact capture (v1.1), and the pixel-game style (`shots/kingdom-come-16bit`). Showcase: `shots/kingdom-come-v4` (ProgressiveSlop brand, rigged actors) → `out/kingdom-come-v4.mp4` and the Short `out/kingdom-come-v4-short.mp4`. `shots/kingdom-come` is the older v3 (pose-swap actors).
 
 ## Goals
 
@@ -169,6 +169,20 @@ Call `Actors.clear()` when a scene starts (frees the WebGL contexts; Chrome keep
 **Animated backgrounds.** `Actors.bg(plateEl, '<place>', opts)` loads the plate, its glow maps and sparkle points: `glow: [keys]` screen-blended and pulsed (`pulse: 'beat'|'bar'`), `shimmer: [keys]` (a moving mask sweep, e.g. fountain/crystal light), `twinkle: [keys]` (star glints on the brightest points), `fountain: {x,y}` (rising droplets), `lasers: [{x,y,from,to,color,beats}]` (beat-synced sweeps), `disco: {x,y}` (spinning ball + floor spots), `eyes: [[x,y]]` (a big creature's eyes flaring on downbeats). Coordinates are source-image pixels.
 
 **QA for motion.** Besides the check sheet, render a few seconds and sample consecutive frames: crop one actor, diff frame n vs n+k (`ImageChops.difference`), and confirm that the head, arms/cape and hem light up differently and that no frame is a duplicate (`ffmpeg -vf mpdecimate` should keep ~all frames). When extracting frames with `select`, add `-fps_mode vfr` or ffmpeg duplicates them.
+
+## Pixel game style (16-bit sprites)
+
+Worked example: `shots/kingdom-come-16bit` (Kingdom Come as a SNES-era side-scroller). Use it when the art set can't carry rigged animation: cut-out stills warped into motion look janky (the v4 lesson), while frame-by-frame sprite loops are native to pixel art. Work within what the frames can do.
+
+- **One low-res canvas.** The stage is a single `<canvas>` at the internal resolution (480x270; 270x480 for Shorts) with `image-rendering: pixelated` and `imageSmoothingEnabled = false`, redrawn every frame from `Music.time()`. Scenes are time-driven from bar times; the `<section>` stubs exist only so `npm run check` sees the scene list.
+- **Integer capture.** `"pixel": {"w": 480, "h": 270}` in `<name>.music.json` makes `lib/frame-runner.mjs` use the internal size as the viewport with an integer device scale (4x → 1920x1080 / 1080x1920), PNG frames, and the final mux scales with `flags=neighbor`. Every art pixel is an exact 4x4 block.
+- **Rules:** all positions `Math.round`ed; no rotation, sub-pixel moves, blur or scaling on sprites (mirror with `scale(-1,1)` only for symmetric characters; never mirror text or logos like Uno's "1"). Alpha only for flat full-screen flashes/tints.
+- **Sprites from a reference sheet** (`scripts/pixel_sprites.py`): chroma key against the corner colour with a 2 px matte erosion (kills the magenta fringe), crop per frame (cut columns from the column-coverage minima), premultiplied box downscale to ~60 px tall, hard alpha, one shared median-cut palette (+ exact brand colours), despeckle tiny islands, 1 px dark outline. Extra loop frames by pixel edits (`shift_rows`, `shift_region`: foot lifts, off-beat squash of the upper body). NPCs are derived from the same reference frames so they match the heroes' detail level: re-sample a hero frame at the NPC's size, recolour by hue (cloak/gown/gold → the NPC's colours, skipping the top of the head so red eyes stay red), and add small shaded pixel accessories (wizard hat + staff, jester hat + bells, knight plume + spear, sorcerer horns + orb staff); crowd = 2 mini designs x palette variants. Hand-drawn primitive NPCs looked Atari-crude next to the painted backgrounds; don't ship blob figures. `pack()` writes an atlas + json (anchor = bottom centre).
+- **Loops:** each animation has a fixed fps (8-12) or is beat-locked (`spr(..., {beat: 2})` = 2 frames per beat, so an 8-frame dance is one bar). One-shots (`slash`, `cast`, `spark`) take `{t0, once: true}`. Different seeds/phases per character so nobody moves in lockstep.
+- **Backgrounds:** painted plates downscaled to 480x270 and quantized (no dither); split at the floor line into a far band (0.35x) and a near band (1x), each mirror-tiled for seamless scrolling, plus a procedural silhouette foreground at 1.6x.
+- **Game feel kit:** bitmap font (Press Start 2P rendered 1-bit at 8 px into a strip), RPG text boxes for verse lyrics (typed per sung word), arcade 2x text for chorus lines, `STAGE n` cards for one bar, HUD (1UP/score/HI), health bars, white hit flash (`source-in` white atlas), integer screen shake, spark bursts, arcade title (INSERT COIN → coin lands on a downbeat → CREDIT 1 → PRESS START) and THE END + credit.
+- **Shorts:** draw the world into an offscreen 480x270 canvas and blit a 270x270 centre crop into the vertical screen (logo band on top, lyrics below). Keep the action in world x 105-375.
+- **Review:** sample consecutive frames of one character (`select=between(n,a,b),crop,tile`) to confirm the loop advances; zoom a crop with `flags=neighbor` to confirm 4x4 blocks and no fringe.
 
 ## Chorus routine (the recurring hook)
 

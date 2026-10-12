@@ -66,3 +66,11 @@ Stop for human approval at the two marked gates. Everything else runs autonomous
 
 ## 11. Export
 - Commit the shot. Copy renders + manifest + contact sheet into the channel folder (`channels/<channel>/renders/`, `…/assets/<name>/`), then merge into the user's channel folder without overwriting (`workflows/export.md`).
+
+## Style option: pixel game (16-bit sprites)
+- Pick it when the assets are stills that can't be animated convincingly (lesson from v4: don't overreach). Example: `shots/kingdom-come-16bit` (`build_assets.py` + one-canvas `stage/index.html`).
+- Assets: one design-reference sprite sheet per cast row on a flat chroma background (8 frames each: idle x3, actions, dance poses) + pixel-art backgrounds. Build with `scripts/pixel_sprites.py` (key → crop → downscale to ~60 px → shared palette → outline; extra loop frames by pixel edits; NPCs re-sampled from hero frames, recoloured by hue, with shaded pixel accessories, so every character matches the background detail). Check the sprite contact sheet before building scenes.
+- `"pixel": {"w":480,"h":270}` in `<name>.music.json` for integer 4x capture and nearest-neighbour output. Integer positions only; no smoothing, rotation or blur.
+- Story as game stages: arcade title (coin drop on a downbeat), `STAGE n` card per section, side-scroll walks with parallax, encounters, a boss fight with health bars/hit flashes/shake/sparks, `STAGE CLEAR` tally, THE END + channel credit. Every chorus = the same beat-locked dance routine (2 frames per beat), crowd grows each chorus.
+- Lyrics: verse lines in an RPG text box typed per sung word; chorus lines as 2x arcade text.
+- Review: consecutive-frame strips per character (loops advance), a nearest-neighbour zoom crop (crisp 4x4 blocks, no fringe).

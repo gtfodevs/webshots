@@ -1,0 +1,15 @@
+[
+ {"scene":"title","bar":0,"label":"arcade title: INSERT COIN, coin drops on bar 4, PRESS START"},
+ {"scene":"stage1","bar":6,"label":"STAGE 1 card + the chrome kingdom: the Wizard sends Uno and Aura on the quest"},
+ {"scene":"dance1","bar":10,"label":"chorus routine in the hall (crowd 4)"},
+ {"scene":"stage2","bar":15,"label":"STAGE 2 crystal forest side-scroll; knights fall"},
+ {"scene":"dance2","bar":23,"label":"chorus routine (crowd 8)"},
+ {"scene":"stage3","bar":31,"label":"STAGE 3 dark woods side-scroll; beasts fall before my might"},
+ {"scene":"dance3","bar":40,"label":"chorus routine (crowd 12)"},
+ {"scene":"stage4","bar":47,"label":"STAGE 4 the lair: WARNING, the Sorcerer appears"},
+ {"scene":"dance4","bar":56,"label":"chorus routine (crowd 16)"},
+ {"scene":"boss","bar":63,"label":"FINAL STAGE boss fight: health bars, hits, explosion, YOU WIN"},
+ {"scene":"dance5","bar":72,"label":"victory chorus routine (everyone)"},
+ {"scene":"party","bar":78,"label":"STAGE CLEAR: dance party + score tally"},
+ {"scene":"end","bar":90,"label":"THE END, ProgressiveSlop credit"}
+]

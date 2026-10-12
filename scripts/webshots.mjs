@@ -191,7 +191,7 @@ async function cmdRenderMusic() {
     const { renderFrames } = await import('../lib/frame-runner.mjs');
     mkdirSync(join(OUT, '.frames'), { recursive: true });
     raw = join(OUT, '.frames', `${suffix}.mp4`);
-    await renderFrames({ name, out: raw, start, end, format, fps: Number(flag('--fps', cfg.fps ?? 30)) });
+    await renderFrames({ name, out: raw, start, end, format, fps: Number(flag('--fps', cfg.fps ?? 30)), pixel: cfg.pixel || null });
     if (!existsSync(raw)) die('frame capture failed; see the log above');
   } else {
     const argo = join(ROOT, 'node_modules', '@argo-video', 'cli', 'bin', 'argo.js');
@@ -208,7 +208,7 @@ async function cmdRenderMusic() {
     fin ? `afade=t=in:d=${fin}` : null, fade ? `afade=t=out:st=${Math.max(0, len - fade)}:d=${fade}` : null].filter(Boolean).join(',');
   const final = join(OUT, `${suffix}.mp4`);
   const c2 = await run('ffmpeg', ['-y', '-loglevel', 'error', '-i', raw, '-i', join(shotDir(name), cfg.soundtrack),
-    '-map', '0:v:0', '-map', '1:a:0', '-t', String(len), '-vf', `scale=${W}:${H}:flags=lanczos,format=yuv420p${fade ? `,fade=t=out:st=${Math.max(0, len - fade)}:d=${fade}` : ''}`,
+    '-map', '0:v:0', '-map', '1:a:0', '-t', String(len), '-vf', `scale=${W}:${H}:flags=${cfg.pixel ? 'neighbor' : 'lanczos'},format=yuv420p${fade ? `,fade=t=out:st=${Math.max(0, len - fade)}:d=${fade}` : ''}`,
     '-c:v', 'libx264', '-preset', 'slow', '-crf', '18', '-af', af, '-ac', '2', '-c:a', 'aac', '-b:a', '256k', '-movflags', '+faststart', final]);
   if (c2 !== 0) die('ffmpeg could not mux the soundtrack');
   console.log(`\nDone: out/${suffix}.mp4  (${format} ${W}x${H}, ${len.toFixed(1)}s, soundtrack at ${cfg.loudness ?? -14} LUFS)`);
