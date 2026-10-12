@@ -411,3 +411,6 @@ First used by `shots/neon-dojo-fighter`. The game logic is a pure script, `stage
 - **Scale and palette:** downscale with a box filter to the 960x540 world (Uno is about 198 px tall, i.e. 2x2 blocks at 1080p), then apply one shared 56-colour palette and a dark outline.
 - **Anchors:** the anchor is (belt x, sole row), so the ground row is exact. Walk bob comes from the art's hip heights (`bob` in the atlas json).
 - The engine logic stays in 480x270 coordinates, drawn ×2. Sprite characters are listed in `FIGHT.SPRITE_ANIMS` and drawn from `stage/assets/px/<char>.png/json`. The QA checks atlas anchors, consecutive poses, master identity ≥97% and walk silhouette change, and prints the art flags.
+- **Per-character settings** live in the `CFG` dict in `uno_sprites.py`: which frames get the master, mirrored poses, target height, and the belt landmark (`gold` belt, or `waist` for outfits without one, e.g. Aura's gown).
+- **Baked-in energy** (cyan pixels with low red and high green and blue, plus the white-hot cores within 4 px of them) is pulled out of the body into a separate `fx` layer for each pose. The engine draws that layer additively with a 3-step flicker, so it reads as an effect and never counts toward the body's silhouette or ground row.
+- **`strip` poses** have the haze deleted instead, and chrome tinted by the haze is pulled back to neutral grey.

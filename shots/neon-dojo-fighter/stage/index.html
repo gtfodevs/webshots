@@ -67,7 +67,7 @@ function ph(c, x, y, w, h, label, col = '#3a1a70') { // labelled placeholder box
 // ---------- placeholder fighter (shared-master rects) + contact shadow ----------
 const COL = (C) => ({ chrome: C.chrome, dark: '#4a4e66', limb: '#8a90a8', foot: '#2a2c3a', acc: C.acc, acc2: C.acc2, eye: '#ff2030', fist: C.chrome });
 const qa = (window.__qa = window.__qa || { draws: [] });
-function fighter(st, o = {}) {
+function fighter(st, o = {}, t = Music.time()) {
   const C = CH[st.char], rects = SPR[st.char] ? [] : FIGHT.poseRects(st.char, st.anim, st.frame), col = COL(C), s = st.flip ? -1 : 1;
   const gy = o.ground ?? st.y; // contact shadow on the stage ground even when airborne
   g.fillStyle = '#0000007a'; const sw = R(C.w * 1.6 + 10); g.fillRect(R(st.x - sw / 2), (o.groundRow ?? st.y) - 1 + (st.air ? 0 : 0), sw, 3); g.fillRect(R(st.x - sw / 2) + 3, (o.groundRow ?? st.y) + 2, sw - 6, 1);
@@ -75,7 +75,11 @@ function fighter(st, o = {}) {
     const pose = FIGHT.animOf(st.char, st.anim).frames[st.frame], fr = SPR[st.char].meta.frames[pose], [sx, sy, w, h] = fr.rect;
     const ax = st.flip ? w - 1 - fr.ax : fr.ax, dx = R(st.x * Z) - ax, dy = R(gy * Z) - fr.ay;
     g.save(); g.setTransform(1, 0, 0, 1, 0, 0); if (st.flip) { g.translate(dx + w, dy); g.scale(-1, 1); } else g.translate(dx, dy);
-    g.drawImage(o.white ? white(st.char) : SPR[st.char].img, sx, sy, w, h, 0, 0, w, h); g.restore();
+    g.drawImage(o.white ? white(st.char) : SPR[st.char].img, sx, sy, w, h, 0, 0, w, h);
+    if (fr.fx && !o.white) { // energy layer: additive, flickers on a 3-step cycle so it reads as effect, not body
+      const [fx, fy, fw, fh] = fr.fx.rect, fl = Math.floor(t * 20) % 3; g.globalCompositeOperation = 'lighter'; g.globalAlpha = fl === 0 ? 1 : fl === 1 ? 0.7 : 0.45;
+      g.drawImage(SPR[st.char].img, fx, fy, fw, fh, fr.fx.ox, fr.fx.oy, fw, fh); g.globalAlpha = 1; g.globalCompositeOperation = 'source-over'; }
+    g.restore();
     qa.draws.push([st.char, st.anim, st.frame, st.x, st.y, st.air ? 1 : 0, pose]); return;
   }
   for (const [x, y, w, h, k] of rects) { g.fillStyle = o.white ? '#ffffff' : o.tint || col[k]; const X = s > 0 ? st.x + x : st.x - x - w + 1; g.fillRect(R(X), R(gy + y), w, h); }

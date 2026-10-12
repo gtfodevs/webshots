@@ -65,6 +65,19 @@ F.SPRITE_ANIMS = {
     ko_down: { frames: ['ko_down'], durations: [1000] },
     victory: { frames: ['idle_br1', 'victory'], durations: [120, 900] },
   },
+  // Aura: no idle_b (breath from the idle_a master); cyan energy is a separate additive fx layer per pose
+  aura: {
+    idle:    { loop: 1, frames: ['idle_a', 'idle_br1', 'idle_br2', 'idle_br1'], durations: [300, 180, 340, 180] },
+    walk:    { loop: 1, frames: ['walk_contact_R', 'walk_pass_R', 'walk_contact_L', 'walk_pass_L'], durations: [130, 110, 130, 110] },
+    punch:   { frames: ['punch_windup', 'punch_extend'], durations: [110, 220] },
+    kick:    { frames: ['kick_chamber', 'kick_extend'], durations: [120, 240] },
+    special: { frames: ['special_charge', 'special_release'], durations: [260, 360] },
+    block:   { frames: ['block'], durations: [400] },
+    hit:     { frames: ['hit'], durations: [350] },
+    ko_fall: { frames: ['ko_fall'], durations: [600] },
+    ko_down: { frames: ['ko_down'], durations: [1000] },
+    victory: { frames: ['idle_br1', 'victory'], durations: [120, 900] },
+  },
 };
 F.animOf = (c, a) => (F.SPRITE_ANIMS[c] && F.SPRITE_ANIMS[c][a]) || F.ANIMS[a];
 // lean plan: KAZE-9 and RAIJIN (montage-only) get idle / attack / hit / KO (ASSET_LIST.md)

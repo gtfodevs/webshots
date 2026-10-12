@@ -20,6 +20,9 @@ for name, a in AN.items():
         im = Image.new('RGBA', (W, H), (26, 12, 54, 255)); d = ImageDraw.Draw(im); d.rectangle([0, top + 1, W, H], fill=(18, 8, 40, 255)); d.line([0, top + 1, W, top + 1], fill=(255, 63, 210, 255))
         d.rectangle([left - 40, top - 1, left + 40, top + 2], fill=(0, 0, 0, 120))
         x, y, w, h = f['rect']; spr = A.crop((x, y, x + w, y + h)); lift = 20 if f.get('air') else 0
-        im.alpha_composite(spr, (left - f['ax'], top - f['ay'] - lift)); ims.append(im.convert('RGB').resize((W * S, H * S), Image.NEAREST))
+        im.alpha_composite(spr, (left - f['ax'], top - f['ay'] - lift))
+        if 'fx' in f:
+            fx, fy, fw, fh = f['fx']['rect']; e = A.crop((fx, fy, fx + fw, fy + fh)); im.alpha_composite(e, (left - f['ax'] + f['fx']['ox'], top - f['ay'] - lift + f['fx']['oy']))
+        ims.append(im.convert('RGB').resize((W * S, H * S), Image.NEAREST))
     ims[0].save(f'{OUT}/{c}_{name}.gif', save_all=True, append_images=ims[1:], duration=a['durations'], loop=0, disposal=2)
     print(name, len(ims), 'frames')
