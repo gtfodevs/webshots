@@ -84,7 +84,11 @@
   "boss_orbs": 113.9,
   "boss_slam": 117.6,
   "hall": 75.0,
-  "kingdom": 18.0
+  "kingdom": 18.0,
+  "walkC": 29.2,
+  "lairwalk": 85.5,
+  "boss_idle": 112.4,
+  "hall2": 100.5
  },
  "parallax_pair": [
   "walkA",
@@ -176,5 +180,18 @@
  ],
  "idles": [
   "uno_stand"
- ]
+ ],
+ "scene_bg": {
+  "stage1": "kingdom",
+  "stage2": "forest",
+  "stage3": "forest",
+  "stage4": "lair",
+  "boss": "lair",
+  "dance1": "hall",
+  "dance2": "hall",
+  "dance3": "hall",
+  "dance4": "hall",
+  "dance5": "hall",
+  "party": "hall"
+ }
 }

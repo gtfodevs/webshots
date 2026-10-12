@@ -251,6 +251,19 @@ fbg = Image.open(os.path.join(OUT, 'bg-forest.png'))
 L0 = wrap_tile(fbg)                                   # 0.1x: the painted forest (sky/canopy/far trees)
 GY = SPLIT['forest']
 L3 = wrap_tile(fbg.crop((0, GY, W, H)))               # 1.0x: walkway floor
+# a clear walkway the feet stand on (the raw near-ground strip was pipe clutter, so sprites read as floating)
+def walkway(L, top, depth=11):
+    from PIL import ImageDraw as _D
+    im = L.convert('RGBA'); d = _D.Draw(im); w = im.width
+    d.rectangle([0, top, w, top + depth], fill=(52, 40, 78))
+    d.rectangle([0, top + 2, w, top + depth - 2], fill=(66, 52, 96))
+    d.line([(0, top), (w, top)], fill=(176, 160, 214)); d.line([(0, top + 1), (w, top + 1)], fill=(112, 96, 150))
+    d.line([(0, top + depth), (w, top + depth)], fill=(20, 12, 34))
+    for x in range(0, w, 24):                      # slab seams + rivets
+        d.line([(x, top + 2), (x - 3, top + depth - 1)], fill=(36, 26, 58)); d.point((x + 10, top + 5), fill=(140, 120, 190))
+    return im
+WALK_TOP = 204 - 2 - GY                            # feet sink 2 px into the slab top (forest ground row 204)
+L3 = walkway(L3, WALK_TOP)
 HAZE = [(28, 14, 52), (44, 26, 78), (66, 44, 108), (92, 68, 140), (120, 96, 170), (150, 130, 200)]
 FGD = [(10, 6, 20), (22, 12, 38), (36, 22, 58), (52, 34, 80), (70, 50, 104), (90, 70, 130)]
 CRM, CRC = _ramp((200, 60, 200)), _ramp((70, 170, 220))

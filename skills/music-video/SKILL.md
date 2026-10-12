@@ -210,3 +210,14 @@ Checklist additions:
 - [ ] The bob is a triangle (2–3 px); contacts are held longer; frame 8 flows into frame 1.
 - [ ] Planted foot pinned: the scroll follows the measured foot travel.
 - [ ] Idle heroes breathe (never a frozen frame).
+
+### Ground contact fix (v2 render)
+The "floating" look in the forest came from the near-ground layer being raw pipe clutter, with no readable surface under the feet. The forest now has a painted walkway slab on the 1.0x layer (`walkway()`), and feet sink 2 px into its lit top edge at ground row 204. QA now uses the stage of each sampled still (`scene_bg`) and checks that each grounded sprite's lowest opaque pixel, at its composited position, sits within ±1 px of *that stage's* ground row. Only crowds and NPCs may use the declared depth rows.
+
+### Improve next (after the first video)
+- Aura: detailed frame-by-frame walk (8 poses) and idle, using THE sprite method; she is still the v3 rig and looks simpler than Uno.
+- Knights and animals: detailed per-pose frames (knight march 6; wolf gallop 6 + crouch/lunge/bite/hit/down; spider 4 + attack set; bat 4 + dive/hit/down) to replace the rigs.
+- Cloak flicker: Uno's lower cloak hem still comes from each pose and shimmers slightly. Make the hem master plus small offsets, or hand-pick the 2–3 least boily hems.
+- Walk speed: the art's stride gives about 39 px/beat (about 89 px/s), which is brisk. Generate shorter-stride poses, or use 2 beats per step (8 frames per 2 beats) for a calmer march.
+- Hips stretched 2–3 px on the down frames, and a slight sword kink at the hilt seam.
+- Forest walkway is plain. Add slab variation and occasional roots in front of the feet.

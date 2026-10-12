@@ -160,7 +160,13 @@ if '--no-browser' not in sys.argv and CFG.get('stills'):
         for an, fi, dx, dy, y, *fl in Q[lab]['draws']:
             if (fl and fl[0]) or an in air or an in skip or an not in M: continue
             if not (M[an]['frames'][fi][3] + dy - 1 == y): F(f'{lab}: {an} bottom row != anchor')
-            if min(abs(y - g) for g in grounds) > 1: F(f'{lab}: grounded {an} feet at y={y}, not on a ground line {sorted(grounds)}'); break
+            sc = Q[lab].get('scene'); bgk = CFG.get('scene_bg', {}).get(sc)
+            allowed = ({W['ground'][bgk]} | (set(W.get('depth_rows', {}).get(bgk, [])) if an.startswith(('crowd', 'wizard', 'jester')) else set())) if bgk else grounds
+            if min(abs(y - g) for g in allowed) > 1: F(f'{lab} ({sc}): grounded {an} feet at y={y}, stage ground is {sorted(allowed)}'); break
+            # the sprite's lowest opaque pixel (composited position) must land on the anchor row
+            fx, fy, fw, fh = M[an]['frames'][fi]; col = A[fy:fy + fh, fx:fx + fw, 3] > 0
+            low = dy + int(np.where(col.any(1))[0].max())
+            if abs(low - y) > 1: F(f'{lab}: {an} lowest foot pixel y={low} vs ground {y} (floating {y - low}px)'); break
         Image.fromarray(im[::4, ::4].astype(np.uint8)).save(f'{OUT}/{lab}-1x.png')
     # parallax: measure each layer's shift between two walk frames from the pixels themselves
     pa, pb = CFG.get('parallax_pair', [None, None])
