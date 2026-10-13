@@ -175,6 +175,18 @@ def check_audio(spec):
         ok(f"cut points clear of words, tail fades over >= {C.TAIL_FADE}s" + (f" under a {ec['seconds']}s end card" if ec else ''))
 
 
+def rotated_bounds(r, box, deg):
+    """Axis-aligned bounds of rect r after rotating by deg (PIL convention, counter-clockwise) about box's centre."""
+    cx, cy = box[0] + box[2] / 2 + 6, box[1] + box[3] / 2 + 6
+    a = math.radians(deg)
+    pts = []
+    for x, y in ((r[0], r[1]), (r[0] + r[2], r[1]), (r[0], r[1] + r[3]), (r[0] + r[2], r[1] + r[3])):
+        dx, dy = x - cx, y - cy
+        pts.append((cx + dx * math.cos(a) + dy * math.sin(a), cy - dx * math.sin(a) + dy * math.cos(a)))
+    xs, ys = [p[0] for p in pts], [p[1] for p in pts]
+    return (int(min(xs)) - 1, int(min(ys)) - 1, int(max(xs) - min(xs)) + 2, int(max(ys) - min(ys)) + 2)
+
+
 def check_endcard(spec):
     print('end card:')
     n0 = len(problems)
@@ -191,8 +203,10 @@ def check_endcard(spec):
             for tb in C.endcard_text_bounds(it):
                 if not inside(tb, it['rect']):
                     fail(f"end card {orient}: text {tb} spills out of its box {it['rect']}")
-                if not inside(tb, safe):
-                    fail(f"end card {orient}: text {tb} is outside the title-safe area {C.SAFE[orient]}")
+                # the box is drawn rotated: rotate all 4 text corners (+ box shadow offset) about the box centre
+                rb = rotated_bounds(tb, it['rect'], it['rot'])
+                if not inside(rb, safe):
+                    fail(f"end card {orient}: rotated text {rb} is outside the title-safe area {C.SAFE[orient]}")
             if not inside(C.endcard_bounds_rotated(it), (0, 0, W, H)):
                 fail(f"end card {orient}: box {C.endcard_bounds_rotated(it)} leaves the frame")
     if len(problems) == n0:
@@ -283,18 +297,32 @@ def check_page(sub, draft):
                 fail(f"{pid} {orient}: {it['who']} leaves the frame {it['rect']}")
             # no clipping: the box must sit inside its panel's lettering rect and the page safe area,
             # and the measured ink of every line must sit inside the box
-            if not inside(it['rect'], it['slot'], 2):
-                fail(f"{pid} {orient}: {it['who']} box {it['rect']} extends past its panel {tuple(it['slot'])}")
+            # box (at its peak: SFX stamp-in scale) inside the panel's real clip path (slanted / tilted
+            # polygons, eroded by C.LETTER_INSET) - not just its bounding rect
+            if not C.fits(it['rect'], it['geo']):
+                fail(f"{pid} {orient}: {it['who']} box {it['rect']} crosses its panel edge (clip path incl. slanted/tilted gutters)")
             if not inside(it['rect'], (sx, sy, sw, sh), 0):
                 fail(f"{pid} {orient}: {it['who']} box {it['rect']} extends past the safe area {C.TEXT_SAFE[orient]}")
             if it.get('kind') == 'caption':
-                for tb in C.caption_text_bounds(it['obj'], it['slot']):
+                for tb in C.caption_text_bounds(it['obj'], it['slot'], it['geo'], C.TEXT_SAFE[orient]):
                     if not inside(tb, it['rect'], 0):
                         fail(f"{pid} {orient}: {it['who']} text {tb} spills out of its box {it['rect']}")
         for a, b in itertools.combinations(items, 2):
             if max(a['from'], b['from']) < min(a['to'], b['to']) and overlap(a['rect'], b['rect']):
                 both = a.get('obj', {}).get('lyric') and b.get('obj', {}).get('lyric')
                 fail(f"{pid} {orient}: {a['who']} overlaps {'the next lyric caption ' if both else ''}{b['who']}")
+        # pixel check: render each unit's lettering alone at its peak frame; no lettering pixel may sit
+        # outside the panel clip path (cut by a mask edge / hanging over a gutter) or the safe area
+        for uid in sorted({it['unit'] for it in items}):
+            lay, geo = C.letter_layer_cached(sub, orient, uid) if hasattr(C, 'letter_layer_cached') else C.lettering_layer(sub, orient, uid)
+            outside = lay & ~C.clip_path_mask(geo, W, H, 4)
+            safe = np.zeros_like(lay); safe[sy:sy + sh, sx:sx + sw] = True
+            n_out, n_safe = int(outside.sum()), int((lay & ~safe).sum())
+            if n_out:
+                ys, xs = np.nonzero(outside)
+                fail(f"{pid} {orient}: {uid} lettering has {n_out} px outside its panel clip path near ({int(xs.mean())},{int(ys.mean())})")
+            if n_safe:
+                fail(f"{pid} {orient}: {uid} lettering has {n_safe} px outside the safe area")
         if orient == 'landscape':
             check_lyric_timing(sub, items, pid)
 

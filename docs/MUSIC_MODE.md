@@ -592,6 +592,13 @@ two-pass loudnorm to `song.loudness` (-14 LUFS, TP -1.5).
   (`C.TEXT_SAFE`), measured ink (`getbbox`) of every caption line inside its box; a lyric caption must stay
   on screen until its sung line ends (timeline lyrics/words; follows a repeat on the splash) and never
   overlap the next caption;
+- angled / slanted panels: every caption and SFX box (SFX measured at its 125% stamp-in peak, rotation and
+  stroke included in the measured tile) must sit inside the panel's real clip path (slanted gutters, tilted
+  and breakout panels) eroded by `C.LETTER_INSET` (16 px) - not just its bounding rect. The renderer
+  auto-fits: it moves the box inward by the smallest step, keeps SFX clear of the panel's captions, and
+  shrinks the type when it cannot fit. Pixel check: each panel's lettering is rendered alone at its peak
+  frame and no lettering pixel may fall outside the clip path (4 px inside the ink) or the safe area;
+  the end card's text corners are rotated with its box before the safe-area test;
 - audio: song / Short start and end never cut a word (timeline words), stay inside the source audio, and
   the tail fades over ≥ `C.TAIL_FADE` (2.5 s) under the end card;
 - end card: present (`spec.endCard`, default on), ~3 s, and its measured text fits the title-safe area

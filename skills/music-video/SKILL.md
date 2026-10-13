@@ -258,4 +258,5 @@ and QA: `docs/MUSIC_MODE.md` → "Comic mode". The steps for a full song:
    and fades (2.5 s+) under it. Check it with `comic_render.py <spec> --endcard-test`.
 8. **No clipping** (QA fails): lettering past its panel or the safe area (measured bounds), a lyric caption
    that leaves before its line is sung or overlaps the next caption, a song/Short cut point mid-word, end
-   card text outside the title-safe area. Pick Short start/end in word gaps (timeline `words`).
+   card text outside the title-safe area. Boxes are tested against the panel's real (slanted/tilted) clip path and
+   rendered at their peak frame pixel by pixel; the renderer auto-fits (move inward, then shrink). Pick Short start/end in word gaps (timeline `words`).

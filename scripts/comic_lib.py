@@ -398,31 +398,102 @@ def wrap(text, f, maxw):
         lines.append(cur)
     return lines
 
-def caption_text_bounds(cap, slot):
+def caption_text_bounds(cap, slot, geo=None, safe=None):
     """Measured ink bounds (frame px) of every caption line, as draw_caption places them."""
-    (x, y, w, h), lines, f, pad, lh = caption_box(cap, slot)
+    (x, y, w, h), lines, f, pad, lh = caption_box(cap, slot, geo, safe)
     out = []
     for i, l in enumerate(lines):
         b = f.getbbox(l)
         out.append((x + pad + b[0], y + pad + i * lh + b[1], b[2] - b[0], b[3] - b[1]))
     return out
 
-def caption_box(cap, slot):
-    """Returns (rect, lines, font) for a caption box pinned to a slot corner."""
-    px = int(min(max(base_px(slot) * cap.get('size', 0.072), 32), 52))
+LETTER_INSET = 16   # px kept clear between lettering and the panel's ink edge (border is 7-9 px)
+
+_FIT_MASKS = {}
+def fit_mask(geo):
+    """bbox-sized bool mask of where lettering may sit: the panel's real clip path (slanted / tilted polygons,
+    breakout burst) eroded by LETTER_INSET, so nothing touches or crosses a gutter."""
+    key = (tuple(map(tuple, (tuple(map(tuple, p)) for p in geo['polys']))), geo['bbox'])
+    if key not in _FIT_MASKS:
+        m0 = slot_mask(geo)
+        pad = LETTER_INSET + 4          # pad first: MinFilter replicates the image border, which would not erode it
+        m = Image.new('L', (m0.width + 2 * pad, m0.height + 2 * pad), 0); m.paste(m0, (pad, pad))
+        for _ in range(LETTER_INSET // 2):
+            m = m.filter(ImageFilter.MinFilter(5))
+        _FIT_MASKS[key] = np.asarray(m)[pad:-pad, pad:-pad] > 127
+    return _FIT_MASKS[key]
+
+def fits(rect, geo, safe=None, avoid=()):
+    x, y, w, h = rect
+    for a in avoid:   # other lettering of the same panel (+ a small gap)
+        if x < a[0] + a[2] + 10 and a[0] < x + w + 10 and y < a[1] + a[3] + 10 and a[1] < y + h + 10:
+            return False
+    if safe and not (x >= safe[0] and y >= safe[1] and x + w <= safe[0] + safe[2] and y + h <= safe[1] + safe[3]):
+        return False
+    m = fit_mask(geo)
+    bx, by = geo['bbox'][:2]
+    x0, y0 = x - bx, y - by
+    if x0 < 0 or y0 < 0 or x0 + w > m.shape[1] or y0 + h > m.shape[0]:
+        return False
+    return bool(m[y0:y0 + h, x0:x0 + w].all())
+
+def place_in(rect, geo, safe=None, toward=None, avoid=()):
+    """Smallest move of rect (towards the slot centre first) so it sits fully inside the panel clip path
+    and the safe area. Returns the new (x, y) or None."""
+    x, y, w, h = rect
+    bx, by, bw, bh = geo['bbox']
+    cx, cy = toward or (bx + bw / 2, by + bh / 2)
+    best = None
+    for r in range(0, int(max(bw, bh) * 0.5), 6):
+        for dx in range(-r, r + 1, 6):
+            for dy in (-r, r) if abs(dx) != r else range(-r, r + 1, 6):
+                cand = (x + dx, y + dy, w, h)
+                if fits(cand, geo, safe, avoid):
+                    d = (dx * dx + dy * dy, -((cx - x) * dx + (cy - y) * dy))
+                    if best is None or d < best[0]:
+                        best = (d, (x + dx, y + dy))
+        if best:
+            return best[1]
+    return None
+
+def _caption_layout(cap, slot, scale=1.0):
+    px = int(min(max(base_px(slot) * cap.get('size', 0.072), 32), 52) * scale)
     f = font(px)
     pad = int(px * 0.45)
-    lines = wrap(cap['text'], f, slot[2] * cap.get('maxw', 0.6) - 2 * pad)
+    lines = wrap(cap['text'], f, slot[2] * cap.get('maxw', 0.6) * (1 if scale >= 1 else scale) - 2 * pad)
     lh = int(px * 1.08)
-    w = int(max(f.getlength(l) for l in lines) + 2 * pad)
+    # measured ink width (getbbox), so a glyph can never poke out of its box
+    w = int(max(max(f.getlength(l), f.getbbox(l)[2]) for l in lines) + 2 * pad)
     h = int(lh * len(lines) + 2 * pad - (lh - px) + 4)
     a = cap.get('anchor', 'tl')
     x = slot[0] if a[1] == 'l' else slot[0] + slot[2] - w
     y = slot[1] if a[0] == 't' else slot[1] + slot[3] - h
     return (x, y, w, h), lines, f, pad, lh
 
-def draw_caption(img, cap, slot):
-    (x, y, w, h), lines, f, pad, lh = caption_box(cap, slot)
+def caption_box(cap, slot, geo=None, safe=None):
+    """Returns (rect, lines, font, pad, lh) for a caption box pinned to a slot corner. With the panel geo,
+    the box is auto-fitted: moved inward until it sits inside the panel's clip path (slanted gutters,
+    tilted panels) and the safe area, shrinking the type when it cannot fit."""
+    if geo is None:
+        return _caption_layout(cap, slot)
+    key = (cap['text'], cap.get('anchor'), cap.get('size'), cap.get('maxw'), tuple(slot), geo['bbox'], safe)
+    if key in _CAP_CACHE:
+        return _CAP_CACHE[key]
+    res = None
+    for scale in (1.0, 0.9, 0.8, 0.7, 0.6):
+        (x, y, w, h), lines, f, pad, lh = _caption_layout(cap, slot, scale)
+        pos = place_in((x, y, w, h), geo, safe)
+        if pos:
+            res = ((pos[0], pos[1], w, h), lines, f, pad, lh)
+            break
+    if res is None:
+        res = _caption_layout(cap, slot, 0.6)
+    _CAP_CACHE[key] = res
+    return res
+_CAP_CACHE = {}
+
+def draw_caption(img, cap, slot, geo=None, safe=None):
+    (x, y, w, h), lines, f, pad, lh = caption_box(cap, slot, geo, safe)
     d = ImageDraw.Draw(img)
     d.rectangle([x, y, x + w - 1, y + h - 1], fill=cap.get('fill') and tuple(cap['fill']) or CAPTION_FILL,
                 outline=INK, width=5)
@@ -447,7 +518,28 @@ def sfx_tile(sfx, slot):
     bb = tile.getbbox()
     return tile.crop(bb)
 
-def sfx_rect(sfx, slot, scale=1.0):
+SFX_PEAK = 1.25    # the stamp-in animation starts at 125%
+
+def sfx_rect(sfx, slot, scale=1.0, geo=None, safe=None, avoid=()):
+    """avoid: caption rects of the same panel - the SFX (at its stamp-in peak) moves clear of them."""
+    if geo is not None:
+        avoid = tuple(tuple(a) for a in avoid)
+        key = (sfx['text'], tuple(sfx['pos']), sfx.get('rot'), sfx.get('size'), tuple(slot), geo['bbox'], safe, avoid)
+        if key not in _SFX_CACHE:
+            tile0 = sfx_tile(sfx, slot)
+            res = None
+            for shrink in (1.0, 0.9, 0.8, 0.7, 0.6):
+                (px_, py_, pw, ph), _ = sfx_rect(sfx, slot, SFX_PEAK * shrink)
+                pos = place_in((px_, py_, pw, ph), geo, safe, avoid=avoid)
+                if pos:
+                    res = (pos[0] + pw / 2, pos[1] + ph / 2, shrink); break
+            _SFX_CACHE[key] = res or (None, None, 0.6)
+        cx, cy, shrink = _SFX_CACHE[key]
+        tile = sfx_tile(sfx, slot)
+        w, h = int(tile.width * scale * shrink), int(tile.height * scale * shrink)
+        if cx is None:
+            return sfx_rect(sfx, slot, scale * shrink)
+        return (int(cx - w / 2), int(cy - h / 2), w, h), tile
     tile = sfx_tile(sfx, slot)
     w, h = int(tile.width * scale), int(tile.height * scale)
     cx = slot[0] + sfx['pos'][0] * slot[2]
@@ -458,6 +550,11 @@ def sfx_rect(sfx, slot, scale=1.0):
     return (int(cx - w / 2), int(cy - h / 2), w, h), tile
 
 # ---------------------------------------------------------------- scene model
+_SFX_CACHE = {}
+
+def unit_caption_rects(u, slot, geo, safe):
+    return [caption_box(c, slot, geo, safe)[0] for c in u.get('captions', [])]
+
 def ease(x):
     x = min(max(x, 0.0), 1.0)
     return 1 - (1 - x) ** 3
@@ -469,26 +566,28 @@ def ease_io(x):
 def text_items(spec, orient):
     """Every caption / SFX with its page rect and visible interval (scene seconds). Used by QA."""
     L = layout(orient, spec.get('layout', 'three'), spec.get('splashStyle', 'full'))
+    G = layout_geo(orient, spec.get('layout', 'three'), spec.get('splashStyle', 'full'))
+    S = TEXT_SAFE[orient]
     items = []
     tr = spec.get('transition')
     end = scene_len(spec)
     page_end = T(spec, tr['at']) - tr.get('dur', 0.4) if tr else end
     splash_t0 = T(spec, tr['at']) if tr else end
     for p in spec['panels']:
-        slot = L[p['slot']]
+        slot = L[p['slot']]; geo = G[p['slot']]
         for c in p.get('captions', []):
-            items.append({'who': f"{p['id']} caption '{c['text']}'", 'rect': caption_box(c, slot)[0],
+            items.append({'who': f"{p['id']} caption '{c['text']}'", 'rect': caption_box(c, slot, geo, S)[0], 'geo': geo, 'unit': p['id'],
                           'from': T(spec, c.get('at', p['at'])), 'to': page_end, 'slot': slot, 'kind': 'caption', 'obj': c})
         for s in p.get('sfx', []):
-            items.append({'who': f"{p['id']} sfx '{s['text']}'", 'rect': sfx_rect(s, slot)[0],
+            items.append({'who': f"{p['id']} sfx '{s['text']}'", 'rect': sfx_rect(s, slot, SFX_PEAK, geo, S, unit_caption_rects(p, slot, geo, S))[0], 'geo': geo, 'unit': p['id'],
                           'from': T(spec, s['at']), 'to': page_end, 'slot': slot, 'kind': 'sfx', 'obj': s})
     sp = splash_unit(spec) or {}
-    slot = L['splash']
+    slot = L['splash']; geo = G['splash']
     for c in sp.get('captions', []):
-        items.append({'who': f"{sp['id']} caption '{c['text']}'", 'rect': caption_box(c, slot)[0],
+        items.append({'who': f"{sp['id']} caption '{c['text']}'", 'rect': caption_box(c, slot, geo, S)[0], 'geo': geo, 'unit': sp.get('id'),
                       'from': max(splash_t0, T(spec, c.get('at', tr['at']))), 'to': end, 'slot': slot, 'kind': 'caption', 'obj': c})
     for s in sp.get('sfx', []):
-        items.append({'who': f"{sp['id']} sfx '{s['text']}'", 'rect': sfx_rect(s, slot)[0],
+        items.append({'who': f"{sp['id']} sfx '{s['text']}'", 'rect': sfx_rect(s, slot, SFX_PEAK, geo, S, unit_caption_rects(sp, slot, geo, S))[0], 'geo': geo, 'unit': sp.get('id'),
                       'from': T(spec, s['at']), 'to': end, 'slot': slot, 'kind': 'sfx', 'obj': s})
     return items
 
@@ -501,9 +600,10 @@ class Scene:
         self.fps = fps or spec.get('fps', 30)
         self.G = layout_geo(orient, spec.get('layout', 'three'), spec.get('splashStyle', 'full'))
         self.paper = Image.fromarray(paper(self.W, self.H))
-        self.units = [dict(p, slotrect=self.G[p['slot']]['inner'], geo=self.G[p['slot']]) for p in spec['panels']]
+        self.L = layout(orient, spec.get('layout', 'three'), spec.get('splashStyle', 'full'))
+        self.units = [dict(p, slotrect=self.L[p['slot']], geo=self.G[p['slot']]) for p in spec['panels']]
         sp = splash_unit(spec)
-        self.splash = sp and dict(sp, slotrect=self.G['splash']['inner'], geo=self.G['splash'])
+        self.splash = sp and dict(sp, slotrect=self.L['splash'], geo=self.G['splash'])
         for u in self.all_units():
             self._prep(u)
         self._page_cache = {}
@@ -587,16 +687,17 @@ class Scene:
 
     def _letter(self, img, u, t):
         slot = u['slotrect']
+        S = TEXT_SAFE[self.orient]
         for c in u.get('captions', []):
             if t >= T(self.spec, c.get('at', u['at'])):
-                draw_caption(img, c, slot)
+                draw_caption(img, c, slot, u['geo'], S)
         for s in u.get('sfx', []):
             ts = T(self.spec, s['at'])
             if t >= ts:
                 k = min((t - ts) * self.fps / 3, 1.0)
                 scale = 1.25 - 0.25 * ease(k)          # quick 3-frame stamp, then still
-                rect, tile = sfx_rect(s, slot, scale)
-                if scale != 1.0:
+                rect, tile = sfx_rect(s, slot, scale, u['geo'], S, unit_caption_rects(u, slot, u['geo'], S))
+                if (rect[2], rect[3]) != tile.size:
                     tile = tile.resize((rect[2], rect[3]), Image.BICUBIC)
                 img.paste(tile, rect[:2], tile)
 
@@ -745,3 +846,33 @@ def endcard_bounds_rotated(item):
     rh = (w + 20) * math.sin(a) + (h + 20) * math.cos(a)
     cx, cy = x + w / 2 + 6, y + h / 2 + 6
     return (int(cx - rw / 2), int(cy - rh / 2), int(rw), int(rh))
+
+
+def lettering_layer(spec, orient, unit_id):
+    """RGBA layer with only one unit's lettering at its peak (captions on, SFX at the stamp-in peak).
+    Used by QA's pixel check: any lettering pixel outside the panel clip path is clipped/overhanging."""
+    W, H = SIZES[orient]
+    L = layout(orient, spec.get('layout', 'three'), spec.get('splashStyle', 'full'))
+    G = layout_geo(orient, spec.get('layout', 'three'), spec.get('splashStyle', 'full'))
+    units = [dict(p) for p in spec['panels']] + ([dict(splash_unit(spec), slot='splash')] if splash_unit(spec) else [])
+    u = next(x for x in units if x['id'] == unit_id)
+    slot, geo, S = L[u['slot']], G[u['slot']], TEXT_SAFE[orient]
+    img = Image.new('RGBA', (W, H), (0, 0, 0, 0))
+    for c in u.get('captions', []):
+        draw_caption(img, c, slot, geo, S)
+    for s_ in u.get('sfx', []):
+        rect, tile = sfx_rect(s_, slot, SFX_PEAK, geo, S, unit_caption_rects(u, slot, geo, S))
+        tile = tile.resize((rect[2], rect[3]), Image.BICUBIC)
+        img.alpha_composite(tile, (max(rect[0], 0), max(rect[1], 0))) if rect[0] >= 0 and rect[1] >= 0 else img.paste(tile, rect[:2], tile)
+    return np.asarray(img)[..., 3] > 24, geo
+
+
+def clip_path_mask(geo, W, H, inset=4):
+    """Full-frame bool mask of a panel's clip path (polygons + burst), eroded by `inset` px (inside the ink)."""
+    m = Image.new('L', (W, H), 0)
+    d = ImageDraw.Draw(m)
+    for p in geo['polys'] + ([geo['burst']] if geo['burst'] else []):
+        d.polygon([(x, y) for x, y in p], fill=255)
+    for _ in range(inset // 2):
+        m = m.filter(ImageFilter.MinFilter(5))
+    return np.asarray(m) > 127
