@@ -122,6 +122,10 @@ def check_lyric_timing(sub, items, pid):
         at = it['from'] + t0
         cands = [l for l in lines if norm(l['text']) == want and abs(l['t'] - at) < 4.0]
         if not cands:
+            part = [l for l in lines if abs(l['t'] - at) < 4.0 and len(norm(l['text'])) > len(want) and norm(l['text'])[:len(want)] == want]
+            if part:
+                l = min(part, key=lambda l: abs(l['t'] - at))
+                fail(f"{pid}: {it['who']} truncates the sung line - it goes on '{' '.join(norm(l['text'])[len(want):])}'")
             continue
         line = min(cands, key=lambda l: abs(l['t'] - at))
         # the same lyric may continue on the next box (e.g. a splash repeats it): follow the chain
@@ -323,6 +327,43 @@ def check_page(sub, draft):
                 fail(f"{pid} {orient}: {uid} lettering has {n_out} px outside its panel clip path near ({int(xs.mean())},{int(ys.mean())})")
             if n_safe:
                 fail(f"{pid} {orient}: {uid} lettering has {n_safe} px outside the safe area")
+        # glyph overhang: every SFX tile must hold all its ink vs an oversized-canvas reference
+        # (a tight pre-rotation canvas sliced the top-right of slanted Bangers glyphs)
+        for it in items:
+            if it.get('kind') == 'sfx':
+                lost, _, _ = C.sfx_ink_lost(it['obj'], it['slot'])
+                if lost > 0:
+                    fail(f"{pid} {orient}: {it['who']} tile loses {lost} ink px vs the padded reference (glyph/stroke overhang cropped)")
+        # rendered-frame geometry: map every visible caption / SFX through the frame's zoom (page transition)
+        # and screen-shake crop at sampled times; nothing visible may be sliced by the frame edge
+        sc = C.Scene.__new__(C.Scene)
+        sc.spec, sc.orient, sc.W, sc.H, sc.fps = sub, orient, W, H, sub.get('fps', 30)
+        sc.G = C.layout_geo(orient, sub.get('layout', 'three'), sub.get('splashStyle', 'full'))
+        sc.units = [dict(p, geo=sc.G[p['slot']]) for p in sub['panels']]
+        spu = C.splash_unit(sub); sc.splash = spu and dict(spu, geo=sc.G['splash'])
+        tr = sub.get('transition')
+        times = set()
+        for it in items:
+            times |= {it['from'] + d for d in (0.0, 0.03, 0.1, 0.2)}
+        if tr:
+            t1 = C.T(sub, tr['at']); d_ = tr.get('dur', 0.4)
+            times |= {t1 - d_ + d_ * k / 8 for k in range(9)}
+        for t in sorted(x for x in times if 0 <= x < C.scene_len(sub)):
+            vb = sc.view_box(t); shb = sc.shake_box(t)
+            for it in items:
+                if not (it['from'] <= t < it['to']):
+                    continue
+                if tr and vb != (0, 0, W, H) and it['unit'] != tr['panel']:
+                    continue   # renderer drops other panels' lettering during the zoom
+                x, y, w, h = it['rect']
+                sx_ = W / vb[2]; sy_ = H / vb[3]
+                r = [(x - vb[0]) * sx_, (y - vb[1]) * sy_, w * sx_, h * sy_]
+                if shb:
+                    r = [(r[0] - shb[0]) * W / shb[2], (r[1] - shb[1]) * H / shb[3], r[2] * W / shb[2], r[3] * H / shb[3]]
+                if r[0] < 2 or r[1] < 2 or r[0] + r[2] > W - 2 or r[1] + r[3] > H - 2:
+                    fail(f"{pid} {orient}: {it['who']} is sliced by the frame edge at {t + sub['song']['start']:.2f}s "
+                         f"({'zoom' if vb != (0, 0, W, H) else ''}{' shake' if shb else ''}) -> {[int(v) for v in r]}")
+                    break
         if orient == 'landscape':
             check_lyric_timing(sub, items, pid)
 

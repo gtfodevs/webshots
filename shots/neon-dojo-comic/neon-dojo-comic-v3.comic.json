@@ -91,7 +91,8 @@
        "text": "YEAH, YOU KNOW THE VIBE",
        "anchor": "tl",
        "at": 4.087,
-       "lyric": true
+       "lyric": true,
+       "until": 7.918
       },
       {
        "text": "QUICK FEET ON THE CONCRETE, MOVE SMOOTH, NEVER MESSY",
@@ -134,8 +135,8 @@
      "clip": {
       "src": "v3/clips/v03.mp4",
       "in": 0.0,
-      "out": 2.4,
-      "trimNote": "camera jumps to a face close-up at ~2.5 s (regenerate)"
+      "out": 6.0,
+      "trimNote": "REGEN (v3/regen.json): camera jumps to a face close-up at ~2.5 s"
      },
      "sfx": [
       {
@@ -160,7 +161,7 @@
     {
      "id": "v04",
      "image": "v3/panels/v04.jpg",
-     "at": 20.759,
+     "at": 14.35,
      "location": "Uno's punch and Aura's cyan magic blast colliding in a huge ",
      "camera": "Extreme low side angle",
      "moment": "Their attacks collide: Uno's punch meets Aura's cyan blast and blows them both across the mat.",
@@ -175,13 +176,13 @@
      "clip": {
       "src": "v3/clips/v04.mp4",
       "in": 0.0,
-      "out": 2.9,
-      "trimNote": "after the flash both fighters shrink into the background; page turns at 24.20s, clip capped to 2.9s"
+      "out": 5.89,
+      "trimNote": "REGEN (v3/regen.json): after the flash both fighters shrink into the background; page turns at 20.76s, clip capped to 5.89s"
      },
      "sfx": [
       {
        "text": "KA-POW!",
-       "at": 21.618,
+       "at": 15.209,
        "pos": [
         0.3,
         0.3
@@ -202,13 +203,13 @@
    "transition": {
     "type": "zoom",
     "panel": "v04",
-    "at": 24.613,
-    "dur": 0.418
+    "at": 21.159,
+    "dur": 0.4
    },
    "splash": {
     "id": "s05",
     "image": "v3/panels/s05.jpg",
-    "at": 24.613,
+    "at": 21.159,
     "location": "botched training tag in the rain, Uno and Aura tangled and c",
     "camera": "Splash, existing art",
     "moment": "The botched tag: their hand-off misses and they crash into a puddle while Sensei watches.",
@@ -223,7 +224,7 @@
     "sfx": [
      {
       "text": "SPLOOSH!",
-      "at": 25.472,
+      "at": 22.036,
       "pos": [
        0.7,
        0.28
@@ -295,8 +296,8 @@
      "clip": {
       "src": "v3/clips/v07.mp4",
       "in": 0.0,
-      "out": 4.5,
-      "trimNote": "training dummy morphs into a pile after ~4.5 s"
+      "out": 6.0,
+      "trimNote": "REGEN (v3/regen.json): training dummy morphs into a pile after ~4.5 s"
      },
      "sfx": [
       {
@@ -343,7 +344,7 @@
      "motionPrompt": "Aura's cyan shield flares as the mech arm hits it. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
      "captions": [
       {
-       "text": "I MOVE CALM WITH THE JAW GAME",
+       "text": "I MOVE CALM WITH THE JAW GAME, AIN'T NO NEED FOR DEPLOYED",
        "anchor": "tl",
        "at": 42.585,
        "lyric": true
@@ -394,10 +395,11 @@
        "text": "SHORT SWING, LIKE A CLOCK HAND, PRECISE AND TO THE POINT",
        "anchor": "tl",
        "at": 46.44,
-       "lyric": true
+       "lyric": true,
+       "until": 50.294
       },
       {
-       "text": "HIT HARD, THEN I STOP",
+       "text": "HIT HARD, THEN I STOP, MAN, NO NEED TO DISAPPOINT",
        "anchor": "bl",
        "at": 50.294,
        "lyric": true
@@ -406,8 +408,8 @@
      "clip": {
       "src": "v3/clips/v09.mp4",
       "in": 0.0,
-      "out": 3.9,
-      "trimNote": "hands dissolve into a glow after ~4 s"
+      "out": 6.0,
+      "trimNote": "REGEN (v3/regen.json): hands dissolve into a glow after ~4 s"
      },
      "sfx": [
       {
@@ -450,12 +452,20 @@
      "Aura"
     ],
     "motionPrompt": "Uno's fist connects and the mech bursts into sparks. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
-    "captions": [],
+    "captions": [
+     {
+      "text": "HIT HARD, THEN I STOP, MAN, NO NEED TO DISAPPOINT",
+      "anchor": "tl",
+      "at": 54.149,
+      "lyric": true,
+      "carried": true
+     }
+    ],
     "clip": {
      "src": "v3/clips/s10.mp4",
      "in": 0.0,
-     "out": 5.0,
-     "trimNote": "smoke swallows the frame after 5 s"
+     "out": 6.0,
+     "trimNote": "REGEN (v3/regen.json): smoke swallows the frame after 5 s"
     },
     "sfx": [
      {
@@ -510,15 +520,15 @@
      "clip": {
       "src": "v3/clips/v12.mp4",
       "in": 0.0,
-      "out": 4.0,
-      "trimNote": "rival lineup starts to duplicate after ~4 s"
+      "out": 6.0,
+      "trimNote": "REGEN (v3/regen.json): rival lineup starts to duplicate after ~4 s"
      },
      "slot": "a"
     },
     {
      "id": "v13",
      "image": "v3/panels/v13.jpg",
-     "at": 64.412,
+     "at": 61.835,
      "location": "KAZE-9's masked face and red scarf whipping in the wind, one",
      "camera": "Extreme close-up, Dutch angle",
      "moment": "KAZE-9 picks his rival: he points a blade at Aura. It's personal.",
@@ -540,13 +550,12 @@
      "clip": {
       "src": "v3/clips/v13.mp4",
       "in": 0.0,
-      "out": 3.73,
-      "trimNote": "page turns at 68.69s, clip capped to 3.73s"
+      "out": 6.0
      },
      "sfx": [
       {
        "text": "SHING!",
-       "at": 65.271,
+       "at": 62.694,
        "pos": [
         0.3,
         0.3
@@ -597,7 +606,8 @@
      "clip": {
       "src": "v3/clips/v14.mp4",
       "in": 0.0,
-      "out": 6.0
+      "out": 5.89,
+      "trimNote": "page turns at 75.12s, clip capped to 5.89s"
      },
      "sfx": [
       {
@@ -622,7 +632,7 @@
     {
      "id": "v15",
      "image": "v3/panels/v15.jpg",
-     "at": 72.121,
+     "at": 69.126,
      "location": "Uno uppercutting RAIJIN, lightning burst",
      "camera": "Existing art",
      "moment": "\"Knuckle talk\": strike and impact - Uno ducks and lands the uppercut.",
@@ -633,11 +643,18 @@
       "RAIJIN"
      ],
      "motionPrompt": "Uno's uppercut snaps up and RAIJIN's head rocks back. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
-     "captions": [],
+     "captions": [
+      {
+       "text": "KNUCKLE TALK, KNUCKLE TALK",
+       "anchor": "tl",
+       "at": 69.126,
+       "lyric": true
+      }
+     ],
      "sfx": [
       {
        "text": "POW!",
-       "at": 72.98,
+       "at": 69.962,
        "pos": [
         0.3,
         0.3
@@ -657,7 +674,7 @@
     {
      "id": "v16",
      "image": "v3/panels/v16.jpg",
-     "at": 73.816,
+     "at": 69.544,
      "location": "Aura's cyan wave pushing TEKKO off the edge of the ring, TEK",
      "camera": "Wide side angle",
      "moment": "\"Hands up, then it all falls\": Aura tags in and pushes TEKKO out of the ring.",
@@ -669,22 +686,29 @@
      "motionPrompt": "TEKKO tips backward off the ring edge. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
      "captions": [
       {
-       "text": "HANDS UP, THEN IT ALL FALLS",
+       "text": "KEEP IT CLOSE, KEEP IT SMALL",
        "anchor": "tl",
-       "at": 73.816,
+       "at": 69.962,
+       "lyric": true,
+       "until": 72.121
+      },
+      {
+       "text": "KNUCKLE TALK, KNUCKLE TALK",
+       "anchor": "bl",
+       "at": 72.121,
        "lyric": true
       }
      ],
      "clip": {
       "src": "v3/clips/v16.mp4",
       "in": 0.0,
-      "out": 2.04,
-      "trimNote": "TEKKO vanishes after ~3.5 s; page turns at 76.39s, clip capped to 2.04s"
+      "out": 5.05,
+      "trimNote": "REGEN (v3/regen.json): TEKKO vanishes after ~3.5 s; page turns at 75.12s, clip capped to 5.05s"
      },
      "sfx": [
       {
        "text": "WHUMP!",
-       "at": 74.699,
+       "at": 70.403,
        "pos": [
         0.7,
         0.35
@@ -705,13 +729,13 @@
    "transition": {
     "type": "zoom",
     "panel": "v16",
-    "at": 76.812,
+    "at": 75.535,
     "dur": 0.418
    },
    "splash": {
     "id": "s17",
     "image": "v3/panels/s17.jpg",
-    "at": 76.812,
+    "at": 75.535,
     "location": "LOTUS diving down with a crane kick against Aura's crossed c",
     "camera": "Splash, worm's-eye view",
     "moment": "Reaction: LOTUS strikes from above; Aura blocks the crane kick mid-air.",
@@ -725,26 +749,26 @@
      {
       "text": "KNUCKLE TALK, KNUCKLE TALK",
       "anchor": "tl",
-      "at": 76.812,
+      "at": 75.535,
       "lyric": true
      },
      {
-      "text": "I DON'T ARGUE, I JUST WALK",
+      "text": "KNUCKLE TALK, KNUCKLE TALK",
       "anchor": "bl",
-      "at": 80.666,
+      "at": 76.812,
       "lyric": true
      }
     ],
     "clip": {
      "src": "v3/clips/s17.mp4",
      "in": 0.0,
-     "out": 4.5,
-     "trimNote": "ring fades and LOTUS re-poses after 4.5 s"
+     "out": 6.0,
+     "trimNote": "REGEN (v3/regen.json): ring fades and LOTUS re-poses after 4.5 s"
     },
     "sfx": [
      {
       "text": "WHAM!",
-      "at": 77.671,
+      "at": 76.394,
       "pos": [
        0.7,
        0.28
@@ -785,13 +809,14 @@
      "motionPrompt": "Sparks spray as the blades grind on the shield. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
      "captions": [
       {
-       "text": "TOE-TO-TOE, NAH, I DON'T OVERDO",
+       "text": "TOE-TO-TOE, NAH, I DON'T OVERDO, KEEP IT UNDERSTATED",
        "anchor": "tl",
        "at": 82.384,
-       "lyric": true
+       "lyric": true,
+       "until": 85.38
       },
       {
-       "text": "LITTLE WORK, LET THE MOVES SPEAK TRUE",
+       "text": "LITTLE WORK, LET THE MOVES SPEAK TRUE, FULLY ARTICULATED",
        "anchor": "bl",
        "at": 85.38,
        "lyric": true
@@ -839,13 +864,14 @@
      "motionPrompt": "Aura hits the mat and the impact flash pops. Locked overhead camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
      "captions": [
       {
-       "text": "DUCK LOW, THEN I CUT THROUGH",
+       "text": "DUCK LOW, THEN I CUT THROUGH, UNEXPECTED, UNSEEN",
        "anchor": "tl",
        "at": 88.375,
-       "lyric": true
+       "lyric": true,
+       "until": 91.788
       },
       {
-       "text": "TURN A FRONT LIKE A BACKDOOR VIEW",
+       "text": "TURN A FRONT LIKE A BACKDOOR VIEW, KEEPIN' MY SLATE CLEAN",
        "anchor": "bl",
        "at": 91.788,
        "lyric": true
@@ -854,8 +880,8 @@
      "clip": {
       "src": "v3/clips/v19.mp4",
       "in": 0.0,
-      "out": 4.0,
-      "trimNote": "Aura dissolves into smoke after ~4 s"
+      "out": 6.0,
+      "trimNote": "REGEN (v3/regen.json): Aura dissolves into smoke after ~4 s"
      },
      "sfx": [
       {
@@ -880,7 +906,7 @@
     {
      "id": "v20",
      "image": "v3/panels/v20.jpg",
-     "at": 95.225,
+     "at": 93.925,
      "location": "Uno kneeling over fallen Aura, one hand on her shoulder, her",
      "camera": "Low angle close shot, dim light",
      "moment": "Uno kneels over Aura; her cyan glow flickers out. The crowd goes quiet.",
@@ -893,13 +919,14 @@
      "motionPrompt": "Aura's cyan glow flickers once. Very slow push-in. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
      "captions": [
       {
-       "text": "NO CHESS, JUST A SLICK CHECK",
+       "text": "NO CHESS, JUST A SLICK CHECK, A SUBTLE SHIFT IN THE AIR",
        "anchor": "tl",
        "at": 95.225,
-       "lyric": true
+       "lyric": true,
+       "until": 98.638
       },
       {
-       "text": "NO FLEX, BUT A QUICK NECK",
+       "text": "NO FLEX, BUT A QUICK NECK, SHOW 'EM I DON'T CARE",
        "anchor": "bl",
        "at": 98.638,
        "lyric": true
@@ -916,13 +943,13 @@
    "transition": {
     "type": "zoom",
     "panel": "v20",
-    "at": 102.911,
-    "dur": 0.418
+    "at": 101.216,
+    "dur": 0.441
    },
    "splash": {
     "id": "s21",
     "image": "v3/panels/s21.jpg",
-    "at": 102.911,
+    "at": 101.216,
     "location": "Uno carrying Aura on his back across the arena, side-on, cro",
     "camera": "Splash, wide side-on shot",
     "moment": "\"If the room start to get loud... I make room with a clean step\": Uno carries Aura out of the ring; KAZE-9 lowers his blades in respect.",
@@ -936,8 +963,23 @@
     "motionPrompt": "Uno steps slowly left to right across the frame carrying Aura. Locked side camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
     "captions": [
      {
-      "text": "I MAKE ROOM WITH A CLEAN STEP",
+      "text": "NO FLEX, BUT A QUICK NECK, SHOW 'EM I DON'T CARE",
+      "anchor": "tr",
+      "at": 101.216,
+      "lyric": true,
+      "carried": true,
+      "until": 102.052
+     },
+     {
+      "text": "IF THE ROOM START TO GET LOUD, AND THE TENSION BEGINS TO RISE",
       "anchor": "tl",
+      "at": 102.052,
+      "lyric": true,
+      "until": 105.488
+     },
+     {
+      "text": "I MAKE ROOM WITH A CLEAN STEP, RIGHT BEFORE THEIR EYES",
+      "anchor": "bl",
       "at": 105.488,
       "lyric": true
      }
@@ -945,8 +987,7 @@
     "clip": {
      "src": "v3/clips/s21.mp4",
      "in": 0.0,
-     "out": 4.59,
-     "trimNote": "page turns at 108.04s, clip capped to 4.59s"
+     "out": 6.0
     }
    },
    "splashStyle": "tilt"
@@ -1008,7 +1049,7 @@
     {
      "id": "v23",
      "image": "v3/panels/v23.jpg",
-     "at": 115.31,
+     "at": 110.62,
      "location": "SHOGUN's armored hands holding the golden dojo belt",
      "camera": "Extreme close-up, existing v1 art",
      "moment": "\"Say my name\": the prize - SHOGUN grips the golden belt.",
@@ -1024,19 +1065,12 @@
        "anchor": "tl",
        "at": 115.31,
        "lyric": true
-      },
-      {
-       "text": "WHEN IT POPS, IT'S ALREADY DONE",
-       "anchor": "bl",
-       "at": 117.888,
-       "lyric": true
       }
      ],
      "clip": {
       "src": "clips/n18.mp4",
       "in": 0.0,
-      "out": 2.04,
-      "trimNote": "page turns at 117.89s, clip capped to 2.04s"
+      "out": 6.0
      },
      "slot": "b"
     }
@@ -1044,13 +1078,13 @@
    "transition": {
     "type": "zoom",
     "panel": "v23",
-    "at": 118.306,
-    "dur": 0.418
+    "at": 117.888,
+    "dur": 0.441
    },
    "splash": {
     "id": "s24",
     "image": "v3/panels/s24.jpg",
-    "at": 118.306,
+    "at": 117.888,
     "location": "Uno's forearm guard locked against SHOGUN's red katana, spar",
     "camera": "Splash, existing art",
     "moment": "\"When it pops\": Uno, alone, meets SHOGUN in a blade lock.",
@@ -1063,16 +1097,24 @@
     "motionPrompt": "Sparks spray from the blade lock as they push. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
     "captions": [
      {
+      "text": "SAY MY NAME, THEN BITE THE TONGUE",
+      "anchor": "bl",
+      "at": 117.888,
+      "lyric": true,
+      "carried": true,
+      "until": 117.888
+     },
+     {
       "text": "WHEN IT POPS, IT'S ALREADY DONE",
       "anchor": "tl",
-      "at": 118.306,
+      "at": 117.888,
       "lyric": true
      }
     ],
     "sfx": [
      {
       "text": "KZZZANG!",
-      "at": 119.165,
+      "at": 118.724,
       "pos": [
        0.7,
        0.28
@@ -1116,6 +1158,13 @@
        "text": "KEEP IT CLOSE, KEEP IT SMALL",
        "anchor": "tl",
        "at": 124.714,
+       "lyric": true,
+       "until": 126.851
+      },
+      {
+       "text": "KNUCKLE TALK, KNUCKLE TALK",
+       "anchor": "bl",
+       "at": 126.851,
        "lyric": true
       }
      ],
@@ -1164,12 +1213,13 @@
        "text": "HANDS UP, THEN IT ALL FALLS",
        "anchor": "tl",
        "at": 128.546,
-       "lyric": true
+       "lyric": true,
+       "until": 129.846
       },
       {
-       "text": "TAP THE CHIN, MAKE 'EM CRAWL",
+       "text": "KNUCKLE TALK, KNUCKLE TALK",
        "anchor": "bl",
-       "at": 131.541,
+       "at": 129.846,
        "lyric": true
       }
      ],
@@ -1222,13 +1272,14 @@
      "motionPrompt": "Uno's red eyes flare brighter. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
      "captions": [
       {
-       "text": "THEY TALKING TOUGH, THEIR WORDS ARE TALKING THIN",
+       "text": "UH, UH, THEY TALKING TOUGH, YEAH, THEIR WORDS ARE TALKING THIN",
        "anchor": "tl",
        "at": 137.091,
-       "lyric": true
+       "lyric": true,
+       "until": 140.968
       },
       {
-       "text": "I JUST GRIN, THEN I SPIN",
+       "text": "I JUST GRIN, THEN I SPIN, LET THE SILENCE SETTLE IN",
        "anchor": "bl",
        "at": 140.968,
        "lyric": true
@@ -1244,7 +1295,7 @@
     {
      "id": "v29",
      "image": "v3/panels/v29.jpg",
-     "at": 144.382,
+     "at": 141.851,
      "location": "Aura charging a bright cyan orb between her hands",
      "camera": "Close-up cut-in, existing v1 art",
      "moment": "\"One sharp move\": SUPER cut-in - Aura charges a cyan orb.",
@@ -1256,13 +1307,14 @@
      "motionPrompt": "The cyan orb swells and crackles. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
      "captions": [
       {
-       "text": "ONE SHARP MOVE, WHOLE ROOM STILL, LIKE A FREEZE FRAME",
+       "text": "ONE SHARP MOVE, WHOLE ROOM STILL, LIKE A FREEZE FRAME, A PAUSE",
        "anchor": "tl",
        "at": 144.382,
-       "lyric": true
+       "lyric": true,
+       "until": 147.772
       },
       {
-       "text": "THAT'S THE WAY I SAY WHAT I SAY",
+       "text": "THAT'S THE WAY I SAY WHAT I SAY, AIN'T NO NEED FOR APPLAUSE",
        "anchor": "bl",
        "at": 147.772,
        "lyric": true
@@ -1271,8 +1323,7 @@
      "clip": {
       "src": "clips/n23.mp4",
       "in": 0.0,
-      "out": 3.73,
-      "trimNote": "page turns at 148.63s, clip capped to 3.73s"
+      "out": 6.0
      },
      "slot": "b"
     }
@@ -1300,23 +1351,32 @@
     "motionPrompt": "The armour bursts outward into sparkles. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
     "captions": [
      {
+      "text": "THAT'S THE WAY I SAY WHAT I SAY, AIN'T NO NEED FOR APPLAUSE",
+      "anchor": "tr",
+      "at": 149.049,
+      "lyric": true,
+      "carried": true,
+      "until": 151.208
+     },
+     {
       "text": "KNUCKLE TALK, KNUCKLE TALK",
       "anchor": "tl",
       "at": 151.208,
-      "lyric": true
+      "lyric": true,
+      "until": 152.462
      },
      {
-      "text": "HANDS UP, THEN IT ALL FALLS",
+      "text": "KEEP IT CLOSE, KEEP IT SMALL",
       "anchor": "bl",
-      "at": 155.876,
+      "at": 152.462,
       "lyric": true
      }
     ],
     "clip": {
      "src": "v3/clips/s30.mp4",
      "in": 0.0,
-     "out": 2.0,
-     "trimNote": "armour bursts, then SHOGUN re-forms whole after ~2 s (regenerate)"
+     "out": 6.0,
+     "trimNote": "REGEN (v3/regen.json): armour bursts, then SHOGUN re-forms whole after ~2 s"
     },
     "sfx": [
      {
@@ -1362,7 +1422,14 @@
       "RAIJIN"
      ],
      "motionPrompt": "Sensei lifts the belt and the rivals bow. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
-     "captions": [],
+     "captions": [
+      {
+       "text": "KNUCKLE TALK, KNUCKLE TALK",
+       "anchor": "tl",
+       "at": 157.594,
+       "lyric": true
+      }
+     ],
      "clip": {
       "src": "v3/clips/v31.mp4",
       "in": 0.0,
@@ -1373,7 +1440,7 @@
     {
      "id": "v32",
      "image": "v3/panels/v32.jpg",
-     "at": 160.984,
+     "at": 160.148,
      "location": "Uno and Aura from behind facing a pink sunrise over Neo-Kyot",
      "camera": "Wide shot from behind, existing v1 art",
      "moment": "\"I don't argue, I just walk\": Uno and Aura, from behind, facing the sunrise.",
@@ -1388,8 +1455,9 @@
       {
        "text": "KNUCKLE TALK, KNUCKLE TALK",
        "anchor": "tl",
-       "at": 160.984,
-       "lyric": true
+       "at": 160.566,
+       "lyric": true,
+       "until": 162.261
       },
       {
        "text": "I DON'T ARGUE, I JUST WALK",
@@ -1401,8 +1469,7 @@
      "clip": {
       "src": "clips/n26.mp4",
       "in": 0.0,
-      "out": 5.28,
-      "trimNote": "page turns at 166.81s, clip capped to 5.28s"
+      "out": 6.0
      },
      "slot": "b"
     }

@@ -1,0 +1,67 @@
+[
+ {
+  "id": "s30",
+  "reason": "SHOGUN's armour bursts, then he re-forms whole after ~2 s (clip had been cut to 2.0 s)",
+  "prompt": "SHOGUN kneels in the shattered armour pieces after the final blow, sparks drifting down slowly, his red eyes dimming gently. Calm, slow motion; the subject holds the pose and stays fully in frame the whole time; locked-off camera, no camera cut, no zoom jump, no new characters, no morphing or dissolving; chrome robot with glowing red eyes and headphone ears keeps the same design."
+ },
+ {
+  "id": "v03",
+  "reason": "Camera jumps to a face close-up at ~2.5 s",
+  "prompt": "Wide shot of the fighter in a ready stance in the dojo, breathing slowly, neon light flickering softly on the chrome. Calm, slow motion; the subject holds the pose and stays fully in frame the whole time; locked-off camera, no camera cut, no zoom jump, no new characters, no morphing or dissolving; chrome robot with glowing red eyes and headphone ears keeps the same design."
+ },
+ {
+  "id": "v04",
+  "reason": "Both fighters shrink into the background after the flash; Aura's skin renders human-toned in the panel art",
+  "prompt": "The two fighters hold a locked clinch in mid-frame and push against each other slowly, with sparks at the contact point. Aura is fully chrome with no human skin. Calm, slow motion; the subject holds the pose and stays fully in frame the whole time; locked-off camera, no camera cut, no zoom jump, no new characters, no morphing or dissolving; chrome robot with glowing red eyes and headphone ears keeps the same design."
+ },
+ {
+  "id": "v07",
+  "reason": "Training dummy morphs into a pile after ~4.5 s",
+  "prompt": "The fighter strikes the wooden training dummy, which rocks back and forth and stays upright and intact, with dust drifting slowly. Calm, slow motion; the subject holds the pose and stays fully in frame the whole time; locked-off camera, no camera cut, no zoom jump, no new characters, no morphing or dissolving; chrome robot with glowing red eyes and headphone ears keeps the same design."
+ },
+ {
+  "id": "v09",
+  "reason": "Hands dissolve into a glow after ~4 s",
+  "prompt": "Close-up of the chrome fists held in a guard, a steady soft energy glow around the knuckles, the fingers staying solid and clearly visible. Calm, slow motion; the subject holds the pose and stays fully in frame the whole time; locked-off camera, no camera cut, no zoom jump, no new characters, no morphing or dissolving; chrome robot with glowing red eyes and headphone ears keeps the same design."
+ },
+ {
+  "id": "s10",
+  "reason": "Smoke swallows the frame after 5 s",
+  "prompt": "The fighter stands in light haze that stays low at the feet. The figure stays clearly visible, and the coat sways slightly. Calm, slow motion; the subject holds the pose and stays fully in frame the whole time; locked-off camera, no camera cut, no zoom jump, no new characters, no morphing or dissolving; chrome robot with glowing red eyes and headphone ears keeps the same design."
+ },
+ {
+  "id": "v12",
+  "reason": "Rival lineup starts to duplicate after ~4 s",
+  "prompt": "The same rivals stand in a fixed lineup and keep their count and positions. They shift their weight slightly and their eyes glow. Calm, slow motion; the subject holds the pose and stays fully in frame the whole time; locked-off camera, no camera cut, no zoom jump, no new characters, no morphing or dissolving; chrome robot with glowing red eyes and headphone ears keeps the same design."
+ },
+ {
+  "id": "v16",
+  "reason": "TEKKO vanishes after ~3.5 s",
+  "prompt": "TEKKO holds a fighting stance in the centre of the frame and bounces lightly on his feet, staying present the whole time. Calm, slow motion; the subject holds the pose and stays fully in frame the whole time; locked-off camera, no camera cut, no zoom jump, no new characters, no morphing or dissolving; chrome robot with glowing red eyes and headphone ears keeps the same design."
+ },
+ {
+  "id": "s17",
+  "reason": "The ring fades and LOTUS re-poses after 4.5 s",
+  "prompt": "LOTUS holds a victory pose in the ring, which stays in place. Her hair and ribbons move gently in the wind. Calm, slow motion; the subject holds the pose and stays fully in frame the whole time; locked-off camera, no camera cut, no zoom jump, no new characters, no morphing or dissolving; chrome robot with glowing red eyes and headphone ears keeps the same design."
+ },
+ {
+  "id": "v19",
+  "reason": "Aura dissolves into smoke after ~4 s",
+  "prompt": "Aura stands firm, fully solid chrome, with a faint aura shimmering steadily around her and her hair moving slightly. Calm, slow motion; the subject holds the pose and stays fully in frame the whole time; locked-off camera, no camera cut, no zoom jump, no new characters, no morphing or dissolving; chrome robot with glowing red eyes and headphone ears keeps the same design."
+ },
+ {
+  "id": "s05",
+  "reason": "Static panel, no clip yet",
+  "prompt": "The dojo interior holds steady; lanterns sway gently, petals drift down slowly, and the robot stands still in the doorway. Calm, slow motion; the subject holds the pose and stays fully in frame the whole time; locked-off camera, no camera cut, no zoom jump, no new characters, no morphing or dissolving; chrome robot with glowing red eyes and headphone ears keeps the same design."
+ },
+ {
+  "id": "v15",
+  "reason": "Static panel, no clip yet",
+  "prompt": "The fighter turns their head slowly toward the rival. Their eyes brighten, and their posture stays the same. Calm, slow motion; the subject holds the pose and stays fully in frame the whole time; locked-off camera, no camera cut, no zoom jump, no new characters, no morphing or dissolving; chrome robot with glowing red eyes and headphone ears keeps the same design."
+ },
+ {
+  "id": "s24",
+  "reason": "Static panel, no clip yet",
+  "prompt": "The splash pose is held; a cape and hair ripple softly and embers float upward slowly across the scene. Calm, slow motion; the subject holds the pose and stays fully in frame the whole time; locked-off camera, no camera cut, no zoom jump, no new characters, no morphing or dissolving; chrome robot with glowing red eyes and headphone ears keeps the same design."
+ }
+]

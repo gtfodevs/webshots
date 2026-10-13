@@ -500,23 +500,37 @@ def draw_caption(img, cap, slot, geo=None, safe=None):
     for i, l in enumerate(lines):
         d.text((x + pad, y + pad + i * lh), l, font=f, fill=INK)
 
-def sfx_tile(sfx, slot):
+def _sfx_font(sfx, slot):
     px = int(base_px(slot) * sfx.get('size', 0.2))
     f = font(px)
     while f.getlength(sfx['text']) > slot[2] * 0.8 and px > 30:
         px -= 4; f = font(px)
-    sw = max(4, px // 14)
-    tw = int(f.getlength(sfx['text'])) + 4 * sw + 8
-    th = int(px * 1.25) + 4 * sw
+    return f, px, max(4, px // 14)
+
+def sfx_tile(sfx, slot, pad=None):
+    """SFX lettering tile. Drawn on a generously padded canvas BEFORE rotating (Bangers is slanted: the last
+    glyph and its 2x stroke overhang getlength() on the right; a tight canvas sliced the top-right corner
+    off every SFX once rotated), rotated with expand=True, then cropped to the real ink. `pad` overrides the
+    padding (QA renders an oversized reference and compares)."""
+    f, px, sw = _sfx_font(sfx, slot)
+    P = pad if pad is not None else int(0.3 * px) + 2 * sw + 8
+    l, t, r, b = f.getbbox(sfx['text'], stroke_width=2 * sw)
+    tw, th = (r - l) + 2 * P, (b - t) + 2 * P
     tile = Image.new('RGBA', (tw, th), (0, 0, 0, 0))
     d = ImageDraw.Draw(tile)
+    o = (P - l, P - t)
     # outer white keyline, then black ink stroke, then colour fill
-    d.text((2 * sw + 4, 2 * sw), sfx['text'], font=f, fill=(255, 255, 255, 255), stroke_width=2 * sw, stroke_fill=(255, 255, 255, 255))
-    d.text((2 * sw + 4, 2 * sw), sfx['text'], font=f, fill=tuple(sfx.get('color', [255, 214, 0])) + (255,),
-           stroke_width=sw, stroke_fill=INK + (255,))
+    d.text(o, sfx['text'], font=f, fill=(255, 255, 255, 255), stroke_width=2 * sw, stroke_fill=(255, 255, 255, 255))
+    d.text(o, sfx['text'], font=f, fill=tuple(sfx.get('color', [255, 214, 0])) + (255,), stroke_width=sw, stroke_fill=INK + (255,))
     tile = tile.rotate(sfx.get('rot', -6), resample=Image.BICUBIC, expand=True)
-    bb = tile.getbbox()
-    return tile.crop(bb)
+    return tile.crop(tile.getbbox())
+
+def sfx_ink_lost(sfx, slot):
+    """QA: ink pixels the production tile loses vs an oversized-canvas reference (should be 0)."""
+    a = np.asarray(sfx_tile(sfx, slot))[..., 3] > 24
+    _, px, _ = _sfx_font(sfx, slot)
+    b = np.asarray(sfx_tile(sfx, slot, pad=2 * px))[..., 3] > 24
+    return int(b.sum()) - int(a.sum()), a.shape, b.shape
 
 SFX_PEAK = 1.25    # the stamp-in animation starts at 125%
 
@@ -577,7 +591,7 @@ def text_items(spec, orient):
         slot = L[p['slot']]; geo = G[p['slot']]
         for c in p.get('captions', []):
             items.append({'who': f"{p['id']} caption '{c['text']}'", 'rect': caption_box(c, slot, geo, S)[0], 'geo': geo, 'unit': p['id'],
-                          'from': T(spec, c.get('at', p['at'])), 'to': page_end, 'slot': slot, 'kind': 'caption', 'obj': c})
+                          'from': T(spec, c.get('at', p['at'])), 'to': min(page_end, T(spec, c['until'])) if 'until' in c else page_end, 'slot': slot, 'kind': 'caption', 'obj': c})
         for s in p.get('sfx', []):
             items.append({'who': f"{p['id']} sfx '{s['text']}'", 'rect': sfx_rect(s, slot, SFX_PEAK, geo, S, unit_caption_rects(p, slot, geo, S))[0], 'geo': geo, 'unit': p['id'],
                           'from': T(spec, s['at']), 'to': page_end, 'slot': slot, 'kind': 'sfx', 'obj': s})
@@ -585,7 +599,7 @@ def text_items(spec, orient):
     slot = L['splash']; geo = G['splash']
     for c in sp.get('captions', []):
         items.append({'who': f"{sp['id']} caption '{c['text']}'", 'rect': caption_box(c, slot, geo, S)[0], 'geo': geo, 'unit': sp.get('id'),
-                      'from': max(splash_t0, T(spec, c.get('at', tr['at']))), 'to': end, 'slot': slot, 'kind': 'caption', 'obj': c})
+                      'from': max(splash_t0, T(spec, c.get('at', tr['at']))), 'to': min(end, T(spec, c['until'])) if 'until' in c else end, 'slot': slot, 'kind': 'caption', 'obj': c})
     for s in sp.get('sfx', []):
         items.append({'who': f"{sp['id']} sfx '{s['text']}'", 'rect': sfx_rect(s, slot, SFX_PEAK, geo, S, unit_caption_rects(sp, slot, geo, S))[0], 'geo': geo, 'unit': sp.get('id'),
                       'from': T(spec, s['at']), 'to': end, 'slot': slot, 'kind': 'sfx', 'obj': s})
@@ -692,7 +706,7 @@ class Scene:
         slot = u['slotrect']
         S = TEXT_SAFE[self.orient]
         for c in u.get('captions', []):
-            if t >= T(self.spec, c.get('at', u['at'])):
+            if t >= T(self.spec, c.get('at', u['at'])) and ('until' not in c or t < T(self.spec, c['until'])):
                 draw_caption(img, c, slot, u['geo'], S)
         for s in u.get('sfx', []):
             ts = T(self.spec, s['at'])
@@ -704,7 +718,7 @@ class Scene:
                     tile = tile.resize((rect[2], rect[3]), Image.BICUBIC)
                 img.paste(tile, rect[:2], tile)
 
-    def page(self, t):
+    def page(self, t, letters_only=None):
         img = self.paper.copy()
         for u in sorted(self.units, key=lambda u: u['geo']['z']):
             ta = T(self.spec, u['at'])
@@ -717,7 +731,7 @@ class Scene:
             else:
                 self._paint(img, u, t)
         for u in self.units:
-            if t >= T(self.spec, u['at']):
+            if t >= T(self.spec, u['at']) and (letters_only is None or u['id'] == letters_only):
                 self._letter(img, u, t)
         return img
 
@@ -760,6 +774,42 @@ class Scene:
         y0 = min(max((self.H - zh) / 2 + dy, 0), self.H - zh)
         return img.resize((self.W, self.H), Image.BICUBIC, box=(x0, y0, x0 + zw, y0 + zh))
 
+    def view_box(self, t):
+        """Page-space box the frame at t shows (zoom transition), before shake. QA maps lettering through it."""
+        tr = self.spec.get('transition')
+        if not tr:
+            return (0, 0, self.W, self.H)
+        t_land = T(self.spec, tr['at']); dur = tr.get('dur', 0.4)
+        if t >= t_land or t < t_land - dur:
+            return (0, 0, self.W, self.H)
+        target = next(u for u in self.units if u['id'] == tr['panel'])['geo']['bbox']
+        a = self.W / self.H
+        tx, ty, tw, th = target
+        if tw / th > a:
+            th2 = tw / a; ty -= (th2 - th) / 2; th = th2
+        else:
+            tw2 = th * a; tx -= (tw2 - tw) / 2; tw = tw2
+        tx = min(max(tx, 0), self.W - tw); ty = min(max(ty, 0), self.H - th)
+        k = ease_io((t - (t_land - dur)) / dur)
+        return (tx * k, ty * k, self.W + (tw - self.W) * k, self.H + (th - self.H) * k)
+
+    def shake_box(self, t):
+        """Frame-space crop the shake applies at t (x0, y0, w, h), or None."""
+        tr = self.spec.get('transition')
+        live = [self.splash] if (tr and self.splash and t >= T(self.spec, tr['at'])) else self.units
+        amp = 0.0
+        for u in live:
+            for ts in self._impacts(u):
+                if ts <= t < ts + self.IMPACT_SHAKE:
+                    amp = max(amp, 1 - (t - ts) / self.IMPACT_SHAKE)
+        if amp <= 0:
+            return None
+        A = 0.008 * self.W * amp; n = t * self.fps
+        zw, zh = self.W / 1.02, self.H / 1.02
+        x0 = min(max((self.W - zw) / 2 + A * math.sin(n * 2.7), 0), self.W - zw)
+        y0 = min(max((self.H - zh) / 2 + A * math.cos(n * 3.9), 0), self.H - zh)
+        return (x0, y0, zw, zh)
+
     def _frame(self, t):
         tr = self.spec.get('transition')
         if not tr:
@@ -773,7 +823,8 @@ class Scene:
         # zoom into the target panel, then hard cut to the splash on the beat
         key = round(t_land - dur, 4)
         if key not in self._page_cache:
-            self._page_cache[key] = self.page(t_land - dur)
+            # only the zoom target keeps its lettering: other panels' words would be sliced by the frame edge
+            self._page_cache[key] = self.page(t_land - dur, letters_only=tr['panel'])
         src = self._page_cache[key]
         target = next(u for u in self.units if u['id'] == tr['panel'])['geo']['bbox']
         a = self.W / self.H
