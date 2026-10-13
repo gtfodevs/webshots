@@ -127,6 +127,18 @@ print(json.dumps(out))`, `${SD}/assets/px`, [...need].join(',')], { encoding: 'u
     else { const start = sp.t - 0.16; // fighterAt starts an attack anim 0.16 s before its impact
       if (start < f.super[0] + F.CUTIN - 0.05) fail(`${id}: ${who}'s special starts during the cut-in`); if (sp.t - f.super[0] > 1.6) fail(`${id}: cut-in ${(sp.t - f.super[0]).toFixed(2)}s before the special (too early)`);
       notes.push(`${id}: ${who} cut-in ${f.super[0].toFixed(2)}-${(f.super[0] + F.CUTIN).toFixed(2)}s, world held from ${(f.super[0] - F.HOLD).toFixed(2)}s, special lands ${sp.t}s`); } } }
+// ---- no grey placeholders anywhere in the timeline
+{ const calls = (src.match(/\bph\(\s*g\b/g) || []).length; if (calls) fail(`${calls} grey placeholder box call(s) ph(g, ...) still in the stage`);
+  for (const [k, S] of Object.entries(F.STAGES)) if (!S.art) fail(`stage ${k}: no art (would draw the PLACEHOLDER STAGE fallback)`);
+  const px = (n) => existsSync(`${SD}/assets/px/${n}`);
+  for (const s of E.scenes) {
+    if (s.name === 'cut' && !px(`panel-${s.panel}.png`)) fail(`cut @${s.t0.toFixed(1)}s: panel-${s.panel}.png missing`);
+    if (s.name === 'map' && !px('world-map.png')) fail('map: world-map.png missing');
+    if (s.name === 'title' && !px('logo.png')) fail('title: logo.png missing');
+    if (s.name === 'ending') for (const n of ['belt', 'sensei', 'bow']) if (!px(`panel-${n}.png`)) fail(`ending: panel-${n}.png missing`);
+    if (s.name === 'fight' && !F.STAGES[E.fights[s.fight].stage].art) fail(`fight ${s.fight}: placeholder stage`); }
+  for (const c of F.ROSTER) if (!F.SPRITE_ANIMS[c]) fail(`${c}: still a rect placeholder fighter`);
+  if (existsSync(`${SD}/assets/px/story.json`)) { const st = JSON.parse(readFileSync(`${SD}/assets/px/story.json`, 'utf8')); if (st.logo_green_px) fail(`logo: ${st.logo_green_px} green fringe px`); if ((st.pins || []).length !== 5) fail(`world map: ${st.pins.length} pins measured, want 5`); } }
 const dt = 1 / 30;
 for (const f of Object.values(E.fights)) {
   const used = new Set(), gfail = new Set(); let lastKey = {}, still = {};
