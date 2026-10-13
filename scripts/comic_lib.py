@@ -678,6 +678,9 @@ class Scene:
         if geo['keyline']:   # keyline first so it sits under the art edge and over the panel below
             for p in geo['polys']:
                 self._outline(img, p, w, keyline=True)
+        fl = self._flash(u, t)
+        if fl > 0:   # impact flash: the panel art blows out to white on the hit, then decays
+            art = Image.blend(art, Image.new('RGB', art.size, (255, 252, 235)), fl)
         img.paste(art, (x0, y0), u['mask'])
         for p in geo['polys']:
             self._outline(img, p, w, keyline=geo['keyline'])
@@ -725,7 +728,39 @@ class Scene:
         self._letter(img, u, t)
         return img
 
+    IMPACT_FLASH = 0.18     # s of white-out decay on an impact SFX
+    IMPACT_SHAKE = 0.28     # s of screen shake
+    def _impacts(self, u):
+        return [T(self.spec, s_['at']) for s_ in u.get('sfx', []) if s_.get('impact')]
+
+    def _flash(self, u, t):
+        k = 0.0
+        for ts in self._impacts(u):
+            if ts <= t < ts + self.IMPACT_FLASH:
+                k = max(k, 0.6 * (1 - (t - ts) / self.IMPACT_FLASH))
+        return k
+
     def frame(self, t):
+        img = self._frame(t)
+        tr = self.spec.get('transition')
+        live = [self.splash] if (tr and self.splash and t >= T(self.spec, tr['at'])) else self.units
+        amp = 0.0
+        for u in live:
+            for ts in self._impacts(u):
+                if ts <= t < ts + self.IMPACT_SHAKE:
+                    amp = max(amp, 1 - (t - ts) / self.IMPACT_SHAKE)
+        if amp <= 0:
+            return img
+        # screen shake: decaying jitter, zoomed 2% so no edge shows
+        A = 0.008 * self.W * amp
+        n = (t * self.fps)
+        dx, dy = A * math.sin(n * 2.7), A * math.cos(n * 3.9)
+        zw, zh = self.W / 1.02, self.H / 1.02
+        x0 = min(max((self.W - zw) / 2 + dx, 0), self.W - zw)
+        y0 = min(max((self.H - zh) / 2 + dy, 0), self.H - zh)
+        return img.resize((self.W, self.H), Image.BICUBIC, box=(x0, y0, x0 + zw, y0 + zh))
+
+    def _frame(self, t):
         tr = self.spec.get('transition')
         if not tr:
             return self.page(t)

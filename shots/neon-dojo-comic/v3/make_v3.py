@@ -177,4 +177,5 @@ def main():
         open(path, 'w').write(data)
     print(n, 'panels;', sum(1 for p in prompts if p['reuse']), 'reused; max prompt words',
           max(len(p['prompt'].split()) for p in prompts if p['prompt']))
-main()
+if __name__ == "__main__":
+    main()
