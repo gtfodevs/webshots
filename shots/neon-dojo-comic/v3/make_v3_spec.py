@@ -21,25 +21,48 @@ REUSE_CLIP = {'v01': 'clips/n01.mp4', 'v23': 'clips/n18.mp4', 'v28': 'clips/n09.
               'v32': 'clips/n26.mp4', 's05': 'v3/clips/s05_r2.mp4', 'v15': 'v3/clips/v15_r2.mp4',
               's24': 'v3/clips/s24_r2.mp4'}
 # r2 review 2026-10-13 (8 fps + detail strips): these regenerations are clean for the full 6 s
+# r3 review 2026-10-13: both variants per id at 8 fps + detail strips; picked variant plays the full 6 s
+R3_PICK = {'s30': 'b', 'v03': 'a', 'v07': 'b', 'v09': 'a', 's17': 'b', 'v19': 'b'}
 R2_USED = {'s05', 's10', 's24', 'v04', 'v12', 'v15', 'v16'}
 # 8 fps review 2026-10-13: (clean seconds from in=0, note). Clips play their full length; a clip that morphs is
 # marked REGEN and listed in v3/regen.json instead of being cut to 2-4 s.
 TRIMS = {
  's05': (6.0, None), 'v15': (6.0, None), 's24': (6.0, None),
  'v01': (6.0, None), 'v23': (6.0, None), 'v28': (6.0, None), 'v29': (6.0, None), 'v32': (6.0, None),
- 'v02': (6.0, None), 'v03': (2.4, 'v1 clip kept: camera jumps at ~2.5 s; r2 hard-cuts at 1.4 s (regen2)'),
+ 'v02': (6.0, None), 'v03': (6.0, None),
  'v04': (6.0, None), 'v06': (6.0, None),
- 'v07': (4.5, 'v1 clip kept: dummy morphs after 4.5 s; r2 cuts away from the panel at 0.1 s (regen2)'), 'v08': (5.0, 'jump at 5.25 s'),
- 'v09': (3.9, 'v1 clip kept: hands dissolve after ~4 s; r2 morphs the fist into a face by 0.4 s (regen2)'), 's10': (6.0, None),
+ 'v07': (6.0, None), 'v08': (5.0, 'jump at 5.25 s'),
+ 'v09': (6.0, None), 's10': (6.0, None),
  'v12': (6.0, None), 'v13': (6.0, None), 'v14': (6.0, None),
- 'v16': (6.0, None), 's17': (4.5, 'v1 clip kept: re-pose after 4.5 s; r2 cross-morphs into a new pose at 0.3 s (regen2)'),
- 'v18': (5.6, 'jump at 5.75 s'), 'v19': (4.0, 'v1 clip kept: dissolve after ~4 s; r2 melts Aura into a glowing figure at ~2.5 s (regen2)'), 'v20': (6.0, None),
+ 'v16': (6.0, None), 's17': (6.0, None),
+ 'v18': (5.6, 'jump at 5.75 s'), 'v19': (6.0, None), 'v20': (6.0, None),
  's21': (6.0, None), 'v22': (5.2, 'jump at 5.25 s'), 'v25': (6.0, None), 'v26': (6.0, None),
- 's30': (2.0, 'v1 clip kept: SHOGUN re-forms after ~2 s; r2 re-forms him by 1.5 s (regen2)'), 'v31': (6.0, None),
+ 's30': (6.0, None), 'v31': (6.0, None),
 }
 FULL = 6.6  # 6 s clip + 0.44 s anticipation + margin
 SFX_STYLE = {'a': ([0.72, 0.32], -8), 'b': ([0.3, 0.3], 7), 'c': ([0.7, 0.35], -6), 'splash': ([0.7, 0.28], -7)}
 COLORS = [[255, 214, 0], [90, 230, 255], [255, 90, 200], [255, 255, 255]]
+
+
+# Character anchor, prepended to every motion prompt so the video model keeps each character's exact look
+ANCHOR_HEAD = 'Handsome, sleek, well-designed chrome robots.'
+ANCHOR_CAST = {
+ 'Uno': 'Uno: round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold 1 chain.',
+ 'Aura': 'Aura: beautiful grey chrome robot face, red eyes, headphone ears, flowing dark crimson hair, modest crimson bodysuit.',
+ 'Sensei': 'Sensei: elderly chrome robot, grey robe, white cable beard, cane.',
+ 'KAZE-9': 'KAZE-9: lean black ninja robot, red scarf, twin blades.',
+ 'RAIJIN': 'RAIJIN: bulky boxer robot, lightning gauntlets.',
+ 'TEKKO': 'TEKKO: squat sumo robot, piston arms.',
+ 'LOTUS': 'LOTUS: long-legged slim crane-kick robot.',
+ 'SHOGUN': 'SHOGUN: red samurai robot, horned helmet, glowing red katana.',
+}
+ANCHOR_TAIL = ('Each character keeps the exact same face, body, outfit and size for the entire shot; one continuous shot; '
+               'the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes.')
+
+
+def anchor(chars):
+    names = [n for n in ANCHOR_CAST if n in (chars if isinstance(chars, str) else ' '.join(chars))]
+    return ' '.join([ANCHOR_HEAD] + [ANCHOR_CAST[n] for n in names] + [ANCHOR_TAIL])
 
 
 def norm(x):
@@ -120,8 +143,8 @@ def build():
                 for c_ in caps[1:]: c_['anchor'] = 'bl'
             u = {'id': pid, 'image': f'v3/panels/{pid}.jpg', 'at': round(land, 3), 'location': scene[:60], 'camera': shot,
                  'moment': beat, 'scene': scene, 'prompt': pr['prompt'] or f'REUSE {reuse}', 'refs': pr['refs'],
-                 'motionPrompt': pr['motion'], 'captions': caps}
-            clip = (f'v3/clips/{pid}_r2.mp4' if pid in R2_USED and not reuse else f'v3/clips/{pid}.mp4' if not reuse else REUSE_CLIP.get(pid))
+                 'motionPrompt': anchor(chars) + ' ' + pr['motion'], 'captions': caps}
+            clip = (f'v3/clips/{pid}_r3{R3_PICK[pid]}.mp4' if pid in R3_PICK else f'v3/clips/{pid}_r2.mp4' if pid in R2_USED and not reuse else f'v3/clips/{pid}.mp4' if not reuse else REUSE_CLIP.get(pid))
             if clip:
                 u['clip'] = {'src': clip, 'in': 0.0, 'out': None}
             if sfx:

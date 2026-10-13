@@ -5,7 +5,7 @@ import comic_lib as C
 from PIL import Image,ImageDraw
 spec=C.load_spec('shots/neon-dojo-comic/neon-dojo-comic-v3.comic.json')
 OUT='/workspace/neon-dojo-comic/out/'
-vids={'landscape':(OUT+'neon-dojo-comic-1080p-v4.mp4',0.0,999),'vertical':(OUT+'neon-dojo-comic-short-v4.mp4',112.25,155.81)}
+vids={'landscape':(OUT+'neon-dojo-comic-1080p-v5.mp4',0.0,999),'vertical':(OUT+'neon-dojo-comic-short-v5.mp4',112.25,155.81)}
 def frame(p,t,W,H):
     b=subprocess.run(['ffmpeg','-v','error','-ss',f'{t:.3f}','-i',p,'-frames:v','1','-f','rawvideo','-pix_fmt','rgb24','-'],capture_output=True).stdout
     return Image.frombytes('RGB',(W,H),b)
@@ -43,4 +43,4 @@ for orient,L in crops.items():
       for j,(lbl,c) in enumerate(rows[i:i+2]):
         sheet.paste(c,(j*(tw+10),y+20));d.text((j*(tw+10)+2,y+4),lbl[:70],fill='yellow');hh=max(hh,c.height)
       y+=hh+22
-    sheet.save(f'{OUT}v4-audit/{orient}-{k//12:02d}.png')
+    sheet.save(f'{OUT}v5-audit/{orient}-{k//12:02d}.png')

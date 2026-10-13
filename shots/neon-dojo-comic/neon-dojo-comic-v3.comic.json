@@ -58,7 +58,7 @@
      "refs": [
       "none"
      ],
-     "motionPrompt": "The blimp glides slowly left, rain falls. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
+     "motionPrompt": "Handsome, sleek, well-designed chrome robots. Each character keeps the exact same face, body, outfit and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. The blimp glides slowly left, rain falls. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
      "captions": [
       {
        "text": "NEO-KYOTO. THE OLD DOJO IS FADING...",
@@ -85,7 +85,7 @@
      "refs": [
       "none"
      ],
-     "motionPrompt": "Sensei slowly raises his cane toward the empty hook, rain drips. Locked low camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
+     "motionPrompt": "Handsome, sleek, well-designed chrome robots. Sensei: elderly chrome robot, grey robe, white cable beard, cane. Each character keeps the exact same face, body, outfit and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. Sensei slowly raises his cane toward the empty hook, rain drips. Locked low camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
      "captions": [
       {
        "text": "YEAH, YOU KNOW THE VIBE",
@@ -130,13 +130,12 @@
       "Uno",
       "Aura"
      ],
-     "motionPrompt": "Uno and Aura turn their heads and glare at each other, a spark pops. Slow push-in. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
+     "motionPrompt": "Handsome, sleek, well-designed chrome robots. Uno: round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold 1 chain. Aura: beautiful grey chrome robot face, red eyes, headphone ears, flowing dark crimson hair, modest crimson bodysuit. Sensei: elderly chrome robot, grey robe, white cable beard, cane. Each character keeps the exact same face, body, outfit and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. Uno and Aura turn their heads and glare at each other, a spark pops. Slow push-in. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
      "captions": [],
      "clip": {
-      "src": "v3/clips/v03.mp4",
+      "src": "v3/clips/v03_r3a.mp4",
       "in": 0.0,
-      "out": 2.4,
-      "trimNote": "v1 clip kept: camera jumps at ~2.5 s; r2 hard-cuts at 1.4 s (regen2)"
+      "out": 6.0
      },
      "sfx": [
       {
@@ -171,7 +170,7 @@
       "Uno",
       "Aura"
      ],
-     "motionPrompt": "The impact flash bursts and both robots fly backward. Locked camera, slight shake. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
+     "motionPrompt": "Handsome, sleek, well-designed chrome robots. Uno: round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold 1 chain. Aura: beautiful grey chrome robot face, red eyes, headphone ears, flowing dark crimson hair, modest crimson bodysuit. Each character keeps the exact same face, body, outfit and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. The impact flash bursts and both robots fly backward. Locked camera, slight shake. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
      "captions": [],
      "clip": {
       "src": "v3/clips/v04_r2.mp4",
@@ -219,7 +218,7 @@
      "Uno",
      "Aura"
     ],
-    "motionPrompt": "Uno and Aura stumble and splash down into the puddle. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
+    "motionPrompt": "Handsome, sleek, well-designed chrome robots. Uno: round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold 1 chain. Aura: beautiful grey chrome robot face, red eyes, headphone ears, flowing dark crimson hair, modest crimson bodysuit. Sensei: elderly chrome robot, grey robe, white cable beard, cane. Each character keeps the exact same face, body, outfit and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. Uno and Aura stumble and splash down into the puddle. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
     "captions": [],
     "clip": {
      "src": "v3/clips/s05_r2.mp4",
@@ -268,7 +267,7 @@
       "Uno",
       "Aura"
      ],
-     "motionPrompt": "Sensei pulls the glowing cable tight around their wrists. Locked overhead camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
+     "motionPrompt": "Handsome, sleek, well-designed chrome robots. Uno: round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold 1 chain. Aura: beautiful grey chrome robot face, red eyes, headphone ears, flowing dark crimson hair, modest crimson bodysuit. Sensei: elderly chrome robot, grey robe, white cable beard, cane. Each character keeps the exact same face, body, outfit and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. Sensei pulls the glowing cable tight around their wrists. Locked overhead camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
      "captions": [],
      "clip": {
       "src": "v3/clips/v06.mp4",
@@ -290,7 +289,7 @@
       "Uno",
       "Aura"
      ],
-     "motionPrompt": "Both robots spin once in sync and the dummy topples. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
+     "motionPrompt": "Handsome, sleek, well-designed chrome robots. Uno: round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold 1 chain. Aura: beautiful grey chrome robot face, red eyes, headphone ears, flowing dark crimson hair, modest crimson bodysuit. Each character keeps the exact same face, body, outfit and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. Both robots spin once in sync and the dummy topples. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
      "captions": [
       {
        "text": "ONE-TWO IN A CLEAN SWEEP, LIKE A WHISPER IN THE BREEZE",
@@ -300,10 +299,9 @@
       }
      ],
      "clip": {
-      "src": "v3/clips/v07.mp4",
+      "src": "v3/clips/v07_r3b.mp4",
       "in": 0.0,
-      "out": 4.5,
-      "trimNote": "v1 clip kept: dummy morphs after 4.5 s; r2 cuts away from the panel at 0.1 s (regen2)"
+      "out": 6.0
      },
      "sfx": [
       {
@@ -347,7 +345,7 @@
       "Aura",
       "Uno"
      ],
-     "motionPrompt": "Aura's cyan shield flares as the mech arm hits it. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
+     "motionPrompt": "Handsome, sleek, well-designed chrome robots. Uno: round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold 1 chain. Aura: beautiful grey chrome robot face, red eyes, headphone ears, flowing dark crimson hair, modest crimson bodysuit. Each character keeps the exact same face, body, outfit and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. Aura's cyan shield flares as the mech arm hits it. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
      "captions": [
       {
        "text": "I MOVE CALM WITH THE JAW GAME, AIN'T NO NEED FOR DEPLOYED",
@@ -395,7 +393,7 @@
       "Uno",
       "Aura"
      ],
-     "motionPrompt": "The two hands meet and a bright spark bursts. Locked macro camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
+     "motionPrompt": "Handsome, sleek, well-designed chrome robots. Uno: round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold 1 chain. Aura: beautiful grey chrome robot face, red eyes, headphone ears, flowing dark crimson hair, modest crimson bodysuit. Each character keeps the exact same face, body, outfit and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. The two hands meet and a bright spark bursts. Locked macro camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
      "captions": [
       {
        "text": "SHORT SWING, LIKE A CLOCK HAND, PRECISE AND TO THE POINT",
@@ -412,10 +410,9 @@
       }
      ],
      "clip": {
-      "src": "v3/clips/v09.mp4",
+      "src": "v3/clips/v09_r3a.mp4",
       "in": 0.0,
-      "out": 3.9,
-      "trimNote": "v1 clip kept: hands dissolve after ~4 s; r2 morphs the fist into a face by 0.4 s (regen2)"
+      "out": 6.0
      },
      "sfx": [
       {
@@ -457,7 +454,7 @@
      "Uno",
      "Aura"
     ],
-    "motionPrompt": "Uno's fist connects and the mech bursts into sparks. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
+    "motionPrompt": "Handsome, sleek, well-designed chrome robots. Uno: round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold 1 chain. Aura: beautiful grey chrome robot face, red eyes, headphone ears, flowing dark crimson hair, modest crimson bodysuit. Sensei: elderly chrome robot, grey robe, white cable beard, cane. Each character keeps the exact same face, body, outfit and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. Uno's fist connects and the mech bursts into sparks. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
     "captions": [
      {
       "text": "HIT HARD, THEN I STOP, MAN, NO NEED TO DISAPPOINT",
@@ -513,7 +510,7 @@
       "KAZE-9",
       "RAIJIN"
      ],
-     "motionPrompt": "The spotlights sweep across the four rivals. Slow tilt up. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
+     "motionPrompt": "Handsome, sleek, well-designed chrome robots. KAZE-9: lean black ninja robot, red scarf, twin blades. RAIJIN: bulky boxer robot, lightning gauntlets. TEKKO: squat sumo robot, piston arms. LOTUS: long-legged slim crane-kick robot. Each character keeps the exact same face, body, outfit and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. The spotlights sweep across the four rivals. Slow tilt up. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
      "captions": [
       {
        "text": "SAY MY NAME, THEN BITE THE TONGUE",
@@ -542,7 +539,7 @@
       "KAZE-9",
       "Aura"
      ],
-     "motionPrompt": "The red scarf whips and the blade glints. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
+     "motionPrompt": "Handsome, sleek, well-designed chrome robots. Aura: beautiful grey chrome robot face, red eyes, headphone ears, flowing dark crimson hair, modest crimson bodysuit. KAZE-9: lean black ninja robot, red scarf, twin blades. Each character keeps the exact same face, body, outfit and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. The red scarf whips and the blade glints. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
      "captions": [
       {
        "text": "WHEN IT POPS, IT'S ALREADY DONE",
@@ -598,7 +595,7 @@
       "RAIJIN",
       "Uno"
      ],
-     "motionPrompt": "RAIJIN pulls his fist back and lightning crackles. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
+     "motionPrompt": "Handsome, sleek, well-designed chrome robots. Uno: round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold 1 chain. RAIJIN: bulky boxer robot, lightning gauntlets. Each character keeps the exact same face, body, outfit and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. RAIJIN pulls his fist back and lightning crackles. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
      "captions": [
       {
        "text": "KNUCKLE TALK, KNUCKLE TALK",
@@ -646,7 +643,7 @@
       "Uno",
       "RAIJIN"
      ],
-     "motionPrompt": "Uno's uppercut snaps up and RAIJIN's head rocks back. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
+     "motionPrompt": "Handsome, sleek, well-designed chrome robots. Uno: round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold 1 chain. RAIJIN: bulky boxer robot, lightning gauntlets. Each character keeps the exact same face, body, outfit and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. Uno's uppercut snaps up and RAIJIN's head rocks back. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
      "captions": [
       {
        "text": "KNUCKLE TALK, KNUCKLE TALK",
@@ -693,7 +690,7 @@
      "refs": [
       "Aura"
      ],
-     "motionPrompt": "TEKKO tips backward off the ring edge. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
+     "motionPrompt": "Handsome, sleek, well-designed chrome robots. Aura: beautiful grey chrome robot face, red eyes, headphone ears, flowing dark crimson hair, modest crimson bodysuit. TEKKO: squat sumo robot, piston arms. Each character keeps the exact same face, body, outfit and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. TEKKO tips backward off the ring edge. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
      "captions": [
       {
        "text": "KEEP IT CLOSE, KEEP IT SMALL",
@@ -754,7 +751,7 @@
     "refs": [
      "Aura"
     ],
-    "motionPrompt": "LOTUS's kick lands on Aura's guard and the impact ring flashes. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
+    "motionPrompt": "Handsome, sleek, well-designed chrome robots. Aura: beautiful grey chrome robot face, red eyes, headphone ears, flowing dark crimson hair, modest crimson bodysuit. LOTUS: long-legged slim crane-kick robot. Each character keeps the exact same face, body, outfit and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. LOTUS's kick lands on Aura's guard and the impact ring flashes. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
     "captions": [
      {
       "text": "KNUCKLE TALK, KNUCKLE TALK",
@@ -770,10 +767,9 @@
      }
     ],
     "clip": {
-     "src": "v3/clips/s17.mp4",
+     "src": "v3/clips/s17_r3b.mp4",
      "in": 0.0,
-     "out": 4.5,
-     "trimNote": "v1 clip kept: re-pose after 4.5 s; r2 cross-morphs into a new pose at 0.3 s (regen2)"
+     "out": 6.0
     },
     "sfx": [
      {
@@ -816,7 +812,7 @@
       "Aura",
       "KAZE-9"
      ],
-     "motionPrompt": "Sparks spray as the blades grind on the shield. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
+     "motionPrompt": "Handsome, sleek, well-designed chrome robots. Aura: beautiful grey chrome robot face, red eyes, headphone ears, flowing dark crimson hair, modest crimson bodysuit. KAZE-9: lean black ninja robot, red scarf, twin blades. Each character keeps the exact same face, body, outfit and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. Sparks spray as the blades grind on the shield. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
      "captions": [
       {
        "text": "TOE-TO-TOE, NAH, I DON'T OVERDO, KEEP IT UNDERSTATED",
@@ -871,7 +867,7 @@
       "Aura",
       "KAZE-9"
      ],
-     "motionPrompt": "Aura hits the mat and the impact flash pops. Locked overhead camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
+     "motionPrompt": "Handsome, sleek, well-designed chrome robots. Aura: beautiful grey chrome robot face, red eyes, headphone ears, flowing dark crimson hair, modest crimson bodysuit. KAZE-9: lean black ninja robot, red scarf, twin blades. Each character keeps the exact same face, body, outfit and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. Aura hits the mat and the impact flash pops. Locked overhead camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
      "captions": [
       {
        "text": "DUCK LOW, THEN I CUT THROUGH, UNEXPECTED, UNSEEN",
@@ -888,10 +884,9 @@
       }
      ],
      "clip": {
-      "src": "v3/clips/v19.mp4",
+      "src": "v3/clips/v19_r3b.mp4",
       "in": 0.0,
-      "out": 4.0,
-      "trimNote": "v1 clip kept: dissolve after ~4 s; r2 melts Aura into a glowing figure at ~2.5 s (regen2)"
+      "out": 6.0
      },
      "sfx": [
       {
@@ -926,7 +921,7 @@
       "Uno",
       "Aura"
      ],
-     "motionPrompt": "Aura's cyan glow flickers once. Very slow push-in. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
+     "motionPrompt": "Handsome, sleek, well-designed chrome robots. Uno: round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold 1 chain. Aura: beautiful grey chrome robot face, red eyes, headphone ears, flowing dark crimson hair, modest crimson bodysuit. Each character keeps the exact same face, body, outfit and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. Aura's cyan glow flickers once. Very slow push-in. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
      "captions": [
       {
        "text": "NO CHESS, JUST A SLICK CHECK, A SUBTLE SHIFT IN THE AIR",
@@ -970,7 +965,7 @@
      "Aura",
      "KAZE-9"
     ],
-    "motionPrompt": "Uno steps slowly left to right across the frame carrying Aura. Locked side camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
+    "motionPrompt": "Handsome, sleek, well-designed chrome robots. Uno: round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold 1 chain. Aura: beautiful grey chrome robot face, red eyes, headphone ears, flowing dark crimson hair, modest crimson bodysuit. KAZE-9: lean black ninja robot, red scarf, twin blades. Each character keeps the exact same face, body, outfit and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. Uno steps slowly left to right across the frame carrying Aura. Locked side camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
     "captions": [
      {
       "text": "NO FLEX, BUT A QUICK NECK, SHOW 'EM I DON'T CARE",
@@ -1021,7 +1016,7 @@
      "refs": [
       "SHOGUN"
      ],
-     "motionPrompt": "SHOGUN draws the katana and it ignites red. Slow tilt up. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
+     "motionPrompt": "Handsome, sleek, well-designed chrome robots. SHOGUN: red samurai robot, horned helmet, glowing red katana. Each character keeps the exact same face, body, outfit and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. SHOGUN draws the katana and it ignites red. Slow tilt up. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
      "captions": [
       {
        "text": "COUNT IT OUT, ONE BY ONE",
@@ -1068,7 +1063,7 @@
      "refs": [
       "SHOGUN"
      ],
-     "motionPrompt": "The armored hands tighten on the belt, red glint. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
+     "motionPrompt": "Handsome, sleek, well-designed chrome robots. SHOGUN: red samurai robot, horned helmet, glowing red katana. Each character keeps the exact same face, body, outfit and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. The armored hands tighten on the belt, red glint. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
      "captions": [
       {
        "text": "SAY MY NAME, THEN BITE THE TONGUE",
@@ -1104,7 +1099,7 @@
      "Uno",
      "SHOGUN"
     ],
-    "motionPrompt": "Sparks spray from the blade lock as they push. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
+    "motionPrompt": "Handsome, sleek, well-designed chrome robots. Uno: round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold 1 chain. SHOGUN: red samurai robot, horned helmet, glowing red katana. Each character keeps the exact same face, body, outfit and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. Sparks spray from the blade lock as they push. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
     "captions": [
      {
       "text": "SAY MY NAME, THEN BITE THE TONGUE",
@@ -1167,7 +1162,7 @@
       "Aura",
       "Uno"
      ],
-     "motionPrompt": "Their hands slap and the starburst flares. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
+     "motionPrompt": "Handsome, sleek, well-designed chrome robots. Uno: round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold 1 chain. Aura: beautiful grey chrome robot face, red eyes, headphone ears, flowing dark crimson hair, modest crimson bodysuit. Each character keeps the exact same face, body, outfit and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. Their hands slap and the starburst flares. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
      "captions": [
       {
        "text": "KEEP IT CLOSE, KEEP IT SMALL",
@@ -1222,7 +1217,7 @@
       "Aura",
       "SHOGUN"
      ],
-     "motionPrompt": "SHOGUN is knocked upward by the kick. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
+     "motionPrompt": "Handsome, sleek, well-designed chrome robots. Uno: round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold 1 chain. Aura: beautiful grey chrome robot face, red eyes, headphone ears, flowing dark crimson hair, modest crimson bodysuit. SHOGUN: red samurai robot, horned helmet, glowing red katana. Each character keeps the exact same face, body, outfit and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. SHOGUN is knocked upward by the kick. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
      "captions": [
       {
        "text": "HANDS UP, THEN IT ALL FALLS",
@@ -1284,7 +1279,7 @@
      "refs": [
       "Uno"
      ],
-     "motionPrompt": "Uno's red eyes flare brighter. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
+     "motionPrompt": "Handsome, sleek, well-designed chrome robots. Uno: round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold 1 chain. Each character keeps the exact same face, body, outfit and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. Uno's red eyes flare brighter. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
      "captions": [
       {
        "text": "UH, UH, THEY TALKING TOUGH, YEAH, THEIR WORDS ARE TALKING THIN",
@@ -1319,7 +1314,7 @@
      "refs": [
       "Aura"
      ],
-     "motionPrompt": "The cyan orb swells and crackles. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
+     "motionPrompt": "Handsome, sleek, well-designed chrome robots. Aura: beautiful grey chrome robot face, red eyes, headphone ears, flowing dark crimson hair, modest crimson bodysuit. Each character keeps the exact same face, body, outfit and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. The cyan orb swells and crackles. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
      "captions": [
       {
        "text": "ONE SHARP MOVE, WHOLE ROOM STILL, LIKE A FREEZE FRAME, A PAUSE",
@@ -1363,7 +1358,7 @@
      "Aura",
      "SHOGUN"
     ],
-    "motionPrompt": "The armour bursts outward into sparkles. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
+    "motionPrompt": "Handsome, sleek, well-designed chrome robots. Uno: round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold 1 chain. Aura: beautiful grey chrome robot face, red eyes, headphone ears, flowing dark crimson hair, modest crimson bodysuit. SHOGUN: red samurai robot, horned helmet, glowing red katana. Each character keeps the exact same face, body, outfit and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. The armour bursts outward into sparkles. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
     "captions": [
      {
       "text": "THAT'S THE WAY I SAY WHAT I SAY, AIN'T NO NEED FOR APPLAUSE",
@@ -1388,10 +1383,9 @@
      }
     ],
     "clip": {
-     "src": "v3/clips/s30.mp4",
+     "src": "v3/clips/s30_r3b.mp4",
      "in": 0.0,
-     "out": 2.0,
-     "trimNote": "v1 clip kept: SHOGUN re-forms after ~2 s; r2 re-forms him by 1.5 s (regen2)"
+     "out": 6.0
     },
     "sfx": [
      {
@@ -1436,7 +1430,7 @@
       "KAZE-9",
       "RAIJIN"
      ],
-     "motionPrompt": "Sensei lifts the belt and the rivals bow. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
+     "motionPrompt": "Handsome, sleek, well-designed chrome robots. Uno: round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold 1 chain. Aura: beautiful grey chrome robot face, red eyes, headphone ears, flowing dark crimson hair, modest crimson bodysuit. Sensei: elderly chrome robot, grey robe, white cable beard, cane. KAZE-9: lean black ninja robot, red scarf, twin blades. RAIJIN: bulky boxer robot, lightning gauntlets. Each character keeps the exact same face, body, outfit and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. Sensei lifts the belt and the rivals bow. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
      "captions": [
       {
        "text": "KNUCKLE TALK, KNUCKLE TALK",
@@ -1465,7 +1459,7 @@
       "Uno",
       "Aura"
      ],
-     "motionPrompt": "The sun rises slowly, their coat and hair stir in the wind. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
+     "motionPrompt": "Handsome, sleek, well-designed chrome robots. Uno: round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold 1 chain. Aura: beautiful grey chrome robot face, red eyes, headphone ears, flowing dark crimson hair, modest crimson bodysuit. Each character keeps the exact same face, body, outfit and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. The sun rises slowly, their coat and hair stir in the wind. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
      "captions": [
       {
        "text": "KNUCKLE TALK, KNUCKLE TALK",
