@@ -153,6 +153,9 @@ for (const f of Object.values(E.fights)) if (f.tag) { let prev = null, px = null
       for (const e of f.events) if (e.side === 1 && e.t - 0.42 < t + entT && e.t + 0.7 > t - exitT) fail(`${f.id}: p1 ${e.move} @${e.t} overlaps the tag window`);
       notes.push(`${f.id}: tag ${prev} -> ${st.char} @${t.toFixed(2)}s, exit ${exitT.toFixed(2)}s + entry ${entT.toFixed(2)}s`); }
     prev = st.char; } }
+// ---- text QA (browser): bitmap text clipped at the frame edge or overlapping other text, landscape + Short
+{ const tq = spawnSync('node', ['scripts/text_qa.mjs', shot, '--step', '0.5'], { encoding: 'utf8', timeout: 600000 });
+  if (tq.status !== 0) fail(`text QA crashed: ${(tq.stderr || '').slice(-200)}`); else { const P = JSON.parse(tq.stdout.trim().split('\n').pop()); P.forEach((m) => fail(`TEXT: ${m}`)); notes.push(`text QA: ${P.length} clipped/overlapping text problem(s) (landscape + Short)`); } }
 const dt = 1 / 30;
 for (const f of Object.values(E.fights)) {
   const used = new Set(), gfail = new Set(); let lastKey = {}, still = {};
