@@ -8,7 +8,7 @@ D = os.path.dirname(os.path.abspath(__file__)); M = json.load(open(f'{D}/stage/a
 js = subprocess.run(['node', '-e', f"const vm=require('vm'),fs=require('fs');const x={{}};vm.createContext(x);vm.runInContext(fs.readFileSync('{D}/stage/fight.js','utf8'),x);console.log(JSON.stringify(x.FIGHT.SPRITE_ANIMS['{c}']))"], capture_output=True, text=True, check=True)
 AN = json.loads(js.stdout); S = 2
 # single-pose anims are previewed in context (from / back to the stance) so the GIF shows the motion
-AN['block'] = {'frames': ['idle_a', 'block'], 'durations': [400, 700]}
+if 'block' in M['frames']: AN['block'] = {'frames': ['idle_a', 'block'], 'durations': [400, 700]}
 AN['hit'] = {'frames': ['idle_a', 'hit', 'idle_a'], 'durations': [400, 350, 300]}
 AN['ko'] = {'frames': ['hit', 'ko_fall', 'ko_down'], 'durations': [200, 450, 1200]}
 for k in ('ko_fall', 'ko_down'): AN.pop(k)

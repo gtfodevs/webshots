@@ -70,6 +70,7 @@ const COL = (C) => ({ chrome: C.chrome, dark: '#4a4e66', limb: '#8a90a8', foot: 
 const ART = {};
 for (const [k, S] of Object.entries(ST)) if (S.art) { const base = `assets/px/stage-${S.art}`; ART[k] = { meta: await (await fetch(base + '.json')).json() };
   for (const [L] of ART[k].meta.layers) ART[k][L] = await img(`${base}-${L}.png`);
+  ART[k].glow = {}; for (const [n] of ART[k].meta.glows || []) ART[k].glow[n] = await img(`${base}-glow-${n}.png`);
   ART[k].figs = await Promise.all((ART[k].meta.figures || []).map((_, i) => img(`${base}-fig${i}.png`))); }
 // SF2 restraint: layers drift with the camera only. Layers sit on an INPAINTED CLEAN PLATE; every animated background figure
 // (crowd robot, monk, spectator) is its own cutout and rises 1px on the beat (alternate figures on alternate beats);
@@ -82,15 +83,20 @@ function artStage(k, t, cam) {
   for (const [L, sp, fx] of M.layers) {
     if (L === 'floor') continue;
     g.drawImage(A[L], off(sp), 0);
-    if (L === M.figure_layer) M.figures.forEach(([x, y, w, h, p], i) => g.drawImage(A.figs[i], x + off(M.figure_speed), y - ((bi + p) % 2 === 0 && ph < 0.35 ? 1 : 0)));
+    if (L === M.figure_layer) M.figures.forEach(([x, y, w, h, p], i) => g.drawImage(A.figs[i], x + off(M.figure_speed),
+      y - (M.figure_mode === 'breathe' ? (Math.sin(t * 1.7 + i * 1.9) > 0.3 ? 1 : 0) : ((bi + p) % 2 === 0 && ph < 0.35 ? 1 : 0))));   // guards: slow 1px breath, offset per figure
     if (L === 'mid' && M.shimmer) { const [x, y, w, h, sp2] = M.shimmer; for (let yy = y; yy < y + h; yy += 2) { const dx = R(Math.sin(t * 1.3 + yy * 0.35)); if (dx) g.drawImage(A.mid, x, yy, w, 2, x + dx + off(sp2), yy, w, 2); } }
   }
   g.globalCompositeOperation = 'lighter';
-  const lx = off(M.layers.find((l) => l[0] === 'gate' || l[0] === 'mid')[1]);
+  const lx = off((M.layers.find((l) => l[0] === 'gate' || l[0] === 'mid' || l[0] === M.figure_layer) || [0, 0.6])[1]);
+  for (const [n, mode] of M.glows || []) { // additive glow layers: crest pulse, torch flicker, rare window lightning
+    const a = mode === 'pulse' ? 0.35 + 0.3 * Math.sin(t * 2.2) : mode === 'flicker' ? 0.3 + 0.35 * hash(Math.floor(t * 12)) : (() => { const c = Math.floor(t / 2.7), u = t - c * 2.7; return hash(c * 7 + 1) > 0.55 && u < 0.18 ? (u < 0.06 || u > 0.12 ? 1 : 0.25) : 0; })();
+    if (a > 0.01) { g.globalAlpha = Math.min(1, a); g.drawImage(A.glow[n], off(mode === 'flash' ? 0.1 : 0.6), 0); g.globalAlpha = 1; } }
   M.lanterns.forEach(([x, y, r], i) => { const f = 0.5 + 0.5 * Math.sin(t * (2.1 + hash(i) * 1.7) + i * 2) * Math.sin(t * 0.7 + i); const a = 0.05 + 0.07 * f;
     g.fillStyle = `rgba(255,120,170,${a.toFixed(3)})`; g.fillRect(x - r + lx, y - r, r * 2, r * 2); g.fillRect(x - r + 3 + lx, y - r - 3, r * 2 - 6, r * 2 + 6); });
   g.globalCompositeOperation = 'source-over';
   g.drawImage(A.floor, off(1), 0);
+  if (ST[k].tint) { g.globalCompositeOperation = 'multiply'; g.fillStyle = ST[k].tint; g.fillRect(0, 0, W * Z, H * Z); g.globalCompositeOperation = 'source-over'; } // tinted stage variant
   if (M.petals) for (let i = 0; i < M.petals; i++) { const sp = 6 + hash(i + 3) * 10, x = R(((hash(i) * 1100 + t * sp * 1.6) % 1100) - 70 + Math.sin(t * 0.8 + i) * 6), y = R((hash(i + 7) * 600 + t * sp) % 600 - 30);
     g.fillStyle = i % 3 ? '#ff9ad6' : '#ffd0ea'; g.fillRect(x, y, 4, 2); g.fillRect(x + 1, y + 2, 2, 2); }
   g.restore();
@@ -268,7 +274,7 @@ function bossIntro(t, s) {
   g.fillStyle = '#000'; g.fillRect(0, 0, W, H);
   if (t < s.helm) { s.counts.forEach((c, i) => { if (t >= c) { const opp = ['tekko', 'kaze9', 'raijin', 'lotus'][i]; ph(g, 20 + i * 114, 60, 100, 110, 'BEATEN ' + CH[opp].name, '#2a2a50'); g.fillStyle = '#000'; for (let k = 0; k < 20; k++) g.fillRect(70 + i * 114 - k + (k % 3), 60 + k * 5, 2, 5); logo(g, String(i + 1), 70 + i * 114, 178, 3, FIRE); } }); return; }
   // real SHOGUN.EXE art: rises out of the dark (idle breath + flickering red glow), then the victory pose holding the belt
-  const redBg = (k) => { for (let y = 0; y < H; y += 2) { const v = y / H; g.fillStyle = `rgb(${R(20 + 70 * v * k)},${R(4 + 6 * v)},${R(10 + 14 * v)})`; g.fillRect(0, y, W, 2); } };
+  const redBg = (k) => { stageBg('temple', t, 0); g.fillStyle = `rgba(0,0,0,${(0.75 - 0.45 * k).toFixed(3)})`; g.fillRect(0, 0, W, H); }; // the palace, darkened until he rises
   if (t < s.belt) { const d = t - s.helm, e = Math.min(1, d / 1.2); redBg(e);
     fighter({ char: 'shogun', anim: 'idle', frame: FIGHT.frameAt('idle', t, 1), x: W / 2, y: 330 + R((1 - e * e) * 150), flip: true }, { k: 2 }, t);
     if (d > 1.2 && Math.floor(d * 10) % 2) { g.fillStyle = '#ff203055'; g.fillRect(0, 0, W, H); } return; }

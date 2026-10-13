@@ -109,3 +109,8 @@ Drop-in: put each pose as `channels/progressiveslop/assets/neon-dojo-fighter/sou
 - Beat-snapped choreo for: moves, cut-ins, montage cuts
 - Freeze-frame palette invert
 - Vertical HUD layout for the Short
+
+## Processed: rivals + boss stage
+- KAZE-9 (192 px) and RAIJIN (208 px, 1.05x Uno): idle_a, attack, hit, ko_down. Breathing idle comes from idle_a, and ko_fall from hit tilted back. RAIJIN's gauntlet lightning (idle, attack) and KO smoke are additive fx layers. Both are wired into the montage.
+- shogun_palace.jpg is the boss stage (`temple` key) for the boss intro and the tag-team fight. Layers: sky/windows, back pillars, hall + throne, front pillars, reflective floor (ground 476). The 4 guards are rembg cutouts over an inpainted plate with an offset 1 px breath. Glow layers: crest pulse, torch flicker, rare window lightning.
+- Montage stages without their own art use tinted variants: alley = blue-tinted rooftop, yard = amber-tinted temple.
