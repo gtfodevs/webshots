@@ -189,6 +189,7 @@ def build():
                      'audioNote': 'relative to assetsDir; not committed', 'timeline': 'shots/neon-dojo-fighter/stage/timeline.json',
                      'start': 0.0, 'end': END, 'loudness': -14},
             'short': {'start': 112.25, 'end': 155.81, 'note': 'pre-chorus 2 + chorus 2 + bridge + final chorus: belt, blade lock, tag combo, both supers, double finisher; cut points in word gaps (112.16-112.42, 155.66-155.84)'},
+            'intro': {'enabled': True, 'title': 'NEON DOJO', 'subtitle': 'PROGRESSIVE SLOP PRESENTS', 'seconds': 2.6},
             'endCard': {'enabled': True, 'seconds': 3.0, 'lines': ['BROUGHT TO YOU BY PROGRESSIVE SLOP', 'LIKE AND SUBSCRIBE FOR MORE!']},
             'cast': V.CAST, 'pages': pages}
     path = os.path.join(HERE, '..', 'neon-dojo-comic-v3.comic.json')

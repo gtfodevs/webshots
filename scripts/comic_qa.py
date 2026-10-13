@@ -191,6 +191,39 @@ def rotated_bounds(r, box, deg):
     return (int(min(xs)) - 1, int(min(ys)) - 1, int(max(xs) - min(xs)) + 2, int(max(ys) - min(ys)) + 2)
 
 
+def check_intro(spec):
+    """Standing rule: every video and Short opens on the title logo intro; its lettering is never clipped."""
+    ic = C.intro(spec)
+    if not ic:
+        fail('intro: the title logo intro is missing/disabled (required on every video and Short)')
+        return
+    bad = 0
+    for orient in ('landscape', 'vertical'):
+        W, H = C.SIZES[orient]
+        lost = C.intro_ink_lost(ic, orient)
+        if lost > 0:
+            fail(f"intro {orient}: logo tile loses {lost} ink px vs the oversized-canvas reference"); bad += 1
+        s0 = spec['song']['start'] if orient == 'landscape' or not spec.get('short') else spec['short']['start']
+        ts = C.intro_slam(spec, s0)
+        fps = spec.get('fps', 30)
+        sx0, sy0, sx1, sy1 = C.SAFE[orient]
+        for k in range(int((ts - 0.15) * fps), int((ts + ic['seconds']) * fps) + 1):
+            t = k / fps
+            st = C.intro_state(ic, orient, t, ts)
+            if not st:
+                continue
+            r = C.intro_rect(ic, orient, st[0])
+            if r[0] < sx0 or r[1] < sy0 or r[0] + r[2] > sx1 or r[1] + r[3] > sy1:
+                fail(f"intro {orient}: logo {[int(v) for v in r]} leaves the title-safe area at {t:.2f}s"); bad += 1; break
+            sb = C.intro_shake_box(orient, t, st[3], fps)
+            if sb:
+                r = [(r[0] - sb[0]) * W / sb[2], (r[1] - sb[1]) * H / sb[3], r[2] * W / sb[2], r[3] * H / sb[3]]
+            if r[0] < 2 or r[1] < 2 or r[0] + r[2] > W - 2 or r[1] + r[3] > H - 2:
+                fail(f"intro {orient}: logo sliced by the frame edge at {t:.2f}s (shake) -> {[int(v) for v in r]}"); bad += 1; break
+    if not bad:
+        ok(f"intro: '{ic['title']}' logo slams in on the first downbeat, {ic['seconds']}s, no ink lost, inside title-safe + frame (landscape + vertical, incl. shake)")
+
+
 def check_endcard(spec):
     print('end card:')
     n0 = len(problems)
@@ -481,6 +514,7 @@ def main(path):
     check_layouts(spec, subs)
     check_unique(spec, subs)
     check_audio(spec)
+    check_intro(spec)
     check_endcard(spec)
     out = os.path.join(C.ROOT, 'out', os.path.basename(os.path.dirname(spec['_path'])), 'qa')
     os.makedirs(out, exist_ok=True)

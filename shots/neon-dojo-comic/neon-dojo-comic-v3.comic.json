@@ -20,6 +20,12 @@
   "end": 155.81,
   "note": "pre-chorus 2 + chorus 2 + bridge + final chorus: belt, blade lock, tag combo, both supers, double finisher; cut points in word gaps (112.16-112.42, 155.66-155.84)"
  },
+ "intro": {
+  "enabled": true,
+  "title": "NEON DOJO",
+  "subtitle": "PROGRESSIVE SLOP PRESENTS",
+  "seconds": 2.6
+ },
  "endCard": {
   "enabled": true,
   "seconds": 3.0,

@@ -7,7 +7,7 @@ Writes (never overwriting; -v2, -v3 ... suffixes):
   DIR/comic-scene-1080p.mp4   1920x1080, song section, loudnorm to spec.song.loudness (default -14 LUFS)
   DIR/comic-scene-short.mp4   1080x1920 vertical variant
   DIR/comic-scene-sheet.png   contact sheet of the beats
-Every video and Short ends on an end card (spec.endCard, default C.ENDCARD_DEFAULT: ~3 s,
+Every video and Short opens on the title logo intro (spec.intro, default on; --intro-test writes the stills) and ends on an end card (spec.endCard, default C.ENDCARD_DEFAULT: ~3 s,
 'BROUGHT TO YOU BY PROGRESSIVE SLOP' / 'LIKE AND SUBSCRIBE FOR MORE!'); the song tail fades under it.
 """
 import argparse, json, os, subprocess, sys, tempfile
@@ -57,6 +57,8 @@ def render(spec, orient, out_path, wav, sheet_path=None, t0=None, t1=None):
     t_song1 = spec['song']['end'] if t1 is None else t1
     written = 0
     shots = []
+    ic = C.intro(spec)
+    ts_intro = C.intro_slam(spec, t_song0) if ic else None
     for sub in C.subspecs(spec):
         if sub['song']['end'] <= t_song0 + 1e-3 or sub['song']['start'] >= t_song1 - 1e-3:
             continue
@@ -80,6 +82,10 @@ def render(spec, orient, out_path, wav, sheet_path=None, t0=None, t1=None):
         while written < end_frame:
             t = (written / fps) - (sub['song']['start'] - t_song0)
             f = sc.frame(max(t, 0.0))
+            if ic:
+                f = C.intro_frame(f, orient, ic, written / fps, ts_intro, fps)
+                if written == int(round((ts_intro + 0.5) * fps)):
+                    shots.append((written / fps, 'title intro', f))
             enc.stdin.write(f.tobytes())
             if written in keep:
                 shots.append((written / fps, keep[written], f))
@@ -114,11 +120,26 @@ def main():
     ap.add_argument('spec')
     ap.add_argument('--out', default='/workspace/comic-experiment/out')
     ap.add_argument('--only', choices=['landscape', 'vertical'])
+    ap.add_argument('--intro-test', action='store_true', help='only write OUT/intro_test_landscape.png + intro_test_vertical.png (title logo over the opening frame) and exit')
     ap.add_argument('--endcard-test', action='store_true', help='only write OUT/endcard_test.png (both orientations side by side) and exit; works on drafts')
     ap.add_argument('--short', choices=['full', 'cut'], default='cut',
                     help='vertical: "cut" uses spec.short {start,end} when present (a ~45 s Short), "full" renders the whole spec')
     a = ap.parse_args()
     spec = C.load_spec(a.spec)
+    if a.intro_test:
+        os.makedirs(a.out, exist_ok=True)
+        ic = C.intro(spec) or C.intro(dict(spec, intro=dict(spec.get('intro') or {}, enabled=True)))
+        for orient in ('landscape', 'vertical'):
+            s0 = spec['song']['start'] if orient == 'landscape' or not spec.get('short') else spec['short']['start']
+            ts = C.intro_slam(spec, s0)
+            sub = next((x for x in C.subspecs(spec) if x['song']['start'] <= s0 + ts + 0.5 < x['song']['end']), C.subspecs(spec)[0])
+            try:
+                base = C.Scene(sub, orient).frame(s0 + ts + 0.5 - sub['song']['start'])
+            except Exception:
+                base = C.paper(*C.SIZES[orient])
+            im = C.intro_frame(base, orient, ic, ts + 0.5, ts, spec.get('fps', 30))
+            p = C.next_free(os.path.join(a.out, f'intro_test_{orient}.png')); im.save(p); print('intro', orient, p)
+        return
     if a.endcard_test:
         os.makedirs(a.out, exist_ok=True)
         ec = C.endcard(spec) or C.ENDCARD_DEFAULT

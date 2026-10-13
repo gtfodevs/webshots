@@ -6,7 +6,7 @@ optionally plays a short trimmed Grok Imagine clip inside its frame, then freeze
 clip's last frame. A transition (zoom into a panel) leads to a full-frame splash.
 All "at" times in the spec are SONG seconds; scene time = song time - song.start.
 """
-import json, math, os, subprocess, shutil, urllib.request
+import json, math, os, re, subprocess, shutil, urllib.request
 from functools import lru_cache
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
@@ -962,3 +962,206 @@ def clip_path_mask(geo, W, H, inset=4):
     for _ in range(inset // 2):
         m = m.filter(ImageFilter.MinFilter(5))
     return np.asarray(m) > 127
+
+
+# ---------------------------------------------------------------- title logo intro (standing rule: default ON)
+# Every Progressive Slop video and Short opens with a bold text logo for the song title: chunky comic/arcade
+# lettering, chrome bevel, heavy ink outline, neon glow, slamming in on the first downbeat with an impact flash,
+# a little screen shake and sparkles. It is overlaid on the opening frames (the music starts immediately in most
+# songs; with a long silent lead-in the slam still waits for the first downbeat).
+INTRO_DEFAULT = {'enabled': True, 'seconds': 2.6, 'title': None, 'subtitle': 'PROGRESSIVE SLOP PRESENTS',
+                 'glow': [255, 60, 200], 'glow2': [60, 230, 255], 'chrome': [[255, 255, 255], [190, 215, 255], [120, 135, 170], [30, 36, 60], [150, 170, 210], [245, 250, 255]],
+                 'subColor': [255, 228, 122], 'rot': -4, 'width': 0.78, 'dim': 0.45}
+INTRO_PEAK = 1.18      # slam-in starts at 118% and settles to 100%
+INTRO_FLASH, INTRO_SHAKE, INTRO_FADE = 0.16, 0.32, 0.35
+
+
+def intro(spec):
+    """Intro config, or None when a spec explicitly disables it (QA fails that: the intro is required)."""
+    ic = dict(INTRO_DEFAULT, **(spec.get('intro') or {}))
+    if not ic.get('title'):
+        ic['title'] = re.split(r'\s+[-\u2013\u2014]\s+', spec.get('title', 'UNTITLED'))[0]
+    ic['title'] = ic['title'].upper()
+    return ic if ic.get('enabled', True) and ic.get('seconds', 0) > 0 else None
+
+
+def intro_slam(spec, t0=None):
+    """Video-relative time of the slam: the first downbeat at/after the video's first song second."""
+    s0 = spec['song']['start'] if t0 is None else t0
+    beats = [b for b in song_beats(spec) if b >= s0 + 0.15]
+    return round(beats[0] - s0, 3) if beats else 0.4
+
+
+def _intro_fonts(ic, orient):
+    W, H = SIZES[orient]
+    maxw = W * ic.get('width', 0.78) / INTRO_PEAK
+    words = ic['title'].split()
+    lines = [ic['title']] if orient == 'landscape' or len(words) < 2 else [' '.join(words[:len(words) // 2]), ' '.join(words[len(words) // 2:])]
+    px = int(H * (0.26 if orient == 'landscape' else 0.15))
+    while px > 40 and max(font(px).getlength(l) for l in lines) + 2 * max(6, px // 9) > maxw:
+        px -= 4
+    return lines, px, max(6, px // 9), int(px * 0.24)
+
+
+def intro_tile(ic, orient, pad=None):
+    """RGBA logo tile (title + optional subtitle, glow included), drawn on a padded canvas, rotated with
+    expand=True and cropped to its ink - the same overhang-safe recipe as sfx_tile. `pad` = oversized QA reference."""
+    from PIL import ImageFilter
+    lines, px, sw, spx = _intro_fonts(ic, orient)
+    f, fs = font(px), font(spx)
+    glow_r = max(8, px // 7)
+    P = pad if pad is not None else int(0.3 * px) + 3 * sw + 3 * glow_r
+    sub = ic.get('subtitle')
+    boxes = [f.getbbox(l, stroke_width=2 * sw) for l in lines]
+    lw = max(b[2] - b[0] for b in boxes); lh = [b[3] - b[1] for b in boxes]
+    sb = fs.getbbox(sub, stroke_width=max(3, spx // 8)) if sub else (0, 0, 0, 0)
+    gap = int(px * 0.08)
+    tw = max(lw, sb[2] - sb[0]) + 2 * P
+    th = (sb[3] - sb[1] + gap if sub else 0) + sum(lh) + gap * (len(lines) - 1) + 2 * P
+    text = Image.new('L', (tw, th), 0); outer = Image.new('L', (tw, th), 0); fill = Image.new('L', (tw, th), 0)
+    dt, do, df = ImageDraw.Draw(text), ImageDraw.Draw(outer), ImageDraw.Draw(fill)
+    y = P
+    subpos = None
+    if sub:
+        subpos = ((tw - (sb[2] - sb[0])) // 2 - sb[0], y - sb[1]); y += sb[3] - sb[1] + gap
+    pos = []
+    for l, b in zip(lines, boxes):
+        o = ((tw - (b[2] - b[0])) // 2 - b[0], y - b[1]); pos.append((l, o)); y += b[3] - b[1] + gap
+    for l, o in pos:
+        do.text(o, l, font=f, fill=255, stroke_width=2 * sw, stroke_fill=255)
+        dt.text(o, l, font=f, fill=255, stroke_width=sw, stroke_fill=255)
+        df.text(o, l, font=f, fill=255)
+    # neon glow (two colours), white keyline, ink outline, chrome bevel gradient fill with a hot specular band
+    tile = Image.new('RGBA', (tw, th), (0, 0, 0, 0))
+    for col, r, k in ((ic['glow2'], glow_r * 2, 0.8), (ic['glow'], glow_r, 1.0)):
+        g = outer.filter(ImageFilter.GaussianBlur(r)).point(lambda v: min(255, int(v * 2.2 * k)))
+        tile.alpha_composite(Image.merge('RGBA', [Image.new('L', (tw, th), c) for c in col] + [g]))
+    tile.alpha_composite(Image.merge('RGBA', [Image.new('L', (tw, th), 255)] * 3 + [outer]))
+    tile.alpha_composite(Image.merge('RGBA', [Image.new('L', (tw, th), c) for c in INK] + [text]))
+    # chrome: sky-to-horizon gradient per text line (bright top, dark horizon just under the middle, bright floor)
+    stops = np.array(ic['chrome'], np.float32)
+    xs = np.array([0, 0.3, 0.5, 0.53, 0.8, 1.0]) if len(stops) == 6 else np.linspace(0, 1, len(stops))
+    rgb = np.zeros((th, tw, 3), np.float32)
+    for (l, o), b in zip(pos, boxes):
+        y0, y1 = o[1] + f.getbbox(l)[1], o[1] + f.getbbox(l)[3]
+        ys = np.clip((np.arange(th) - y0) / max(1, y1 - y0), 0, 1)
+        g = np.stack([np.interp(ys, xs, stops[:, c]) for c in range(3)], -1)
+        m = (np.arange(th) >= y0 - sw) & (np.arange(th) <= y1 + sw)
+        rgb[m] = g[m][:, None, :]
+    rgb = np.clip(rgb, 0, 255).astype(np.uint8)
+    fill_rgba = Image.fromarray(np.dstack([rgb, np.asarray(fill)]), 'RGBA')
+    # bevel: light top-left edge / dark bottom-right edge inside the glyphs
+    fa = np.asarray(fill).astype(np.int16)
+    edge_hi = np.clip(fa - np.roll(np.roll(fa, 3, 0), 3, 1), 0, 255).astype(np.uint8)
+    edge_lo = np.clip(fa - np.roll(np.roll(fa, -3, 0), -3, 1), 0, 255).astype(np.uint8)
+    tile.alpha_composite(fill_rgba)
+    tile.alpha_composite(Image.merge('RGBA', [Image.new('L', (tw, th), 255)] * 3 + [Image.fromarray(edge_hi)]))
+    tile.alpha_composite(Image.merge('RGBA', [Image.new('L', (tw, th), 40)] * 3 + [Image.fromarray((edge_lo * 0.7).astype(np.uint8))]))
+    if sub:
+        ssw = max(3, spx // 8)
+        ImageDraw.Draw(tile).text(subpos, sub, font=fs, fill=tuple(ic['subColor']) + (255,), stroke_width=ssw, stroke_fill=INK + (255,))
+    tile = tile.rotate(ic.get('rot', -4), resample=Image.BICUBIC, expand=True)
+    bb = Image.fromarray((np.asarray(tile)[..., 3] > 8).astype(np.uint8) * 255).getbbox()
+    return tile.crop(bb)
+
+
+def intro_ink_lost(ic, orient):
+    """QA: logo ink (alpha > 24) the production tile loses vs an oversized-canvas reference (should be 0)."""
+    a = np.asarray(intro_tile(ic, orient))[..., 3] > 24
+    _, px, _, _ = _intro_fonts(ic, orient)
+    b = np.asarray(intro_tile(ic, orient, pad=2 * px))[..., 3] > 24
+    return int(b.sum()) - int(a.sum())
+
+
+_INTRO_CACHE = {}
+def _intro_tile_cached(ic, orient):
+    k = (json.dumps(ic, sort_keys=True), orient)
+    if k not in _INTRO_CACHE:
+        _INTRO_CACHE[k] = intro_tile(ic, orient)
+    return _INTRO_CACHE[k]
+
+
+def intro_state(ic, orient, t, ts):
+    """(scale, alpha, flash, shake_amp) of the logo at video time t (slam at ts), or None when not shown."""
+    end = ts + ic['seconds']
+    if t < ts - 0.12 or t >= end:
+        return None
+    if t < ts:   # 4-frame drop-in from the peak size
+        k = (t - (ts - 0.12)) / 0.12
+        return INTRO_PEAK - (INTRO_PEAK - 1.0) * k * k, k, 0.0, 0.0
+    a = 1.0 if t < end - INTRO_FADE else (end - t) / INTRO_FADE
+    sc = 1.0   # lands at 100% on the beat
+    flash = 0.75 * (1 - (t - ts) / INTRO_FLASH) if t < ts + INTRO_FLASH else 0.0
+    shake = 1 - (t - ts) / INTRO_SHAKE if t < ts + INTRO_SHAKE else 0.0
+    return sc, a, flash, shake
+
+
+def intro_rect(ic, orient, scale=1.0):
+    """Frame-space rect of the logo tile at `scale` (centred, a little above middle)."""
+    W, H = SIZES[orient]
+    tile = _intro_tile_cached(ic, orient)
+    x0, y0, x1, y1 = SAFE[orient]
+    fit = min(1.0, 0.96 * (x1 - x0) / (tile.width * INTRO_PEAK), 0.8 * (y1 - y0) / (tile.height * INTRO_PEAK))
+    w, h = tile.width * fit * scale, tile.height * fit * scale
+    cy = H * (0.46 if orient == 'landscape' else 0.42)
+    return [W / 2 - w / 2, cy - h / 2, w, h]
+
+
+def intro_shake_box(orient, t, amp, fps=30):
+    if amp <= 0:
+        return None
+    W, H = SIZES[orient]
+    A = 0.006 * W * amp; n = t * fps
+    zw, zh = W / 1.02, H / 1.02
+    x0 = min(max((W - zw) / 2 + A * math.sin(n * 3.1), 0), W - zw)
+    y0 = min(max((H - zh) / 2 + A * math.cos(n * 4.3), 0), H - zh)
+    return (x0, y0, zw, zh)
+
+
+def _sparkles(img, rect, t, ts, seed=7):
+    """Star sparkles bursting out of the logo for ~1.2 s after the slam."""
+    age = t - ts
+    if age < 0 or age > 1.2:
+        return
+    d = ImageDraw.Draw(img)
+    rnd = np.random.default_rng(seed)
+    x, y, w, h = rect
+    for _ in range(36):
+        ang = rnd.uniform(0, 2 * math.pi); sp = rnd.uniform(0.25, 0.75); ph = rnd.uniform(0, 0.3)
+        a = age - ph
+        if a < 0:
+            continue
+        cx = x + w / 2 + math.cos(ang) * (w * 0.45 + sp * a * w * 0.6)
+        cy = y + h / 2 + math.sin(ang) * (h * 0.45 + sp * a * h * 0.9)
+        r = max(0.0, (1 - a / 0.9)) * rnd.uniform(8, 18)
+        if r < 1:
+            continue
+        col = (255, 255, 255) if rnd.random() < 0.5 else (255, 240, 140)
+        d.polygon([(cx, cy - 2.6 * r), (cx + 0.5 * r, cy - 0.5 * r), (cx + 2.6 * r, cy), (cx + 0.5 * r, cy + 0.5 * r),
+                   (cx, cy + 2.6 * r), (cx - 0.5 * r, cy + 0.5 * r), (cx - 2.6 * r, cy), (cx - 0.5 * r, cy - 0.5 * r)], fill=col)
+
+
+def intro_frame(base, orient, ic, t, ts, fps=30):
+    """Composite the logo intro over a rendered frame (video-relative time t, slam at ts)."""
+    st = intro_state(ic, orient, t, ts)
+    if not st:
+        return base
+    sc, a, flash, shake = st
+    W, H = SIZES[orient]
+    img = base.convert('RGB').copy()
+    if ic.get('dim', 0):
+        img = Image.blend(img, Image.new('RGB', (W, H), (8, 6, 16)), ic['dim'] * a)
+    tile = _intro_tile_cached(ic, orient)
+    r = intro_rect(ic, orient, sc)
+    tl = tile if (int(r[2]), int(r[3])) == tile.size else tile.resize((max(1, int(r[2])), max(1, int(r[3]))), Image.BICUBIC)
+    if a < 1:
+        al = tl.getchannel('A').point(lambda v: int(v * a)); tl = tl.copy(); tl.putalpha(al)
+    img.paste(tl, (int(round(r[0])), int(round(r[1]))), tl)
+    _sparkles(img, r, t, ts)
+    if flash > 0:
+        img = Image.blend(img, Image.new('RGB', (W, H), (255, 255, 255)), flash)
+    sb = intro_shake_box(orient, t, shake, fps)
+    if sb:
+        x0, y0, zw, zh = sb
+        img = img.resize((W, H), Image.BICUBIC, box=(x0, y0, x0 + zw, y0 + zh))
+    return img
