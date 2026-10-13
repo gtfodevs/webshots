@@ -240,10 +240,15 @@ and QA: `docs/MUSIC_MODE.md` → "Comic mode". The steps for a full song:
 3. Animate each panel with **Grok Imagine image-to-video, 480p, shortest duration (6 s)**, using the
    motion-prompt template (one action, locked camera, keep faces/hands/limb count).
 4. Review every clip on a 2 fps contact sheet; mark melting faces / extra limbs / re-framing. Trim to the
-   best **~2 s** (1.5–2.5 s, max 3 s). No clean window → static panel.
+   best window: **3.5–4.5 s, the full ~6 s when clean** (QA max 6 s); cut only at real breakage and
+   record why in `clip.trimNote`. Land last panels/splashes early enough that clips finish before the page
+   turns. No clean window → static panel.
    Hold rule: the clip starts one beat (~0.3–0.5 s) after the panel lands (QA max 0.6 s), so omit
    `clip.at` and let the default do it. Every panel must be a different scene (location, camera, moment);
    keep it playful and kid-friendly. QA fails on duplicate prompts / location+camera / pHash images.
+   Layouts: pick from the layout library (docs → "Layout library": slanted/diagonal gutters, insets,
+   angled overlaps, breakout splashes, mixed sizes) to fit each page's panel count; never the same layout or
+   splash style on consecutive pages, and use many across the song (QA fails repeats, flags low variety).
 5. Write `shots/<name>/<name>.comic.json` (for a whole song use `pages`; plan first with `"draft": true`; panels in order: image, clip in/out, slot, captions with the
    lyric line, SFX, the beat each lands on; transition; splash).
 6. `npm run check -- <name>` (comic QA must PASS) → `npm run comic -- <name>` → review the contact sheet.

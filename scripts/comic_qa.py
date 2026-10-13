@@ -2,12 +2,15 @@
 """Comic mode QA (run by `npm run check -- <name>` when shots/<name>/<name>.comic.json exists).
 
 Checks (every page of a multi-page spec):
-  clips     clip in/out inside the source duration, out > in, length <= 3 s
+  clips     clip in/out inside the source duration, out > in, length <= 6 s (warn < 3.5 s without a trimNote,
+            warn if the page turns before the clip finishes)
   hold      the clip starts <= 0.6 s after its panel lands (one-beat static hold, then motion)
   beats     every landing / clip / caption / SFX / transition time is on the song's beat grid (<= 60 ms)
   text      captions + SFX inside the frame (landscape + vertical), no overlaps while on screen
   slots     no black or empty slot at sampled frames
   align     each clip registers on its panel (NCC >= 0.75, scale 0.9-1.1); first used frame not re-framed
+  paper     no page leaves more than 30% bare paper once its panels have landed (pick the layout for the count)
+  layouts   no layout (or splash style) repeated on consecutive pages; flags low layout variety per song
   unique    every panel is a different scene: no two panels with near-identical prompts
             (content-word Jaccard >= 0.6), the same location + camera pair, or near-identical
             images (64-bit DCT perceptual hash, Hamming distance <= 10)
@@ -15,15 +18,17 @@ Checks (every page of a multi-page spec):
 A spec with "draft": true (planning stage, art not generated yet) runs the timing, text,
 hold and prompt checks and reports missing media instead of failing on it.
 """
-import itertools, json, os, re, sys
+import itertools, json, math, os, re, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import numpy as np
 import comic_lib as C
 from PIL import Image
 
-MAX_CLIP = 3.0
+MAX_CLIP = 6.05      # Jason: let clips play (3.5-4.5 s typical, full ~6 s when clean)
+MIN_CLIP_WANT = 3.5
 PROMPT_SIM = 0.6
 PHASH_DIST = 10
+MAX_PAPER = 0.3
 STOP = set('a an the and of in on with to at by from for into its his her their is as it this that over under while one two'.split())
 problems, warnings, report = [], [], {}
 
@@ -94,6 +99,13 @@ def check_page(sub, draft):
         L = c['out'] - c['in']
         if L > MAX_CLIP or c['out'] <= c['in']:
             fail(f"{pid}/{u['id']}: clip {c['in']}-{c['out']} is empty or longer than {MAX_CLIP}s")
+        if L < MIN_CLIP_WANT - 1e-6 and not c.get('trimNote'):
+            warn(f"{pid}/{u['id']}: clip only {L:.2f}s - let it play 3.5-4.5 s unless it breaks (add a trimNote saying why)")
+        is_splash = bool(C.splash_unit(sub)) and u['id'] == C.splash_unit(sub)['id']
+        page_cut = (sub['song']['end'] if is_splash else
+                    (sub['transition']['at'] - sub['transition'].get('dur', 0.4) if sub.get('transition') else sub['song']['end']))
+        if start + L > page_cut + 0.05:
+            warn(f"{pid}/{u['id']}: clip runs {start + L - page_cut:.2f}s past the page turn and gets cut off")
         src = C.resolve(sub, c['src'])
         if os.path.exists(src):
             d = C.probe_duration(src)
@@ -118,6 +130,15 @@ def check_page(sub, draft):
     for w, t in times:
         if not (sub['song']['start'] - 1e-3 <= t <= sub['song']['end']):
             fail(f"{pid}: {w} at {t:.3f}s is outside the page ({sub['song']['start']}-{sub['song']['end']})")
+
+    # empty paper: a page whose panels leave a big blank area needs a layout that fits its panel count
+    for orient in ('landscape', 'vertical'):
+        pf = C.paper_fraction(sub, orient)
+        if pf > MAX_PAPER:
+            fail(f"{pid} {orient}: {pf:.0%} of the page is empty paper (max {MAX_PAPER:.0%}) - use a layout for {len(sub['panels'])} panels (e.g. \"layout\": \"two-up\")")
+        for p in sub['panels']:
+            if sub.get('layout', 'three') in C.LAYOUTS and p['slot'] not in C.layout(orient, sub.get('layout', 'three')):
+                fail(f"{pid}: {p['id']} slot '{p['slot']}' is not in layout '{sub.get('layout', 'three')}'")
 
     # text
     for orient in ('landscape', 'vertical'):
@@ -168,7 +189,7 @@ def check_page(sub, draft):
                 r = a[y:y + h, x:x + w]
                 lum = r.mean(axis=2)
                 dark = float((lum < 12).mean())
-                if r.std() < 18 or lum.mean() < 25 or dark > 0.35:
+                if r.std() < 18 or lum.mean() < 25 or dark > 0.6:   # dark art (silhouettes, night) is fine; flat/black is not
                     fail(f"{pid} {orient}: slot of {u['id']} looks empty/black at {t:.2f}s")
 
 
@@ -209,6 +230,29 @@ def check_unique(spec, subs):
            f'{len(hashes)} images hashed)')
 
 
+def check_layouts(spec, subs):
+    print('layouts:')
+    n0 = len(problems)
+    names = [(s.get('page', ''), s.get('layout', 'three'), s.get('splashStyle') if s.get('splash') else None) for s in subs]
+    for (pa, la, sa), (pb, lb, sb) in zip(names, names[1:]):
+        if la == lb:
+            fail(f'{pa} and {pb} both use layout {la!r} - never repeat a layout on consecutive pages')
+        if sa and sb and sa == sb:
+            fail(f'{pa} and {pb} both use splash style {sa!r} back to back')
+    for pg, la, _ in names:
+        if la not in C.LAYOUTS:
+            fail(f'{pg}: unknown layout {la!r}')
+    distinct = len({la for _, la, _ in names})
+    if len(names) >= 4:
+        want = math.ceil(len(names) / 2)
+        if distinct < math.ceil(len(names) / 3):
+            fail(f'low layout variety: {distinct} distinct layouts over {len(names)} pages (need >= {math.ceil(len(names) / 3)})')
+        elif distinct < want:
+            warn(f'low layout variety: {distinct} distinct layouts over {len(names)} pages (aim for >= {want})')
+    if len(problems) == n0:
+        ok(f"{distinct} distinct layouts over {len(names)} pages, no consecutive repeats: " + ', '.join(f'{la}{"+" + sa if sa else ""}' for _, la, sa in names))
+
+
 def main(path):
     spec = C.load_spec(path)
     draft = bool(spec.get('draft'))
@@ -219,6 +263,7 @@ def main(path):
         check_page(sub, draft)
         if len(problems) == n0:
             ok(f"{sub.get('page', 'page')}: {len(all_units(sub))} panels - clips, hold {C.MIN_HOLD}-{C.MAX_HOLD}s, beats, text")
+    check_layouts(spec, subs)
     check_unique(spec, subs)
     out = os.path.join(C.ROOT, 'out', os.path.basename(os.path.dirname(spec['_path'])), 'qa')
     os.makedirs(out, exist_ok=True)

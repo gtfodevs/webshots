@@ -47,6 +47,7 @@ LYR = [(0.0,"KINGDOM COME, KINGDOM COME"),(4.18,"HEAR THE PULSE OF MY DRUM"),(7.
  (128.38,"KINGDOM COME, KINGDOM COME"),(131.58,"HEAR THE BEAT OF MY DRUM"),(134.58,"RIGHTEOUS FIRE IN MY SOUL")]
 EST = {46.09, 81.39, 95.53, 116.66}
 
+# timing rebalanced for longer clips (v2): last panels / splashes land a bar earlier so clips finish before the page turns
 # pages: (id, start downbeat, end downbeat or None=song end, location, [panels]); panel = (db, slot|'splash', fields)
 P = lambda **k: k
 PAGES = [
@@ -60,7 +61,7 @@ PAGES = [
      setting='top of the castle gate tower, sky full of morning clouds', light='cyan sound-wave glow and warm sun',
      refs=['uno','aura'], move='Uno brings both mallets down on the drum, a ring of cyan light pulses out', sec='coat fur ruffles, clouds drift', cam_m='locked off', exp=1.8,
      sfx=('BOOM!', [0.74, 0.22], 6, [255, 214, 0]))),
-  (6, 'splash', P(id='s03', loc='castle courtyard', cam='heroic high-angle splash', moment='mending the crest',
+  (5, 'splash', P(id='s03', loc='castle courtyard', cam='heroic high-angle splash', moment='mending the crest',
      shot='Full splash, high angle looking down', action='Aura casting a spiral of cyan magic that mends a cracked giant chrome kingdom crest on the courtyard floor while Uno and a cheering crowd of robot townsfolk throw confetti',
      setting='castle courtyard with fountains and purple flags', light='cyan magic glow and golden confetti sparkle',
      refs=['aura','uno','crowd'], move='the cyan spiral sweeps around the crest and the crack seals with a flash', sec='confetti falls, crowd arms wave', cam_m='slow pull-back', exp=2.2,
@@ -87,7 +88,7 @@ PAGES = [
      shot='Heroic low-angle shot', action='Uno raising a glowing enchanted sword on a mossy boulder while tiny chrome fireflies swirl around the blade, Aura lighting the path with a cyan lantern of magic',
      setting='enchanted forest of crystal trees and giant glowing mushrooms', light='teal bioluminescence and a shaft of moonlight',
      refs=['uno','aura'], move='Uno lifts the sword and a gleam runs down the blade', sec='fireflies swirl, mushroom glow pulses', cam_m='locked off', exp=1.8,
-     sfx=('SHIING!', [0.76, 0.24], -8, [255, 214, 0]))),
+     sfx=('SHIING!', [0.74, 0.5], -8, [255, 214, 0]))),
   (21, 'splash', P(id='s08', loc='forest clearing', cam='dynamic three-quarter splash', moment='shield for the weak',
      shot='Full splash, dynamic three-quarter view', action='Uno holding up a big round shield that blocks a shower of purple thorns, sheltering a family of tiny chrome robot rabbits who peek out and give him a thumbs-up',
      setting='misty forest clearing with crystal flowers', light='purple thorn glow against warm shield highlights',
@@ -116,7 +117,7 @@ PAGES = [
      setting='crystal spider cave with huge glittering webs', light='cyan orb light and purple crystal reflections',
      refs=['spider','aura'], move='the spider wriggles in its web as the cyan orb brightens', sec='web strands sway, crystals sparkle', cam_m='slow push-in', exp=1.8,
      sfx=('THWIP!', [0.8, 0.5], -7, [255, 255, 255]))),
-  (37, 'splash', P(id='s13', loc='cave mouth at dawn', cam='silhouette splash', moment='dawn breaks',
+  (36, 'splash', P(id='s13', loc='cave mouth at dawn', cam='silhouette splash', moment='dawn breaks',
      shot='Full splash, backlit silhouette', action='Uno and Aura bursting out of the cave mouth into a blazing sunrise, a stream of little chrome spiders scurrying away waving tiny white flags',
      setting='mountain cave mouth over a valley at sunrise', light='huge golden sunrise backlight with lens flare',
      refs=['uno','aura','spider'], move='the heroes step into the light and the spiders scurry off', sec='sun rays flicker, dust glitters', cam_m='slow push-in', exp=2.2)),
@@ -131,7 +132,7 @@ PAGES = [
      setting='inside the tower on a spiral staircase', light='warm lantern light and purple shadows',
      refs=['bat'], move='the bats bob their heads to the beat and the sleepy one slips', sec='lantern sways, dust drifts', cam_m='locked off', exp=1.8,
      sfx=('BOP BOP', [0.76, 0.8], 5, [255, 214, 0]))),
-  (44, 'bottom', P(id='p16', loc='bat tower', cam='wide interior shot', moment='lanterns lit',
+  (43, 'bottom', P(id='p16', loc='bat tower', cam='wide interior shot', moment='lanterns lit',
      shot='Wide interior shot', action='Aura sending a wave of cyan fire that lights every lantern on the spiral staircase at once, Uno cheering, the bats spinning in a happy loop',
      setting='tall hollow tower interior with a spiral staircase', light='cyan fire racing up the tower',
      refs=['aura','uno','bat'], move='the cyan flame races up the spiral lighting each lantern', sec='bats loop, sparks drift', cam_m='slow tilt up', exp=2.0, focus=[0.5, 0.45],
@@ -146,7 +147,7 @@ PAGES = [
      shot='Extreme close-up', action="Aura drawing a bow made of cyan light, a glowing cyan magic arrow beside her red eye, focused and calm",
      setting='windswept rocky ridge above the plains', light='cyan arrow glow on chrome',
      refs=['aura'], move='Aura draws the light-bow and the arrow flares', sec='crimson-streaked hair blows', cam_m='locked off', exp=1.6,
-     sfx=('ZWING!', [0.78, 0.8], -6, [90, 230, 255]))),
+     sfx=('ZWING!', [0.76, 0.5], -6, [90, 230, 255]))),
   (53, 'splash', P(id='s19', loc='plains battlefield', cam='side-on panoramic splash', moment='knight dominoes',
      shot='Full splash, side-on panorama', action="the cyan arrow bouncing off the first knight's helmet and the whole row of chrome robot knights toppling over like dominoes, Uno laughing with his hands on his hips",
      setting='the plains of peril with the dark castle behind', light='cyan streak and purple storm light',
@@ -158,16 +159,16 @@ PAGES = [
      shot='Wide shot from behind a pile of gold', action='the big chrome robot dragon waking up in its treasure cave, one eye opening, Uno and Aura peeking over the gold coins',
      setting='volcanic treasure cave full of gold coins and crystal stalactites', light='orange lava glow and purple throat glow',
      refs=['dragon','uno','aura'], move='the dragon opens one eye and lifts its head', sec='coins slide, lava glows', cam_m='slow push-in', exp=2.0)),
-  (58, 'top-right', P(id='p21', loc="dragon's lair", cam='frontal close-up', moment='spark sneeze',
+  (57, 'top-right', P(id='p21', loc="dragon's lair", cam='frontal close-up', moment='spark sneeze',
      shot='Comedic frontal close-up', action='the dragon sneezing a burst of harmless sparkly sparks, the Jester in front with his hat singed and smoking, blinking',
      setting='inside the treasure cave', light='bright gold sneeze sparks',
      refs=['dragon','jester'], move='the dragon sneezes and sparks spray, the jester blinks', sec='smoke curls from the hat', cam_m='locked off', exp=1.6,
      sfx=('AH-CHOO!', [0.76, 0.22], 7, [255, 214, 0]))),
-  (61, 'splash', P(id='s22', loc='stormy sky', cam='flying action splash', moment='dragon ride',
+  (60, 'splash', P(id='s22', loc='stormy sky', cam='flying action splash', moment='dragon ride',
      shot='Full splash, flying action shot', action="Uno and Aura riding the friendly chrome dragon through the storm clouds toward the Sorcerer's horned castle, Aura's cyan magic trailing behind",
      setting='stormy night sky above the clouds', light='lightning flashes and cyan trail glow',
      refs=['dragon','uno','aura'], move='the dragon beats its wings and banks toward the castle', sec='clouds whip past, coat flutters', cam_m='tracking alongside', exp=2.2,
-     sfx=('WHOOSH!', [0.78, 0.82], -6, [90, 230, 255]))),
+     sfx=('WHOOSH!', [0.78, 0.45], -6, [90, 230, 255]))),
  ]),
  ('page09', 63, 72, 'verse 4 - the boss', [
   (63, 'top-left', P(id='p23', loc='forgotten ruins', cam='framed through a broken arch', moment='entering the lair',
@@ -178,7 +179,7 @@ PAGES = [
      shot='Low-angle shot', action='the Horned Sorcerer lounging on a spiky throne, holding a birdcage full of glowing music notes, grinning smugly',
      setting='grand throne room with purple banners and a cracked marble floor', light='red and purple uplight',
      refs=['sorcerer'], move='the sorcerer taps the cage and the notes flutter', sec='banners ripple, purple orb glows', cam_m='slow push-in', exp=1.8)),
-  (67, 'bottom', P(id='p25', loc='boss throne room', cam='wide two-shot', moment='magic clash',
+  (66, 'bottom', P(id='p25', loc='boss throne room', cam='wide two-shot', moment='magic clash',
      shot='Wide two-shot', action="the Sorcerer's purple lightning crashing into Aura's cyan shield while Uno charges forward with his sword",
      setting='the throne room floor cracking with energy', light='purple versus cyan clash flare',
      refs=['sorcerer','aura','uno'], move='purple lightning hits the cyan shield and splashes off', sec='floor cracks spark, cape billows', cam_m='locked off', exp=2.0, focus=[0.5, 0.45],
@@ -194,12 +195,12 @@ PAGES = [
      shot='Wide high-angle shot', action='a packed ballroom of chrome robot dancers under a giant spinning crystal disco chandelier, the freed music notes swirling above them',
      setting='palace ballroom with laser beams and a mirror floor', light='purple and cyan lasers',
      refs=['crowd'], move='the chandelier spins and the crowd jumps on the beat', sec='lasers sweep, notes swirl', cam_m='slow rotate', exp=2.0)),
-  (74, 'top-right', P(id='p28', loc='dance-party ballroom', cam='medium two-shot', moment='the reformed sorcerer dances',
+  (73, 'top-right', P(id='p28', loc='dance-party ballroom', cam='medium two-shot', moment='the reformed sorcerer dances',
      shot='Medium two-shot', action='the reformed Horned Sorcerer doing an awkward robot dance with the Jester, a wolf and a bat dancing beside them',
      setting='edge of the ballroom dance floor', light='magenta spotlight',
      refs=['sorcerer','jester','wolf','bat'], move='the sorcerer does a stiff robot dance and the jester copies him', sec='wolf wags, bat flaps', cam_m='locked off', exp=2.0,
      sfx=('BOING!', [0.76, 0.2], 6, [255, 120, 200]))),
-  (76, 'bottom', P(id='p29', loc='dance-party ballroom', cam='spotlight centre-stage', moment='dance-off',
+  (75, 'bottom', P(id='p29', loc='dance-party ballroom', cam='spotlight centre-stage', moment='dance-off',
      shot='Centre-stage spotlight shot', action='Uno and Aura in a dance-off in a circle of light, Uno spinning on his back, Aura striking a pose with cyan sparkles, the crowd cheering',
      setting='centre of the ballroom dance floor', light='single white spotlight and cyan sparkles',
      refs=['uno','aura','crowd'], move='Uno spins on his back and Aura hits a pose', sec='crowd claps, sparkles fall', cam_m='slow push-in', exp=2.2, focus=[0.5, 0.42],
@@ -221,9 +222,43 @@ PAGES = [
      refs=['uno','aura','wizard','jester','knight','sorcerer','dragon','bat','crowd'], move='everyone waves and the sun rises', sec='banners ripple, bats circle', cam_m='slow pull-back', exp=2.4)),
  ]),
 ]
-# clip trims (in, out) picked from frame review; None = keep the panel static (clip broken)
-TRIMS = {i: (0.0, 2.0) for i in ['p02','s03','p04','p05','p06','p07','s08','p09','p10','p11','p12','s13','p14','p15','p16','p17','p18','s19','p20','p21','p23','p25','s26','p27','p28','p29','p30','p31','s32']}
-TRIMS.update(p01=(0.0, 1.5), p24=(0.0, 1.8), s22=None)
+# clip trims (in, out, why) from the frame-by-frame drift scores (frame-to-frame NCC jumps, drift from
+# frame 0) + a 1 s contact-sheet review of all 6 s. Jason: let clips play 3.5-4.5 s, up to the full ~6 s when
+# clean; only cut where real morphing/breakage starts. The planner also caps each clip so it ends before
+# its page turns (see avail below).
+TRIMS = {i: (0.0, 6.0, 'clean for the full clip') for i in
+         ['p01','p02','s03','p04','p05','p06','p07','p11','p12','s13','p15','p16','p17','p21','p23','p25','p29','p31','s32']}
+TRIMS.update(
+    s22=(0.0, 4.5, 'one-head regen (s22b); fast flight, stable dragon'),
+    p09=(0.0, 4.5, 'hard reframe at 4.75 s'),
+    p10=(0.0, 4.5, 'wolf pup shape drifts late'),
+    p18=(0.0, 5.0, 'flash jump at 5.6 s'),
+    p27=(0.0, 4.5, 'busy crowd; keep it short of the late drift'),
+    p28=(0.0, 4.5, 'dancers drift late'),
+    p30=(0.0, 4.5, 'conga drifts late'),
+    s19=(0.0, 3.5, 'knight pile reframes at 3.5 s'),
+    p24=(0.0, 3.5, "sorcerer's pose/face morphs after ~3.5 s"),
+    p20=(0.0, 3.0, 'heroes at the bottom vanish after ~3 s'),
+    s08=(0.0, 3.0, 'extra rabbits appear after ~3 s'),
+    p14=(0.0, 2.5, 'purple vortex artifact from ~2.5 s, reframe at 4.4 s'),
+    s26=(0.0, 2.25, 'scene changes / sorcerer vanishes at 2.25 s'),
+)
+CLIPSRC = {'p01': 'clips/p01c.mp4', 's22': 'clips/s22b.mp4'}  # regenerated clips
+# page layouts from the comic layout library (scripts/comic_lib.py LAYOUTS); never the same on consecutive
+# pages (QA fails repeats). Splash styles: full | tilt | breakout (impact burst breaking the border).
+PAGE_LAYOUT = {
+    'page01': ('slant-two', 'breakout'),   # chorus drop: the crest mends with a burst
+    'page02': ('inset-two', None),
+    'page03': ('tilt-two', 'tilt'),
+    'page04': ('two-up', None),
+    'page05': ('inset-two', 'full'),
+    'page06': ('inset-three', None),
+    'page07': ('tilt-two', 'full'),
+    'page08': ('slant-two', 'tilt'),
+    'page09': ('tilt-three', 'breakout'),  # the boss hit breaks the frame
+    'page10': ('diagonal-three', None),
+    'page11': ('slant-two', 'full'),
+}
 NARR = {'p30': 'AND THE MUSIC CAME HOME.', 's32': 'KINGDOM COME.'}
 
 def build():
@@ -251,7 +286,8 @@ def build():
                  'location': f['loc'], 'camera': f['cam'], 'moment': f['moment'],
                  'scene': f"{f['shot']} of {f['action']}, {f['setting']}",
                  'prompt': prompt, 'refs': f['refs'], 'motionPrompt': motion,
-                 'clip': ({'src': f'clips/{f["id"]}.mp4', 'in': TRIMS[f['id']][0], 'out': TRIMS[f['id']][1]}
+                 'clip': ({'src': CLIPSRC.get(f['id'], f'clips/{f["id"]}.mp4'), 'in': TRIMS[f['id']][0],
+                           'out': TRIMS[f['id']][1], 'trimNote': TRIMS[f['id']][2]}
                           if TRIMS.get(f['id']) else None),
                  'lyric': ' / '.join(s for _, s in lyr[:2]), 'captions': caps}
             if 'focus' in f: u['focus'] = f['focus']
@@ -269,6 +305,22 @@ def build():
                 pg['panels'].append(u)
             prompts.append({'id': f['id'], 'prompt': prompt, 'refs': f['refs']})
             rows.append((pid, slot, u, f, round(dur, 3) if slot == 'splash' else None))
+        cut = pg['transition']['at'] - pg['transition']['dur'] if pg.get('transition') else pg['end']
+        for u2 in pg['panels'] + ([pg['splash']] if pg.get('splash') else []):
+            c = u2.get('clip')
+            if not c:
+                continue
+            page_cut = pg['end'] if u2 is pg.get('splash') else cut
+            avail = page_cut - next_beat(u2['at']) - 0.1
+            if c['out'] - c['in'] > avail:
+                c['out'] = round(c['in'] + max(1.0, avail), 2)
+                c['trimNote'] += f'; capped to {c["out"] - c["in"]:.2f} s by the page turn'
+        lay, sst = PAGE_LAYOUT[pid]
+        pg['layout'] = lay
+        if pg.get('splash'):
+            pg['splashStyle'] = sst
+        for u2, sl in zip(pg['panels'], 'abc'):
+            u2['slot'] = sl
         pages.append(pg)
     spec = {'title': 'Kingdom Come - comic mode, full song', 'outName': 'kingdom-come-comic',
             'assetsDir': '/workspace/kingdom-come-comic', 'fps': 30, 'defaults': {'holdBeats': 1},

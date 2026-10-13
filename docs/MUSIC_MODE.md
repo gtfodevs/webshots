@@ -471,7 +471,7 @@ two-pass loudnorm to `song.loudness` (-14 LUFS, TP -1.5).
    Characters: {CHARACTER SHEET LINES, identical every panel}.
    ```
    Keep `{CHARACTER SHEET LINES}` byte-identical across the song (costume, colours, helmet, props).
-3. **Clips**: Grok Imagine image-to-video from each panel, **480p, shortest duration (6 s)**. Small,
+3. **Clips**: Grok Imagine image-to-video from each panel, **480p, 6 s**. Small,
    readable motion only; the camera mostly locked so the clip lines up with the panel. Motion prompt template:
 
    ```
@@ -481,8 +481,13 @@ two-pass loudnorm to `song.loudness` (-14 LUFS, TP -1.5).
    unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.
    ```
 4. **Review each clip** (`ffmpeg -i c.mp4 -vf "fps=2,scale=368:-1,tile=4x3" -frames:v 1 sheet.png`): the
-   first ~2 s are usually clean; later seconds tend to melt faces, sprout extra limbs, or re-frame.
-   Pick the best **1.5–2.5 s** (`in`/`out`, hard max 3 s). If no window is clean, leave the panel static.
+   Score every clip frame by frame (frame-to-frame NCC: a drop < 0.75 is a jump/reframe; drift from frame 0)
+   and look at a 1 fps sheet of all 6 s. **Let clips play: 3.5–4.5 s typical, the full ~6 s when clean**
+   (`in`/`out`, QA max 6 s). Cut only where real breakage starts (melting faces, extra heads/limbs, things
+   vanishing or multiplying, hard reframes) and say why in `clip.trimNote` (QA warns on < 3.5 s without one).
+   Give clips room: land the last panel / splash early enough that its clip finishes before the page turns
+   (QA warns when a page turn cuts a clip); several clips playing on one page at once is fine. If no window
+   is clean, leave the panel static.
    **Hold rule (Jason):** a clip starts almost immediately after its panel lands: hold the still for at most
    one beat (~0.3–0.5 s), then the motion plays. Leave `clip.at` out and the renderer starts the clip
    `defaults.holdBeats` (default 1) beats after the landing; QA fails if clip start − panel land > 0.6 s or < 0.25 s (keep the anticipation beat).
@@ -509,6 +514,28 @@ two-pass loudnorm to `song.loudness` (-14 LUFS, TP -1.5).
      "splash": { "image": "panels/p3.jpg", "clip": { … }, "captions": [ … ], "sfx": [ … ] }
    }
    ```
+   **Layout library** (`LAYOUTS` in `scripts/comic_lib.py`; `"layout"` per page, slots `a`, `b`, `c` in
+   reading order; `"splashStyle"` per page with a splash). Geometry is normalised; vertical either reuses it
+   (`same`), transposes it (`T`: left/right splits become top/bottom) or stacks (`three`).
+
+   | panels | layout | look |
+   |---|---|---|
+   | 2 | `two-up` | two full-width tiers |
+   | 2 | `slant-two` | one diagonal gutter |
+   | 2 | `inset-two` | big panel + rotated inset laid over its corner (white keyline) |
+   | 2 | `tilt-two` | two panels overlapping at opposite angles |
+   | 3 | `three` | grid: two on top, one wide below (stacked in vertical) |
+   | 3 | `diagonal-three` | three bands with slanted gutters |
+   | 3 | `mixed-three` | big panel + two small with a slanted gutter (mixed sizes) |
+   | 3 | `inset-three` | two tiers + a tilted inset straddling the gutter |
+   | 3 | `tilt-three` | big tilted panel + two angled panels overlapping it |
+   | splash | `full` / `tilt` / `breakout` | full frame / slightly rotated with paper corners / an impact burst breaking out over the border |
+
+   Slot primitives: `rect`, `poly` (slanted, with a lettering-safe inner rect), `rot` (angle, z-order,
+   keyline). Captions/SFX are placed in each slot's inner rect. Crops that change the art's aspect a lot keep
+   the upper-middle band (focus 0.5, 0.42); set `"focus": [x, y]` on a panel to override.
+   **Rules:** never the same layout (or splash style) on consecutive pages; use the full library across a
+   song (QA flags low variety); save `breakout` for the biggest hits (chorus drop, boss).
    A whole song uses `"pages": [{ "id", "start", "end", "panels": [...], "transition"?, "splash"? }]` with the
    same panel fields (one page per section; a page may skip the splash). Add `"location"`, `"camera"`,
    `"moment"`, `"scene"`, `"prompt"`, `"refs"`, `"motionPrompt"` per panel at planning time; `"draft": true`
@@ -531,10 +558,24 @@ two-pass loudnorm to `song.loudness` (-14 LUFS, TP -1.5).
 - Clips: lanczos upscale + light unsharp (r 1.6, 55%), then halftone (45°, 7 px cell, dots grow in
   shadows, 22% strength) + paper grain. Ink borders are drawn after, lettering last.
 
+### Comic corrections checklist (Jason's feedback, check every comic video)
+
+- Clip starts one beat after the panel lands (0.3–0.5 s anticipation, never > 0.6 s).
+- Every panel a different scene (location, camera, moment); playful, kid-friendly humour beats.
+- Let clips play 3.5–4.5 s (full ~6 s when clean); cut only at real breakage, with a trimNote. Regenerate
+  clips with extra heads/limbs, melting faces or camera jumps early on.
+- Pages fill the paper (no empty bottom row): pick a layout for the panel count.
+- Layouts vary: slanted/diagonal gutters, insets over bigger panels, angled overlaps, breakouts, mixed sizes;
+  never the same layout on consecutive pages.
+
 ### Comic QA (`scripts/comic_qa.py`, part of `npm run check`)
 
-- clip `in`/`out` inside the source duration, `out > in`, length ≤ 3 s;
+- clip `in`/`out` inside the source duration, `out > in`, length ≤ 6 s; warns on < 3.5 s without a
+  `trimNote` and on clips cut off by the page turn;
 - 0.25 s ≤ clip start − panel land ≤ 0.6 s (the one-beat anticipation hold);
+- layouts: fails the same layout or splash style on consecutive pages and an unknown layout; flags low
+  variety (fails < pages/3 distinct layouts, warns < pages/2);
+- no page with > 30% bare paper (layout must fit the panel count), every slot exists in the page layout;
 - every panel a different scene: fails on two panels with near-identical prompts (content-word Jaccard
   ≥ 0.6 on `scene`/`prompt`), the same `location` + `camera` pair, or near-identical images
   (64-bit DCT pHash, Hamming ≤ 10; a splash reusing its own panel art is allowed);

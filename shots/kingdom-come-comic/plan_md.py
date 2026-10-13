@@ -5,7 +5,7 @@ def write(spec, rows, B):
          f"Song: Kingdom Come - Hip Hop Fantasy (Suno 7bf4887f-eec0-4614-a285-5557aa4382d5), {spec['song']['end']:.1f} s, 136 BPM (beat ~0.44 s, bar ~1.76 s).",
          f"Timeline/lyrics: `shots/kingdom-come-16bit/stage/timeline.json`. Spec: `shots/kingdom-come-comic/kingdom-come-comic.comic.json`. Prompts: `prompts.json`.\n",
          f"{len(rows)} panels on {len(spec['pages'])} pages; every panel is a different scene (location + camera + moment; QA checks prompt similarity and image pHash).",
-         "Rule: each clip starts one beat after its panel lands (static hold ~0.44 s, QA max 0.6 s). Trim every clip to <= 2.5 s.",
+         "Rule: each clip starts one beat after its panel lands (static hold ~0.44 s, QA max 0.6 s). Clips play 3.5-6 s; cut only at real breakage (trimNote).",
          "Files to generate: `panels/<id>.jpg` (16:9, no text) and `clips/<id>.mp4` (Grok Imagine i2v, 480p, 6 s) under `/workspace/kingdom-come-comic/`.\n",
          "Lyric times marked * were estimated (the aligner missed the line).\n"]
     cur = None
@@ -23,5 +23,5 @@ def write(spec, rows, B):
         L.append(f"- Refs: {', '.join(u['refs'])}")
         L.append(f"- Image prompt: {u['prompt']}")
         L.append(f"- Motion prompt: {u['motionPrompt']}")
-        L.append(f"- Trim: {u['clip']['in']:.1f}-{u['clip']['out']:.1f} s\n" if u.get('clip') else "- Trim: static (clip rejected - regenerate)\n")
+        L.append(f"- Trim: {u['clip']['in']:.1f}-{u['clip']['out']:.2f} s ({u['clip'].get('trimNote', '')})\n" if u.get('clip') else "- Trim: static (clip rejected - regenerate)\n")
     open('/workspace/kingdom-come-comic/plan.md', 'w').write('\n'.join(L))

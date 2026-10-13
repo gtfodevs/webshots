@@ -57,6 +57,7 @@ def subspecs(spec):
     for pg in spec['pages']:
         sub = {k: v for k, v in spec.items() if k != 'pages'}
         sub.update(panels=pg['panels'], transition=pg.get('transition'), splash=pg.get('splash'), page=pg['id'],
+                   layout=pg.get('layout', 'three'), splashStyle=pg.get('splashStyle', 'full'),
                    song=dict(spec['song'], start=pg['start'], end=pg['end']))
         out.append(sub)
     return out
@@ -119,26 +120,165 @@ def font(px):
 # ---------------------------------------------------------------- layouts
 SIZES = {'landscape': (1920, 1080), 'vertical': (1080, 1920)}
 
-def layout(orient):
-    """Slot rects (x, y, w, h) for each orientation. 'splash' is the full-frame splash slot."""
+# Layout library. Each layout is a list of slot primitives in normalised page-content coordinates
+# (u, v in 0..1, landscape). A primitive is one of
+#   ('rect', u, v, w, h)                       axis-aligned panel
+#   ('poly', [(u, v), ...], inner)             slanted / diagonal panel; inner = (u, v, w, h) lettering-safe rect
+#   ('rot', cu, cv, w, h, deg)                 panel rotated by deg (overlapping-at-an-angle, insets)
+# plus options {'z': draw order, 'keyline': white keyline around the ink (insets laid over other panels)}.
+# 'vert' says how the layout becomes 1080x1920: 'same' (same normalised geometry in the tall content box)
+# or 'T' (transpose u<->v, so left/right splits become top/bottom splits).
+GX, GY = 0.013, 0.024   # gutters in normalised units (~24 px)
+LAYOUTS = {
+    # ---- two panels
+    'two-up': {'n': 2, 'vert': 'same', 'slots': {
+        'a': ('rect', 0, 0, 1, 0.5 - GY / 2), 'b': ('rect', 0, 0.5 + GY / 2, 1, 0.5 - GY / 2)}},
+    'slant-two': {'n': 2, 'vert': 'T', 'slots': {
+        'a': ('poly', [(0, 0), (0.62, 0), (0.40, 1), (0, 1)], (0, 0, 0.40, 1)),
+        'b': ('poly', [(0.62 + GX, 0), (1, 0), (1, 1), (0.40 + GX, 1)], (0.62 + GX, 0, 0.38 - GX, 1))}},
+    'inset-two': {'n': 2, 'vert': 'same', 'slots': {
+        'a': ('rect', 0, 0, 1, 1, {'inner': (0, 0, 0.52, 1)}),
+        'b': ('rot', 0.76, 0.69, 0.42, 0.50, -3, {'z': 1, 'keyline': True})}},
+    'tilt-two': {'n': 2, 'vert': 'T', 'slots': {
+        'a': ('rot', 0.34, 0.45, 0.67, 0.88, 2, {'inner': (0.03, 0.06, 0.36, 0.78)}),
+        'b': ('rot', 0.69, 0.56, 0.60, 0.84, -3, {'z': 1, 'keyline': True})}},
+    # ---- three panels
+    'three': {'n': 3, 'vert': 'stack', 'slots': {
+        'a': ('rect', 0, 0, 0.4935, 0.509), 'b': ('rect', 0.5065, 0, 0.4935, 0.509), 'c': ('rect', 0, 0.533, 1, 0.467)}},
+    'diagonal-three': {'n': 3, 'vert': 'T', 'slots': {
+        'a': ('poly', [(0, 0), (0.37, 0), (0.30, 1), (0, 1)], (0, 0, 0.30, 1)),
+        'b': ('poly', [(0.37 + GX, 0), (0.71, 0), (0.64, 1), (0.30 + GX, 1)], (0.37 + GX, 0, 0.27 - GX, 1)),
+        'c': ('poly', [(0.71 + GX, 0), (1, 0), (1, 1), (0.64 + GX, 1)], (0.71 + GX, 0, 0.29 - GX, 1))}},
+    'mixed-three': {'n': 3, 'vert': 'T', 'slots': {
+        'a': ('rect', 0, 0, 0.62, 1),
+        'b': ('poly', [(0.62 + GX, 0), (1, 0), (1, 0.42), (0.62 + GX, 0.56)], (0.62 + GX, 0, 0.38 - GX, 0.42)),
+        'c': ('poly', [(0.62 + GX, 0.56 + GY), (1, 0.42 + GY), (1, 1), (0.62 + GX, 1)], (0.62 + GX, 0.56 + GY, 0.38 - GX, 0.44 - GY))}},
+    'inset-three': {'n': 3, 'vert': 'same', 'slots': {
+        'a': ('rect', 0, 0, 1, 0.47, {'inner': (0, 0, 0.62, 0.47)}),
+        'b': ('rect', 0, 0.47 + GY, 1, 0.53 - GY, {'inner': (0, 0.47 + GY, 0.62, 0.53 - GY)}),
+        'c': ('rot', 0.81, 0.49, 0.32, 0.44, -4, {'z': 2, 'keyline': True})}},
+    'tilt-three': {'n': 3, 'vert': 'T', 'slots': {
+        'a': ('rot', 0.40, 0.50, 0.78, 0.94, 1.5, {'inner': (0.04, 0.06, 0.55, 0.88)}),
+        'b': ('rot', 0.81, 0.27, 0.36, 0.48, -4, {'z': 1, 'keyline': True}),
+        'c': ('rot', 0.80, 0.74, 0.37, 0.47, 3, {'z': 2, 'keyline': True})}},
+}
+# legacy slot names (single-page specs written before the library)
+ALIASES = {'top-left': 'a', 'top-right': 'b', 'bottom': 'c', 'top': 'a'}
+SPLASH_STYLES = {
+    'full': ('rect', 0, 0, 1, 1),
+    'tilt': ('rot', 0.5, 0.5, 0.95, 0.93, -2),
+    'breakout': ('breakout', 0.03, 0.13, 0.94, 0.84),   # frame + an impact burst that breaks out over the top border
+}
+CONTENT = {'landscape': (36, 36, 1848, 1008), 'vertical': (40, 60, 1000, 1800)}
+SPLASH_BOX = {'landscape': (14, 14, 1892, 1052), 'vertical': (40, 400, 1000, 1120)}
+
+
+def _rot_poly(cx, cy, w, h, deg):
+    a = math.radians(deg); c, s_ = math.cos(a), math.sin(a)
+    return [(cx + dx * c - dy * s_, cy + dx * s_ + dy * c) for dx, dy in ((-w / 2, -h / 2), (w / 2, -h / 2), (w / 2, h / 2), (-w / 2, h / 2))]
+
+
+def _geo(prim, box, transpose=False):
+    """Primitive -> pixel geometry {'polys', 'bbox', 'inner', 'z', 'keyline', 'burst'}."""
+    bx, by, bw, bh = box
+    opts = prim[-1] if isinstance(prim[-1], dict) else {}
+    kind = prim[0]
+    T_ = (lambda u, v: (v, u)) if transpose else (lambda u, v: (u, v))
+    P = lambda u, v: (bx + T_(u, v)[0] * bw, by + T_(u, v)[1] * bh)
+    def R(r):
+        u, v, w, h = r
+        (x0, y0), (x1, y1) = P(u, v), P(u + w, v + h)
+        return (min(x0, x1), min(y0, y1), abs(x1 - x0), abs(y1 - y0))
+    burst = None
+    if kind == 'rect':
+        r = R(prim[1:5]); polys = [[(r[0], r[1]), (r[0] + r[2], r[1]), (r[0] + r[2], r[1] + r[3]), (r[0], r[1] + r[3])]]
+        inner = R(opts['inner']) if 'inner' in opts else r
+    elif kind == 'poly':
+        polys = [[P(u, v) for u, v in prim[1]]]; inner = R(prim[2])
+    elif kind == 'rot':
+        cu, cv, w, h, deg = prim[1:6]
+        cx, cy = P(cu, cv)
+        pw, ph = (h * bw, w * bh) if transpose else (w * bw, h * bh)
+        deg = -deg if transpose else deg
+        polys = [_rot_poly(cx, cy, pw, ph, deg)]
+        a = abs(math.radians(deg))
+        iw, ih = pw * math.cos(a) - ph * math.sin(a), ph * math.cos(a) - pw * math.sin(a)
+        inner = R(opts['inner']) if 'inner' in opts else (cx - iw / 2, cy - ih / 2, iw, ih)
+    elif kind == 'breakout':
+        r = R(prim[1:5]); polys = [[(r[0], r[1]), (r[0] + r[2], r[1]), (r[0] + r[2], r[1] + r[3]), (r[0], r[1] + r[3])]]
+        cx, cy, R0 = r[0] + 0.70 * r[2], r[1] + 0.02 * r[3], 0.17 * min(r[2], r[3])
+        pts = []
+        for i in range(28):
+            ang = -math.pi / 2 + i * math.pi / 14
+            rad = R0 * (1.0 if i % 2 == 0 else 0.55) * (1.0 + 0.12 * math.sin(i * 2.3))
+            pts.append((cx + rad * math.cos(ang) * 1.5, max(by + 4, cy + rad * math.sin(ang))))
+        burst = pts
+        inner = r
+    xs = [x for p in polys + ([burst] if burst else []) for x, _ in p]
+    ys = [y for p in polys + ([burst] if burst else []) for _, y in p]
+    x0, y0 = int(math.floor(min(xs))), int(math.floor(min(ys)))
+    bbox = (x0, y0, int(math.ceil(max(xs))) - x0, int(math.ceil(max(ys))) - y0)
+    inner = tuple(int(round(v)) for v in inner)
+    return {'polys': polys, 'burst': burst, 'bbox': bbox, 'inner': inner, 'z': opts.get('z', 0),
+            'keyline': opts.get('keyline', False)}
+
+
+def layout_geo(orient, kind='three', splash='full'):
+    """name -> pixel geometry for every slot of a layout (+ 'splash')."""
+    if kind not in LAYOUTS:
+        raise KeyError(f'unknown layout {kind!r}; have {sorted(LAYOUTS)}')
+    L = LAYOUTS[kind]
+    out = {}
+    if orient == 'vertical' and L['vert'] == 'stack':
+        x, y0, w, _ = CONTENT['vertical']
+        h = round(w * 9 / 16); g = 28; top = (1920 - (3 * h + 2 * g)) // 2
+        for i, n in enumerate(sorted(L['slots'])):
+            out[n] = _geo(('rect', 0, 0, 1, 1), (x, top + i * (h + g), w, h))
+    else:
+        for n, prim in L['slots'].items():
+            out[n] = _geo(prim, CONTENT[orient], transpose=(orient == 'vertical' and L['vert'] == 'T'))
+    out['splash'] = _geo(SPLASH_STYLES[splash], SPLASH_BOX[orient])
+    for k, v in ALIASES.items():
+        if v in out and k not in out:
+            out[k] = out[v]
+    return out
+
+
+def layout(orient, kind='three', splash='full'):
+    """Lettering-safe rect (x, y, w, h) per slot (captions, SFX and QA work in these)."""
+    return {n: g['inner'] for n, g in layout_geo(orient, kind, splash).items()}
+
+
+def slot_mask(geo):
+    """L-mode mask (bbox-sized) of a slot's polygons (+ breakout burst)."""
+    x0, y0, w, h = geo['bbox']
+    m = Image.new('L', (w, h), 0)
+    d = ImageDraw.Draw(m)
+    for p in geo['polys'] + ([geo['burst']] if geo['burst'] else []):
+        d.polygon([(x - x0, y - y0) for x, y in p], fill=255)
+    return m
+
+
+def paper_fraction(spec, orient):
+    """Share of the page that is bare paper once every panel of the page has landed."""
     W, H = SIZES[orient]
-    if orient == 'landscape':
-        m, g = 36, 24
-        tw = (W - 2 * m - g) // 2
-        th = round(tw * 9 / 16)
-        by = m + th + g
-        return {'top-left': (m, m, tw, th), 'top-right': (m + tw + g, m, tw, th),
-                'bottom': (m, by, W - 2 * m, H - m - by), 'splash': (14, 14, W - 28, H - 28)}
-    w = 1000
-    h = round(w * 9 / 16)
-    g = 28
-    top = (H - (3 * h + 2 * g)) // 2
-    x = (W - w) // 2
-    return {'top-left': (x, top, w, h), 'top-right': (x, top + h + g, w, h),
-            'bottom': (x, top + 2 * (h + g), w, h), 'splash': (x, 400, w, 1120)}
+    G = layout_geo(orient, spec.get('layout', 'three'))
+    m = Image.new('L', (W // 4, H // 4), 0)
+    d = ImageDraw.Draw(m)
+    for p in spec['panels']:
+        for poly in G[p['slot']]['polys']:
+            d.polygon([(x / 4, y / 4) for x, y in poly], fill=255)
+    return 1 - float(np.asarray(m).mean()) / 255.0
+
 
 def base_px(slot):
     return math.sqrt(slot[2] * slot[3]) * 0.75
+
+def default_focus(img_w, img_h, dst_w, dst_h):
+    """Crop centre when a slot's aspect differs from the art. Wide strips keep the upper-middle band
+    (heads and hands sit there in comic framing); narrower crops stay centred. Override with "focus"."""
+    return (0.5, 0.42) if dst_w / dst_h > img_w / img_h * 1.25 else (0.5, 0.5)
+
 
 def cover_crop(src_w, src_h, dst_w, dst_h, focus=(0.5, 0.5), within=None):
     """Largest crop of aspect dst inside the source (or inside `within` rect), centred on focus."""
@@ -314,7 +454,7 @@ def ease_io(x):
 
 def text_items(spec, orient):
     """Every caption / SFX with its page rect and visible interval (scene seconds). Used by QA."""
-    L = layout(orient)
+    L = layout(orient, spec.get('layout', 'three'), spec.get('splashStyle', 'full'))
     items = []
     tr = spec.get('transition')
     end = scene_len(spec)
@@ -345,11 +485,11 @@ class Scene:
         self.spec, self.orient = spec, orient
         self.W, self.H = SIZES[orient]
         self.fps = fps or spec.get('fps', 30)
-        self.L = layout(orient)
+        self.G = layout_geo(orient, spec.get('layout', 'three'), spec.get('splashStyle', 'full'))
         self.paper = Image.fromarray(paper(self.W, self.H))
-        self.units = [dict(p, slotrect=self.L[p['slot']]) for p in spec['panels']]
+        self.units = [dict(p, slotrect=self.G[p['slot']]['inner'], geo=self.G[p['slot']]) for p in spec['panels']]
         sp = splash_unit(spec)
-        self.splash = sp and dict(sp, slotrect=self.L['splash'])
+        self.splash = sp and dict(sp, slotrect=self.G['splash']['inner'], geo=self.G['splash'])
         for u in self.all_units():
             self._prep(u)
         self._page_cache = {}
@@ -359,7 +499,10 @@ class Scene:
 
     def _prep(self, u):
         img = Image.open(resolve(self.spec, u['image'])).convert('RGB')
-        x, y, w, h = u['slotrect']
+        x, y, w, h = u['geo']['bbox']
+        u['mask'] = slot_mask(u['geo'])
+        if u['geo']['burst']:
+            g = dict(u['geo'], polys=[]); u['burstMask'] = slot_mask(g)
         within = None
         if u.get('clip'):
             c = u['clip']
@@ -370,7 +513,11 @@ class Scene:
             # keep the crop inside the area the clip covers so static -> clip lines up exactly
             rx, ry, rw, rh = reg
             within = (max(rx, 0), max(ry, 0), min(rx + rw, img.width) - max(rx, 0), min(ry + rh, img.height) - max(ry, 0))
-        crop = cover_crop(img.width, img.height, w, h, tuple(u.get('focus', (0.5, 0.5))), within)
+        focus = u.get('focus')
+        if focus is None:
+            focus = default_focus(img.width, img.height, w, h)
+        u['focusUsed'] = focus
+        crop = cover_crop(img.width, img.height, w, h, tuple(focus), within)
         u['crop'] = crop
         u['static'] = comic_finish(upscale(img, crop, (w, h), sharpen=False))
         if u.get('clip'):
@@ -378,7 +525,9 @@ class Scene:
             fw, fh = frames[0].size
             cbox = ((crop[0] - rx) * fw / rw, (crop[1] - ry) * fh / rh, crop[2] * fw / rw, crop[3] * fh / rh)
             u['clipbox'] = cbox
-            u['frames'] = [comic_finish(upscale(f, cbox, (w, h))) for f in frames]
+            u['raw'] = frames            # small source frames; upscaled + finished lazily (6 s clips at 1080p would not fit in RAM)
+            u['size'] = (w, h)
+            u['_cache'] = (None, None)
 
     def art(self, u, t):
         """Panel art at scene time t: static hold -> clip (3-frame crossfade in) -> freeze on last frame."""
@@ -387,8 +536,10 @@ class Scene:
         t0 = T(self.spec, clip_start(self.spec, u))
         if t < t0:
             return u['static']
-        i = min(int((t - t0) * self.fps), len(u['frames']) - 1)
-        fr = u['frames'][i]
+        i = min(int((t - t0) * self.fps), len(u['raw']) - 1)
+        if u['_cache'][0] != i:
+            u['_cache'] = (i, comic_finish(upscale(u['raw'][i], u['clipbox'], u['size'])))
+        fr = u['_cache'][1]
         xf = 3 / self.fps
         if t - t0 < xf:
             return Image.blend(u['static'], fr, (t - t0) / xf)
@@ -397,6 +548,28 @@ class Scene:
     def _ink(self, img, r, w=7):
         x, y, ww, hh = r
         ImageDraw.Draw(img).rectangle([x - w + 1, y - w + 1, x + ww + w - 2, y + hh + w - 2], outline=INK, width=w)
+
+    def _outline(self, img, poly, w=7, keyline=False):
+        d = ImageDraw.Draw(img)
+        pts = [(round(x), round(y)) for x, y in poly] + [(round(poly[0][0]), round(poly[0][1]))]
+        if keyline:
+            d.line(pts, fill=(250, 246, 236), width=w + 12, joint='curve')
+        d.line(pts, fill=INK, width=w, joint='curve')
+
+    def _paint(self, img, u, t, w=7):
+        """Panel art masked to its slot shape, then ink (white keyline for insets laid over other panels)."""
+        geo = u['geo']
+        art = self.art(u, t)
+        x0, y0 = geo['bbox'][:2]
+        if geo['keyline']:   # keyline first so it sits under the art edge and over the panel below
+            for p in geo['polys']:
+                self._outline(img, p, w, keyline=True)
+        img.paste(art, (x0, y0), u['mask'])
+        for p in geo['polys']:
+            self._outline(img, p, w, keyline=geo['keyline'])
+        if geo['burst']:     # the action breaks out over the border
+            img.paste(art, (x0, y0), u['burstMask'])
+            self._outline(img, geo['burst'], w)
 
     def _letter(self, img, u, t):
         slot = u['slotrect']
@@ -415,20 +588,16 @@ class Scene:
 
     def page(self, t):
         img = self.paper.copy()
-        for u in self.units:
+        for u in sorted(self.units, key=lambda u: u['geo']['z']):
             ta = T(self.spec, u['at'])
             if t < ta:
                 continue
             k = ease((t - ta) / 0.14)
-            x, y, w, h = u['slotrect']
-            dy = int(round((1 - k) * 16))
-            art = self.art(u, t)
             if k < 1:
-                bg = img.crop((x - 8, y + dy - 8, x + w + 8, y + dy + h + 8))
-                fr = bg.copy(); fr.paste(art, (8, 8)); self._ink(fr, (8, 8, w, h))
-                img.paste(Image.blend(bg, fr, k), (x - 8, y + dy - 8))
+                fr = img.copy(); self._paint(fr, u, t)
+                img = Image.blend(img, fr, k)
             else:
-                img.paste(art, (x, y)); self._ink(img, (x, y, w, h))
+                self._paint(img, u, t)
         for u in self.units:
             if t >= T(self.spec, u['at']):
                 self._letter(img, u, t)
@@ -437,8 +606,7 @@ class Scene:
     def splash_frame(self, t):
         img = self.paper.copy()
         u = self.splash
-        x, y, w, h = u['slotrect']
-        img.paste(self.art(u, t), (x, y)); self._ink(img, (x, y, w, h), 9)
+        self._paint(img, u, t, 9)
         self._letter(img, u, t)
         return img
 
@@ -457,7 +625,7 @@ class Scene:
         if key not in self._page_cache:
             self._page_cache[key] = self.page(t_land - dur)
         src = self._page_cache[key]
-        target = next(u for u in self.units if u['id'] == tr['panel'])['slotrect']
+        target = next(u for u in self.units if u['id'] == tr['panel'])['geo']['bbox']
         a = self.W / self.H
         tx, ty, tw, th = target
         if tw / th > a:
