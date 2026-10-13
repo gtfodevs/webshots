@@ -18,20 +18,24 @@ ASSETS = '/workspace/neon-dojo-comic'
 
 # reused panels -> existing clips (None = static panel: no clip exists for that art)
 REUSE_CLIP = {'v01': 'clips/n01.mp4', 'v23': 'clips/n18.mp4', 'v28': 'clips/n09.mp4', 'v29': 'clips/n23.mp4',
-              'v32': 'clips/n26.mp4', 's05': None, 'v15': None, 's24': None}
+              'v32': 'clips/n26.mp4', 's05': 'v3/clips/s05_r2.mp4', 'v15': 'v3/clips/v15_r2.mp4',
+              's24': 'v3/clips/s24_r2.mp4'}
+# r2 review 2026-10-13 (8 fps + detail strips): these regenerations are clean for the full 6 s
+R2_USED = {'s05', 's10', 's24', 'v04', 'v12', 'v15', 'v16'}
 # 8 fps review 2026-10-13: (clean seconds from in=0, note). Clips play their full length; a clip that morphs is
 # marked REGEN and listed in v3/regen.json instead of being cut to 2-4 s.
 TRIMS = {
+ 's05': (6.0, None), 'v15': (6.0, None), 's24': (6.0, None),
  'v01': (6.0, None), 'v23': (6.0, None), 'v28': (6.0, None), 'v29': (6.0, None), 'v32': (6.0, None),
- 'v02': (6.0, None), 'v03': (6.0, 'REGEN (v3/regen.json): camera jumps to a face close-up at ~2.5 s'),
- 'v04': (6.0, 'REGEN (v3/regen.json): after the flash both fighters shrink into the background'), 'v06': (6.0, None),
- 'v07': (6.0, 'REGEN (v3/regen.json): training dummy morphs into a pile after ~4.5 s'), 'v08': (5.0, 'jump at 5.25 s'),
- 'v09': (6.0, 'REGEN (v3/regen.json): hands dissolve into a glow after ~4 s'), 's10': (6.0, 'REGEN (v3/regen.json): smoke swallows the frame after 5 s'),
- 'v12': (6.0, 'REGEN (v3/regen.json): rival lineup starts to duplicate after ~4 s'), 'v13': (6.0, None), 'v14': (6.0, None),
- 'v16': (6.0, 'REGEN (v3/regen.json): TEKKO vanishes after ~3.5 s'), 's17': (6.0, 'REGEN (v3/regen.json): ring fades and LOTUS re-poses after 4.5 s'),
- 'v18': (5.6, 'jump at 5.75 s'), 'v19': (6.0, 'REGEN (v3/regen.json): Aura dissolves into smoke after ~4 s'), 'v20': (6.0, None),
+ 'v02': (6.0, None), 'v03': (2.4, 'v1 clip kept: camera jumps at ~2.5 s; r2 hard-cuts at 1.4 s (regen2)'),
+ 'v04': (6.0, None), 'v06': (6.0, None),
+ 'v07': (4.5, 'v1 clip kept: dummy morphs after 4.5 s; r2 cuts away from the panel at 0.1 s (regen2)'), 'v08': (5.0, 'jump at 5.25 s'),
+ 'v09': (3.9, 'v1 clip kept: hands dissolve after ~4 s; r2 morphs the fist into a face by 0.4 s (regen2)'), 's10': (6.0, None),
+ 'v12': (6.0, None), 'v13': (6.0, None), 'v14': (6.0, None),
+ 'v16': (6.0, None), 's17': (4.5, 'v1 clip kept: re-pose after 4.5 s; r2 cross-morphs into a new pose at 0.3 s (regen2)'),
+ 'v18': (5.6, 'jump at 5.75 s'), 'v19': (4.0, 'v1 clip kept: dissolve after ~4 s; r2 melts Aura into a glowing figure at ~2.5 s (regen2)'), 'v20': (6.0, None),
  's21': (6.0, None), 'v22': (5.2, 'jump at 5.25 s'), 'v25': (6.0, None), 'v26': (6.0, None),
- 's30': (6.0, 'REGEN (v3/regen.json): armour bursts, then SHOGUN re-forms whole after ~2 s'), 'v31': (6.0, None),
+ 's30': (2.0, 'v1 clip kept: SHOGUN re-forms after ~2 s; r2 re-forms him by 1.5 s (regen2)'), 'v31': (6.0, None),
 }
 FULL = 6.6  # 6 s clip + 0.44 s anticipation + margin
 SFX_STYLE = {'a': ([0.72, 0.32], -8), 'b': ([0.3, 0.3], 7), 'c': ([0.7, 0.35], -6), 'splash': ([0.7, 0.28], -7)}
@@ -117,7 +121,7 @@ def build():
             u = {'id': pid, 'image': f'v3/panels/{pid}.jpg', 'at': round(land, 3), 'location': scene[:60], 'camera': shot,
                  'moment': beat, 'scene': scene, 'prompt': pr['prompt'] or f'REUSE {reuse}', 'refs': pr['refs'],
                  'motionPrompt': pr['motion'], 'captions': caps}
-            clip = (f'v3/clips/{pid}.mp4' if not reuse else REUSE_CLIP.get(pid))
+            clip = (f'v3/clips/{pid}_r2.mp4' if pid in R2_USED and not reuse else f'v3/clips/{pid}.mp4' if not reuse else REUSE_CLIP.get(pid))
             if clip:
                 u['clip'] = {'src': clip, 'in': 0.0, 'out': None}
             if sfx:

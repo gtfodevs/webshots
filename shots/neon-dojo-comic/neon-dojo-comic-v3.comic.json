@@ -135,8 +135,8 @@
      "clip": {
       "src": "v3/clips/v03.mp4",
       "in": 0.0,
-      "out": 6.0,
-      "trimNote": "REGEN (v3/regen.json): camera jumps to a face close-up at ~2.5 s"
+      "out": 2.4,
+      "trimNote": "v1 clip kept: camera jumps at ~2.5 s; r2 hard-cuts at 1.4 s (regen2)"
      },
      "sfx": [
       {
@@ -174,10 +174,10 @@
      "motionPrompt": "The impact flash bursts and both robots fly backward. Locked camera, slight shake. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
      "captions": [],
      "clip": {
-      "src": "v3/clips/v04.mp4",
+      "src": "v3/clips/v04_r2.mp4",
       "in": 0.0,
       "out": 5.89,
-      "trimNote": "REGEN (v3/regen.json): after the flash both fighters shrink into the background; page turns at 20.76s, clip capped to 5.89s"
+      "trimNote": "page turns at 20.76s, clip capped to 5.89s"
      },
      "sfx": [
       {
@@ -221,6 +221,12 @@
     ],
     "motionPrompt": "Uno and Aura stumble and splash down into the puddle. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.",
     "captions": [],
+    "clip": {
+     "src": "v3/clips/s05_r2.mp4",
+     "in": 0.0,
+     "out": 5.89,
+     "trimNote": "page turns at 27.61s, clip capped to 5.89s"
+    },
     "sfx": [
      {
       "text": "SPLOOSH!",
@@ -296,8 +302,8 @@
      "clip": {
       "src": "v3/clips/v07.mp4",
       "in": 0.0,
-      "out": 6.0,
-      "trimNote": "REGEN (v3/regen.json): training dummy morphs into a pile after ~4.5 s"
+      "out": 4.5,
+      "trimNote": "v1 clip kept: dummy morphs after 4.5 s; r2 cuts away from the panel at 0.1 s (regen2)"
      },
      "sfx": [
       {
@@ -408,8 +414,8 @@
      "clip": {
       "src": "v3/clips/v09.mp4",
       "in": 0.0,
-      "out": 6.0,
-      "trimNote": "REGEN (v3/regen.json): hands dissolve into a glow after ~4 s"
+      "out": 3.9,
+      "trimNote": "v1 clip kept: hands dissolve after ~4 s; r2 morphs the fist into a face by 0.4 s (regen2)"
      },
      "sfx": [
       {
@@ -462,10 +468,9 @@
      }
     ],
     "clip": {
-     "src": "v3/clips/s10.mp4",
+     "src": "v3/clips/s10_r2.mp4",
      "in": 0.0,
-     "out": 6.0,
-     "trimNote": "REGEN (v3/regen.json): smoke swallows the frame after 5 s"
+     "out": 6.0
     },
     "sfx": [
      {
@@ -518,10 +523,9 @@
       }
      ],
      "clip": {
-      "src": "v3/clips/v12.mp4",
+      "src": "v3/clips/v12_r2.mp4",
       "in": 0.0,
-      "out": 6.0,
-      "trimNote": "REGEN (v3/regen.json): rival lineup starts to duplicate after ~4 s"
+      "out": 6.0
      },
      "slot": "a"
     },
@@ -651,6 +655,12 @@
        "lyric": true
       }
      ],
+     "clip": {
+      "src": "v3/clips/v15_r2.mp4",
+      "in": 0.0,
+      "out": 5.47,
+      "trimNote": "page turns at 75.12s, clip capped to 5.47s"
+     },
      "sfx": [
       {
        "text": "POW!",
@@ -700,10 +710,10 @@
       }
      ],
      "clip": {
-      "src": "v3/clips/v16.mp4",
+      "src": "v3/clips/v16_r2.mp4",
       "in": 0.0,
       "out": 5.05,
-      "trimNote": "REGEN (v3/regen.json): TEKKO vanishes after ~3.5 s; page turns at 75.12s, clip capped to 5.05s"
+      "trimNote": "page turns at 75.12s, clip capped to 5.05s"
      },
      "sfx": [
       {
@@ -762,8 +772,8 @@
     "clip": {
      "src": "v3/clips/s17.mp4",
      "in": 0.0,
-     "out": 6.0,
-     "trimNote": "REGEN (v3/regen.json): ring fades and LOTUS re-poses after 4.5 s"
+     "out": 4.5,
+     "trimNote": "v1 clip kept: re-pose after 4.5 s; r2 cross-morphs into a new pose at 0.3 s (regen2)"
     },
     "sfx": [
      {
@@ -880,8 +890,8 @@
      "clip": {
       "src": "v3/clips/v19.mp4",
       "in": 0.0,
-      "out": 6.0,
-      "trimNote": "REGEN (v3/regen.json): Aura dissolves into smoke after ~4 s"
+      "out": 4.0,
+      "trimNote": "v1 clip kept: dissolve after ~4 s; r2 melts Aura into a glowing figure at ~2.5 s (regen2)"
      },
      "sfx": [
       {
@@ -1111,6 +1121,11 @@
       "lyric": true
      }
     ],
+    "clip": {
+     "src": "v3/clips/s24_r2.mp4",
+     "in": 0.0,
+     "out": 6.0
+    },
     "sfx": [
      {
       "text": "KZZZANG!",
@@ -1375,8 +1390,8 @@
     "clip": {
      "src": "v3/clips/s30.mp4",
      "in": 0.0,
-     "out": 6.0,
-     "trimNote": "REGEN (v3/regen.json): armour bursts, then SHOGUN re-forms whole after ~2 s"
+     "out": 2.0,
+     "trimNote": "v1 clip kept: SHOGUN re-forms after ~2 s; r2 re-forms him by 1.5 s (regen2)"
     },
     "sfx": [
      {

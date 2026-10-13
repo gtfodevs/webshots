@@ -1,0 +1,32 @@
+[
+ {
+  "id": "s30",
+  "reason": "r2 re-forms SHOGUN whole by 1.5 s (v1 had 2.0 s clean)",
+  "prompt": "SHOGUN stays kneeling among broken armour plates that lie still on the floor; only sparks and embers drift down and the red eyes slowly dim. Single continuous shot; the opening frame matches the panel image exactly; locked-off camera, no cut, no cross-fade, no zoom; very small, slow motion only; the subject keeps the same body, pose and design and stays fully in frame for all 6 seconds; nothing appears, vanishes, melts or transforms."
+ },
+ {
+  "id": "v03",
+  "reason": "r2 hard-cuts to a different framing at 1.4 s",
+  "prompt": "Hold the exact panel framing; the two fighters keep their stance and breathe; the neon flickers softly. Single continuous shot; the opening frame matches the panel image exactly; locked-off camera, no cut, no cross-fade, no zoom; very small, slow motion only; the subject keeps the same body, pose and design and stays fully in frame for all 6 seconds; nothing appears, vanishes, melts or transforms."
+ },
+ {
+  "id": "v07",
+  "reason": "r2 cuts away from the panel composition within the first frames",
+  "prompt": "Hold the exact panel framing; the training dummy rocks gently and stays intact and upright; dust drifts slowly. Single continuous shot; the opening frame matches the panel image exactly; locked-off camera, no cut, no cross-fade, no zoom; very small, slow motion only; the subject keeps the same body, pose and design and stays fully in frame for all 6 seconds; nothing appears, vanishes, melts or transforms."
+ },
+ {
+  "id": "v09",
+  "reason": "r2 morphs the fist into a robot face by 0.4 s",
+  "prompt": "Hold the exact panel close-up of the chrome fist; the fingers stay solid and still while a steady glow pulses softly around the knuckles. Single continuous shot; the opening frame matches the panel image exactly; locked-off camera, no cut, no cross-fade, no zoom; very small, slow motion only; the subject keeps the same body, pose and design and stays fully in frame for all 6 seconds; nothing appears, vanishes, melts or transforms."
+ },
+ {
+  "id": "s17",
+  "reason": "r2 cross-morphs from the fight into a new LOTUS pose at 0.3 s",
+  "prompt": "Hold the exact panel pose; LOTUS's hair and ribbons sway in the wind and the arena lights twinkle. Single continuous shot; the opening frame matches the panel image exactly; locked-off camera, no cut, no cross-fade, no zoom; very small, slow motion only; the subject keeps the same body, pose and design and stays fully in frame for all 6 seconds; nothing appears, vanishes, melts or transforms."
+ },
+ {
+  "id": "v19",
+  "reason": "r2 melts Aura into a glowing translucent figure around 2.5 s",
+  "prompt": "Hold the exact panel pose; Aura stays solid chrome with red hair while the lanterns flicker and her hair moves slightly. Single continuous shot; the opening frame matches the panel image exactly; locked-off camera, no cut, no cross-fade, no zoom; very small, slow motion only; the subject keeps the same body, pose and design and stays fully in frame for all 6 seconds; nothing appears, vanishes, melts or transforms."
+ }
+]
