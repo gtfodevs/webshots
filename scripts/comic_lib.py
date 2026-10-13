@@ -43,6 +43,41 @@ def song_beats(spec):
 def T(spec, song_t):
     return song_t - spec['song']['start']
 
+DEFAULT_HOLD_BEATS = 1     # Jason's rule: static hold of ~one beat (0.3-0.5 s) before the clip plays
+MAX_HOLD = 0.6             # QA fails if clip start - panel land > this
+
+
+def subspecs(spec):
+    """A spec is one page (panels/transition/splash) or a whole song ("pages": [...]).
+    Returns one page-level spec per page with song.start/end set to the page's span."""
+    if 'pages' not in spec:
+        return [spec]
+    out = []
+    for pg in spec['pages']:
+        sub = {k: v for k, v in spec.items() if k != 'pages'}
+        sub.update(panels=pg['panels'], transition=pg.get('transition'), splash=pg.get('splash'), page=pg['id'],
+                   song=dict(spec['song'], start=pg['start'], end=pg['end']))
+        out.append(sub)
+    return out
+
+
+def clip_start(spec, u):
+    """Song time the clip starts: explicit clip.at, else DEFAULT_HOLD_BEATS beats after the panel lands."""
+    c = u['clip']
+    if c.get('at') is not None:
+        return c['at']
+    beats = [b for b in song_beats(spec) if b > u['at'] + 0.05]
+    hold = spec.get('defaults', {}).get('holdBeats', DEFAULT_HOLD_BEATS)
+    return beats[hold - 1] if len(beats) >= hold else u['at'] + 0.45
+
+
+def splash_unit(spec):
+    sp = spec.get('splash')
+    if not sp or not spec.get('transition'):
+        return None
+    return dict(sp, id=sp.get('id', 'splash'), at=spec['transition']['at'])
+
+
 def scene_len(spec):
     return spec['song']['end'] - spec['song']['start']
 
@@ -280,10 +315,10 @@ def text_items(spec, orient):
     """Every caption / SFX with its page rect and visible interval (scene seconds). Used by QA."""
     L = layout(orient)
     items = []
-    tr = spec['transition']
-    page_end = T(spec, tr['at']) - tr.get('dur', 0.4)
-    splash_t0 = T(spec, tr['at'])
+    tr = spec.get('transition')
     end = scene_len(spec)
+    page_end = T(spec, tr['at']) - tr.get('dur', 0.4) if tr else end
+    splash_t0 = T(spec, tr['at']) if tr else end
     for p in spec['panels']:
         slot = L[p['slot']]
         for c in p.get('captions', []):
@@ -292,13 +327,13 @@ def text_items(spec, orient):
         for s in p.get('sfx', []):
             items.append({'who': f"{p['id']} sfx '{s['text']}'", 'rect': sfx_rect(s, slot)[0],
                           'from': T(spec, s['at']), 'to': page_end, 'slot': slot})
-    sp = spec['splash']
+    sp = splash_unit(spec) or {}
     slot = L['splash']
     for c in sp.get('captions', []):
-        items.append({'who': f"splash caption '{c['text']}'", 'rect': caption_box(c, slot)[0],
+        items.append({'who': f"{sp['id']} caption '{c['text']}'", 'rect': caption_box(c, slot)[0],
                       'from': max(splash_t0, T(spec, c.get('at', tr['at']))), 'to': end, 'slot': slot})
     for s in sp.get('sfx', []):
-        items.append({'who': f"splash sfx '{s['text']}'", 'rect': sfx_rect(s, slot)[0],
+        items.append({'who': f"{sp['id']} sfx '{s['text']}'", 'rect': sfx_rect(s, slot)[0],
                       'from': T(spec, s['at']), 'to': end, 'slot': slot})
     return items
 
@@ -312,11 +347,14 @@ class Scene:
         self.L = layout(orient)
         self.paper = Image.fromarray(paper(self.W, self.H))
         self.units = [dict(p, slotrect=self.L[p['slot']]) for p in spec['panels']]
-        sp = dict(spec['splash'], id='splash', slotrect=self.L['splash'], at=spec['transition']['at'])
-        self.splash = sp
-        for u in self.units + [sp]:
+        sp = splash_unit(spec)
+        self.splash = sp and dict(sp, slotrect=self.L['splash'])
+        for u in self.all_units():
             self._prep(u)
         self._page_cache = {}
+
+    def all_units(self):
+        return self.units + ([self.splash] if self.splash else [])
 
     def _prep(self, u):
         img = Image.open(resolve(self.spec, u['image'])).convert('RGB')
@@ -345,7 +383,7 @@ class Scene:
         """Panel art at scene time t: static hold -> clip (3-frame crossfade in) -> freeze on last frame."""
         if not u.get('clip'):
             return u['static']
-        t0 = T(self.spec, u['clip']['at'])
+        t0 = T(self.spec, clip_start(self.spec, u))
         if t < t0:
             return u['static']
         i = min(int((t - t0) * self.fps), len(u['frames']) - 1)
@@ -404,7 +442,9 @@ class Scene:
         return img
 
     def frame(self, t):
-        tr = self.spec['transition']
+        tr = self.spec.get('transition')
+        if not tr:
+            return self.page(t)
         t_land = T(self.spec, tr['at'])
         dur = tr.get('dur', 0.4)
         if t >= t_land:

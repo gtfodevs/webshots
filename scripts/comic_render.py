@@ -37,37 +37,48 @@ def measure_lufs(path):
 
 
 def render(spec, orient, out_path, wav, sheet_path=None):
-    sc = C.Scene(spec, orient)
-    fps = sc.fps
-    n = int(round(C.scene_len(spec) * fps))
-    enc = subprocess.Popen(['ffmpeg', '-v', 'error', '-y', '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-s', f'{sc.W}x{sc.H}',
+    """Renders every page of the spec back to back into one MP4 (single-page specs are one page)."""
+    W, H = C.SIZES[orient]
+    fps = spec.get('fps', 30)
+    enc = subprocess.Popen(['ffmpeg', '-v', 'error', '-y', '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-s', f'{W}x{H}',
                             '-r', str(fps), '-i', '-', '-i', wav, '-map', '0:v', '-map', '1:a',
                             '-c:v', 'libx264', '-preset', 'slow', '-crf', '17', '-pix_fmt', 'yuv420p', '-movflags', '+faststart',
                             '-c:a', 'aac', '-b:a', '256k', '-shortest', out_path], stdin=subprocess.PIPE)
-    # contact sheet moments: each panel landing, each clip mid/freeze, transition, splash, SFX
-    marks = {}
-    for u in sc.units + [sc.splash]:
-        marks[C.T(spec, u['at']) + 0.3] = f"{u['id']} lands"
-        if u.get('clip'):
-            c = u['clip']; t0 = C.T(spec, c['at'])
-            marks[t0 + (c['out'] - c['in']) / 2] = f"{u['id']} clip {c['in']:.1f}-{c['out']:.1f}s"
-            marks[t0 + (c['out'] - c['in']) + 0.3] = f"{u['id']} freeze"
-    tr = spec['transition']
-    marks[C.T(spec, tr['at']) - tr['dur'] / 2] = 'zoom into ' + tr['panel']
-    keep = {int(round(t * fps)): lbl for t, lbl in marks.items() if 0 <= t < n / fps}
+    t_song0 = spec['song']['start']
+    written = 0
     shots = []
-    for i in range(n):
-        f = sc.frame(i / fps)
-        enc.stdin.write(f.tobytes())
-        if i in keep:
-            shots.append((i / fps, keep[i], f))
+    for sub in C.subspecs(spec):
+        sc = C.Scene(sub, orient)
+        # contact sheet moments: each panel landing, each clip mid/freeze, transition
+        marks = {}
+        for u in sc.all_units():
+            marks[C.T(sub, u['at']) + 0.3] = f"{u['id']} lands"
+            if u.get('clip'):
+                c = u['clip']; t0 = C.T(sub, C.clip_start(sub, u))
+                marks[t0 + (c['out'] - c['in']) / 2] = f"{u['id']} clip {c['in']:.1f}-{c['out']:.1f}s"
+                marks[t0 + (c['out'] - c['in']) + 0.3] = f"{u['id']} freeze"
+        tr = sub.get('transition')
+        if tr:
+            marks[C.T(sub, tr['at']) - tr['dur'] / 2] = 'zoom into ' + tr['panel']
+        # frames are counted on the global clock so pages butt together without drift
+        end_frame = int(round((sub['song']['end'] - t_song0) * fps))
+        keep = {}
+        for t, lbl in marks.items():
+            keep[int(round((sub['song']['start'] - t_song0 + t) * fps))] = lbl
+        while written < end_frame:
+            t = (written / fps) - (sub['song']['start'] - t_song0)
+            f = sc.frame(max(t, 0.0))
+            enc.stdin.write(f.tobytes())
+            if written in keep:
+                shots.append((written / fps, keep[written], f))
+            written += 1
     enc.stdin.close()
     if enc.wait():
         raise SystemExit('ffmpeg encode failed')
     if sheet_path:
         shots.sort(key=lambda s: s[0])
         tw = 480 if orient == 'landscape' else 270
-        th = int(tw * sc.H / sc.W)
+        th = int(tw * H / W)
         cols = 4
         rows = (len(shots) + cols - 1) // cols
         sheet = Image.new('RGB', (cols * (tw + 10) + 10, rows * (th + 34) + 10), (30, 30, 30))
@@ -75,9 +86,8 @@ def render(spec, orient, out_path, wav, sheet_path=None):
         for k, (t, lbl, f) in enumerate(shots):
             x = 10 + (k % cols) * (tw + 10); y = 10 + (k // cols) * (th + 34)
             sheet.paste(f.resize((tw, th), Image.LANCZOS), (x, y))
-            d.text((x, y + th + 4), f"{t:5.2f}s ({spec['song']['start'] + t:.2f})  {lbl}", font=C.font(20), fill=(240, 240, 240))
+            d.text((x, y + th + 4), f"{t:5.2f}s ({t_song0 + t:.2f})  {lbl}", font=C.font(20), fill=(240, 240, 240))
         sheet.save(sheet_path)
-    return sc
 
 
 def main():
@@ -87,18 +97,20 @@ def main():
     ap.add_argument('--only', choices=['landscape', 'vertical'])
     a = ap.parse_args()
     spec = C.load_spec(a.spec)
+    if spec.get('draft'):
+        raise SystemExit('spec is marked "draft": true (art/clips not generated yet). Fill in images + clip in/out, remove "draft", run npm run check, then render.')
     os.makedirs(a.out, exist_ok=True)
     with tempfile.TemporaryDirectory() as td:
         wav = os.path.join(td, 'song.wav')
         master_audio(spec, wav)
         results = {}
         if a.only != 'vertical':
-            out = C.next_free(os.path.join(a.out, 'comic-scene-1080p.mp4'))
-            sheet = C.next_free(os.path.join(a.out, 'comic-scene-sheet.png'))
+            out = C.next_free(os.path.join(a.out, f"{spec.get('outName', 'comic-scene')}-1080p.mp4"))
+            sheet = C.next_free(os.path.join(a.out, f"{spec.get('outName', 'comic-scene')}-sheet.png"))
             render(spec, 'landscape', out, wav, sheet)
             results['landscape'] = out; results['sheet'] = sheet
         if a.only != 'landscape':
-            out = C.next_free(os.path.join(a.out, 'comic-scene-short.mp4'))
+            out = C.next_free(os.path.join(a.out, f"{spec.get('outName', 'comic-scene')}-short.mp4"))
             render(spec, 'vertical', out, wav)
             results['vertical'] = out
     for k, p in results.items():

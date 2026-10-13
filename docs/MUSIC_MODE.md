@@ -483,6 +483,11 @@ two-pass loudnorm to `song.loudness` (-14 LUFS, TP -1.5).
 4. **Review each clip** (`ffmpeg -i c.mp4 -vf "fps=2,scale=368:-1,tile=4x3" -frames:v 1 sheet.png`): the
    first ~2 s are usually clean; later seconds tend to melt faces, sprout extra limbs, or re-frame.
    Pick the best **1.5–2.5 s** (`in`/`out`, hard max 3 s). If no window is clean, leave the panel static.
+   **Hold rule (Jason):** a clip starts almost immediately after its panel lands: hold the still for at most
+   one beat (~0.3–0.5 s), then the motion plays. Leave `clip.at` out and the renderer starts the clip
+   `defaults.holdBeats` (default 1) beats after the landing; QA fails if clip start − panel land > 0.6 s.
+   **Every panel is a different scene:** vary the location, camera angle and moment for each panel; never
+   reuse a composition. Keep it playful and kid-friendly with small humour beats.
 5. **Spec** (`shots/<name>/<name>.comic.json`); all `at` values are song seconds on the beat grid:
 
    ```jsonc
@@ -495,7 +500,7 @@ two-pass loudnorm to `song.loudness` (-14 LUFS, TP -1.5).
        "id": "p1", "image": "panels/p1.jpg", "slot": "top-left",   // top-left | top-right | bottom
        "at": 108.042,                                               // beat the panel lands on
        "focus": [0.5, 0.5],                                         // crop centre when the slot aspect differs
-       "clip": { "src": "clips/c1.mp4", "in": 0.0, "out": 2.0, "at": 109.738 },  // optional
+       "clip": { "src": "clips/c1.mp4", "in": 0.0, "out": 2.0 },  // optional; "at" defaults to 1 beat after landing
        "lyric": "(Woman) Count it out, one by one",
        "captions": [ { "text": "COUNT IT OUT, ONE BY ONE", "anchor": "br", "at": 109.738, "lyric": true } ],
        "sfx": [ { "text": "SHIIING!", "at": 110.179, "pos": [0.52, 0.32], "rot": -8, "size": 0.17, "color": [255,70,60] } ]
@@ -504,6 +509,12 @@ two-pass loudnorm to `song.loudness` (-14 LUFS, TP -1.5).
      "splash": { "image": "panels/p3.jpg", "clip": { … }, "captions": [ … ], "sfx": [ … ] }
    }
    ```
+   A whole song uses `"pages": [{ "id", "start", "end", "panels": [...], "transition"?, "splash"? }]` with the
+   same panel fields (one page per section; a page may skip the splash). Add `"location"`, `"camera"`,
+   `"moment"`, `"scene"`, `"prompt"`, `"refs"`, `"motionPrompt"` per panel at planning time; `"draft": true`
+   marks a plan whose art isn't generated yet (QA checks timing/text/uniqueness and reports missing media;
+   the renderer refuses drafts). `"outName"` sets the output file prefix. Example:
+   `shots/kingdom-come-comic/kingdom-come-comic.comic.json`.
    Lyric lines go in caption boxes (one per panel; an optional narration box like "NEO-TOKYO. MIDNIGHT."
    on the opening panel). One SFX per panel at most, on the beat of the action.
 6. **Render + check**: `npm run check -- <name>`, then `npm run comic -- <name>`; look at the contact sheet.
@@ -512,7 +523,7 @@ two-pass loudnorm to `song.loudness` (-14 LUFS, TP -1.5).
 
 ### How it renders (restraint rules)
 
-- Panel entrance: 0.14 s fade + 16 px drop. SFX: a 3-frame stamp (1.25x → 1x), then still. Static →
+- Static hold: one beat, then the clip. Panel entrance: 0.14 s fade + 16 px drop. SFX: a 3-frame stamp (1.25x → 1x), then still. Static →
   clip: 3-frame crossfade. One zoom per page. Nothing shakes, flashes or stacks.
 - Clip → panel alignment: Grok re-frames to 736x400, so each clip's first frame is registered onto its
   panel (scale + offset search, NCC). The slot crop is kept inside the clip's coverage and the same crop
@@ -523,6 +534,10 @@ two-pass loudnorm to `song.loudness` (-14 LUFS, TP -1.5).
 ### Comic QA (`scripts/comic_qa.py`, part of `npm run check`)
 
 - clip `in`/`out` inside the source duration, `out > in`, length ≤ 3 s;
+- clip start − panel land ≤ 0.6 s (one-beat hold);
+- every panel a different scene: fails on two panels with near-identical prompts (content-word Jaccard
+  ≥ 0.6 on `scene`/`prompt`), the same `location` + `camera` pair, or near-identical images
+  (64-bit DCT pHash, Hamming ≤ 10; a splash reusing its own panel art is allowed);
 - every landing / clip / caption / SFX / transition time within 60 ms of a beat;
 - captions + SFX inside the frame and not overlapping while on screen (landscape and vertical);
 - no black or empty slot at sampled frames (std, mean and % near-black per visible slot);
