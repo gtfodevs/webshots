@@ -98,6 +98,35 @@ for (i,a) in masks:
 print(json.dumps(out))`, k, PX], { encoding: 'utf8' });
     if (py.status !== 0) fail(`stage ${k}: figure check crashed: ${py.stderr.slice(-200)}`); else JSON.parse(py.stdout).forEach((m) => fail(`stage ${k}: ${m}`));
     notes.push(`stage ${k}: ${M.figures.length} figure cutouts over a clean plate`); } }
+// ---- VS portraits + super cut-ins
+if (/VS PORTRAIT|CUT-IN .* EYES/.test(src)) fail('VS / cut-in placeholders still drawn (ph slots)');
+{ const vs = E.scenes.filter((s) => s.name === 'vs'), need = new Set(vs.flatMap((s) => [...s.p1, s.p2]));
+  const py = spawnSync('python3', ['-c', `
+import json,sys,os,numpy as np
+from PIL import Image
+px=sys.argv[1]; out=[]
+for c in sys.argv[2].split(','):
+    f=f'{px}/portrait-{c}.png'
+    if not os.path.exists(f): out.append(f'portrait {c}: missing'); continue
+    a=np.asarray(Image.open(f).convert('RGBA')).astype(int); o=a[...,3]>0
+    if o.mean()<0.15: out.append(f'portrait {c}: slot nearly empty ({o.mean():.0%} opaque)')
+    gr=o&(a[...,1]>np.maximum(a[...,0],a[...,2])+30)
+    if gr.sum()>0.001*o.sum(): out.append(f'portrait {c}: green fringe {gr.sum()} px')
+print(json.dumps(out))`, `${SD}/assets/px`, [...need].join(',')], { encoding: 'utf8' });
+  if (py.status !== 0) fail(`portrait check crashed: ${py.stderr.slice(-200)}`); else JSON.parse(py.stdout).forEach(fail);
+  if (!(F.CUTIN >= 0.6 && F.CUTIN <= 0.8)) fail(`cut-in length ${F.CUTIN}s outside 0.6-0.8s`);
+  const want = { f1: 'uno', f2: 'aura', boss: 'shogun' };
+  for (const [id, who] of Object.entries(want)) { const f = E.fights[id];
+    if (!f || !f.super) { fail(`${id}: no super cut-in cue`); continue; }
+    if (f.super[1] !== who) fail(`${id}: cut-in is ${f.super[1]}, want ${who}`);
+    if (!existsSync(`${SD}/assets/px/cutin-${who}.png`)) fail(`${id}: cutin-${who}.png missing`);
+    const c = E.fx(f, f.super[0] + 0.02).cutin; if (!c || c.who !== who) fail(`${id}: cut-in not showing at its cue ${f.super[0].toFixed(2)}s`);
+    if (E.fx(f, f.super[0] + F.CUTIN + 0.02).cutin) fail(`${id}: cut-in overstays`);
+    const side = F.CHARS[who] && (f.p2 === who ? 2 : 1), sp = f.events.find((e) => e.side === side && e.move === 'special' && e.t > f.super[0]);
+    if (!sp) fail(`${id}: no ${who} special after the cut-in`);
+    else { const start = sp.t - 0.16; // fighterAt starts an attack anim 0.16 s before its impact
+      if (start < f.super[0] + F.CUTIN - 0.05) fail(`${id}: ${who}'s special starts during the cut-in`); if (sp.t - f.super[0] > 1.6) fail(`${id}: cut-in ${(sp.t - f.super[0]).toFixed(2)}s before the special (too early)`);
+      notes.push(`${id}: ${who} cut-in ${f.super[0].toFixed(2)}-${(f.super[0] + F.CUTIN).toFixed(2)}s, world held from ${(f.super[0] - F.HOLD).toFixed(2)}s, special lands ${sp.t}s`); } } }
 const dt = 1 / 30;
 for (const f of Object.values(E.fights)) {
   const used = new Set(), gfail = new Set(); let lastKey = {}, still = {};

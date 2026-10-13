@@ -19,6 +19,7 @@ F.CHARS = {
   lotus:  { name: 'LOTUS',      h: 104, w: 20, head: 16, chrome: '#d2d5df', acc: '#ff7ad9', acc2: '#3fe0c0' },
   shogun: { name: 'SHOGUN.EXE', h: 127, w: 42, head: 21, chrome: '#9a9daa', acc: '#d0102a', acc2: '#16101c', boss: 1 },
 };
+F.CUTIN = 0.65; F.HOLD = 0.1;
 F.ROSTER = ['uno', 'aura', 'tekko', 'kaze9', 'raijin', 'lotus', 'shogun'];
 F.STAGES = {
   rooftop: { name: 'NEON ROOFTOP DOJO', ground: 238, art: 'rooftop', sky: ['#120630', '#3a0f5c'], acc: '#ff3fd2' },
@@ -217,7 +218,7 @@ F.build = function (TL) {
     [[50.3, 1, 'kick', 'hit', 10], [51.6, 2, 'punch', 'hit', 8]],
     [[53.7, 2, 'kick', 'block', 2], [54.6, 1, 'punch', 'hit', 7], [55.9, 2, 'punch', 'block', 2]],
     [[57.4, 2, 'special', 'hit', 14], [58.9, 1, 'kick', 'block', 2]],
-    [[62.7, 2, 'kick', 'block', 2], [64.5, 1, 'special', 'ko', 99]]], super: [snap(61.0), 'uno'], win: snap(66.9) });
+    [[62.7, 2, 'kick', 'block', 2], [64.5, 1, 'special', 'ko', 99]]], super: [64.5 - 0.95, 'uno'], win: snap(66.9) });
   S.push({ name: 'fight', t0: fights.f1.t0, fight: 'f1' });
   // D. montage 1: 7 cuts on downbeats, each a mini exchange (opponent swings too)
   const MONT = [['aura', 'kaze9', 'alley'], ['uno', 'raijin', 'yard'], ['aura', 'raijin', 'yard'], ['uno', 'kaze9', 'alley'], ['aura', 'tekko', 'rooftop'], ['uno', 'lotus', 'garden'], ['uno', 'raijin', 'yard']];
@@ -237,12 +238,12 @@ F.build = function (TL) {
     [[91.6, 1, 'punch', 'hit', 8], [93.0, 2, 'special', 'hit', 14]],
     [[95.4, 2, 'kick', 'block', 2], [96.3, 2, 'kick', 'hit', 10], [98.6, 1, 'kick', 'hit', 10]],
     [[100.2, 2, 'punch', 'block', 2], [102.1, 1, 'punch', 'hit', 9], [103.4, 2, 'kick', 'block', 2]],
-    [[104.4, 2, 'punch', 'hit', 6], [105.6, 1, 'special', 'ko', 99]]], win: snap(106.4) });
+    [[104.4, 2, 'punch', 'hit', 6], [105.6, 1, 'special', 'ko', 99]]], super: [105.6 - 0.95, 'aura'], win: snap(106.4) });
   S.push({ name: 'fight', t0: fights.f2.t0, fight: 'f2' });
   // F. boss drama
   sc('boss_intro', 108.0, { counts: [snap(108.0), snap(108.0 + beatLen), snap(108.0 + 2 * beatLen), snap(108.0 + 3 * beatLen)], helm: snapBar(111.3), belt: snapBar(113.0), card: snap(115.2), warn: snap(118.0) });
   sc('vs', 119.7, { p1: ['uno', 'aura'], p2: 'shogun', slam: snap(121.4) });
-  // G + H. boss fight with tag-ins; bridge standoff; double super; freeze frame KO
+  // G + H. boss fight with tag-ins; bridge standoff; SHOGUN super cut-in; freeze frame KO
   fight('boss', { p1: 'uno', p2: 'shogun', stage: 'temple', t0: snapBar(123.4), round: 'FINAL ROUND', pips: [2, 0], tag: [[snap(130.2), 'aura'], [snap(133.5), 'uno']], ex: [
     [[125.0, 2, 'punch', 'block', 3], [126.7, 2, 'special', 'ko_down', 18], [127.6, 1, 'kick', 'block', 2]],
     [[128.3, 2, 'kick', 'block', 3], [129.4, 1, 'punch', 'hit', 7]],
@@ -250,7 +251,7 @@ F.build = function (TL) {
     [[133.0, 2, 'special', 'block', 4], [134.4, 1, 'kick', 'hit', 9], [135.9, 2, 'punch', 'hit', 10]],
     [[140.8, 1, 'special', 'block', 4], [141.6, 2, 'kick', 'hit', 8]],
     [[143.0, 2, 'special', 'block', 4], [144.2, 1, 'special', 'ko', 99]]],
-    standoff: [snap(137.1), snap(142.3)], super: [snap(142.3), 'double'], freeze: [snap(144.2), snap(144.2) + barLen], win: snap(147.8) });
+    standoff: [snap(137.1), 142.0], super: [143.0 - 0.95, 'shogun'], freeze: [snap(144.2), snap(144.2) + barLen], win: snap(147.8) });
   S.push({ name: 'fight', t0: fights.boss.t0, fight: 'boss' });
   // I. ending
   sc('ending', 150.8, { crawl: snap(159.3), walk: snap(162.2), over: snap(165.5) });
@@ -322,7 +323,9 @@ F.build = function (TL) {
     if (f.win && t >= f.win) out.banner = f.p2 === 'shogun' ? 'YOU WIN' : 'YOU WIN';
     if (f.banner && t >= f.events[f.events.length - 1].t) out.banner = f.banner;
     if (f.freeze && t >= f.freeze[0] && t < f.freeze[1]) out.freeze = 1;
-    if (f.super && t >= f.super[0] && t < f.super[0] + barLen) out.cutin = { who: f.super[1], t0: f.super[0], t1: f.super[0] + barLen };
+    // super: SF2 cut-in band for F.CUTIN s, with the world held still from F.HOLD s before it (no other fx stacked)
+    if (f.super && t >= f.super[0] && t < f.super[0] + F.CUTIN) out.cutin = { who: f.super[1], t0: f.super[0], t1: f.super[0] + F.CUTIN };
+    if (f.super && t >= f.super[0] - F.HOLD && t < f.super[0] + F.CUTIN) { out.hold = f.super[0] - F.HOLD; out.sparks = []; out.combo = null; out.shake = 0; }
     return out;
   }
   // tag team (boss fight): which hero is in
