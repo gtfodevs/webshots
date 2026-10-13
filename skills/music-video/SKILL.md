@@ -308,3 +308,19 @@ Every comic video should level up beyond Kingdom Come: real story, real hits. Ex
    - **End card:** present, and its text fits the title-safe area.
    - **Lyric timing:** captions stay up until the line is sung and never overlap; no audio cut lands
      mid-word.
+
+#### Lessons from the Neon Dojo v3 build
+
+- **Spec builder.** `v3/make_v3_spec.py` turns the beat sheet into `neon-dojo-comic-v3.comic.json`. It
+  maps reused panels to their earlier clips (`REUSE_CLIP`) and keeps the 8 fps review verdicts in `TRIMS`.
+  Art that has no clip stays a static panel.
+- **Clip review.** Look for a big frame-step at 0.1 s or 1–2 s: that is usually a hard cut or camera jump,
+  not motion. Trim before it. Also flag the clip if the "finisher" undoes itself (the armour re-forms).
+- **Page turns.** A page never turns while a lyric line is still being sung; a short overrun pushes the
+  turn one beat later instead of carrying the caption. Carried captions can collide with the next
+  page's own lines.
+- **Impact SFX.** Set `"impact": true` on a hit's SFX. The panel art flashes white (0.18 s decay) and the
+  frame shakes (0.28 s, ±0.8% of width, zoomed 2% so no edge shows). Lettering is drawn after the flash,
+  so it stays readable.
+- **Short cut points.** Pick Short start and end in word gaps from timeline `words`, after the lyric
+  line's `end`. QA warns when an end lands inside a line.
