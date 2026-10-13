@@ -276,6 +276,8 @@ function fightScene(t, s) {
   if (X.combo) text(g, X.combo.n + ' HITS', X.combo.side === 1 ? 10 : W - 10, 60, PAL.gold, 2, X.combo.side === 1 ? 'left' : 'right');
   if (!VERT && !f.montage) hud(g, f, t, W);
   if (f.montage) { text(g, CH[f.p1].name + ' VS ' + CH[f.p2].name, W / 2, 10, PAL.cyan, 1, 'center'); hpBar(g, 8, 22, 200, E.hp(f, 1, t), E.hp(f, 1, t), false); hpBar(g, W - 208, 22, 200, E.hp(f, 2, t), E.hp(f, 2, t), true); }
+  if (X.tag) { const e = t - X.tag.t0, y = 70 - R(Math.min(1, e / 0.1) * 6); if (e < 0.42 || Math.floor(e * 16) % 2) text(g, 'TAG!', 24, y, PAL.gold, 2); }
+  if (X.dust) { const { x, y, u } = X.dust, r = R(6 + u * 16); g.fillStyle = `rgba(210,200,230,${(0.55 * (1 - u)).toFixed(2)})`; for (const sx of [-1, 1]) { g.fillRect(R(x + sx * r) - 3, y - 4 - R(u * 3), 6, 3); g.fillRect(R(x + sx * r * 0.6) - 2, y - 7 - R(u * 4), 4, 2); } }
   if (X.banner) banner(X.banner, t);
   if (X.cutin) cutin(X.cutin, t);
   if (f.standoff && t >= f.standoff[0] && t < f.standoff[1]) { // leaf + wind, both bars flash low

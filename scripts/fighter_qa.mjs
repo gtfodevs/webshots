@@ -139,6 +139,20 @@ print(json.dumps(out))`, `${SD}/assets/px`, [...need].join(',')], { encoding: 'u
     if (s.name === 'fight' && !F.STAGES[E.fights[s.fight].stage].art) fail(`fight ${s.fight}: placeholder stage`); }
   for (const c of F.ROSTER) if (!F.SPRITE_ANIMS[c]) fail(`${c}: still a rect placeholder fighter`);
   if (existsSync(`${SD}/assets/px/story.json`)) { const st = JSON.parse(readFileSync(`${SD}/assets/px/story.json`, 'utf8')); if (st.logo_green_px) fail(`logo: ${st.logo_green_px} green fringe px`); if ((st.pins || []).length !== 5) fail(`world map: ${st.pins.length} pins measured, want 5`); } }
+// ---- tag-team: the active fighter never pops; >= 0.5 s of exit + entry motion around every change
+for (const f of Object.values(E.fights)) if (f.tag) { let prev = null, px = null, moved = 0, lastSwap = -9;
+  for (let t = f.t0; t < (f.win || f.t0 + 30); t += 1 / 60) { const st = E.fighterAt(f, 1, t);
+    if (prev && st.char !== prev) { const before = E.fighterAt(f, 1, t - 1 / 60);
+      if (!(before.tag === 'out' && st.tag === 'in')) fail(`${f.id} t=${t.toFixed(2)}: ${prev} -> ${st.char} swaps without an exit/entry (pop)`);
+      if (before.x > 0) fail(`${f.id} t=${t.toFixed(2)}: ${prev} still on screen (x ${before.x}) at the swap`);
+      let exitT = 0, entT = 0; for (let k = 1; k < 120; k++) { if (E.fighterAt(f, 1, t - k / 60).tag === 'out') exitT += 1 / 60; else break; }
+      for (let k = 0; k < 120; k++) { if (E.fighterAt(f, 1, t + k / 60).tag === 'in') entT += 1 / 60; else break; }
+      if (exitT + entT < 0.5) fail(`${f.id} t=${t.toFixed(2)}: tag motion ${(exitT + entT).toFixed(2)}s < 0.5s`);
+      if (!E.fx(f, t + 0.1).tag) fail(`${f.id} t=${t.toFixed(2)}: no TAG! shown`);
+      const land = E.fighterAt(f, 1, t + entT + 0.02); if (land.air) fail(`${f.id}: ${st.char} still airborne after the tag-in`);
+      for (const e of f.events) if (e.side === 1 && e.t - 0.42 < t + entT && e.t + 0.7 > t - exitT) fail(`${f.id}: p1 ${e.move} @${e.t} overlaps the tag window`);
+      notes.push(`${f.id}: tag ${prev} -> ${st.char} @${t.toFixed(2)}s, exit ${exitT.toFixed(2)}s + entry ${entT.toFixed(2)}s`); }
+    prev = st.char; } }
 const dt = 1 / 30;
 for (const f of Object.values(E.fights)) {
   const used = new Set(), gfail = new Set(); let lastKey = {}, still = {};
@@ -154,9 +168,9 @@ for (const f of Object.values(E.fights)) {
         const boxes = [[0, fr.rect[2], 0, fr.rect[3]]].concat(fr.fx ? [[fr.fx.ox, fr.fx.ox + fr.fx.rect[2], fr.fx.oy, fr.fx.oy + fr.fx.rect[3]]] : []);
         for (const [x0, x1, y0, y1] of boxes) { const ax = st.flip ? fr.rect[2] - 1 - fr.ax : fr.ax, dx = Math.round(st.x * Z) - ax, dy = Math.round(st.y * Z) - fr.ay;
           const L = st.flip ? dx + fr.rect[2] - x1 : dx + x0, Rr = st.flip ? dx + fr.rect[2] - x0 : dx + x1;
-          if ((L < 0 || Rr > 960 || dy + y0 < 0) && !gfail.has('clip' + st.char + pose)) { gfail.add('clip' + st.char + pose); fail(`${f.id} t=${t.toFixed(2)}: ${st.char} ${pose} drawn outside the screen (x ${L}..${Rr}, top ${dy + y0}) - limb clipped`); } } }
+          if (!st.tag && (L < 0 || Rr > 960 || dy + y0 < 0) && !gfail.has('clip' + st.char + pose)) { gfail.add('clip' + st.char + pose); fail(`${f.id} t=${t.toFixed(2)}: ${st.char} ${pose} drawn outside the screen (x ${L}..${Rr}, top ${dy + y0}) - limb clipped`); } } }
       const SA = F.SPRITE_ANIMS && F.SPRITE_ANIMS[st.char] && F.SPRITE_ANIMS[st.char][st.anim];
-      if (st.air && st.anim !== 'ko_fall' && !(SA && SA.lift && SA.lift[st.frame])) fail(`${f.id}: ${st.char} airborne outside ko_fall`);
+      if (st.air && st.anim !== 'ko_fall' && st.tag !== 'in' && !(SA && SA.lift && SA.lift[st.frame])) fail(`${f.id}: ${st.char} airborne outside ko_fall`);
       const key = st.anim + st.frame + ':' + st.x; const id = side; if (st.anim === 'idle') { still[id] = key === lastKey[id] ? (still[id] || 0) + dt : 0; if (still[id] > 0.6) { fail(`${f.id} t=${t.toFixed(2)}: ${st.char} idle frozen >0.6s`); still[id] = -99; } } lastKey[id] = key;
     }
   }

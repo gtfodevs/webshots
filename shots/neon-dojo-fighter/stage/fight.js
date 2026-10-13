@@ -20,6 +20,7 @@ F.CHARS = {
   shogun: { name: 'SHOGUN.EXE', h: 127, w: 42, head: 21, chrome: '#9a9daa', acc: '#d0102a', acc2: '#16101c', boss: 1 },
 };
 F.CUTIN = 0.65; F.HOLD = 0.1;
+F.TAG_OUT = 0.38; F.TAG_IN = 0.44; // tag-out: outgoing dashes off the left edge, incoming leaps in and lands (0.82 s total)
 F.ROSTER = ['uno', 'aura', 'tekko', 'kaze9', 'raijin', 'lotus', 'shogun'];
 F.STAGES = {
   rooftop: { name: 'NEON ROOFTOP DOJO', ground: 238, art: 'rooftop', sky: ['#120630', '#3a0f5c'], acc: '#ff3fd2' },
@@ -244,7 +245,7 @@ F.build = function (TL) {
   sc('boss_intro', 108.0, { counts: [snap(108.0), snap(108.0 + beatLen), snap(108.0 + 2 * beatLen), snap(108.0 + 3 * beatLen)], helm: snapBar(111.3), belt: snapBar(113.0), card: snap(115.2), warn: snap(118.0) });
   sc('vs', 119.7, { p1: ['uno', 'aura'], p2: 'shogun', slam: snap(121.4) });
   // G + H. boss fight with tag-ins; bridge standoff; SHOGUN super cut-in; freeze frame KO
-  fight('boss', { p1: 'uno', p2: 'shogun', stage: 'temple', t0: snapBar(123.4), round: 'FINAL ROUND', pips: [2, 0], tag: [[snap(130.2), 'aura'], [snap(133.5), 'uno']], ex: [
+  fight('boss', { p1: 'uno', p2: 'shogun', stage: 'temple', t0: snapBar(123.4), round: 'FINAL ROUND', pips: [2, 0], tag: [[130.5, 'aura'], [133.65, 'uno']], ex: [
     [[125.0, 2, 'punch', 'block', 3], [126.7, 2, 'special', 'ko_down', 18], [127.6, 1, 'kick', 'block', 2]],
     [[128.3, 2, 'kick', 'block', 3], [129.4, 1, 'punch', 'hit', 7]],
     [[131.0, 2, 'thrust', 'hit', 9], [131.7, 1, 'punch', 'hit', 12]],
@@ -301,6 +302,13 @@ F.build = function (TL) {
     }
     if (f.walkOff && side === 1 && f.ko && t > f.ko.t + 0.5) { pick('walk', t - f.ko.t, 1); x -= Math.round((t - f.ko.t - 0.5) * 60); st.flip = true; }
     if (f.standoff && t >= f.standoff[0] && t < f.standoff[1]) { pick('idle', t - f.standoff[0], 1); x = home + dir * 30; }
+    if (side === 1 && f.tag) for (const [ts, who] of f.tag) { // visible tag-out / tag-in, never a pop
+      if (t >= ts - F.TAG_OUT && t < ts) { const u = (t - (ts - F.TAG_OUT)) / F.TAG_OUT; st.char = f.tagged(ts - F.TAG_OUT - 0.01);
+        st.flip = true; pick('walk', t * 1.8, 1); x = Math.round(home - (home + 70) * u * u); st.tag = 'out'; }
+      else if (t >= ts && t < ts + F.TAG_IN) { const u = (t - ts) / F.TAG_IN, e = 1 - (1 - u) * (1 - u); st.char = who;
+        x = Math.round(-70 + (home + 70) * e); st.lift = Math.round(Math.sin(u * Math.PI) * 46); st.air = st.lift > 0 ? 1 : 0; st.tag = 'in';
+        st.anim = 'kick'; st.frame = 0; }   // knee-tuck leap (kick_chamber) across the arc
+    }
     if (st.anim === 'ko_fall') st.air = 1;
     { const SA = F.SPRITE_ANIMS[me] && F.SPRITE_ANIMS[me][st.anim]; if (SA && SA.lift && SA.lift[st.frame]) { st.air = 1; st.lift = SA.lift[st.frame]; } }
     st.x = x; st.y = f.ground - (st.lift || 0);
@@ -323,6 +331,11 @@ F.build = function (TL) {
     if (f.win && t >= f.win) out.banner = f.p2 === 'shogun' ? 'YOU WIN' : 'YOU WIN';
     if (f.banner && t >= f.events[f.events.length - 1].t) out.banner = f.banner;
     if (f.freeze && t >= f.freeze[0] && t < f.freeze[1]) out.freeze = 1;
+    if (f.tag) for (const [ts, who] of f.tag) {
+      if (t >= ts - 0.06 && t < ts + 0.5) out.tag = { t0: ts, who };
+      if (t >= ts - 0.06 && t < ts + 0.1) out.sparks.push({ x: 18, y: f.ground - 70, kind: 'small', frame: Math.min(2, Math.floor((t - ts + 0.06) / 0.053)), side: 1 }); // hand-slap at the edge
+      const dl = t - (ts + F.TAG_IN); if (dl >= 0 && dl < 0.3) out.dust = { x: 168, y: f.ground, u: dl / 0.3 };
+    }
     // super: SF2 cut-in band for F.CUTIN s, with the world held still from F.HOLD s before it (no other fx stacked)
     if (f.super && t >= f.super[0] && t < f.super[0] + F.CUTIN) out.cutin = { who: f.super[1], t0: f.super[0], t1: f.super[0] + F.CUTIN };
     if (f.super && t >= f.super[0] - F.HOLD && t < f.super[0] + F.CUTIN) { out.hold = f.super[0] - F.HOLD; out.sparks = []; out.combo = null; out.shake = 0; }
