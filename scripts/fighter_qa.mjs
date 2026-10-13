@@ -128,7 +128,7 @@ print(json.dumps(out))`, `${SD}/assets/px`, [...need].join(',')], { encoding: 'u
       if (start < f.super[0] + F.CUTIN - 0.05) fail(`${id}: ${who}'s special starts during the cut-in`); if (sp.t - f.super[0] > 1.6) fail(`${id}: cut-in ${(sp.t - f.super[0]).toFixed(2)}s before the special (too early)`);
       notes.push(`${id}: ${who} cut-in ${f.super[0].toFixed(2)}-${(f.super[0] + F.CUTIN).toFixed(2)}s, world held from ${(f.super[0] - F.HOLD).toFixed(2)}s, special lands ${sp.t}s`); } } }
 // ---- no grey placeholders anywhere in the timeline
-{ const calls = (src.match(/\bph\(\s*g\b/g) || []).length; if (calls) fail(`${calls} grey placeholder box call(s) ph(g, ...) still in the stage`);
+{ const calls = (src.match(/(?<!function )\bph\(/g) || []).length; if (calls) fail(`${calls} grey placeholder box call(s) ph(g, ...) still in the stage`);
   for (const [k, S] of Object.entries(F.STAGES)) if (!S.art) fail(`stage ${k}: no art (would draw the PLACEHOLDER STAGE fallback)`);
   const px = (n) => existsSync(`${SD}/assets/px/${n}`);
   for (const s of E.scenes) {
