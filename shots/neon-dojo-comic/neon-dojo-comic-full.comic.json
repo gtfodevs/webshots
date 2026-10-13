@@ -317,11 +317,10 @@
      ],
      "motionPrompt": "Both fighters bow and straighten up. Fans wave glow sticks. Camera: locked off. Slow, simple, clean motion; nobody walks toward the camera. Keep the comic style, faces, hands and limb count; no morphing, no text, no cuts.",
      "clip": {
-      "src": "clips/n07.mp4",
+      "src": "clips/n07_v2.mp4",
       "in": 0.0,
-      "out": 4.4,
-      "expected": 5.5,
-      "trimNote": "TEKKO morphs into a blob and Uno re-poses from ~4.5 s"
+      "out": 6.0,
+      "expected": 5.5
      },
      "lyric": "I MOVE CALM WITH THE JAW GAME / SHORT SWING, LIKE A CLOCK HAND, PRECISE AND TO THE POINT",
      "captions": [
@@ -667,11 +666,11 @@
      ],
      "motionPrompt": "LOTUS's kick sweeps slowly over Aura's head. Petals swirl in the kick wind. Camera: locked off. Slow, simple, clean motion; nobody walks toward the camera. Keep the comic style, faces, hands and limb count; no morphing, no text, no cuts.",
      "clip": {
-      "src": "clips/n14.mp4",
+      "src": "clips/n14_v2.mp4",
       "in": 0.0,
-      "out": 3.5,
+      "out": 5.5,
       "expected": 5.0,
-      "trimNote": "Aura splits into a smeared double during the spin from ~3.5 s (regenerate if possible)"
+      "trimNote": "v2: jump at 5.6 s"
      },
      "lyric": "DUCK LOW, THEN I CUT THROUGH / TURN A FRONT LIKE A BACKDOOR VIEW",
      "captions": [
@@ -1026,11 +1025,11 @@
      ],
      "motionPrompt": "Their hands meet in a slow slap and Aura leaps forward. Cyan sparks burst from the hands. Camera: locked off. Slow, simple, clean motion; nobody walks toward the camera. Keep the comic style, faces, hands and limb count; no morphing, no text, no cuts.",
      "clip": {
-      "src": "clips/n21.mp4",
+      "src": "clips/n21_v2.mp4",
       "in": 0.0,
-      "out": 4.3,
+      "out": 5.5,
       "expected": 5.5,
-      "trimNote": "hand-off figures swap/morph from ~4.4 s"
+      "trimNote": "v2: jump at 5.6 s"
      },
      "lyric": "TAP THE CHIN, MAKE 'EM CRAWL / I DON'T ARGUE, I JUST WALK",
      "captions": [

@@ -173,16 +173,17 @@ NARR = {'n01': 'NEO-KYOTO. THE TOURNAMENT RETURNS.', 'n03': 'YEARS AGO...', 'n06
 def words(s): return len(s.split())
 
 # Clip review 2026-10-13 (8 fps frame sampling + step/drift metrics): clean length in seconds from in=0,
-# and why it is cut. Clips are 6.04 s; None note = clean to the end.
+# and why it is cut. Clips are 6.04 s; None note = clean to the end. Optional 3rd item = regenerated clip.
+# n07/n14/n21 v1 morphed (blob TEKKO, smeared Aura double, swapping hand-off); v2 reviewed clean 2026-10-13.
 TRIMS = {
     'n01': (6.0, None), 'n02': (6.0, None), 'n03': (5.5, 'pose drifts after 5.5 s'), 'n04': (6.0, None),
-    'n05': (6.0, None), 'n06': (6.0, None), 'n07': (4.4, 'TEKKO morphs into a blob and Uno re-poses from ~4.5 s'),
+    'n05': (6.0, None), 'n06': (6.0, None), 'n07': (6.0, None, 'clips/n07_v2.mp4'),
     'n08': (6.0, None), 'n09': (6.0, None), 's10': (5.0, 'jump/morph spike at 5.1 s'),
     'n11': (6.0, None), 'n12': (6.0, None), 'n13': (4.5, "Aura's cyan aura vanishes and figures shift after ~4.5 s"),
-    'n14': (3.5, 'Aura splits into a smeared double during the spin from ~3.5 s (regenerate if possible)'),
+    'n14': (5.5, 'v2: jump at 5.6 s', 'clips/n14_v2.mp4'),
     's16': (5.0, 'LOTUS fragments in the splash after 5 s'), 'n15': (4.0, 'crowd boils/flickers; keep it short'),
     'n17': (5.6, 'jump at 5.75 s'), 'n18': (6.0, None), 's19': (4.6, "Aura's cyan magic disappears and SHOGUN re-poses after ~4.6 s"),
-    'n20': (6.0, None), 'n21': (4.3, 'hand-off figures swap/morph from ~4.4 s'), 'n22': (6.0, None),
+    'n20': (6.0, None), 'n21': (5.5, 'v2: jump at 5.6 s', 'clips/n21_v2.mp4'), 'n22': (6.0, None),
     'n23': (6.0, None), 's24': (5.4, 'jump at 5.5 s'), 'n25': (5.5, 'tail drifts'), 'n26': (6.0, None),
 }
 DRAFT = not all(os.path.exists(f'{OUT}/clips/{k}.mp4') for k in TRIMS)
@@ -276,7 +277,8 @@ def build():
             avail = round(page_cut - next_beat(u2['at']) - 0.1, 2)
             u2['clip']['expected'] = min(u2['clip']['expected'], avail)
             if u2['id'] in TRIMS:   # clips reviewed (frame sampling): play the cleanest stretch, cut only at morphing
-                clean, note = TRIMS[u2['id']]
+                clean, note, *src = TRIMS[u2['id']]
+                if src: u2['clip']['src'] = src[0]   # regenerated clip (cleaner than v1)
                 out = round(min(clean, avail, 6.0), 2)
                 u2['clip'].update({'in': 0.0, 'out': out})
                 why = [note] if note else []
