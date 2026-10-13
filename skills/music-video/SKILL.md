@@ -260,3 +260,51 @@ and QA: `docs/MUSIC_MODE.md` → "Comic mode". The steps for a full song:
    that leaves before its line is sung or overlaps the next caption, a song/Short cut point mid-word, end
    card text outside the title-safe area. Boxes are tested against the panel's real (slanted/tilted) clip path and
    rendered at their peak frame pixel by pixel; the renderer auto-fits (move inward, then shrink). Pick Short start/end in word gaps (timeline `words`).
+
+### Dramatic story workflow (v3+; worked example: `shots/neon-dojo-comic/v3/`)
+
+Every comic video should level up beyond Kingdom Come: real story, real hits. Example files:
+`make_v3.py` (the beat sheet as data; writes `plan.md`, `prompts.json`, `motion.txt`), `generate_jobs.json`
+(one image job per new panel with its reference images). Art is not committed.
+
+1. **Story first.** Write the full story beat by beat, synced to the lyrics and sections from
+   `timeline.json`, before making a single panel. Three acts:
+   - **Act 1, early days:** a montage of Uno and Aura learning to pair up under the Sensei. They clash,
+     fail (a botched tag) and train, until the tag finally clicks.
+   - **Act 2, tournament:** rivals with real stakes. A loss: one hero goes down and Uno carries Aura out.
+   - **Act 3, final boss:** a blade lock, the tag-team combo, both super cut-ins, a kid-safe double finisher
+     (armour bursts into sparkles), and a resolution (Sensei, belt, sunrise).
+
+   Every page has a **need** line saying what the heroes want or are losing. No page without stakes.
+2. **Art direction.** Dramatic, iconic panels; heroes mid-strike, never posing.
+   - Cut each fight on the beat as wind-up → strike → impact → reaction.
+   - Use extreme angles (worm's-eye, Dutch, top-down, extreme close-up), impact flashes, speed lines,
+     screen shake and big SFX lettering.
+   - No static standoffs.
+3. **Image references.**
+   - **Pick references by act.** A reference image that shows the boss leaks the boss into scenes he isn't
+     in, so use the Uno/Aura/Sensei sheet for the early acts. Pass only the characters actually in the
+     panel (see `generate_jobs.json`).
+   - **Spell out every character description in every prompt:** Uno has a round smooth chrome dome, a purple
+     fur coat and a gold "1" chain. Aura has a grey robot face, red eyes, dark crimson hair, a modest crimson
+     bodysuit and cyan magic. All robots are chrome with red eyes and headphone ears.
+   - **Review every panel and regenerate on any of:**
+     - a human, or Aura with human skin;
+     - an off-model character;
+     - a duplicated character or extra limbs;
+     - an immodest outfit;
+     - low energy or a static pose;
+     - text beyond tiny signage.
+4. **Grok Imagine.**
+   - One clear, fast action per motion prompt (a strike is fine), at 480p and 6 s.
+   - Locked or gentle camera; nobody walks toward the camera; no morphing.
+   - Review at 8 fps (contact strip plus frame-step spikes). Trim each clip before morphing starts, keep
+     3.5–6 s, end before the page turn, and record the reason in a `trimNote`. Regenerate clips that break
+     early.
+5. **QA gates (`comic_qa.py`, must PASS before rendering):**
+   - **Layouts:** no repeats on consecutive pages, and enough variety.
+   - **No clipping:** caption and SFX outlines (at their peak, with rotation) must sit inside the panel's
+     real clip path and the safe area, and a pixel-level check of each panel's lettering must pass.
+   - **End card:** present, and its text fits the title-safe area.
+   - **Lyric timing:** captions stay up until the line is sung and never overlap; no audio cut lands
+     mid-word.

@@ -1,0 +1,219 @@
+[
+ {
+  "id": "v02",
+  "aspect": "16:9",
+  "prompt": "Worm's-eye view: the old robot sensei standing in a leaking wooden dojo at night, pointing his cane at an empty golden belt hook on the wall, rain dripping through the roof, lantern glow. Sensei (elderly chrome robot, grey robe, white cable beard, cane). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta and cyan, 16:9, no text.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/32deb144969b27217675600387ab8958db2895183b7f4f98fa438ae0c9ba3cb6.jpg"
+  ],
+  "out": "/workspace/neon-dojo-comic/v3/panels/v02.jpg"
+ },
+ {
+  "id": "v03",
+  "aspect": "16:9",
+  "prompt": "Dutch angle medium shot: Uno and Aura bumping shoulders mid-kata in the dojo, glaring at each other, sparks between their heads, Sensei facepalming behind. Uno (chrome robot, round smooth chrome head, red eyes, headphone ears, purple fur coat, gold \"1\" chain); Aura (robot, grey face, red eyes, headphone ears, dark crimson hair, modest crimson bodysuit, cyan magic); Sensei (elderly chrome robot, grey robe, white cable beard, cane). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta and cyan, 16:9, no text.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/28d7f65fc269920e161ba88fdd319e6eaa4157c12c0b5c822c31fe1a22b35d6a.jpg",
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/32deb144969b27217675600387ab8958db2895183b7f4f98fa438ae0c9ba3cb6.jpg"
+  ],
+  "out": "/workspace/neon-dojo-comic/v3/panels/v03.jpg"
+ },
+ {
+  "id": "v04",
+  "aspect": "16:9",
+  "prompt": "Extreme low side angle: Uno's punch and Aura's cyan magic blast colliding in a huge impact flash between them, both robots blown backward off their feet, dojo mats flying. Uno (chrome robot, round smooth chrome head, red eyes, headphone ears, purple fur coat, gold \"1\" chain); Aura (robot, grey face, red eyes, headphone ears, dark crimson hair, modest crimson bodysuit, cyan magic). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta and cyan, 16:9, no text.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/28d7f65fc269920e161ba88fdd319e6eaa4157c12c0b5c822c31fe1a22b35d6a.jpg"
+  ],
+  "out": "/workspace/neon-dojo-comic/v3/panels/v04.jpg"
+ },
+ {
+  "id": "v06",
+  "aspect": "16:9",
+  "prompt": "High angle overhead shot: Sensei looping a glowing cable around Uno's and Aura's wrists, both robots sulking, rain-soaked dojo floor reflecting lanterns. Uno (chrome robot, round smooth chrome head, red eyes, headphone ears, purple fur coat, gold \"1\" chain); Aura (robot, grey face, red eyes, headphone ears, dark crimson hair, modest crimson bodysuit, cyan magic); Sensei (elderly chrome robot, grey robe, white cable beard, cane). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta and cyan, 16:9, no text.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/28d7f65fc269920e161ba88fdd319e6eaa4157c12c0b5c822c31fe1a22b35d6a.jpg",
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/32deb144969b27217675600387ab8958db2895183b7f4f98fa438ae0c9ba3cb6.jpg"
+  ],
+  "out": "/workspace/neon-dojo-comic/v3/panels/v06.jpg"
+ },
+ {
+  "id": "v07",
+  "aspect": "16:9",
+  "prompt": "Extreme low wide shot: Uno and Aura, wrists still tied, spinning in sync and sweeping a training dummy off its base, circular speed lines, water spray. Uno (chrome robot, round smooth chrome head, red eyes, headphone ears, purple fur coat, gold \"1\" chain); Aura (robot, grey face, red eyes, headphone ears, dark crimson hair, modest crimson bodysuit, cyan magic). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta and cyan, 16:9, no text.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/28d7f65fc269920e161ba88fdd319e6eaa4157c12c0b5c822c31fe1a22b35d6a.jpg"
+  ],
+  "out": "/workspace/neon-dojo-comic/v3/panels/v07.jpg"
+ },
+ {
+  "id": "v08",
+  "aspect": "16:9",
+  "prompt": "Over-the-shoulder Dutch angle: Aura blocking a giant training mech's swinging arm with a cyan shield, reaching her free hand back toward Uno, sparks. Aura (robot, grey face, red eyes, headphone ears, dark crimson hair, modest crimson bodysuit, cyan magic); Uno (chrome robot, round smooth chrome head, red eyes, headphone ears, purple fur coat, gold \"1\" chain). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta and cyan, 16:9, no text.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/28d7f65fc269920e161ba88fdd319e6eaa4157c12c0b5c822c31fe1a22b35d6a.jpg"
+  ],
+  "out": "/workspace/neon-dojo-comic/v3/panels/v08.jpg"
+ },
+ {
+  "id": "v09",
+  "aspect": "16:9",
+  "prompt": "Extreme close-up: Uno's chrome hand slapping Aura's gloved hand in a tag, a starburst of cyan and purple sparks, speed lines. Uno (chrome robot, round smooth chrome head, red eyes, headphone ears, purple fur coat, gold \"1\" chain); Aura (robot, grey face, red eyes, headphone ears, dark crimson hair, modest crimson bodysuit, cyan magic). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta and cyan, 16:9, no text.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/28d7f65fc269920e161ba88fdd319e6eaa4157c12c0b5c822c31fe1a22b35d6a.jpg"
+  ],
+  "out": "/workspace/neon-dojo-comic/v3/panels/v09.jpg"
+ },
+ {
+  "id": "s10",
+  "aspect": "16:9",
+  "prompt": "Splash, worm's-eye view: Uno vaulting over Aura's shoulders, fist-first into the training mech which bursts into harmless bolts and confetti sparks, Sensei smiling in the background. Uno (chrome robot, round smooth chrome head, red eyes, headphone ears, purple fur coat, gold \"1\" chain); Aura (robot, grey face, red eyes, headphone ears, dark crimson hair, modest crimson bodysuit, cyan magic); Sensei (elderly chrome robot, grey robe, white cable beard, cane). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta and cyan, 16:9, no text.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/28d7f65fc269920e161ba88fdd319e6eaa4157c12c0b5c822c31fe1a22b35d6a.jpg",
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/32deb144969b27217675600387ab8958db2895183b7f4f98fa438ae0c9ba3cb6.jpg"
+  ],
+  "out": "/workspace/neon-dojo-comic/v3/panels/s10.jpg"
+ },
+ {
+  "id": "v12",
+  "aspect": "16:9",
+  "prompt": "Worm's-eye wide shot: tournament arena floor under crossing spotlights, rivals posing in a line: KAZE-9, RAIJIN, TEKKO and LOTUS, huge cheering robot crowd. KAZE-9 (lean ninja robot, red scarf, twin blades); RAIJIN (bulky boxer robot, lightning gauntlets); TEKKO (squat sumo robot, piston arms); LOTUS (long-legged crane-kick robot). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta and cyan, 16:9, no text.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/24ac53bc42441aee7ddf086a1ed730e18f5f9155c5e5dd28ddba6840f9e0423c.jpg",
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/525a9cb723f54bafe8f25c99d2bf1a8d2ea498ceb87ac9abbb898e73d14508a8.jpg",
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/7fd52039267455c0ef5b5d17a9cb8560d133e3a217feb21d6d980715d7e56cbf.jpg",
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/f530c92fec27bd661c7ce1f873b5fa584e039385a327bace699890ef5bc3c6b8.jpg"
+  ],
+  "out": "/workspace/neon-dojo-comic/v3/panels/v12.jpg"
+ },
+ {
+  "id": "v13",
+  "aspect": "16:9",
+  "prompt": "Extreme close-up, Dutch angle: KAZE-9's masked face and red scarf whipping in the wind, one blade pointed at the viewer, Aura's reflection in the steel. KAZE-9 (lean ninja robot, red scarf, twin blades); Aura (robot, grey face, red eyes, headphone ears, dark crimson hair, modest crimson bodysuit, cyan magic). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta and cyan, 16:9, no text.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/28d7f65fc269920e161ba88fdd319e6eaa4157c12c0b5c822c31fe1a22b35d6a.jpg",
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/f530c92fec27bd661c7ce1f873b5fa584e039385a327bace699890ef5bc3c6b8.jpg"
+  ],
+  "out": "/workspace/neon-dojo-comic/v3/panels/v13.jpg"
+ },
+ {
+  "id": "v14",
+  "aspect": "16:9",
+  "prompt": "Low Dutch angle: RAIJIN winding up a giant crackling lightning gauntlet, Uno raising his guard, ring ropes and flashbulbs. RAIJIN (bulky boxer robot, lightning gauntlets); Uno (chrome robot, round smooth chrome head, red eyes, headphone ears, purple fur coat, gold \"1\" chain). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta and cyan, 16:9, no text.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/28d7f65fc269920e161ba88fdd319e6eaa4157c12c0b5c822c31fe1a22b35d6a.jpg",
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/525a9cb723f54bafe8f25c99d2bf1a8d2ea498ceb87ac9abbb898e73d14508a8.jpg"
+  ],
+  "out": "/workspace/neon-dojo-comic/v3/panels/v14.jpg"
+ },
+ {
+  "id": "v16",
+  "aspect": "16:9",
+  "prompt": "Wide side angle: Aura's cyan wave pushing TEKKO off the edge of the ring, TEKKO tumbling harmlessly onto a pile of cushions, crowd jumping. Aura (robot, grey face, red eyes, headphone ears, dark crimson hair, modest crimson bodysuit, cyan magic); TEKKO (squat sumo robot, piston arms). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta and cyan, 16:9, no text.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/24ac53bc42441aee7ddf086a1ed730e18f5f9155c5e5dd28ddba6840f9e0423c.jpg",
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/28d7f65fc269920e161ba88fdd319e6eaa4157c12c0b5c822c31fe1a22b35d6a.jpg"
+  ],
+  "out": "/workspace/neon-dojo-comic/v3/panels/v16.jpg"
+ },
+ {
+  "id": "s17",
+  "aspect": "16:9",
+  "prompt": "Splash, worm's-eye view: LOTUS diving down with a crane kick against Aura's crossed cyan-glowing forearms, giant impact ring, cherry petals and spotlights. LOTUS (long-legged crane-kick robot); Aura (robot, grey face, red eyes, headphone ears, dark crimson hair, modest crimson bodysuit, cyan magic). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta and cyan, 16:9, no text.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/28d7f65fc269920e161ba88fdd319e6eaa4157c12c0b5c822c31fe1a22b35d6a.jpg",
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/7fd52039267455c0ef5b5d17a9cb8560d133e3a217feb21d6d980715d7e56cbf.jpg"
+  ],
+  "out": "/workspace/neon-dojo-comic/v3/panels/s17.jpg"
+ },
+ {
+  "id": "v18",
+  "aspect": "16:9",
+  "prompt": "Extreme close-up, Dutch angle: KAZE-9's twin blades grinding against Aura's cyan shield, sparks spraying, their red eyes locked. Aura (robot, grey face, red eyes, headphone ears, dark crimson hair, modest crimson bodysuit, cyan magic); KAZE-9 (lean ninja robot, red scarf, twin blades). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta and cyan, 16:9, no text.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/28d7f65fc269920e161ba88fdd319e6eaa4157c12c0b5c822c31fe1a22b35d6a.jpg",
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/f530c92fec27bd661c7ce1f873b5fa584e039385a327bace699890ef5bc3c6b8.jpg"
+  ],
+  "out": "/workspace/neon-dojo-comic/v3/panels/v18.jpg"
+ },
+ {
+  "id": "v19",
+  "aspect": "16:9",
+  "prompt": "High angle top-down: Aura falling flat onto the arena mat with an impact flash, KAZE-9 landing behind her in a crouch, red scarf trailing. Aura (robot, grey face, red eyes, headphone ears, dark crimson hair, modest crimson bodysuit, cyan magic); KAZE-9 (lean ninja robot, red scarf, twin blades). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta and cyan, 16:9, no text.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/28d7f65fc269920e161ba88fdd319e6eaa4157c12c0b5c822c31fe1a22b35d6a.jpg",
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/f530c92fec27bd661c7ce1f873b5fa584e039385a327bace699890ef5bc3c6b8.jpg"
+  ],
+  "out": "/workspace/neon-dojo-comic/v3/panels/v19.jpg"
+ },
+ {
+  "id": "v20",
+  "aspect": "16:9",
+  "prompt": "Low angle close shot, dim light: Uno kneeling over fallen Aura, one hand on her shoulder, her cyan magic flickering weakly, single spotlight, silent crowd in shadow. Uno (chrome robot, round smooth chrome head, red eyes, headphone ears, purple fur coat, gold \"1\" chain); Aura (robot, grey face, red eyes, headphone ears, dark crimson hair, modest crimson bodysuit, cyan magic). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta and cyan, 16:9, no text.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/28d7f65fc269920e161ba88fdd319e6eaa4157c12c0b5c822c31fe1a22b35d6a.jpg"
+  ],
+  "out": "/workspace/neon-dojo-comic/v3/panels/v20.jpg"
+ },
+ {
+  "id": "s21",
+  "aspect": "16:9",
+  "prompt": "Splash, wide side-on shot: Uno carrying Aura on his back across the arena, side-on, crowd parting, KAZE-9 in the background lowering his blades and bowing. Uno (chrome robot, round smooth chrome head, red eyes, headphone ears, purple fur coat, gold \"1\" chain); Aura (robot, grey face, red eyes, headphone ears, dark crimson hair, modest crimson bodysuit, cyan magic); KAZE-9 (lean ninja robot, red scarf, twin blades). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta and cyan, 16:9, no text.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/28d7f65fc269920e161ba88fdd319e6eaa4157c12c0b5c822c31fe1a22b35d6a.jpg",
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/f530c92fec27bd661c7ce1f873b5fa584e039385a327bace699890ef5bc3c6b8.jpg"
+  ],
+  "out": "/workspace/neon-dojo-comic/v3/panels/s21.jpg"
+ },
+ {
+  "id": "v22",
+  "aspect": "16:9",
+  "prompt": "Extreme worm's-eye view: SHOGUN rising from a throne of server racks, red katana igniting, glowing red smoke rolling down the steps. SHOGUN (red samurai robot, horned helmet, glowing red katana). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta and cyan, 16:9, no text.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/0284aa8eafe96aebecf0ee0edb9b36d3ed5995fce00285ed6693716e23056eac.jpg"
+  ],
+  "out": "/workspace/neon-dojo-comic/v3/panels/v22.jpg"
+ },
+ {
+  "id": "v25",
+  "aspect": "16:9",
+  "prompt": "Dutch angle mid-air shot: Aura diving in over the arena, cyan aura blazing, slapping Uno's outstretched hand mid-air, starburst of sparks. Aura (robot, grey face, red eyes, headphone ears, dark crimson hair, modest crimson bodysuit, cyan magic); Uno (chrome robot, round smooth chrome head, red eyes, headphone ears, purple fur coat, gold \"1\" chain). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta and cyan, 16:9, no text.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/28d7f65fc269920e161ba88fdd319e6eaa4157c12c0b5c822c31fe1a22b35d6a.jpg"
+  ],
+  "out": "/workspace/neon-dojo-comic/v3/panels/v25.jpg"
+ },
+ {
+  "id": "v26",
+  "aspect": "16:9",
+  "prompt": "Worm's-eye wide shot: Uno's rising kick launching SHOGUN into the air while Aura's cyan beam hits him from the side, double impact flash, speed lines. Uno (chrome robot, round smooth chrome head, red eyes, headphone ears, purple fur coat, gold \"1\" chain); Aura (robot, grey face, red eyes, headphone ears, dark crimson hair, modest crimson bodysuit, cyan magic); SHOGUN (red samurai robot, horned helmet, glowing red katana). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta and cyan, 16:9, no text.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/0284aa8eafe96aebecf0ee0edb9b36d3ed5995fce00285ed6693716e23056eac.jpg",
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/28d7f65fc269920e161ba88fdd319e6eaa4157c12c0b5c822c31fe1a22b35d6a.jpg"
+  ],
+  "out": "/workspace/neon-dojo-comic/v3/panels/v26.jpg"
+ },
+ {
+  "id": "s30",
+  "aspect": "16:9",
+  "prompt": "Splash, centred low angle: Uno's glowing punch and Aura's cyan orb hitting SHOGUN together, his red armour bursting apart into harmless sparkles and stars, a small plain robot left dizzy inside. Uno (chrome robot, round smooth chrome head, red eyes, headphone ears, purple fur coat, gold \"1\" chain); Aura (robot, grey face, red eyes, headphone ears, dark crimson hair, modest crimson bodysuit, cyan magic); SHOGUN (red samurai robot, horned helmet, glowing red katana). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta and cyan, 16:9, no text.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/0284aa8eafe96aebecf0ee0edb9b36d3ed5995fce00285ed6693716e23056eac.jpg",
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/28d7f65fc269920e161ba88fdd319e6eaa4157c12c0b5c822c31fe1a22b35d6a.jpg"
+  ],
+  "out": "/workspace/neon-dojo-comic/v3/panels/s30.jpg"
+ },
+ {
+  "id": "v31",
+  "aspect": "16:9",
+  "prompt": "High angle wide shot in the repaired dojo: Uno and Aura presenting the golden belt to the smiling Sensei in the repaired sunny dojo, small un-armoured SHOGUN, KAZE-9 and RAIJIN bowing. Uno (chrome robot, round smooth chrome head, red eyes, headphone ears, purple fur coat, gold \"1\" chain); Aura (robot, grey face, red eyes, headphone ears, dark crimson hair, modest crimson bodysuit, cyan magic); Sensei (elderly chrome robot, grey robe, white cable beard, cane); KAZE-9 (lean ninja robot, red scarf, twin blades); RAIJIN (bulky boxer robot, lightning gauntlets). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta and cyan, 16:9, no text.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/0284aa8eafe96aebecf0ee0edb9b36d3ed5995fce00285ed6693716e23056eac.jpg",
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/28d7f65fc269920e161ba88fdd319e6eaa4157c12c0b5c822c31fe1a22b35d6a.jpg",
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/32deb144969b27217675600387ab8958db2895183b7f4f98fa438ae0c9ba3cb6.jpg",
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/525a9cb723f54bafe8f25c99d2bf1a8d2ea498ceb87ac9abbb898e73d14508a8.jpg",
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/f530c92fec27bd661c7ce1f873b5fa584e039385a327bace699890ef5bc3c6b8.jpg"
+  ],
+  "out": "/workspace/neon-dojo-comic/v3/panels/v31.jpg"
+ }
+]
