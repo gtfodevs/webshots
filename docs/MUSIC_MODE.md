@@ -445,7 +445,7 @@ Files: `scripts/comic_lib.py` (layouts, registration, texture, lettering, frame 
 `shots/neon-dojo-comic/neon-dojo-comic.comic.json`.
 
 ```bash
-npm run comic -- neon-dojo-comic [--out /path/to/out] [--only landscape|vertical]
+npm run comic -- neon-dojo-comic [--out /path/to/out] [--only landscape|vertical] [--short full|cut]   # cut = spec.short {start,end}
 npm run check -- neon-dojo-comic      # comic QA (no stage needed)
 ```
 
@@ -485,7 +485,7 @@ two-pass loudnorm to `song.loudness` (-14 LUFS, TP -1.5).
    Pick the best **1.5–2.5 s** (`in`/`out`, hard max 3 s). If no window is clean, leave the panel static.
    **Hold rule (Jason):** a clip starts almost immediately after its panel lands: hold the still for at most
    one beat (~0.3–0.5 s), then the motion plays. Leave `clip.at` out and the renderer starts the clip
-   `defaults.holdBeats` (default 1) beats after the landing; QA fails if clip start − panel land > 0.6 s.
+   `defaults.holdBeats` (default 1) beats after the landing; QA fails if clip start − panel land > 0.6 s or < 0.25 s (keep the anticipation beat).
    **Every panel is a different scene:** vary the location, camera angle and moment for each panel; never
    reuse a composition. Keep it playful and kid-friendly with small humour beats.
 5. **Spec** (`shots/<name>/<name>.comic.json`); all `at` values are song seconds on the beat grid:
@@ -534,7 +534,7 @@ two-pass loudnorm to `song.loudness` (-14 LUFS, TP -1.5).
 ### Comic QA (`scripts/comic_qa.py`, part of `npm run check`)
 
 - clip `in`/`out` inside the source duration, `out > in`, length ≤ 3 s;
-- clip start − panel land ≤ 0.6 s (one-beat hold);
+- 0.25 s ≤ clip start − panel land ≤ 0.6 s (the one-beat anticipation hold);
 - every panel a different scene: fails on two panels with near-identical prompts (content-word Jaccard
   ≥ 0.6 on `scene`/`prompt`), the same `location` + `camera` pair, or near-identical images
   (64-bit DCT pHash, Hamming ≤ 10; a splash reusing its own panel art is allowed);

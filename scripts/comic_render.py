@@ -14,8 +14,8 @@ import comic_lib as C
 from PIL import Image, ImageDraw
 
 
-def master_audio(spec, wav):
-    s = spec['song']
+def master_audio(spec, wav, t0=None, t1=None):
+    s = dict(spec['song'], **({'start': t0, 'end': t1} if t0 is not None else {}))
     src = C.resolve(spec, s['audio'])
     dur = s['end'] - s['start']
     lufs = s.get('loudness', -14)
@@ -36,7 +36,7 @@ def measure_lufs(path):
     return float(tail.split('I:')[1].split('LUFS')[0])
 
 
-def render(spec, orient, out_path, wav, sheet_path=None):
+def render(spec, orient, out_path, wav, sheet_path=None, t0=None, t1=None):
     """Renders every page of the spec back to back into one MP4 (single-page specs are one page)."""
     W, H = C.SIZES[orient]
     fps = spec.get('fps', 30)
@@ -44,10 +44,13 @@ def render(spec, orient, out_path, wav, sheet_path=None):
                             '-r', str(fps), '-i', '-', '-i', wav, '-map', '0:v', '-map', '1:a',
                             '-c:v', 'libx264', '-preset', 'slow', '-crf', '17', '-pix_fmt', 'yuv420p', '-movflags', '+faststart',
                             '-c:a', 'aac', '-b:a', '256k', '-shortest', out_path], stdin=subprocess.PIPE)
-    t_song0 = spec['song']['start']
+    t_song0 = spec['song']['start'] if t0 is None else t0
+    t_song1 = spec['song']['end'] if t1 is None else t1
     written = 0
     shots = []
     for sub in C.subspecs(spec):
+        if sub['song']['end'] <= t_song0 + 1e-3 or sub['song']['start'] >= t_song1 - 1e-3:
+            continue
         sc = C.Scene(sub, orient)
         # contact sheet moments: each panel landing, each clip mid/freeze, transition
         marks = {}
@@ -61,7 +64,7 @@ def render(spec, orient, out_path, wav, sheet_path=None):
         if tr:
             marks[C.T(sub, tr['at']) - tr['dur'] / 2] = 'zoom into ' + tr['panel']
         # frames are counted on the global clock so pages butt together without drift
-        end_frame = int(round((sub['song']['end'] - t_song0) * fps))
+        end_frame = int(round((min(sub['song']['end'], t_song1) - t_song0) * fps))
         keep = {}
         for t, lbl in marks.items():
             keep[int(round((sub['song']['start'] - t_song0 + t) * fps))] = lbl
@@ -95,6 +98,8 @@ def main():
     ap.add_argument('spec')
     ap.add_argument('--out', default='/workspace/comic-experiment/out')
     ap.add_argument('--only', choices=['landscape', 'vertical'])
+    ap.add_argument('--short', choices=['full', 'cut'], default='cut',
+                    help='vertical: "cut" uses spec.short {start,end} when present (a ~45 s Short), "full" renders the whole spec')
     a = ap.parse_args()
     spec = C.load_spec(a.spec)
     if spec.get('draft'):
@@ -111,7 +116,13 @@ def main():
             results['landscape'] = out; results['sheet'] = sheet
         if a.only != 'landscape':
             out = C.next_free(os.path.join(a.out, f"{spec.get('outName', 'comic-scene')}-short.mp4"))
-            render(spec, 'vertical', out, wav)
+            cut = spec.get('short') if a.short == 'cut' else None
+            if cut:
+                wav2 = os.path.join(td, 'short.wav')
+                master_audio(spec, wav2, cut['start'], cut['end'])
+                render(spec, 'vertical', out, wav2, None, cut['start'], cut['end'])
+            else:
+                render(spec, 'vertical', out, wav)
             results['vertical'] = out
     for k, p in results.items():
         extra = f'  {measure_lufs(p):.1f} LUFS' if p.endswith('.mp4') else ''

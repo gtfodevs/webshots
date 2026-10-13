@@ -23,5 +23,5 @@ def write(spec, rows, B):
         L.append(f"- Refs: {', '.join(u['refs'])}")
         L.append(f"- Image prompt: {u['prompt']}")
         L.append(f"- Motion prompt: {u['motionPrompt']}")
-        L.append(f"- Expected trim: {u['clip']['expected']} s\n")
+        L.append(f"- Trim: {u['clip']['in']:.1f}-{u['clip']['out']:.1f} s\n" if u.get('clip') else "- Trim: static (clip rejected - regenerate)\n")
     open('/workspace/kingdom-come-comic/plan.md', 'w').write('\n'.join(L))

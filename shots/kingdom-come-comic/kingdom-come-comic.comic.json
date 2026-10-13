@@ -1,6 +1,6 @@
 {
- "title": "Kingdom Come - comic mode, full song (DRAFT plan; art not generated yet)",
- "draft": true,
+ "title": "Kingdom Come - comic mode, full song",
+ "outName": "kingdom-come-comic",
  "assetsDir": "/workspace/kingdom-come-comic",
  "fps": 30,
  "defaults": {
@@ -8,12 +8,17 @@
  },
  "song": {
   "suno": "7bf4887f-eec0-4614-a285-5557aa4382d5",
-  "audio": "channels/progressiveslop/songs/7bf4887f-eec0-4614-a285-5557aa4382d5/song.m4a",
-  "audioNote": "not committed; copy from the channel folder (same file as shots/kingdom-come-v4/stage/assets/song.m4a)",
+  "audio": "audio/song.m4a",
+  "audioNote": "relative to assetsDir; not committed. Copy channels/progressiveslop/songs/7bf4887f-eec0-4614-a285-5557aa4382d5/song.m4a there",
   "timeline": "shots/kingdom-come-16bit/stage/timeline.json",
   "start": 0.0,
   "end": 170.816,
   "loudness": -14
+ },
+ "short": {
+  "start": 99.033,
+  "end": 144.869,
+  "note": "chorus 4 (dragon lair) -> boss verse -> chorus 5 ballroom -> outro conga, ~46 s"
  },
  "cast": {
   "uno": "Uno: chrome robot hero, smooth round chrome head with no face plate seams, glowing red eyes, round chrome headphone ears, long purple fur coat, gold chain with a big gold number-one pendant",
@@ -54,9 +59,8 @@
      "motionPrompt": "Animate this comic panel. Uno and aura stride toward the gate, the little guard wobbles from his salute. Subtle secondary motion: banners ripple, glints run along the spires. Camera: slow push-in. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
      "clip": {
       "src": "clips/p01.mp4",
-      "in": null,
-      "out": null,
-      "expected": 2.0
+      "in": 0.0,
+      "out": 1.5
      },
      "lyric": "KINGDOM COME, KINGDOM COME",
      "captions": [
@@ -85,9 +89,8 @@
      "motionPrompt": "Animate this comic panel. Uno brings both mallets down on the drum, a ring of cyan light pulses out. Subtle secondary motion: coat fur ruffles, clouds drift. Camera: locked off. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
      "clip": {
       "src": "clips/p02.mp4",
-      "in": null,
-      "out": null,
-      "expected": 1.8
+      "in": 0.0,
+      "out": 2.0
      },
      "lyric": "HEAR THE PULSE OF MY DRUM / RIGHTEOUS FIRE IN MY SOUL",
      "captions": [
@@ -147,9 +150,8 @@
     "motionPrompt": "Animate this comic panel. The cyan spiral sweeps around the crest and the crack seals with a flash. Subtle secondary motion: confetti falls, crowd arms wave. Camera: slow pull-back. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
     "clip": {
      "src": "clips/s03.mp4",
-     "in": null,
-     "out": null,
-     "expected": 2.2
+     "in": 0.0,
+     "out": 2.0
     },
     "lyric": "GONNA MAKE THE BROKEN WHOLE",
     "captions": [
@@ -202,9 +204,8 @@
      "motionPrompt": "Animate this comic panel. The map unrolls and a glowing path lights up across it. Subtle secondary motion: books flap overhead, candle flames flicker. Camera: locked off. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
      "clip": {
       "src": "clips/p04.mp4",
-      "in": null,
-      "out": null,
-      "expected": 2.0
+      "in": 0.0,
+      "out": 2.0
      },
      "lyric": "KINGDOM COME, KINGDOM COME / HEAR THE PULSE OF MY DRUM",
      "captions": [
@@ -239,9 +240,8 @@
      "motionPrompt": "Animate this comic panel. The orbs arc up and one drops onto the jester's head. Subtle secondary motion: hat bells jingle, dust motes. Camera: locked off. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
      "clip": {
       "src": "clips/p05.mp4",
-      "in": null,
-      "out": null,
-      "expected": 1.6
+      "in": 0.0,
+      "out": 2.0
      },
      "lyric": "RIGHTEOUS FIRE IN MY SOUL",
      "captions": [
@@ -296,9 +296,8 @@
      "motionPrompt": "Animate this comic panel. A smoke ring floats up from the snoring dragon while the heroes tiptoe. Subtle secondary motion: clouds drift below, dragon belly rises and falls. Camera: slow pan right. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
      "clip": {
       "src": "clips/p06.mp4",
-      "in": null,
-      "out": null,
-      "expected": 2.2
+      "in": 0.0,
+      "out": 2.0
      },
      "lyric": "FROM THE SHADOWED PEAKS WHERE DRAGONS SLEEP, I ROAM",
      "captions": [
@@ -344,9 +343,8 @@
      "motionPrompt": "Animate this comic panel. Uno lifts the sword and a gleam runs down the blade. Subtle secondary motion: fireflies swirl, mushroom glow pulses. Camera: locked off. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
      "clip": {
       "src": "clips/p07.mp4",
-      "in": null,
-      "out": null,
-      "expected": 1.8
+      "in": 0.0,
+      "out": 2.0
      },
      "lyric": "THROUGH ANCIENT FORESTS, MAKING EVIL FLEE MY HOME / WITH ENCHANTED BLADE AND COURAGE BRIGHT, I STAND",
      "captions": [
@@ -404,9 +402,8 @@
     "motionPrompt": "Animate this comic panel. Thorns bounce off the shield in sparks, the little rabbits peek out. Subtle secondary motion: mist curls, flower petals flutter. Camera: slow push-in. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
     "clip": {
      "src": "clips/s08.mp4",
-     "in": null,
-     "out": null,
-     "expected": 2.0
+     "in": 0.0,
+     "out": 2.0
     },
     "lyric": "A SHIELD FOR THE WEAK, ACROSS THIS MYSTIC LAND",
     "captions": [
@@ -459,9 +456,8 @@
      "motionPrompt": "Animate this comic panel. The ring of dancers circles and aura spins under uno's arm. Subtle secondary motion: balloons rise, lights twinkle. Camera: slow rotate. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
      "clip": {
       "src": "clips/p09.mp4",
-      "in": null,
-      "out": null,
-      "expected": 2.0
+      "in": 0.0,
+      "out": 2.0
      },
      "lyric": "KINGDOM COME, KINGDOM COME / FEEL THE THRUM OF MY DRUM",
      "captions": [
@@ -498,9 +494,8 @@
      "motionPrompt": "Animate this comic panel. The puppies arc through the air in the juggle while the wolf pup spins after its tail. Subtle secondary motion: popcorn pops, bunting sways. Camera: locked off. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
      "clip": {
       "src": "clips/p10.mp4",
-      "in": null,
-      "out": null,
-      "expected": 2.0
+      "in": 0.0,
+      "out": 2.0
      },
      "lyric": "RIGHTEOUS FIRE IN MY SOUL / GONNA HELP THE BROKEN WHOLE",
      "captions": [
@@ -561,9 +556,8 @@
      "motionPrompt": "Animate this comic panel. The wolves leap forward, the front wolf spins after its tail. Subtle secondary motion: fog rolls, leaves blow. Camera: locked off. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
      "clip": {
       "src": "clips/p11.mp4",
-      "in": null,
-      "out": null,
-      "expected": 2.0
+      "in": 0.0,
+      "out": 2.0
      },
      "lyric": "GONNA HELP THE BROKEN WHOLE / BEASTS OF NIGHTMARE, MAGIC DARK, THEY FALL BEFORE MY MIGHT",
      "captions": [
@@ -615,9 +609,8 @@
      "motionPrompt": "Animate this comic panel. The spider wriggles in its web as the cyan orb brightens. Subtle secondary motion: web strands sway, crystals sparkle. Camera: slow push-in. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
      "clip": {
       "src": "clips/p12.mp4",
-      "in": null,
-      "out": null,
-      "expected": 1.8
+      "in": 0.0,
+      "out": 2.0
      },
      "lyric": "EVERY STEP A LEGEND, BLAZING THROUGH THE NIGHT / FOR THE INNOCENT, I FIGHT, WITH A WARRIOR'S GRACE",
      "captions": [
@@ -677,9 +670,8 @@
     "motionPrompt": "Animate this comic panel. The heroes step into the light and the spiders scurry off. Subtle secondary motion: sun rays flicker, dust glitters. Camera: slow push-in. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
     "clip": {
      "src": "clips/s13.mp4",
-     "in": null,
-     "out": null,
-     "expected": 2.2
+     "in": 0.0,
+     "out": 2.0
     },
     "lyric": "BRINGING DAWN TO DARKNESS, LEAVING NO TRACE",
     "captions": [
@@ -715,9 +707,8 @@
      "motionPrompt": "Animate this comic panel. The bat swarm swirls out of the tower top. Subtle secondary motion: moon glow pulses, grass sways. Camera: slow tilt up. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
      "clip": {
       "src": "clips/p14.mp4",
-      "in": null,
-      "out": null,
-      "expected": 2.0
+      "in": 0.0,
+      "out": 2.0
      },
      "lyric": "KINGDOM COME, KINGDOM COME",
      "captions": [
@@ -745,9 +736,8 @@
      "motionPrompt": "Animate this comic panel. The bats bob their heads to the beat and the sleepy one slips. Subtle secondary motion: lantern sways, dust drifts. Camera: locked off. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
      "clip": {
       "src": "clips/p15.mp4",
-      "in": null,
-      "out": null,
-      "expected": 1.8
+      "in": 0.0,
+      "out": 2.0
      },
      "lyric": "HEAR THE BEAT OF MY DRUM",
      "captions": [
@@ -794,9 +784,8 @@
      "motionPrompt": "Animate this comic panel. The cyan flame races up the spiral lighting each lantern. Subtle secondary motion: bats loop, sparks drift. Camera: slow tilt up. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
      "clip": {
       "src": "clips/p16.mp4",
-      "in": null,
-      "out": null,
-      "expected": 2.0
+      "in": 0.0,
+      "out": 2.0
      },
      "lyric": "HOLY FIRE IN MY BONES / GONNA MAKE THE BROKEN WHOLE",
      "captions": [
@@ -860,9 +849,8 @@
      "motionPrompt": "Animate this comic panel. The column marches forward and the last knight stumbles. Subtle secondary motion: storm clouds roll, dust kicks up. Camera: slow push forward. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
      "clip": {
       "src": "clips/p17.mp4",
-      "in": null,
-      "out": null,
-      "expected": 2.0
+      "in": 0.0,
+      "out": 2.0
      },
      "lyric": "ACROSS THE PLAINS OF PERIL, WHERE THE WICKED PLOTS RESIDE",
      "captions": [
@@ -890,9 +878,8 @@
      "motionPrompt": "Animate this comic panel. Aura draws the light-bow and the arrow flares. Subtle secondary motion: crimson-streaked hair blows. Camera: locked off. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
      "clip": {
       "src": "clips/p18.mp4",
-      "in": null,
-      "out": null,
-      "expected": 1.6
+      "in": 0.0,
+      "out": 2.0
      },
      "lyric": "MY SPIRIT'S AN ARROW, PIERCING THROUGH THEIR PRIDE / WITH SPELLS UNBOUND, AND ANCIENT OATHS I KEEP",
      "captions": [
@@ -952,9 +939,8 @@
     "motionPrompt": "Animate this comic panel. The knights topple one after another like dominoes. Subtle secondary motion: shields bounce, dust puffs. Camera: slow pan left. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
     "clip": {
      "src": "clips/s19.mp4",
-     "in": null,
-     "out": null,
-     "expected": 2.4
+     "in": 0.0,
+     "out": 2.0
     },
     "lyric": "THE REALM'S PROTECTOR, WHILE THE FEARFUL SLEEP",
     "captions": [
@@ -1008,9 +994,8 @@
      "motionPrompt": "Animate this comic panel. The dragon opens one eye and lifts its head. Subtle secondary motion: coins slide, lava glows. Camera: slow push-in. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
      "clip": {
       "src": "clips/p20.mp4",
-      "in": null,
-      "out": null,
-      "expected": 2.0
+      "in": 0.0,
+      "out": 2.0
      },
      "lyric": "KINGDOM COME, KINGDOM COME",
      "captions": [
@@ -1039,9 +1024,8 @@
      "motionPrompt": "Animate this comic panel. The dragon sneezes and sparks spray, the jester blinks. Subtle secondary motion: smoke curls from the hat. Camera: locked off. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
      "clip": {
       "src": "clips/p21.mp4",
-      "in": null,
-      "out": null,
-      "expected": 1.6
+      "in": 0.0,
+      "out": 2.0
      },
      "lyric": "HEAR THE BEAT OF MY DRUM / RIGHTEOUS FIRE IN MY SOUL",
      "captions": [
@@ -1099,12 +1083,6 @@
      "aura"
     ],
     "motionPrompt": "Animate this comic panel. The dragon beats its wings and banks toward the castle. Subtle secondary motion: clouds whip past, coat flutters. Camera: tracking alongside. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
-    "clip": {
-     "src": "clips/s22.mp4",
-     "in": null,
-     "out": null,
-     "expected": 2.2
-    },
     "lyric": "GONNA MAKE THE SHATTERED WHOLE",
     "captions": [
      {
@@ -1114,6 +1092,7 @@
       "lyric": true
      }
     ],
+    "staticNote": "clip rejected in review - regenerate",
     "sfx": [
      {
       "text": "WHOOSH!",
@@ -1155,9 +1134,8 @@
      "motionPrompt": "Animate this comic panel. The heroes step through the arch toward the glow. Subtle secondary motion: vines sway, floating rocks bob. Camera: slow push-in. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
      "clip": {
       "src": "clips/p23.mp4",
-      "in": null,
-      "out": null,
-      "expected": 2.0
+      "in": 0.0,
+      "out": 2.0
      },
      "lyric": "GONNA MAKE THE SHATTERED WHOLE / FROM FORGOTTEN RUINS TO THE WIZARD'S CURSED LAIR",
      "captions": [
@@ -1191,9 +1169,8 @@
      "motionPrompt": "Animate this comic panel. The sorcerer taps the cage and the notes flutter. Subtle secondary motion: banners ripple, purple orb glows. Camera: slow push-in. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
      "clip": {
       "src": "clips/p24.mp4",
-      "in": null,
-      "out": null,
-      "expected": 1.8
+      "in": 0.0,
+      "out": 1.8
      },
      "lyric": "I FACE THE UNKNOWN, WITHOUT A SINGLE FEAR",
      "captions": [
@@ -1224,9 +1201,8 @@
      "motionPrompt": "Animate this comic panel. Purple lightning hits the cyan shield and splashes off. Subtle secondary motion: floor cracks spark, cape billows. Camera: locked off. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
      "clip": {
       "src": "clips/p25.mp4",
-      "in": null,
-      "out": null,
-      "expected": 2.0
+      "in": 0.0,
+      "out": 2.0
      },
      "lyric": "A BEACON OF JUSTICE, AGAINST THE CREEPING DREAD",
      "captions": [
@@ -1283,9 +1259,8 @@
     "motionPrompt": "Animate this comic panel. The cage bursts and the notes fly out. Subtle secondary motion: the sorcerer tumbles, sparkles fall. Camera: slow push-in. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
     "clip": {
      "src": "clips/s26.mp4",
-     "in": null,
-     "out": null,
-     "expected": 2.0
+     "in": 0.0,
+     "out": 2.0
     },
     "lyric": "RESTORING BALANCE, UNTIL ALL EVIL'S BLED",
     "captions": [
@@ -1336,9 +1311,8 @@
      "motionPrompt": "Animate this comic panel. The chandelier spins and the crowd jumps on the beat. Subtle secondary motion: lasers sweep, notes swirl. Camera: slow rotate. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
      "clip": {
       "src": "clips/p27.mp4",
-      "in": null,
-      "out": null,
-      "expected": 2.0
+      "in": 0.0,
+      "out": 2.0
      },
      "lyric": "KINGDOM COME, KINGDOM COME",
      "captions": [
@@ -1369,9 +1343,8 @@
      "motionPrompt": "Animate this comic panel. The sorcerer does a stiff robot dance and the jester copies him. Subtle secondary motion: wolf wags, bat flaps. Camera: locked off. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
      "clip": {
       "src": "clips/p28.mp4",
-      "in": null,
-      "out": null,
-      "expected": 2.0
+      "in": 0.0,
+      "out": 2.0
      },
      "lyric": "HEAR THE BEAT OF MY DRUM",
      "captions": [
@@ -1418,9 +1391,8 @@
      "motionPrompt": "Animate this comic panel. Uno spins on his back and aura hits a pose. Subtle secondary motion: crowd claps, sparkles fall. Camera: slow push-in. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
      "clip": {
       "src": "clips/p29.mp4",
-      "in": null,
-      "out": null,
-      "expected": 2.2
+      "in": 0.0,
+      "out": 2.0
      },
      "lyric": "RIGHTEOUS FIRE IN MY SOUL",
      "captions": [
@@ -1480,9 +1452,8 @@
      "motionPrompt": "Animate this comic panel. The conga line bounces along step by step. Subtle secondary motion: banners sway, light beams shimmer. Camera: slow pan. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
      "clip": {
       "src": "clips/p30.mp4",
-      "in": null,
-      "out": null,
-      "expected": 2.0
+      "in": 0.0,
+      "out": 2.0
      },
      "lyric": "",
      "captions": [
@@ -1510,9 +1481,8 @@
      "motionPrompt": "Animate this comic panel. The wizard scratches a record and the dragon blows a heart-shaped smoke ring. Subtle secondary motion: beard sways, lights pulse. Camera: locked off. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
      "clip": {
       "src": "clips/p31.mp4",
-      "in": null,
-      "out": null,
-      "expected": 1.8
+      "in": 0.0,
+      "out": 2.0
      },
      "lyric": "",
      "captions": [],
@@ -1565,9 +1535,8 @@
     "motionPrompt": "Animate this comic panel. Everyone waves and the sun rises. Subtle secondary motion: banners ripple, bats circle. Camera: slow pull-back. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
     "clip": {
      "src": "clips/s32.mp4",
-     "in": null,
-     "out": null,
-     "expected": 2.4
+     "in": 0.0,
+     "out": 2.0
     },
     "lyric": "",
     "captions": [

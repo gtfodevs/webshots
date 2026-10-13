@@ -85,8 +85,8 @@ def check_page(sub, draft):
         land, start = u['at'], C.clip_start(sub, u)
         if start - land > C.MAX_HOLD + 1e-6:
             fail(f"{pid}/{u['id']}: clip starts {start - land:.2f}s after the panel lands (max {C.MAX_HOLD}s)")
-        elif start < land - 1e-6:
-            fail(f"{pid}/{u['id']}: clip starts before the panel lands")
+        elif start - land < C.MIN_HOLD - 1e-6:
+            fail(f"{pid}/{u['id']}: clip starts {start - land:.2f}s after landing - keep the anticipation beat (>= {C.MIN_HOLD}s)")
         if c.get('in') is None or c.get('out') is None:
             if not draft: fail(f"{pid}/{u['id']}: clip has no in/out")
             elif (c.get('expected') or 0) > 2.5: fail(f"{pid}/{u['id']}: expected trim {c['expected']}s > 2.5s")
@@ -218,7 +218,7 @@ def main(path):
         n0 = len(problems)
         check_page(sub, draft)
         if len(problems) == n0:
-            ok(f"{sub.get('page', 'page')}: {len(all_units(sub))} panels - clips, hold <= {C.MAX_HOLD}s, beats, text")
+            ok(f"{sub.get('page', 'page')}: {len(all_units(sub))} panels - clips, hold {C.MIN_HOLD}-{C.MAX_HOLD}s, beats, text")
     check_unique(spec, subs)
     out = os.path.join(C.ROOT, 'out', os.path.basename(os.path.dirname(spec['_path'])), 'qa')
     os.makedirs(out, exist_ok=True)

@@ -44,6 +44,7 @@ def T(spec, song_t):
     return song_t - spec['song']['start']
 
 DEFAULT_HOLD_BEATS = 1     # Jason's rule: static hold of ~one beat (0.3-0.5 s) before the clip plays
+MIN_HOLD = 0.25            # ...but keep the anticipation beat (Jason likes it)
 MAX_HOLD = 0.6             # QA fails if clip start - panel land > this
 
 

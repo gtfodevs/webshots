@@ -221,6 +221,9 @@ PAGES = [
      refs=['uno','aura','wizard','jester','knight','sorcerer','dragon','bat','crowd'], move='everyone waves and the sun rises', sec='banners ripple, bats circle', cam_m='slow pull-back', exp=2.4)),
  ]),
 ]
+# clip trims (in, out) picked from frame review; None = keep the panel static (clip broken)
+TRIMS = {i: (0.0, 2.0) for i in ['p02','s03','p04','p05','p06','p07','s08','p09','p10','p11','p12','s13','p14','p15','p16','p17','p18','s19','p20','p21','p23','p25','s26','p27','p28','p29','p30','p31','s32']}
+TRIMS.update(p01=(0.0, 1.5), p24=(0.0, 1.8), s22=None)
 NARR = {'p30': 'AND THE MUSIC CAME HOME.', 's32': 'KINGDOM COME.'}
 
 def build():
@@ -248,9 +251,11 @@ def build():
                  'location': f['loc'], 'camera': f['cam'], 'moment': f['moment'],
                  'scene': f"{f['shot']} of {f['action']}, {f['setting']}",
                  'prompt': prompt, 'refs': f['refs'], 'motionPrompt': motion,
-                 'clip': {'src': f'clips/{f["id"]}.mp4', 'in': None, 'out': None, 'expected': f['exp']},
+                 'clip': ({'src': f'clips/{f["id"]}.mp4', 'in': TRIMS[f['id']][0], 'out': TRIMS[f['id']][1]}
+                          if TRIMS.get(f['id']) else None),
                  'lyric': ' / '.join(s for _, s in lyr[:2]), 'captions': caps}
             if 'focus' in f: u['focus'] = f['focus']
+            if not u['clip']: u.pop('clip'); u['staticNote'] = 'clip rejected in review - regenerate'
             if 'sfx' in f:
                 txt, pos, rot, col = f['sfx']
                 u['sfx'] = [{'text': txt, 'at': round(next_beat(next_beat(land)), 3), 'pos': pos, 'rot': rot, 'size': 0.17 if slot != 'splash' else 0.2, 'color': col}]
@@ -265,12 +270,13 @@ def build():
             prompts.append({'id': f['id'], 'prompt': prompt, 'refs': f['refs']})
             rows.append((pid, slot, u, f, round(dur, 3) if slot == 'splash' else None))
         pages.append(pg)
-    spec = {'title': 'Kingdom Come - comic mode, full song (DRAFT plan; art not generated yet)', 'draft': True,
+    spec = {'title': 'Kingdom Come - comic mode, full song', 'outName': 'kingdom-come-comic',
             'assetsDir': '/workspace/kingdom-come-comic', 'fps': 30, 'defaults': {'holdBeats': 1},
             'song': {'suno': '7bf4887f-eec0-4614-a285-5557aa4382d5',
-                     'audio': 'channels/progressiveslop/songs/7bf4887f-eec0-4614-a285-5557aa4382d5/song.m4a',
-                     'audioNote': 'not committed; copy from the channel folder (same file as shots/kingdom-come-v4/stage/assets/song.m4a)',
+                     'audio': 'audio/song.m4a',
+                     'audioNote': 'relative to assetsDir; not committed. Copy channels/progressiveslop/songs/7bf4887f-eec0-4614-a285-5557aa4382d5/song.m4a there',
                      'timeline': 'shots/kingdom-come-16bit/stage/timeline.json', 'start': 0.0, 'end': END, 'loudness': -14},
+            'short': {'start': DB[56], 'end': DB[82], 'note': 'chorus 4 (dragon lair) -> boss verse -> chorus 5 ballroom -> outro conga, ~46 s'},
             'cast': CAST, 'styleTemplate': STYLE, 'motionTemplate': MOTION, 'pages': pages}
     return spec, prompts, rows
 
