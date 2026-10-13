@@ -1,0 +1,52 @@
+{
+  "title": "Neon Dojo - comic mode, scene 1 (pre-chorus into the punch)",
+  "assetsDir": "/workspace/comic-experiment",
+  "fps": 30,
+  "song": {
+    "suno": "ea6b85b9-efbb-40b4-83db-e9bb853f4122",
+    "audio": "shots/neon-dojo-fighter/stage/assets/song.m4a",
+    "timeline": "shots/neon-dojo-fighter/stage/timeline.json",
+    "start": 108.042,
+    "end": 122.137,
+    "loudness": -14,
+    "note": "pre-chorus (bars 63-71): 'Count it out' -> 'When it pops, it's already done'"
+  },
+  "panels": [
+    {
+      "id": "p1", "image": "panels/p1_standoff.jpg", "slot": "top-left", "at": 108.042,
+      "beatNote": "bar 63 downbeat - section start",
+      "clip": { "src": "clips/c1.mp4", "in": 0.0, "out": 2.0, "at": 109.738,
+                "why": "slow push-in, sword flares; after ~3 s SHOGUN's helmet morphs and Uno's face changes" },
+      "lyric": "(Woman) Count it out, one by one",
+      "captions": [
+        { "text": "NEO-TOKYO. ROOFTOP. MIDNIGHT.", "anchor": "tl", "at": 108.042 },
+        { "text": "COUNT IT OUT, ONE BY ONE", "anchor": "br", "at": 109.738, "lyric": true }
+      ],
+      "sfx": [ { "text": "SHIIING!", "at": 110.179, "pos": [0.52, 0.32], "rot": -8, "size": 0.17, "color": [255, 70, 60] } ]
+    },
+    {
+      "id": "p2", "image": "panels/p2_aura.jpg", "slot": "top-right", "at": 111.456,
+      "beatNote": "bar 65 downbeat",
+      "clip": { "src": "clips/c2.mp4", "in": 0.8, "out": 2.8, "at": 113.174,
+                "why": "orb flares and hair whips; face stays stable" },
+      "lyric": "(Woman) Little spark, then the run",
+      "captions": [ { "text": "LITTLE SPARK, THEN THE RUN", "anchor": "bl", "at": 113.174, "lyric": true } ],
+      "sfx": [ { "text": "VWOOM!", "at": 113.174, "pos": [0.74, 0.15], "rot": 7, "size": 0.17, "color": [90, 230, 255] } ]
+    },
+    {
+      "id": "p3", "image": "panels/p3_punch.jpg", "slot": "bottom", "at": 114.892, "focus": [0.55, 0.42],
+      "beatNote": "bar 67 downbeat - static on the page; it gets the splash",
+      "lyric": "(Woman) Say my name, then bite the tongue",
+      "captions": [ { "text": "SAY MY NAME, THEN BITE THE TONGUE", "anchor": "tl", "at": 116.587, "lyric": true } ]
+    }
+  ],
+  "transition": { "type": "zoom", "panel": "p3", "at": 118.306, "dur": 0.418, "beatNote": "lands on bar 69 downbeat" },
+  "splash": {
+    "image": "panels/p3_punch.jpg", "focus": [0.55, 0.45],
+    "clip": { "src": "clips/c3.mp4", "in": 0.0, "out": 1.5, "at": 120.001,
+              "why": "fist connects, yellow impact burst; after ~1.5 s a second fist/arm appears and SHOGUN's face melts into the purple burst" },
+    "lyric": "(Woman) When it pops, it's already done",
+    "captions": [ { "text": "WHEN IT POPS, IT'S ALREADY DONE", "anchor": "tl", "at": 119.583, "lyric": true } ],
+    "sfx": [ { "text": "KRAK-BOOM!", "at": 120.442, "pos": [0.62, 0.8], "rot": -7, "size": 0.2, "color": [255, 214, 0] } ]
+  }
+}

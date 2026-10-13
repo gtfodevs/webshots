@@ -430,3 +430,101 @@ First used by `shots/neon-dojo-fighter`. The game logic is a pure script, `stage
 **VS portraits + super cut-ins.** `shots/neon-dojo-fighter/portraits.py` keys and despills the busts (#00FF00, facing left) into `portrait-<c>.png` and scales the 16:9 cut-ins into `cutin-<c>.png`. `portrait()` contain-fits a bust into a slot and mirrors the left-side fighter. A fight's `super: [t, who]` holds the world still for `FIGHT.HOLD` (0.1 s), then shows a `FIGHT.CUTIN` (0.65 s) band of the cut-in art. Sparks, shake and the combo counter are suppressed during the band. QA checks that the portraits are non-empty with no green fringe, and that each cut-in appears at its cue, ends on time, and comes right before that fighter's special.
 
 **Background figures rule (all stages, default).** Every animated background figure (crowd robots, monks, spectators, anything that bobs or moves) is cut out *individually* and the stage is rebuilt on an *inpainted clean plate*. `build_assets.build_stage(key, src, cfg)` does this for every stage: `figure_boxes` (where figures stand), `static` (statues that must stay), `occluders` (railings drawn over the figures from the original art), `figure_layer`/`figure_speed`. It finds the figures, splits merged blobs, makes exclusive masks, inpaints the plate under them, and writes `stage-<key>-fig<i>.png` with `figures: [[x, y, w, h, phase]]` and `plate: true` in `stage-<key>.json`. The page draws each figure 1 px up on its beat (alternate figures alternate beats). Never bob a whole band. `fighter_qa.mjs` checks every stage json on every run: no band bobs, `plate: true`, a figures list, real masks (not rectangles), the plate under each figure no longer showing it, and no two masks overlapping. Channel setting: `style.json` → `stage_rules.figure_cutouts: "individual"`.
+
+## Comic mode (comic-book music video, not a game)
+
+A song becomes a sequence of comic **pages**. Panels land one at a time on beats, separated by
+paper gutters with black ink borders. Each panel holds as still art, then its short Grok Imagine
+clip plays *inside the frame*, then it freezes on the clip's last frame. A zoom into a panel
+(landing on a downbeat) hands over to a full-frame **splash** for the big hit. Paper grain and a
+light halftone sit over everything so 480p clips blend with the 720p+ art; lettering is Bangers
+(SIL OFL; `fc-match Bangers`, else downloaded to `~/.cache/webshots/fonts`).
+
+Files: `scripts/comic_lib.py` (layouts, registration, texture, lettering, frame builder),
+`scripts/comic_render.py` (MP4s + contact sheet), `scripts/comic_qa.py` (QA). Example scene:
+`shots/neon-dojo-comic/neon-dojo-comic.comic.json`.
+
+```bash
+npm run comic -- neon-dojo-comic [--out /path/to/out] [--only landscape|vertical]
+npm run check -- neon-dojo-comic      # comic QA (no stage needed)
+```
+
+Outputs never overwrite (`-v2`, `-v3` …): `comic-scene-1080p.mp4` (1920x1080), `comic-scene-short.mp4`
+(1080x1920; the same spec re-flows into three stacked 16:9 slots + a 1000x1120 splash),
+`comic-scene-sheet.png`. Audio is the spec's song section, 30 ms fade in / 0.6 s fade out,
+two-pass loudnorm to `song.loudness` (-14 LUFS, TP -1.5).
+
+### Full-song workflow
+
+1. **Timeline.** Use the song's `stage/timeline.json` (`scripts/analyze_music.py`: beats, downbeats,
+   sections, timed lyric lines). One comic scene = one section or 8–12 bars (~12–15 s); 3–4 panels per
+   page, the last one goes splash on the section's hit.
+2. **Panels** (image model, one fixed style prompt for the whole song, 16:9, **no text in the art**;
+   all lettering is added by the renderer so it stays sharp and editable). Style prompt template:
+
+   ```
+   {SHOT} of {CHARACTERS + ACTION}, {SETTING}. 1990s American superhero comic book panel,
+   bold black ink outlines, heavy spot blacks, cel-shaded flat colour with halftone dot shading,
+   dynamic foreshortening, speed lines, dramatic {LIGHT, e.g. neon magenta and cyan rim light},
+   early-90s comic energy, 16:9 panel, full bleed.
+   NO text, no lettering, no speech balloons, no sound effects, no logos, no signatures, no panel borders.
+   Characters: {CHARACTER SHEET LINES, identical every panel}.
+   ```
+   Keep `{CHARACTER SHEET LINES}` byte-identical across the song (costume, colours, helmet, props).
+3. **Clips**: Grok Imagine image-to-video from each panel, **480p, shortest duration (6 s)**. Small,
+   readable motion only; the camera mostly locked so the clip lines up with the panel. Motion prompt template:
+
+   ```
+   Animate this comic panel. {ONE ACTION, e.g. "the fist drives forward and the impact burst flares"}.
+   Subtle secondary motion: {hair / cape / rain / sparks / neon flicker}. Camera: locked off
+   (or a slow push-in). Keep the exact comic art style, ink lines and colours, keep faces and hands
+   unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.
+   ```
+4. **Review each clip** (`ffmpeg -i c.mp4 -vf "fps=2,scale=368:-1,tile=4x3" -frames:v 1 sheet.png`): the
+   first ~2 s are usually clean; later seconds tend to melt faces, sprout extra limbs, or re-frame.
+   Pick the best **1.5–2.5 s** (`in`/`out`, hard max 3 s). If no window is clean, leave the panel static.
+5. **Spec** (`shots/<name>/<name>.comic.json`); all `at` values are song seconds on the beat grid:
+
+   ```jsonc
+   {
+     "assetsDir": "/path/to/panels-and-clips",          // or env COMIC_ASSETS
+     "fps": 30,
+     "song": { "audio": "shots/x/stage/assets/song.m4a", "timeline": "shots/x/stage/timeline.json",
+               "start": 108.042, "end": 122.137, "loudness": -14 },
+     "panels": [{
+       "id": "p1", "image": "panels/p1.jpg", "slot": "top-left",   // top-left | top-right | bottom
+       "at": 108.042,                                               // beat the panel lands on
+       "focus": [0.5, 0.5],                                         // crop centre when the slot aspect differs
+       "clip": { "src": "clips/c1.mp4", "in": 0.0, "out": 2.0, "at": 109.738 },  // optional
+       "lyric": "(Woman) Count it out, one by one",
+       "captions": [ { "text": "COUNT IT OUT, ONE BY ONE", "anchor": "br", "at": 109.738, "lyric": true } ],
+       "sfx": [ { "text": "SHIIING!", "at": 110.179, "pos": [0.52, 0.32], "rot": -8, "size": 0.17, "color": [255,70,60] } ]
+     }],
+     "transition": { "type": "zoom", "panel": "p3", "at": 118.306, "dur": 0.418 },  // at = landing downbeat
+     "splash": { "image": "panels/p3.jpg", "clip": { … }, "captions": [ … ], "sfx": [ … ] }
+   }
+   ```
+   Lyric lines go in caption boxes (one per panel; an optional narration box like "NEO-TOKYO. MIDNIGHT."
+   on the opening panel). One SFX per panel at most, on the beat of the action.
+6. **Render + check**: `npm run check -- <name>`, then `npm run comic -- <name>`; look at the contact sheet.
+   For a whole song, render each scene and concatenate (each scene's audio is its own song slice, so cut
+   scenes edge to edge on the section boundaries).
+
+### How it renders (restraint rules)
+
+- Panel entrance: 0.14 s fade + 16 px drop. SFX: a 3-frame stamp (1.25x → 1x), then still. Static →
+  clip: 3-frame crossfade. One zoom per page. Nothing shakes, flashes or stacks.
+- Clip → panel alignment: Grok re-frames to 736x400, so each clip's first frame is registered onto its
+  panel (scale + offset search, NCC). The slot crop is kept inside the clip's coverage and the same crop
+  is used for still and clip, so the hand-off doesn't jump.
+- Clips: lanczos upscale + light unsharp (r 1.6, 55%), then halftone (45°, 7 px cell, dots grow in
+  shadows, 22% strength) + paper grain. Ink borders are drawn after, lettering last.
+
+### Comic QA (`scripts/comic_qa.py`, part of `npm run check`)
+
+- clip `in`/`out` inside the source duration, `out > in`, length ≤ 3 s;
+- every landing / clip / caption / SFX / transition time within 60 ms of a beat;
+- captions + SFX inside the frame and not overlapping while on screen (landscape and vertical);
+- no black or empty slot at sampled frames (std, mean and % near-black per visible slot);
+- each clip registers on its panel (NCC ≥ 0.75, scale 0.9–1.1) and the first used frame is not re-framed
+  (> 3% shift fails); large content change in the used frames is a warning (expected for impact bursts).

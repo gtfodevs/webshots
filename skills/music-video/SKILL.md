@@ -227,3 +227,21 @@ The "floating" look in the forest came from the near-ground layer being raw pipe
 - Put the logic in a pure `stage/fight.js` (scenes, exchanges, state machine, HUD, FX) shared by the page and `scripts/fighter_qa.mjs`. `npm run check` runs that QA automatically.
 - Script fights as exchanges. The CPU must swing back in EVERY exchange and land hits in full fights. Keep it to 3 or fewer hits per bar, with hit-stop and short flashes.
 - Build the engine with placeholder rect figures first (shared-master core, IK limbs, soles on the ground row), then swap in per-pose art. See docs/MUSIC_MODE.md, "Fighting-game shots".
+
+## Comic mode (comic-book pages instead of a game)
+
+Use when the brief says comic / graphic-novel style. Full reference, both prompt templates, spec format
+and QA: `docs/MUSIC_MODE.md` → "Comic mode". The steps for a full song:
+
+1. Load the song's `stage/timeline.json` (beats, downbeats, timed lyrics). Split the song into scenes of
+   8–12 bars; 3 panels per page plus a splash for the section's hit.
+2. Generate panels with an image model using the **fixed comic style prompt** (bold ink, halftone,
+   90s superhero comic, 16:9, NO text in the art) and identical character-sheet lines every time.
+3. Animate each panel with **Grok Imagine image-to-video, 480p, shortest duration (6 s)**, using the
+   motion-prompt template (one action, locked camera, keep faces/hands/limb count).
+4. Review every clip on a 2 fps contact sheet; mark melting faces / extra limbs / re-framing. Trim to the
+   best **~2 s** (1.5–2.5 s, max 3 s). No clean window → static panel.
+5. Write `shots/<name>/<name>.comic.json` (panels in order: image, clip in/out/at, slot, captions with the
+   lyric line, SFX, the beat each lands on; transition; splash).
+6. `npm run check -- <name>` (comic QA must PASS) → `npm run comic -- <name>` → review the contact sheet.
+   Outputs never overwrite (`-v2`). Commit the spec and code only, never media.

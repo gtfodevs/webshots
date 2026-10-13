@@ -6,6 +6,7 @@
 //   npm run check -- <name>                         play every scene, screenshot it, find errors
 //   npm run render -- <name>                        narrate + record + export -> out/<name>.mp4
 //        [--format vertical] [--start 40 --end 95]   music shots: Shorts 1080x1920 / a time cut
+//   npm run comic -- <name> [--out DIR]             comic mode: render a .comic.json scene (see docs/MUSIC_MODE.md)
 //   npm run list                                    list shots
 //   npm run doctor                                  check that everything needed is installed
 
@@ -97,8 +98,15 @@ async function cmdPreview() {
   console.log(`In the browser console: scene('${manifest()[0].scene}')`);
 }
 
+function comicSpec(n = name) { return join(shotDir(n), `${n}.comic.json`); }
+
 async function cmdCheck() {
   needShot();
+  // Comic mode shots (shots/<name>/<name>.comic.json): no stage, just the comic QA.
+  if (existsSync(comicSpec())) {
+    console.log('Comic QA (scripts/comic_qa.py):');
+    process.exit(await run('python3', ['scripts/comic_qa.py', comicSpec()]) ? 1 : 0);
+  }
   const { chromium } = await import('playwright');
   const server = await serve(0);
   const port = server.address().port;
@@ -263,6 +271,12 @@ async function cmdDoctor() {
   if (bad) process.exit(1);
 }
 
-const commands = { doctor: cmdDoctor, new: cmdNew, preview: cmdPreview, check: cmdCheck, render: cmdRender, list: cmdList };
+async function cmdComic() {
+  needShot();
+  if (!existsSync(comicSpec())) die(`no ${name}.comic.json in shots/${name}`);
+  process.exit(await run('python3', ['scripts/comic_render.py', comicSpec(), ...process.argv.slice(4)]) ? 1 : 0);
+}
+
+const commands = { comic: cmdComic, doctor: cmdDoctor, new: cmdNew, preview: cmdPreview, check: cmdCheck, render: cmdRender, list: cmdList };
 if (!commands[cmd]) die(`unknown command "${cmd ?? ''}". Commands: ${Object.keys(commands).join(', ')}`);
 await commands[cmd]();

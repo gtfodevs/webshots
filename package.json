@@ -10,6 +10,7 @@
     "preview": "node scripts/webshots.mjs preview",
     "check": "node scripts/webshots.mjs check",
     "render": "node scripts/webshots.mjs render",
+    "comic": "node scripts/webshots.mjs comic",
     "list": "node scripts/webshots.mjs list",
     "suno:sync": "node scripts/suno-sync.mjs"
   },
