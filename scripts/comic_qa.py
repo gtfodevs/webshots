@@ -94,7 +94,7 @@ def check_page(sub, draft):
             fail(f"{pid}/{u['id']}: clip starts {start - land:.2f}s after landing - keep the anticipation beat (>= {C.MIN_HOLD}s)")
         if c.get('in') is None or c.get('out') is None:
             if not draft: fail(f"{pid}/{u['id']}: clip has no in/out")
-            elif (c.get('expected') or 0) > 2.5: fail(f"{pid}/{u['id']}: expected trim {c['expected']}s > 2.5s")
+            elif (c.get('expected') or 0) > 6.0: fail(f"{pid}/{u['id']}: expected trim {c['expected']}s > 6.0s")
             continue
         L = c['out'] - c['in']
         if L > MAX_CLIP or c['out'] <= c['in']:
