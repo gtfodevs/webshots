@@ -1,6 +1,5 @@
 {
- "title": "Neon Dojo - comic mode, full song (DRAFT plan; art not generated yet)",
- "draft": true,
+ "title": "Neon Dojo - comic mode, full song",
  "outName": "neon-dojo-comic",
  "assetsDir": "/workspace/neon-dojo-comic",
  "fps": 30,
@@ -17,9 +16,18 @@
   "loudness": -14
  },
  "short": {
-  "start": 108.042,
-  "end": 152.462,
-  "note": "boss reveal -> tag-team chorus -> bridge double super (~44 s)"
+  "start": 123.54,
+  "end": 166.805,
+  "note": "climax + finale: katana wave, tag hand-off, double super, belt returned, sunrise (~43 s + 3 s end card); starts right after the held word \"done\" ends (123.54) so no word is cut"
+ },
+ "endCard": {
+  "enabled": true,
+  "seconds": 3.0,
+  "lines": [
+   "BROUGHT TO YOU BY PROGRESSIVE SLOP",
+   "LIKE AND SUBSCRIBE FOR MORE!"
+  ],
+  "note": "held final frame on the full video and the Short; song tail fades under it"
  },
  "cast": {
   "Uno": "Uno (round smooth chrome head, purple fur coat, gold \"1\" chain)",
@@ -55,8 +63,8 @@
      "motionPrompt": "Rain falls and the blimp drifts slowly left. Neon signs flicker softly. Camera: locked off. Slow, simple, clean motion; nobody walks toward the camera. Keep the comic style, faces, hands and limb count; no morphing, no text, no cuts.",
      "clip": {
       "src": "clips/n01.mp4",
-      "in": null,
-      "out": null,
+      "in": 0.0,
+      "out": 6.0,
       "expected": 5.5
      },
      "lyric": "YEAH, YOU KNOW THE VIBE",
@@ -90,8 +98,8 @@
      "motionPrompt": "Uno's red eyes slowly light up. Raindrops run down the chrome. Camera: very slow push-in. Slow, simple, clean motion; nobody walks toward the camera. Keep the comic style, faces, hands and limb count; no morphing, no text, no cuts.",
      "clip": {
       "src": "clips/n02.mp4",
-      "in": null,
-      "out": null,
+      "in": 0.0,
+      "out": 6.0,
       "expected": 5.0
      },
      "lyric": "QUICK FEET ON THE CONCRETE, MOVE SMOOTH, NEVER MESSY",
@@ -146,9 +154,10 @@
      "motionPrompt": "Young Uno bows slowly and the Sensei nods. Dust motes float in the light. Camera: locked off. Slow, simple, clean motion; nobody walks toward the camera. Keep the comic style, faces, hands and limb count; no morphing, no text, no cuts.",
      "clip": {
       "src": "clips/n03.mp4",
-      "in": null,
-      "out": null,
-      "expected": 5.5
+      "in": 0.0,
+      "out": 5.5,
+      "expected": 5.5,
+      "trimNote": "pose drifts after 5.5 s"
      },
      "lyric": "",
      "captions": [
@@ -175,8 +184,8 @@
      "motionPrompt": "SHOGUN turns his head slowly, visor lighting red. His cape ripples, lanterns sway. Camera: locked off. Slow, simple, clean motion; nobody walks toward the camera. Keep the comic style, faces, hands and limb count; no morphing, no text, no cuts.",
      "clip": {
       "src": "clips/n04.mp4",
-      "in": null,
-      "out": null,
+      "in": 0.0,
+      "out": 6.0,
       "expected": 5.5
      },
      "lyric": "",
@@ -224,8 +233,8 @@
      "motionPrompt": "The cables snap apart in a slow cyan pulse. Her crimson-streaked hair lifts. Camera: locked off. Slow, simple, clean motion; nobody walks toward the camera. Keep the comic style, faces, hands and limb count; no morphing, no text, no cuts.",
      "clip": {
       "src": "clips/n05.mp4",
-      "in": null,
-      "out": null,
+      "in": 0.0,
+      "out": 6.0,
       "expected": 5.0
      },
      "lyric": "",
@@ -265,8 +274,8 @@
      "motionPrompt": "The blimp drifts past and Aura nudges Uno. Uno's fur coat ruffles in the wind. Camera: locked off. Slow, simple, clean motion; nobody walks toward the camera. Keep the comic style, faces, hands and limb count; no morphing, no text, no cuts.",
      "clip": {
       "src": "clips/n06.mp4",
-      "in": null,
-      "out": null,
+      "in": 0.0,
+      "out": 6.0,
       "expected": 5.5
      },
      "lyric": "ONE-TWO IN A CLEAN SWEEP, LIKE A WHISPER IN THE BREEZE",
@@ -309,9 +318,10 @@
      "motionPrompt": "Both fighters bow and straighten up. Fans wave glow sticks. Camera: locked off. Slow, simple, clean motion; nobody walks toward the camera. Keep the comic style, faces, hands and limb count; no morphing, no text, no cuts.",
      "clip": {
       "src": "clips/n07.mp4",
-      "in": null,
-      "out": null,
-      "expected": 5.5
+      "in": 0.0,
+      "out": 4.4,
+      "expected": 5.5,
+      "trimNote": "TEKKO morphs into a blob and Uno re-poses from ~4.5 s"
      },
      "lyric": "I MOVE CALM WITH THE JAW GAME / SHORT SWING, LIKE A CLOCK HAND, PRECISE AND TO THE POINT",
      "captions": [
@@ -345,8 +355,8 @@
      "motionPrompt": "The palm presses in and Uno holds the block. Small sparks drift. Camera: locked off. Slow, simple, clean motion; nobody walks toward the camera. Keep the comic style, faces, hands and limb count; no morphing, no text, no cuts.",
      "clip": {
       "src": "clips/n08.mp4",
-      "in": null,
-      "out": null,
+      "in": 0.0,
+      "out": 6.0,
       "expected": 5.0
      },
      "lyric": "HIT HARD, THEN I STOP",
@@ -392,9 +402,10 @@
      "motionPrompt": "Uno's eyes flare brighter and the speed lines stream. Fur coat trembles with power. Camera: locked off. Slow, simple, clean motion; nobody walks toward the camera. Keep the comic style, faces, hands and limb count; no morphing, no text, no cuts.",
      "clip": {
       "src": "clips/n09.mp4",
-      "in": null,
-      "out": null,
-      "expected": 4.0
+      "in": 0.0,
+      "out": 4.17,
+      "expected": 4.0,
+      "trimNote": "page turns at 63.13s, clip capped to 4.17s"
      },
      "lyric": "SAY MY NAME, THEN BITE THE TONGUE",
      "captions": [
@@ -446,12 +457,20 @@
     "motionPrompt": "TEKKO bounces gently on the cushions. Stars circle his head, cushions puff. Camera: slow push-in. Slow, simple, clean motion; nobody walks toward the camera. Keep the comic style, faces, hands and limb count; no morphing, no text, no cuts.",
     "clip": {
      "src": "clips/s10.mp4",
-     "in": null,
-     "out": null,
-     "expected": 4.5
+     "in": 0.0,
+     "out": 4.59,
+     "expected": 4.5,
+     "trimNote": "jump/morph spike at 5.1 s; page turns at 68.69s, clip capped to 4.59s"
     },
     "lyric": "WHEN IT POPS, IT'S ALREADY DONE",
     "captions": [
+     {
+      "text": "SAY MY NAME, THEN BITE THE TONGUE",
+      "anchor": "bl",
+      "at": 63.576,
+      "lyric": true,
+      "carried": true
+     },
      {
       "text": "WHEN IT POPS, IT'S ALREADY DONE",
       "anchor": "tl",
@@ -502,8 +521,8 @@
      "motionPrompt": "KAZE-9's scarf streams as Aura's palm glows cyan. Lanterns sway, rain falls. Camera: locked off. Slow, simple, clean motion; nobody walks toward the camera. Keep the comic style, faces, hands and limb count; no morphing, no text, no cuts.",
      "clip": {
       "src": "clips/n11.mp4",
-      "in": null,
-      "out": null,
+      "in": 0.0,
+      "out": 6.0,
       "expected": 5.0
      },
      "lyric": "KNUCKLE TALK, KNUCKLE TALK",
@@ -550,8 +569,8 @@
      "motionPrompt": "RAIJIN's gauntlet crackles and Uno raises his guard. Electric sparks flicker on the rails. Camera: locked off. Slow, simple, clean motion; nobody walks toward the camera. Keep the comic style, faces, hands and limb count; no morphing, no text, no cuts.",
      "clip": {
       "src": "clips/n12.mp4",
-      "in": null,
-      "out": null,
+      "in": 0.0,
+      "out": 6.0,
       "expected": 5.5
      },
      "lyric": "HANDS UP, THEN IT ALL FALLS / KNUCKLE TALK, KNUCKLE TALK",
@@ -612,9 +631,10 @@
      "motionPrompt": "Both bow slowly on the bridge. Hologram petals drift down. Camera: locked off. Slow, simple, clean motion; nobody walks toward the camera. Keep the comic style, faces, hands and limb count; no morphing, no text, no cuts.",
      "clip": {
       "src": "clips/n13.mp4",
-      "in": null,
-      "out": null,
-      "expected": 5.5
+      "in": 0.0,
+      "out": 4.5,
+      "expected": 5.5,
+      "trimNote": "Aura's cyan aura vanishes and figures shift after ~4.5 s"
      },
      "lyric": "I DON'T ARGUE, I JUST WALK / TOE-TO-TOE, NAH, I DON'T OVERDO",
      "captions": [
@@ -648,9 +668,10 @@
      "motionPrompt": "LOTUS's kick sweeps slowly over Aura's head. Petals swirl in the kick wind. Camera: locked off. Slow, simple, clean motion; nobody walks toward the camera. Keep the comic style, faces, hands and limb count; no morphing, no text, no cuts.",
      "clip": {
       "src": "clips/n14.mp4",
-      "in": null,
-      "out": null,
-      "expected": 5.0
+      "in": 0.0,
+      "out": 3.5,
+      "expected": 5.0,
+      "trimNote": "Aura splits into a smeared double during the spin from ~3.5 s (regenerate if possible)"
      },
      "lyric": "DUCK LOW, THEN I CUT THROUGH / TURN A FRONT LIKE A BACKDOOR VIEW",
      "captions": [
@@ -701,9 +722,10 @@
      "motionPrompt": "The crowd jumps and waves on the beat. Glow banners sway. Camera: locked off. Slow, simple, clean motion; nobody walks toward the camera. Keep the comic style, faces, hands and limb count; no morphing, no text, no cuts.",
      "clip": {
       "src": "clips/n15.mp4",
-      "in": null,
-      "out": null,
-      "expected": 4.2
+      "in": 0.0,
+      "out": 4.0,
+      "expected": 4.2,
+      "trimNote": "crowd boils/flickers; keep it short"
      },
      "lyric": "NO FLEX, BUT A QUICK NECK / IF THE ROOM START TO GET LOUD",
      "captions": [
@@ -761,9 +783,10 @@
     "motionPrompt": "The water splash rises and falls slowly. Koi fish leap. Camera: locked off. Slow, simple, clean motion; nobody walks toward the camera. Keep the comic style, faces, hands and limb count; no morphing, no text, no cuts.",
     "clip": {
      "src": "clips/s16.mp4",
-     "in": null,
-     "out": null,
-     "expected": 4.5
+     "in": 0.0,
+     "out": 4.59,
+     "expected": 4.5,
+     "trimNote": "LOTUS fragments in the splash after 5 s; page turns at 108.04s, clip capped to 4.59s"
     },
     "lyric": "I MAKE ROOM WITH A CLEAN STEP",
     "captions": [
@@ -816,9 +839,10 @@
      "motionPrompt": "SHOGUN's eyes ignite and he rises slowly. Server lights blink, red smoke curls. Camera: slow tilt up. Slow, simple, clean motion; nobody walks toward the camera. Keep the comic style, faces, hands and limb count; no morphing, no text, no cuts.",
      "clip": {
       "src": "clips/n17.mp4",
-      "in": null,
-      "out": null,
-      "expected": 5.0
+      "in": 0.0,
+      "out": 5.6,
+      "expected": 5.0,
+      "trimNote": "jump at 5.75 s"
      },
      "lyric": "COUNT IT OUT, ONE BY ONE",
      "captions": [
@@ -846,9 +870,10 @@
      "motionPrompt": "The belt lifts and the gold glints. Red light pulses. Camera: locked off. Slow, simple, clean motion; nobody walks toward the camera. Keep the comic style, faces, hands and limb count; no morphing, no text, no cuts.",
      "clip": {
       "src": "clips/n18.mp4",
-      "in": null,
-      "out": null,
-      "expected": 4.2
+      "in": 0.0,
+      "out": 4.2,
+      "expected": 4.2,
+      "trimNote": "page turns at 117.89s, clip capped to 4.2s"
      },
      "lyric": "SAY MY NAME, THEN BITE THE TONGUE / WHEN IT POPS, IT'S ALREADY DONE",
      "captions": [
@@ -891,9 +916,10 @@
     "motionPrompt": "Aura's magic and SHOGUN's red aura pulse. Uno's coat and SHOGUN's cape ripple. Camera: locked off. Slow, simple, clean motion; nobody walks toward the camera. Keep the comic style, faces, hands and limb count; no morphing, no text, no cuts.",
     "clip": {
      "src": "clips/s19.mp4",
-     "in": null,
-     "out": null,
-     "expected": 4.5
+     "in": 0.0,
+     "out": 4.6,
+     "expected": 4.5,
+     "trimNote": "Aura's cyan magic disappears and SHOGUN re-poses after ~4.6 s"
     },
     "lyric": "WHEN IT POPS, IT'S ALREADY DONE",
     "captions": [
@@ -947,8 +973,8 @@
      "motionPrompt": "Uno slides back slowly, holding his guard. Red energy ripples past. Camera: locked off. Slow, simple, clean motion; nobody walks toward the camera. Keep the comic style, faces, hands and limb count; no morphing, no text, no cuts.",
      "clip": {
       "src": "clips/n20.mp4",
-      "in": null,
-      "out": null,
+      "in": 0.0,
+      "out": 6.0,
       "expected": 5.5
      },
      "lyric": "KEEP IT CLOSE, KEEP IT SMALL / HANDS UP, THEN IT ALL FALLS",
@@ -1001,9 +1027,10 @@
      "motionPrompt": "Their hands meet in a slow slap and Aura leaps forward. Cyan sparks burst from the hands. Camera: locked off. Slow, simple, clean motion; nobody walks toward the camera. Keep the comic style, faces, hands and limb count; no morphing, no text, no cuts.",
      "clip": {
       "src": "clips/n21.mp4",
-      "in": null,
-      "out": null,
-      "expected": 5.5
+      "in": 0.0,
+      "out": 4.3,
+      "expected": 5.5,
+      "trimNote": "hand-off figures swap/morph from ~4.4 s"
      },
      "lyric": "TAP THE CHIN, MAKE 'EM CRAWL / I DON'T ARGUE, I JUST WALK",
      "captions": [
@@ -1065,8 +1092,8 @@
      "motionPrompt": "A single leaf drifts slowly between them. Capes and hair move in the wind. Camera: locked off. Slow, simple, clean motion; nobody walks toward the camera. Keep the comic style, faces, hands and limb count; no morphing, no text, no cuts.",
      "clip": {
       "src": "clips/n22.mp4",
-      "in": null,
-      "out": null,
+      "in": 0.0,
+      "out": 6.0,
       "expected": 5.5
      },
      "lyric": "THEY TALKING TOUGH, THEIR WORDS ARE TALKING THIN / I JUST GRIN, THEN I SPIN",
@@ -1101,9 +1128,10 @@
      "motionPrompt": "The cyan orb grows slowly between her hands. Her hair lifts in the energy. Camera: locked off. Slow, simple, clean motion; nobody walks toward the camera. Keep the comic style, faces, hands and limb count; no morphing, no text, no cuts.",
      "clip": {
       "src": "clips/n23.mp4",
-      "in": null,
-      "out": null,
-      "expected": 4.0
+      "in": 0.0,
+      "out": 4.15,
+      "expected": 4.0,
+      "trimNote": "page turns at 148.63s, clip capped to 4.15s"
      },
      "lyric": "ONE SHARP MOVE, WHOLE ROOM STILL, LIKE A FREEZE FRAME / THAT'S THE WAY I SAY WHAT I SAY",
      "captions": [
@@ -1163,9 +1191,10 @@
     "motionPrompt": "Sparkles burst outward and SHOGUN sits down. Cyan and purple light flares. Camera: slow push-in. Slow, simple, clean motion; nobody walks toward the camera. Keep the comic style, faces, hands and limb count; no morphing, no text, no cuts.",
     "clip": {
      "src": "clips/s24.mp4",
-     "in": null,
-     "out": null,
-     "expected": 5.0
+     "in": 0.0,
+     "out": 5.4,
+     "expected": 5.0,
+     "trimNote": "jump at 5.5 s"
     },
     "lyric": "KNUCKLE TALK, KNUCKLE TALK",
     "captions": [
@@ -1220,9 +1249,10 @@
      "motionPrompt": "The Sensei takes the belt and everyone bows. Lanterns glow, petals drift. Camera: locked off. Slow, simple, clean motion; nobody walks toward the camera. Keep the comic style, faces, hands and limb count; no morphing, no text, no cuts.",
      "clip": {
       "src": "clips/n25.mp4",
-      "in": null,
-      "out": null,
-      "expected": 5.0
+      "in": 0.0,
+      "out": 5.5,
+      "expected": 5.0,
+      "trimNote": "tail drifts"
      },
      "lyric": "HANDS UP, THEN IT ALL FALLS",
      "captions": [
@@ -1251,9 +1281,10 @@
      "motionPrompt": "They walk slowly away into the sunrise. The sun rises and clouds glow. Camera: locked off. Slow, simple, clean motion; nobody walks toward the camera. Keep the comic style, faces, hands and limb count; no morphing, no text, no cuts.",
      "clip": {
       "src": "clips/n26.mp4",
-      "in": null,
-      "out": null,
-      "expected": 5.28
+      "in": 0.0,
+      "out": 5.28,
+      "expected": 5.28,
+      "trimNote": "page turns at 166.81s, clip capped to 5.28s"
      },
      "lyric": "KNUCKLE TALK, KNUCKLE TALK / I DON'T ARGUE, I JUST WALK",
      "captions": [

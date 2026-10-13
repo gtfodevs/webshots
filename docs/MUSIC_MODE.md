@@ -567,6 +567,10 @@ two-pass loudnorm to `song.loudness` (-14 LUFS, TP -1.5).
 - Pages fill the paper (no empty bottom row): pick a layout for the panel count.
 - Layouts vary: slanted/diagonal gutters, insets over bigger panels, angled overlaps, breakouts, mixed sizes;
   never the same layout on consecutive pages.
+- End card on every comic video and Short (~3 s held final frame: BROUGHT TO YOU BY PROGRESSIVE SLOP /
+  LIKE AND SUBSCRIBE FOR MORE!, comic lettering); the song tail fades naturally under it.
+- No clipping: lettering never past its panel or the safe area, lyric captions stay up until the line is
+  sung (carry them onto the splash / next page) and never overlap; no audio cut mid-word at either end.
 
 ### Comic QA (`scripts/comic_qa.py`, part of `npm run check`)
 
@@ -584,3 +588,11 @@ two-pass loudnorm to `song.loudness` (-14 LUFS, TP -1.5).
 - no black or empty slot at sampled frames (std, mean and % near-black per visible slot);
 - each clip registers on its panel (NCC ≥ 0.75, scale 0.9–1.1) and the first used frame is not re-framed
   (> 3% shift fails); large content change in the used frames is a warning (expected for impact bursts).
+- no clipping: every caption / SFX box inside its panel's lettering rect and the page safe area
+  (`C.TEXT_SAFE`), measured ink (`getbbox`) of every caption line inside its box; a lyric caption must stay
+  on screen until its sung line ends (timeline lyrics/words; follows a repeat on the splash) and never
+  overlap the next caption;
+- audio: song / Short start and end never cut a word (timeline words), stay inside the source audio, and
+  the tail fades over ≥ `C.TAIL_FADE` (2.5 s) under the end card;
+- end card: present (`spec.endCard`, default on), ~3 s, and its measured text fits the title-safe area
+  (`C.SAFE`, 5%) in landscape and vertical.

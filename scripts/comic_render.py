@@ -7,6 +7,8 @@ Writes (never overwriting; -v2, -v3 ... suffixes):
   DIR/comic-scene-1080p.mp4   1920x1080, song section, loudnorm to spec.song.loudness (default -14 LUFS)
   DIR/comic-scene-short.mp4   1080x1920 vertical variant
   DIR/comic-scene-sheet.png   contact sheet of the beats
+Every video and Short ends on an end card (spec.endCard, default C.ENDCARD_DEFAULT: ~3 s,
+'BROUGHT TO YOU BY PROGRESSIVE SLOP' / 'LIKE AND SUBSCRIBE FOR MORE!'); the song tail fades under it.
 """
 import argparse, json, os, subprocess, sys, tempfile
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -19,14 +21,21 @@ def master_audio(spec, wav, t0=None, t1=None):
     src = C.resolve(spec, s['audio'])
     dur = s['end'] - s['start']
     lufs = s.get('loudness', -14)
-    pre = ['-ss', f"{s['start']:.3f}", '-t', f'{dur:.3f}', '-i', src]
-    fade = f'afade=t=in:d=0.03,afade=t=out:st={dur - 0.6:.3f}:d=0.6'
+    ec = C.endcard(spec)
+    card = ec['seconds'] if ec else 0.0
+    # no hard cut at the end: let the song ring on under the end card when there is more of it,
+    # and fade the tail naturally (C.TAIL_FADE s, longer when the song continues), then pad silence
+    ext = max(0.0, min(card, C.probe_duration(src) - s['end']))
+    take = dur + ext
+    fl = min(take, max(C.TAIL_FADE, ext + 1.5))
+    pre = ['-ss', f"{s['start']:.3f}", '-t', f'{take:.3f}', '-i', src]
+    fade = f'afade=t=in:d={0.03 if s["start"] < 0.05 else 0.25}:curve=qsin,afade=t=out:st={take - fl:.3f}:d={fl:.3f}:curve=qsin'
     meas = subprocess.run(['ffmpeg', '-hide_banner', '-nostats', *pre, '-af', f'{fade},loudnorm=I={lufs}:TP=-1.5:LRA=11:print_format=json',
                            '-f', 'null', '-'], capture_output=True, text=True).stderr
     m = json.loads(meas[meas.rindex('{'):meas.rindex('}') + 1])
     ln = (f"loudnorm=I={lufs}:TP=-1.5:LRA=11:measured_I={m['input_i']}:measured_TP={m['input_tp']}:"
           f"measured_LRA={m['input_lra']}:measured_thresh={m['input_thresh']}:offset={m['target_offset']}:linear=true")
-    subprocess.run(['ffmpeg', '-v', 'error', '-y', *pre, '-af', f'{fade},{ln}', '-ar', '48000', wav], check=True)
+    subprocess.run(['ffmpeg', '-v', 'error', '-y', *pre, '-af', f'{fade},{ln},apad=whole_dur={dur + card:.3f}', '-ar', '48000', wav], check=True)
 
 
 def measure_lufs(path):
@@ -75,6 +84,13 @@ def render(spec, orient, out_path, wav, sheet_path=None, t0=None, t1=None):
             if written in keep:
                 shots.append((written / fps, keep[written], f))
             written += 1
+    ec = C.endcard(spec)
+    if ec and written:
+        card = C.endcard_frame(f, orient, ec)
+        shots.append((written / fps + 0.5, 'end card', card))
+        b = card.tobytes()
+        for _ in range(int(round(ec['seconds'] * fps))):
+            enc.stdin.write(b)
     enc.stdin.close()
     if enc.wait():
         raise SystemExit('ffmpeg encode failed')
@@ -98,10 +114,19 @@ def main():
     ap.add_argument('spec')
     ap.add_argument('--out', default='/workspace/comic-experiment/out')
     ap.add_argument('--only', choices=['landscape', 'vertical'])
+    ap.add_argument('--endcard-test', action='store_true', help='only write OUT/endcard_test.png (both orientations side by side) and exit; works on drafts')
     ap.add_argument('--short', choices=['full', 'cut'], default='cut',
                     help='vertical: "cut" uses spec.short {start,end} when present (a ~45 s Short), "full" renders the whole spec')
     a = ap.parse_args()
     spec = C.load_spec(a.spec)
+    if a.endcard_test:
+        os.makedirs(a.out, exist_ok=True)
+        ec = C.endcard(spec) or C.ENDCARD_DEFAULT
+        L = C.endcard_frame(C.paper(*C.SIZES['landscape']), 'landscape', ec)
+        V = C.endcard_frame(C.paper(*C.SIZES['vertical']), 'vertical', ec)
+        V = V.resize((int(V.width * 1080 / 1920), 1080), Image.LANCZOS)
+        im = Image.new('RGB', (L.width + V.width + 30, 1080), (30, 30, 30)); im.paste(L, (0, 0)); im.paste(V, (L.width + 30, 0))
+        p = C.next_free(os.path.join(a.out, 'endcard_test.png')); im.save(p); print('endcard', p); return
     if spec.get('draft'):
         raise SystemExit('spec is marked "draft": true (art/clips not generated yet). Fill in images + clip in/out, remove "draft", run npm run check, then render.')
     os.makedirs(a.out, exist_ok=True)
@@ -116,13 +141,15 @@ def main():
             results['landscape'] = out; results['sheet'] = sheet
         if a.only != 'landscape':
             out = C.next_free(os.path.join(a.out, f"{spec.get('outName', 'comic-scene')}-short.mp4"))
+            vsheet = C.next_free(os.path.join(a.out, f"{spec.get('outName', 'comic-scene')}-short-sheet.png"))
+            results['short-sheet'] = vsheet
             cut = spec.get('short') if a.short == 'cut' else None
             if cut:
                 wav2 = os.path.join(td, 'short.wav')
                 master_audio(spec, wav2, cut['start'], cut['end'])
-                render(spec, 'vertical', out, wav2, None, cut['start'], cut['end'])
+                render(spec, 'vertical', out, wav2, vsheet, cut['start'], cut['end'])
             else:
-                render(spec, 'vertical', out, wav)
+                render(spec, 'vertical', out, wav, vsheet)
             results['vertical'] = out
     for k, p in results.items():
         extra = f'  {measure_lufs(p):.1f} LUFS' if p.endswith('.mp4') else ''

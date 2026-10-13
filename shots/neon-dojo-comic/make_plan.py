@@ -172,6 +172,62 @@ NARR = {'n01': 'NEO-KYOTO. THE TOURNAMENT RETURNS.', 'n03': 'YEARS AGO...', 'n06
 
 def words(s): return len(s.split())
 
+# Clip review 2026-10-13 (8 fps frame sampling + step/drift metrics): clean length in seconds from in=0,
+# and why it is cut. Clips are 6.04 s; None note = clean to the end.
+TRIMS = {
+    'n01': (6.0, None), 'n02': (6.0, None), 'n03': (5.5, 'pose drifts after 5.5 s'), 'n04': (6.0, None),
+    'n05': (6.0, None), 'n06': (6.0, None), 'n07': (4.4, 'TEKKO morphs into a blob and Uno re-poses from ~4.5 s'),
+    'n08': (6.0, None), 'n09': (6.0, None), 's10': (5.0, 'jump/morph spike at 5.1 s'),
+    'n11': (6.0, None), 'n12': (6.0, None), 'n13': (4.5, "Aura's cyan aura vanishes and figures shift after ~4.5 s"),
+    'n14': (3.5, 'Aura splits into a smeared double during the spin from ~3.5 s (regenerate if possible)'),
+    's16': (5.0, 'LOTUS fragments in the splash after 5 s'), 'n15': (4.0, 'crowd boils/flickers; keep it short'),
+    'n17': (5.6, 'jump at 5.75 s'), 'n18': (6.0, None), 's19': (4.6, "Aura's cyan magic disappears and SHOGUN re-poses after ~4.6 s"),
+    'n20': (6.0, None), 'n21': (4.3, 'hand-off figures swap/morph from ~4.4 s'), 'n22': (6.0, None),
+    'n23': (6.0, None), 's24': (5.4, 'jump at 5.5 s'), 'n25': (5.5, 'tail drifts'), 'n26': (6.0, None),
+}
+DRAFT = not all(os.path.exists(f'{OUT}/clips/{k}.mp4') for k in TRIMS)
+
+
+def sung_end(text, at):
+    """When the line is actually sung to (same rule as comic_qa.sung_end)."""
+    import re
+    key = lambda x: re.sub(r'[^A-Z0-9 ]', '', re.sub(r'^\([^)]*\)\s*', '', x).upper()).split()
+    c = [l for l in TL['lyrics'] if key(l['text']) == key(text) and abs(l['t'] - at) < 4.0]
+    if not c:
+        return 0
+    l = min(c, key=lambda l: abs(l['t'] - at))
+    ts = [w['t'] for w in l['words']]
+    last = ts[0]
+    for t in ts[1:]:
+        if t - last > 2.0: break
+        last = t
+    return min(l['end'], last + 0.6)
+
+
+def carry_lyrics(pages):
+    """No clipped lyrics: a lyric caption still being sung when its box leaves (zoom into the splash
+    or page turn) is repeated on the splash / the next page's first panel."""
+    for i, pg in enumerate(pages):
+        tr = pg.get('transition')
+        turn = tr['at'] - tr['dur'] if tr else pg['end']
+        hops = []
+        for u in pg['panels']:
+            for c in u['captions']:
+                if c.get('lyric') and sung_end(c['text'], c['at']) > turn + 0.05:
+                    hops.append((c, pg['splash'] if tr else (pages[i + 1]['panels'][0] if i + 1 < len(pages) else None),
+                                 tr['at'] if tr else (pages[i + 1]['start'] if i + 1 < len(pages) else None)))
+        if tr:
+            for c in pg['splash']['captions']:
+                if c.get('lyric') and sung_end(c['text'], c['at']) > pg['end'] + 0.05 and i + 1 < len(pages):
+                    hops.append((c, pages[i + 1]['panels'][0], pages[i + 1]['start']))
+        for c, dst, at in hops:
+            if dst is None or any(d['text'] == c['text'] for d in dst['captions']):
+                continue
+            used = {d['anchor'] for d in dst['captions']}
+            anchor = next(a for a in ('tl', 'bl', 'tr', 'br') if a not in used)
+            dst['captions'].insert(0, {'text': c['text'], 'anchor': anchor, 'at': round(at, 3), 'lyric': True, 'carried': True})
+
+
 def build():
     pages, prompts, rows = [], [], []
     for pid, sdb, edb, note, items in PAGES:
@@ -219,17 +275,29 @@ def build():
             page_cut = pg['end'] if u2 is pg.get('splash') else cut
             avail = round(page_cut - next_beat(u2['at']) - 0.1, 2)
             u2['clip']['expected'] = min(u2['clip']['expected'], avail)
+            if u2['id'] in TRIMS:   # clips reviewed (frame sampling): play the cleanest stretch, cut only at morphing
+                clean, note = TRIMS[u2['id']]
+                out = round(min(clean, avail, 6.0), 2)
+                u2['clip'].update({'in': 0.0, 'out': out})
+                why = [note] if note else []
+                if out < clean - 0.01:
+                    why.append(f'page turns at {page_cut:.2f}s, clip capped to {out}s')
+                if why:
+                    u2['clip']['trimNote'] = '; '.join(why)
         lay, sst = PAGE_LAYOUT[pid]
         pg['layout'] = lay
         if pg.get('splash'):
             pg['splashStyle'] = sst
         pages.append(pg)
-    spec = {'title': 'Neon Dojo - comic mode, full song (DRAFT plan; art not generated yet)', 'draft': True,
+    carry_lyrics(pages)
+    spec = {'title': 'Neon Dojo - comic mode, full song', **({'draft': True} if DRAFT else {}),
             'outName': 'neon-dojo-comic', 'assetsDir': OUT, 'fps': 30, 'defaults': {'holdBeats': 1},
             'song': {'suno': 'ea6b85b9-efbb-40b4-83db-e9bb853f4122', 'audio': 'audio/song.m4a',
                      'audioNote': 'relative to assetsDir; not committed. Copy shots/neon-dojo-fighter/stage/assets/song.m4a there',
                      'timeline': 'shots/neon-dojo-fighter/stage/timeline.json', 'start': 0.0, 'end': END, 'loudness': -14},
-            'short': {'start': DB[63], 'end': DB[89], 'note': 'boss reveal -> tag-team chorus -> bridge double super (~44 s)'},
+            'short': {'start': 123.54, 'end': END, 'note': 'climax + finale: katana wave, tag hand-off, double super, belt returned, sunrise (~43 s + 3 s end card); starts right after the held word "done" ends (123.54) so no word is cut'},
+            'endCard': {'enabled': True, 'seconds': 3.0, 'lines': ['BROUGHT TO YOU BY PROGRESSIVE SLOP', 'LIKE AND SUBSCRIBE FOR MORE!'],
+                        'note': 'held final frame on the full video and the Short; song tail fades under it'},
             'cast': CAST, 'styleTemplate': STYLE, 'motionTemplate': MOTION, 'pages': pages}
     return spec, prompts, rows
 

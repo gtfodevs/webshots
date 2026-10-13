@@ -39,6 +39,24 @@ npm run render -- my-song --format vertical --start 40 --end 95 # out/my-song-ve
 
 Needs `pip install --user librosa faster-whisper`. Design and API: [docs/MUSIC_MODE.md](docs/MUSIC_MODE.md). Example: `shots/kingdom-come`.
 
+### Comic mode
+
+The same song can be rendered as a 1990s comic book instead: panels (image model, no text in the art) are
+animated with image-to-video clips and laid out on varied overlapping pages, with Bangers lettering for lyric
+captions and SFX, halftone and paper grain.
+
+```bash
+python3 shots/<name>/make_plan.py                    # plan: spec (draft), prompts.json, motion.txt, plan.md
+npm run check -- <name>                              # comic QA must PASS (or scripts/comic_qa.py <spec>)
+python3 scripts/comic_render.py <spec> --out DIR     # DIR/<outName>-1080p.mp4 + Short + contact sheets
+python3 scripts/comic_render.py <spec> --endcard-test --out DIR   # just a still of the end card
+```
+
+- **Trims:** clips play 3.5-4.5 s, the full ~6 s when clean; cut only where morphing starts and say why in `trimNote` (QA max 6 s). Each clip starts one beat (~0.44 s) after its panel lands.
+- **End card:** every video and Short ends on a ~3 s held frame reading *BROUGHT TO YOU BY PROGRESSIVE SLOP* / *LIKE AND SUBSCRIBE FOR MORE!* (`spec.endCard`, on by default); the song tail fades out under it (never a hard cut).
+- **No clipping (QA):** every caption/SFX box stays inside its panel and the page safe area (measured text bounds); lyric captions stay up until the line is sung (carried onto the splash / next page) and never overlap; song/Short cut points never land mid-word; the end card text fits the title-safe area.
+- Full workflow: [docs/MUSIC_MODE.md](docs/MUSIC_MODE.md) → "Comic mode". Examples: `shots/kingdom-come-comic`, `shots/neon-dojo-comic`.
+
 ## 🤖 If you're the AI assistant
 
 Read **[`AGENTS.md`](AGENTS.md)** and follow it step by step. It covers setup, writing the narration, building the animation, the visual check, rendering and the hand-off. Keep the user out of the details: do the work, then give them the finished file.

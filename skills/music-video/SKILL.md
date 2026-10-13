@@ -239,7 +239,7 @@ and QA: `docs/MUSIC_MODE.md` → "Comic mode". The steps for a full song:
    90s superhero comic, 16:9, NO text in the art) and identical character-sheet lines every time.
 3. Animate each panel with **Grok Imagine image-to-video, 480p, shortest duration (6 s)**, using the
    motion-prompt template (one action, locked camera, keep faces/hands/limb count).
-4. Review every clip on a 2 fps contact sheet; mark melting faces / extra limbs / re-framing. Trim to the
+4. Review every clip by frame sampling (contact strip + frame-step/drift metrics); mark melting faces / extra limbs / re-framing. Trim to the
    best window: **3.5–4.5 s, the full ~6 s when clean** (QA max 6 s); cut only at real breakage and
    record why in `clip.trimNote`. Land last panels/splashes early enough that clips finish before the page
    turns. No clean window → static panel.
@@ -253,3 +253,9 @@ and QA: `docs/MUSIC_MODE.md` → "Comic mode". The steps for a full song:
    lyric line, SFX, the beat each lands on; transition; splash).
 6. `npm run check -- <name>` (comic QA must PASS) → `npm run comic -- <name>` → review the contact sheet.
    Outputs never overwrite (`-v2`). Commit the spec and code only, never media.
+7. **End card** (default, both the full video and the Short): the last ~3 s hold the final frame under
+   *BROUGHT TO YOU BY PROGRESSIVE SLOP* / *LIKE AND SUBSCRIBE FOR MORE!* (`spec.endCard`); the song rings on
+   and fades (2.5 s+) under it. Check it with `comic_render.py <spec> --endcard-test`.
+8. **No clipping** (QA fails): lettering past its panel or the safe area (measured bounds), a lyric caption
+   that leaves before its line is sung or overlaps the next caption, a song/Short cut point mid-word, end
+   card text outside the title-safe area. Pick Short start/end in word gaps (timeline `words`).

@@ -246,7 +246,12 @@ def layout_geo(orient, kind='three', splash='full'):
 
 def layout(orient, kind='three', splash='full'):
     """Lettering-safe rect (x, y, w, h) per slot (captions, SFX and QA work in these)."""
-    return {n: g['inner'] for n, g in layout_geo(orient, kind, splash).items()}
+    cx, cy, cw, ch = CONTENT[orient]
+    def clamp(r):   # lettering never sits in the paper margin (a full-bleed splash would clip it at the frame edge)
+        x0, y0 = max(r[0], cx), max(r[1], cy)
+        x1, y1 = min(r[0] + r[2], cx + cw), min(r[1] + r[3], cy + ch)
+        return (x0, y0, x1 - x0, y1 - y0)
+    return {n: clamp(g['inner']) for n, g in layout_geo(orient, kind, splash).items()}
 
 
 def slot_mask(geo):
@@ -393,6 +398,15 @@ def wrap(text, f, maxw):
         lines.append(cur)
     return lines
 
+def caption_text_bounds(cap, slot):
+    """Measured ink bounds (frame px) of every caption line, as draw_caption places them."""
+    (x, y, w, h), lines, f, pad, lh = caption_box(cap, slot)
+    out = []
+    for i, l in enumerate(lines):
+        b = f.getbbox(l)
+        out.append((x + pad + b[0], y + pad + i * lh + b[1], b[2] - b[0], b[3] - b[1]))
+    return out
+
 def caption_box(cap, slot):
     """Returns (rect, lines, font) for a caption box pinned to a slot corner."""
     px = int(min(max(base_px(slot) * cap.get('size', 0.072), 32), 52))
@@ -464,18 +478,18 @@ def text_items(spec, orient):
         slot = L[p['slot']]
         for c in p.get('captions', []):
             items.append({'who': f"{p['id']} caption '{c['text']}'", 'rect': caption_box(c, slot)[0],
-                          'from': T(spec, c.get('at', p['at'])), 'to': page_end, 'slot': slot})
+                          'from': T(spec, c.get('at', p['at'])), 'to': page_end, 'slot': slot, 'kind': 'caption', 'obj': c})
         for s in p.get('sfx', []):
             items.append({'who': f"{p['id']} sfx '{s['text']}'", 'rect': sfx_rect(s, slot)[0],
-                          'from': T(spec, s['at']), 'to': page_end, 'slot': slot})
+                          'from': T(spec, s['at']), 'to': page_end, 'slot': slot, 'kind': 'sfx', 'obj': s})
     sp = splash_unit(spec) or {}
     slot = L['splash']
     for c in sp.get('captions', []):
         items.append({'who': f"{sp['id']} caption '{c['text']}'", 'rect': caption_box(c, slot)[0],
-                      'from': max(splash_t0, T(spec, c.get('at', tr['at']))), 'to': end, 'slot': slot})
+                      'from': max(splash_t0, T(spec, c.get('at', tr['at']))), 'to': end, 'slot': slot, 'kind': 'caption', 'obj': c})
     for s in sp.get('sfx', []):
         items.append({'who': f"{sp['id']} sfx '{s['text']}'", 'rect': sfx_rect(s, slot)[0],
-                      'from': T(spec, s['at']), 'to': end, 'slot': slot})
+                      'from': T(spec, s['at']), 'to': end, 'slot': slot, 'kind': 'sfx', 'obj': s})
     return items
 
 
@@ -636,3 +650,98 @@ class Scene:
         k = ease_io((t - (t_land - dur)) / dur)
         box = (tx * k, ty * k, self.W + (tw - self.W) * k, self.H + (th - self.H) * k)
         return src.resize((self.W, self.H), Image.LANCZOS, box=(box[0], box[1], box[0] + box[2], box[1] + box[3]))
+
+
+# ---------------------------------------------------------------- end card (Jason's rule: every video + Short)
+ENDCARD_DEFAULT = {'enabled': True, 'seconds': 3.0,
+                   'lines': ['BROUGHT TO YOU BY PROGRESSIVE SLOP', 'LIKE AND SUBSCRIBE FOR MORE!']}
+TEXT_SAFE = CONTENT       # panel lettering must stay on the printed page area (inside the paper margin)
+SAFE = {'landscape': (96, 54, 1824, 1026), 'vertical': (54, 96, 1026, 1824)}   # 5% title-safe (x0, y0, x1, y1)
+TAIL_FADE = 2.5            # seconds of natural fade at the very end of the audio
+
+
+def endcard(spec):
+    ec = dict(ENDCARD_DEFAULT, **(spec.get('endCard') or {}))
+    return ec if ec.get('enabled', True) and ec.get('seconds', 0) > 0 else None
+
+
+def endcard_layout(ec, orient):
+    """Measured lettering for the end card: [(rect, text, font, stroke, fill, pad)], all rects in frame px.
+    Each line sits on its own caption box; the text is fitted so its measured bbox stays inside the safe area."""
+    W, H = SIZES[orient]
+    sx0, sy0, sx1, sy1 = SAFE[orient]
+    maxw = (sx1 - sx0) * 0.9
+    fills = [CAPTION_FILL, (255, 70, 90)]
+    out, boxes = [], []
+    for i, text in enumerate(ec['lines']):
+        # prefer one line (shrinking to a floor), then a balanced two-line wrap; text is measured with getbbox
+        px, floor = (104, 76) if orient == 'landscape' else (100, 100)
+        f = font(px)
+        while f.getbbox(text)[2] - f.getbbox(text)[0] > maxw - px and px > floor:
+            px -= 4; f = font(px)
+        lines = [text]
+        if f.getbbox(text)[2] - f.getbbox(text)[0] > maxw - px:
+            ws = text.split()
+            k = min(range(1, len(ws)), key=lambda k: abs(len(' '.join(ws[:k])) - len(' '.join(ws[k:]))))
+            lines = [' '.join(ws[:k]), ' '.join(ws[k:])]
+            while max(f.getbbox(l)[2] - f.getbbox(l)[0] for l in lines) > maxw - px and px > 30:
+                px -= 4; f = font(px)
+        pad = int(px * 0.4)
+        lh = int(px * 1.1)
+        tw = max(f.getbbox(l)[2] - f.getbbox(l)[0] for l in lines)
+        boxes.append((lines, f, px, pad, lh, tw + 2 * pad, lh * len(lines) + 2 * pad, fills[i % 2]))
+    gap = 70
+    total = sum(b[6] for b in boxes) + gap * (len(boxes) - 1)
+    y = (H - total) // 2
+    for k, (lines, f, px, pad, lh, w, h, fill) in enumerate(boxes):
+        x = (W - w) // 2 + (-30 if k % 2 == 0 else 30) * (orient == 'landscape')
+        out.append({'rect': (x, y, w, h), 'lines': lines, 'font': f, 'pad': pad, 'lh': lh, 'fill': fill, 'rot': -3 if k % 2 == 0 else 2})
+        y += h + gap
+    return out
+
+
+def endcard_text_bounds(item):
+    """Measured ink bounds of every line (frame px) for QA."""
+    x, y, w, h = item['rect']
+    res = []
+    for i, l in enumerate(item['lines']):
+        b = item['font'].getbbox(l)
+        lx = x + (w - (b[2] - b[0])) // 2 - b[0]
+        ly = y + item['pad'] + i * item['lh']
+        res.append((lx + b[0], ly + b[1], b[2] - b[0], b[3] - b[1]))
+    return res
+
+
+def endcard_frame(base, orient, ec):
+    """Final frame: the last page dimmed under halftone, with the two lettering boxes on top."""
+    W, H = SIZES[orient]
+    if isinstance(base, np.ndarray):
+        base = Image.fromarray(np.clip(base, 0, 255).astype(np.uint8)).convert('RGB')
+    img = Image.blend(base.convert('RGB'), Image.new('RGB', (W, H), (20, 8, 40)), 0.62)
+    dots = dot_field(W, H, 9.0)
+    arr = np.asarray(img, np.float32)
+    arr = arr * (1 - 0.25 * (dots < 0.22)[..., None])
+    img = Image.fromarray(np.clip(arr, 0, 255).astype(np.uint8))
+    for it in endcard_layout(ec, orient):
+        x, y, w, h = it['rect']
+        tile = Image.new('RGBA', (w + 20, h + 20), (0, 0, 0, 0))
+        d = ImageDraw.Draw(tile)
+        d.rectangle([14, 14, w + 13, h + 13], fill=INK + (255,))             # drop shadow
+        d.rectangle([4, 4, w + 3, h + 3], fill=it['fill'] + (255,), outline=INK + (255,), width=6)
+        for i, l in enumerate(it['lines']):
+            b = it['font'].getbbox(l)
+            d.text((4 + (w - (b[2] - b[0])) // 2 - b[0], 4 + it['pad'] + i * it['lh']), l, font=it['font'], fill=INK + (255,))
+        tile = tile.rotate(it['rot'], resample=Image.BICUBIC, expand=True)
+        img.paste(tile, (x + w // 2 + 6 - tile.width // 2, y + h // 2 + 6 - tile.height // 2), tile)
+    return img
+
+
+def endcard_bounds_rotated(item):
+    """Bounding box of the rotated lettering box as drawn (frame px)."""
+    x, y, w, h = item['rect']
+    import math
+    a = math.radians(abs(item['rot']))
+    rw = (w + 20) * math.cos(a) + (h + 20) * math.sin(a)
+    rh = (w + 20) * math.sin(a) + (h + 20) * math.cos(a)
+    cx, cy = x + w / 2 + 6, y + h / 2 + 6
+    return (int(cx - rw / 2), int(cy - rh / 2), int(rw), int(rh))

@@ -6,7 +6,14 @@ Checks (every page of a multi-page spec):
             warn if the page turns before the clip finishes)
   hold      the clip starts <= 0.6 s after its panel lands (one-beat static hold, then motion)
   beats     every landing / clip / caption / SFX / transition time is on the song's beat grid (<= 60 ms)
-  text      captions + SFX inside the frame (landscape + vertical), no overlaps while on screen
+  text      captions + SFX inside the frame (landscape + vertical), no overlaps while on screen;
+            no clipping: every box inside its panel's lettering rect and the page safe area (C.TEXT_SAFE),
+            measured ink of every caption line inside its box; a lyric caption stays up until its
+            sung line ends (timeline lyrics) and never overlaps the next caption
+  audio     song / Short cut points never land mid-word (timeline words), inside the source audio,
+            tail fades naturally (C.TAIL_FADE) under the end card
+  end card  every video + Short ends on the end card (spec.endCard / C.ENDCARD_DEFAULT, ~3 s); its
+            measured text fits the title-safe area (C.SAFE) in both orientations
   slots     no black or empty slot at sampled frames
   align     each clip registers on its panel (NCC >= 0.75, scale 0.9-1.1); first used frame not re-framed
   paper     no page leaves more than 30% bare paper once its panels have landed (pick the layout for the count)
@@ -67,6 +74,131 @@ def phash(path):
     return low[1:] > np.median(low[1:])
 
 
+def inside(r, box, tol=0):
+    return (r[0] >= box[0] - tol and r[1] >= box[1] - tol and
+            r[0] + r[2] <= box[0] + box[2] + tol and r[1] + r[3] <= box[1] + box[3] + tol)
+
+
+_TL = {}
+def timeline(spec):
+    p = spec['song'].get('timeline')
+    if not p:
+        return {}
+    p = C.resolve(spec, p)
+    if p not in _TL:
+        _TL[p] = json.load(open(p)) if os.path.exists(p) else {}
+    return _TL[p]
+
+
+def norm(s):
+    return re.sub(r'[^A-Z0-9 ]', '', C.lyric_text(s)).split()
+
+
+def sung_end(line):
+    """End of the sung line. The aligner sometimes stretches a line over an instrumental gap, so the
+    line ends at the last word before a > 2 s gap (+0.6 s for that word), capped by line.end."""
+    ts = [w['t'] for w in line.get('words', [])]
+    if not ts:
+        return line['end']
+    last = ts[0]
+    for t in ts[1:]:
+        if t - last > 2.0:
+            break
+        last = t
+    return min(line['end'], last + 0.6)
+
+
+def check_lyric_timing(sub, items, pid):
+    """A lyric caption must stay up until its sung line ends (no caption gone before the singer is)."""
+    lines = timeline(sub).get('lyrics', [])
+    if not lines:
+        return
+    t0 = sub['song']['start']
+    for it in items:
+        c = it.get('obj') or {}
+        if it.get('kind') != 'caption' or not c.get('lyric'):
+            continue
+        want = norm(c['text'])
+        at = it['from'] + t0
+        cands = [l for l in lines if norm(l['text']) == want and abs(l['t'] - at) < 4.0]
+        if not cands:
+            continue
+        line = min(cands, key=lambda l: abs(l['t'] - at))
+        # the same lyric may continue on the next box (e.g. a splash repeats it): follow the chain
+        to = it['to']
+        for o in sorted(items, key=lambda o: o['from']):
+            if o is not it and o.get('kind') == 'caption' and norm(o['obj']['text']) == want and o['from'] <= to + 0.6 and o['to'] > to:
+                to = o['to']
+        gone = to + t0
+        end = sung_end(line)
+        if gone < end - 0.05:
+            fail(f"{pid}: {it['who']} leaves at {gone:.2f}s but the line is sung until {end:.2f}s")
+
+
+def check_audio(spec):
+    """No clipped audio: cut points never land mid-word, the source covers the span, the tail fades."""
+    print('audio:')
+    n0 = len(problems)
+    words = timeline(spec).get('words', [])
+    lines = timeline(spec).get('lyrics', [])
+    src = C.resolve(spec, spec['song']['audio'])
+    dur = None
+    if os.path.exists(src):
+        dur = C.probe_duration(src)
+    else:
+        warn(f"song audio {spec['song']['audio']} not found - source-length checks skipped")
+    cuts = [('song start', spec['song']['start']), ('song end', spec['song']['end'])]
+    if spec.get('short'):
+        cuts += [('Short start', spec['short']['start']), ('Short end', spec['short']['end'])]
+    for name, t in cuts:
+        if dur is not None and t > dur + 0.05:
+            fail(f"{name} {t:.2f}s is past the end of the audio ({dur:.2f}s)")
+        if 'start' in name and t < 0.05:
+            continue
+        if dur is not None and 'end' in name and t >= dur - 0.05:
+            continue
+        for w in words:
+            if w['s'] + 0.03 < t < w['e'] - 0.03:
+                fail(f"{name} at {t:.2f}s cuts the word '{w['w']}' ({w['s']:.2f}-{w['e']:.2f}s) - move it to a gap")
+                break
+        if 'end' in name:
+            for l in lines:
+                if l['t'] < t < l['end'] - 0.05:
+                    warn(f"{name} at {t:.2f}s lands inside the lyric line '{l['text']}' - the tail fade carries it out")
+                    break
+    ec = C.endcard(spec)
+    if not ec:
+        fail('no end card - every comic video and Short ends on the PROGRESSIVE SLOP end card (spec.endCard)')
+    if C.TAIL_FADE < 1.5:
+        fail(f'tail fade {C.TAIL_FADE}s is too short - fade the song out naturally (>= 1.5 s)')
+    if len(problems) == n0:
+        ok(f"cut points clear of words, tail fades over >= {C.TAIL_FADE}s" + (f" under a {ec['seconds']}s end card" if ec else ''))
+
+
+def check_endcard(spec):
+    print('end card:')
+    n0 = len(problems)
+    ec = C.endcard(spec)
+    if not ec:
+        return
+    if not 2.5 <= ec['seconds'] <= 4.0:
+        warn(f"end card holds {ec['seconds']}s (aim for ~3 s)")
+    for orient in ('landscape', 'vertical'):
+        W, H = C.SIZES[orient]
+        x0, y0, x1, y1 = C.SAFE[orient]
+        safe = (x0, y0, x1 - x0, y1 - y0)
+        for it in C.endcard_layout(ec, orient):
+            for tb in C.endcard_text_bounds(it):
+                if not inside(tb, it['rect']):
+                    fail(f"end card {orient}: text {tb} spills out of its box {it['rect']}")
+                if not inside(tb, safe):
+                    fail(f"end card {orient}: text {tb} is outside the title-safe area {C.SAFE[orient]}")
+            if not inside(C.endcard_bounds_rotated(it), (0, 0, W, H)):
+                fail(f"end card {orient}: box {C.endcard_bounds_rotated(it)} leaves the frame")
+    if len(problems) == n0:
+        ok(f"{len(ec['lines'])} lines fit inside the title-safe area (landscape + vertical), held {ec['seconds']}s")
+
+
 def all_units(sub):
     us = [dict(p) for p in sub['panels']]
     sp = C.splash_unit(sub)
@@ -80,7 +212,7 @@ def media_ok(spec, rel):
 def check_page(sub, draft):
     pid = sub.get('page', 'page')
     units = all_units(sub)
-    have_media = all(media_ok(sub, u['image']) and (not u.get('clip') or media_ok(sub, u['clip'].get('src'))) for u in units)
+    have_media = all(media_ok(sub, u['image']) and (not u.get('clip') or (media_ok(sub, u['clip'].get('src')) and u['clip'].get('in') is not None and u['clip'].get('out') is not None)) for u in units)
 
     # clips + hold
     for u in units:
@@ -144,13 +276,27 @@ def check_page(sub, draft):
     for orient in ('landscape', 'vertical'):
         W, H = C.SIZES[orient]
         items = C.text_items(sub, orient)
+        sx, sy, sw, sh = C.TEXT_SAFE[orient]
         for it in items:
             x, y, w, h = it['rect']
             if x < 8 or y < 8 or x + w > W - 8 or y + h > H - 8:
                 fail(f"{pid} {orient}: {it['who']} leaves the frame {it['rect']}")
+            # no clipping: the box must sit inside its panel's lettering rect and the page safe area,
+            # and the measured ink of every line must sit inside the box
+            if not inside(it['rect'], it['slot'], 2):
+                fail(f"{pid} {orient}: {it['who']} box {it['rect']} extends past its panel {tuple(it['slot'])}")
+            if not inside(it['rect'], (sx, sy, sw, sh), 0):
+                fail(f"{pid} {orient}: {it['who']} box {it['rect']} extends past the safe area {C.TEXT_SAFE[orient]}")
+            if it.get('kind') == 'caption':
+                for tb in C.caption_text_bounds(it['obj'], it['slot']):
+                    if not inside(tb, it['rect'], 0):
+                        fail(f"{pid} {orient}: {it['who']} text {tb} spills out of its box {it['rect']}")
         for a, b in itertools.combinations(items, 2):
             if max(a['from'], b['from']) < min(a['to'], b['to']) and overlap(a['rect'], b['rect']):
-                fail(f"{pid} {orient}: {a['who']} overlaps {b['who']}")
+                both = a.get('obj', {}).get('lyric') and b.get('obj', {}).get('lyric')
+                fail(f"{pid} {orient}: {a['who']} overlaps {'the next lyric caption ' if both else ''}{b['who']}")
+        if orient == 'landscape':
+            check_lyric_timing(sub, items, pid)
 
     if not have_media:
         (warn if draft else fail)(f'{pid}: panel art / clips not generated yet - slot + alignment checks skipped')
@@ -189,7 +335,7 @@ def check_page(sub, draft):
                 r = a[y:y + h, x:x + w]
                 lum = r.mean(axis=2)
                 dark = float((lum < 12).mean())
-                if r.std() < 18 or lum.mean() < 25 or dark > 0.6:   # dark art (silhouettes, night) is fine; flat/black is not
+                if r.std() < 18 or lum.mean() < 10 or dark > 0.85:   # dark art (silhouettes, night: n04 mean 21, std 40) is fine; flat/black is not
                     fail(f"{pid} {orient}: slot of {u['id']} looks empty/black at {t:.2f}s")
 
 
@@ -265,6 +411,8 @@ def main(path):
             ok(f"{sub.get('page', 'page')}: {len(all_units(sub))} panels - clips, hold {C.MIN_HOLD}-{C.MAX_HOLD}s, beats, text")
     check_layouts(spec, subs)
     check_unique(spec, subs)
+    check_audio(spec)
+    check_endcard(spec)
     out = os.path.join(C.ROOT, 'out', os.path.basename(os.path.dirname(spec['_path'])), 'qa')
     os.makedirs(out, exist_ok=True)
     with open(os.path.join(out, 'comic-qa.json'), 'w') as f:
