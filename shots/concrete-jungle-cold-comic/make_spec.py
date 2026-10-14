@@ -123,7 +123,8 @@ FOCUS_REGIONS = {
  'f18': [R('Uno face', 0.30, 0.04, 0.43, 0.26), R('Aura face', 0.60, 0.04, 0.72, 0.26), R('searchlight', 0.45, 0.30, 0.65, 0.90, req=False)],
  'f19': [R('car mid-leap', 0.29, 0.25, 0.72, 0.62), R('moon', 0.30, 0.05, 0.55, 0.35, req=False)],
  'f20': [R("Ferro's furious face", 0.28, 0.12, 0.46, 0.42), R('Nickel face', 0.78, 0.20, 0.92, 0.42, req=False)],
- 'f21': [R('Uno face', 0.28, 0.0, 0.42, 0.18), R('Aura face', 0.58, 0.0, 0.72, 0.18)],
+ 'f21': [R('Uno face + headphones', 0.32, 0.0, 0.42, 0.19), R('Aura face', 0.62, 0.0, 0.71, 0.17),  # redraw 07:51
+         R('Uno + Aura stride', 0.18, 0.0, 0.78, 0.97, req=False)],
  'f22': [R('Uno eyes', 0.17, 0.02, 0.40, 0.40), R('Ferro eyes', 0.74, 0.22, 0.97, 0.58)],
  'f23': [R("Aura's smile", 0.12, 0.05, 0.30, 0.35), R('Nickel + hat', 0.50, 0.10, 0.85, 0.50, req=False)],
  'f24': [R('headline', 0.22, 0.12, 0.90, 0.45)],
@@ -137,6 +138,40 @@ SHORT = {'start': 128.30, 'end': 177.95,
 CAPTION_FILLS = [[255, 226, 150], [240, 232, 214], [255, 190, 190], [214, 200, 255]]   # deco gold, ivory, crimson blush, lilac
 SFX_COLORS = [[255, 200, 60], [230, 40, 60], [190, 120, 255], [255, 245, 230], [255, 150, 40]]
 CLIP_LEN = 6.0
+# Clip review (2026-10-14, 1 fps strips + first-frame match). DROP: no clip until a keepable take lands.
+DROP_CLIPS = {'f21': 'takes 1-4 rejected (Uno skeletal / missing headphones / bare legs); still-only until a keepable take lands'}
+TRIMS = {'f13': (4.0, 'from ~4.5 s the gold flare washes Uno\'s face toward a bright skull look; ends before it')}
+# Clip-start stills: when a clip's first frame does not register on its panel (NCC < 0.75), the panel still is
+# replaced by the clip's first frame (Lanczos 2x-ish upscale to 1280x720 + light unsharp), saved as
+# panels/fNN_clipstart.jpg, so the still->clip handoff is seamless. Focus regions re-derived on those stills.
+CLIPSTART_FOCUS = {
+ 'f02': [R('Uno face', 0.25, 0.08, 0.42, 0.28), R('Aura face', 0.58, 0.08, 0.75, 0.28)],
+ 'f08': [R('Ferro grin', 0.12, 0.08, 0.32, 0.35), R('Uno face', 0.42, 0.15, 0.58, 0.40, req=False), R('Nickel face', 0.65, 0.15, 0.80, 0.40, req=False)],
+ 'f09': [R('Uno + crate swing', 0.15, 0.25, 0.50, 0.85), R('Uno face', 0.28, 0.25, 0.42, 0.42, req=False), R('Aura face', 0.68, 0.05, 0.82, 0.22, req=False)],
+ 'f12': [R('Aura face in lasers', 0.38, 0.30, 0.58, 0.55)],
+ 'f13': [R('Uno ear + face', 0.18, 0.02, 0.45, 0.42), R('vault dial', 0.62, 0.40, 0.85, 0.75)],
+ 'f22': [R('Uno face', 0.05, 0.02, 0.32, 0.30), R('Nickel eyes', 0.52, 0.05, 0.75, 0.42)],
+ 'f23': [R("Aura's smile", 0.10, 0.08, 0.38, 0.45), R('Nickel face', 0.62, 0.18, 0.85, 0.45, req=False)],
+ 'f25': [R('Uno face', 0.34, 0.10, 0.49, 0.32), R('Aura face', 0.57, 0.10, 0.73, 0.36), R('gold 1 chain', 0.20, 0.18, 0.30, 0.67, req=False)],
+}
+MATCH_MIN = 0.75
+
+
+def clip_start_still(fid):
+    """(image path, matched?) for a clip: the original panel when the clip's first frame registers on it, else the
+    clip-start still (written once from the first frame)."""
+    import comic_lib as C
+    from PIL import Image, ImageFilter
+    clip = os.path.join(ASSETS, 'clips', f'{fid}.mp4')
+    panel = Image.open(os.path.join(ASSETS, 'panels', f'{fid}.jpg')).convert('RGB')
+    fr = C.first_frame(clip)
+    _, score = C.register(panel, fr)
+    if score >= MATCH_MIN:
+        return f'panels/{fid}.jpg', round(score, 3)
+    out = os.path.join(ASSETS, 'panels', f'{fid}_clipstart.jpg')
+    if not os.path.exists(out) or os.path.getmtime(out) < os.path.getmtime(clip):
+        fr.resize((1280, 720), Image.LANCZOS).filter(ImageFilter.UnsharpMask(radius=1.6, percent=60, threshold=2)).save(out, quality=95)
+    return f'panels/{fid}_clipstart.jpg', round(score, 3)
 MOMENTS = {}
 for l in open(os.path.join(HERE, 'storyboard.md')).read().splitlines():
     m = re.match(r'^\|\s*(\d+)\s*\|([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)\|([^|]*)\|', l)
@@ -170,12 +205,21 @@ def unit(fid, land, sfx, impact, ent, motion, k, slot=None):
     if slot:
         u['slot'] = slot
     clip = os.path.join(ASSETS, 'clips', f'{fid}.mp4')
-    if os.environ.get('CJC_CLIPS') == '1' and os.path.exists(clip):
+    if os.environ.get('CJC_CLIPS') == '1' and os.path.exists(clip) and fid not in DROP_CLIPS:
         u['clip'] = {'src': f'clips/{fid}.mp4', 'in': 0.0, 'out': CLIP_LEN}
+        if fid in TRIMS:
+            u['clip']['out'], u['clip']['trimNote'] = TRIMS[fid]
+        img, score = clip_start_still(fid)
+        u['clip']['firstFrameNcc'] = score
+        if img != u['image']:
+            u['panelOriginal'] = u['image']; u['image'] = img
+            u['clipStartStill'] = True
     else:
         u['stillMotion'] = {'type': motion, 'amount': 0.05, 'dur': 6.0}
         u['clipPending'] = f'clips/{fid}.mp4'
-    u['focusRegions'] = FOCUS_REGIONS.get(fid, []) + FACES.get(fid, [])
+    u['focusRegions'] = (CLIPSTART_FOCUS[fid] if u.get('clipStartStill') else FOCUS_REGIONS.get(fid, []) + FACES.get(fid, []))
+    if fid in DROP_CLIPS:
+        u['clipDropped'] = DROP_CLIPS[fid]
     u['shotKind'] = 'fx' if fid in ('f01', 'f24') else ('vehicle' if fid in ('f10', 'f19') else 'character')
     if fid not in ('f01', 'f10', 'f19', 'f24'):
         u['refs'] = ['/workspace/progressive-slop-refs/uno-locked.jpg', '/workspace/progressive-slop-refs/aura-locked.jpg']
@@ -237,7 +281,7 @@ def build():
                 c['anchor'] = ['bl', 'tl'][i % 2] if u['id'] in ('f02', 'f18', 'f21', 'f25') else ['tl', 'bl'][i % 2]
             if u.get('clip'):
                 avail = round(end - next_beat(u.get('at', sp_at or start)) - 0.1, 2)
-                if avail < CLIP_LEN - 0.01:
+                if avail < u['clip']['out'] - 0.01:
                     u['clip']['out'] = avail
                     u['clip']['trimNote'] = f'page turns at {end:.2f}s, clip capped to {avail}s'
         pages.append(out)

@@ -77,9 +77,10 @@ two-pass loudnorm to `song.loudness` (-14 LUFS, TP -1.5).
    Give clips room: land the last panel / splash early enough that its clip finishes before the page turns
    (QA warns when a page turn cuts a clip); several clips playing on one page at once is fine. If no window
    is clean, leave the panel static.
-   **Hold rule (Jason):** a clip starts almost immediately after its panel lands: hold the still for at most
-   one beat (~0.3–0.5 s), then the motion plays. Leave `clip.at` out and the renderer starts the clip
-   `defaults.holdBeats` (default 1) beats after the landing; QA fails if clip start − panel land > 0.6 s or < 0.25 s (keep the anticipation beat).
+   **Hold rule (Jason):** a clip starts on the first beat *after* the panel lands (tempo-aware). Leave
+   `clip.at` out and the renderer picks that beat; QA allows hold up to `max(0.6 s, one beat + 60 ms)` and
+   fails below 0.25 s (keep the anticipation beat). On a ~86 BPM track one beat is ~0.7 s, so the old
+   fixed 0.6 s cap was too tight.
    **Every panel is a different scene:** vary the location, camera angle and moment for each panel; never
    reuse a composition. Keep it playful and kid-friendly with small humour beats.
 5. **Spec** (`shots/<name>/<name>.comic.json`); all `at` values are song seconds on the beat grid:
@@ -146,12 +147,22 @@ two-pass loudnorm to `song.loudness` (-14 LUFS, TP -1.5).
 - Clip → panel alignment: Grok re-frames to 736x400, so each clip's first frame is registered onto its
   panel (scale + offset search, NCC). The slot crop is kept inside the clip's coverage and the same crop
   is used for still and clip, so the hand-off doesn't jump.
+- **Clip-start still rule (Jason, 2026-10-14):** when a clip's first-frame NCC against its panel is
+  below 0.75, do **not** regenerate the clip. Instead replace that panel's still with the clip's first
+  frame, Lanczos-upscaled to 1280×720 plus a light UnsharpMask (r 1.6, 60%, threshold 2), saved as
+  `panels/fNN_clipstart.jpg`. Re-derive `focusRegions` on the new still (inspect the image). Keep the
+  original panel only when the clip passes the match check. The builder (`make_spec.py` with
+  `CJC_CLIPS=1`) writes `clipStartStill: true`, `panelOriginal`, and `clip.firstFrameNcc` when it
+  swaps. Registration against the new still is ~1.0, so the still→clip hand-off is seamless. Drop a
+  clip entirely (`clipDropped` + no `clip` key) when characters drift off-model (e.g. Uno bald/skull
+  or missing fedora/headphones) rather than shipping a bad take.
 - Clips: lanczos upscale + light unsharp (r 1.6, 55%), then halftone (45°, 7 px cell, dots grow in
   shadows, 22% strength) + paper grain. Ink borders are drawn after, lettering last.
 
 ### Comic corrections checklist (Jason's feedback, check every comic video)
 
-- Clip starts one beat after the panel lands (0.3–0.5 s anticipation, never > 0.6 s).
+- Clip starts on the first beat after the panel lands (tempo-aware; hold ≤ max(0.6 s, one beat + 60 ms)).
+- Clip-start stills when first-frame NCC < 0.75; re-derive focusRegions; drop off-model takes.
 - Every panel a different scene (location, camera, moment); playful, kid-friendly humour beats.
 - Let clips play 3.5–4.5 s (full ~6 s when clean); cut only at real breakage, with a trimNote. Regenerate
   clips with extra heads/limbs, melting faces or camera jumps early on.
@@ -167,7 +178,7 @@ two-pass loudnorm to `song.loudness` (-14 LUFS, TP -1.5).
 
 - clip `in`/`out` inside the source duration, `out > in`, length ≤ 6 s; warns on < 3.5 s without a
   `trimNote` and on clips cut off by the page turn;
-- 0.25 s ≤ clip start − panel land ≤ 0.6 s (the one-beat anticipation hold);
+- 0.25 s ≤ clip start − panel land ≤ max(0.6 s, one beat + 60 ms) (tempo-aware one-beat hold);
 - layouts: fails the same layout or splash style on consecutive pages and an unknown layout; flags low
   variety (fails < pages/3 distinct layouts, warns < pages/2);
 - no page with > 30% bare paper (layout must fit the panel count), every slot exists in the page layout;
@@ -179,6 +190,8 @@ two-pass loudnorm to `song.loudness` (-14 LUFS, TP -1.5).
 - no black or empty slot at sampled frames (std, mean and % near-black per visible slot);
 - each clip registers on its panel (NCC ≥ 0.75, scale 0.9–1.1) and the first used frame is not re-framed
   (> 3% shift fails); large content change in the used frames is a warning (expected for impact bursts).
+  When NCC against the original panel is < 0.75, the builder swaps in a clip-start still (see above) so
+  registration passes against the image actually shown.
 - no clipping: every caption / SFX box inside its panel's lettering rect and the page safe area
   (`C.TEXT_SAFE`), measured ink (`getbbox`) of every caption line inside its box; a lyric caption must stay
   on screen until its sung line ends (timeline lyrics/words; follows a repeat on the splash) and never
