@@ -837,7 +837,7 @@
      "refs": [
       "/workspace/deadstars-comic/refs/deadstar-court.jpg"
      ],
-     "motionPrompt": "Handsome, sleek, well-designed chrome robots and sleek chrome fighter jets. Each character and each jet keeps the exact same shape, colors and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. Violet gravity rings swirl faster, the core cannon brightens, debris spirals inward. Slow push-in. Single continuous shot, every character and jet stays fully in frame.",
+     "motionPrompt": "Black spiked jet opens its bay doors and red gravity rings ripple outward from its glowing core; debris swirls slowly. Locked low camera. One continuous shot, no people.",
      "captions": [
       {
        "text": "NA NA NA NA, NA NA NA NA",
@@ -847,10 +847,9 @@
       }
      ],
      "clip": {
-      "src": "clips/d20_a.mp4",
+      "src": "clips/d20_e.mp4",
       "in": 0.0,
-      "out": 6.0,
-      "trimNote": "FLAG: extra robots fade in at the right after ~3 s (both takes)"
+      "out": 6.0
      },
      "sfx": [
       {
@@ -924,7 +923,7 @@
      "refs": [
       "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/1a70147613238d45a1d50100c327a4beaf976b8a58dab1b1971802446bbc5cbb.jpg"
      ],
-     "motionPrompt": "Handsome, sleek, well-designed chrome robots and sleek chrome fighter jets. Each character and each jet keeps the exact same shape, colors and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. The cyan tow beam tightens and the purple jet begins pulling free of the violet rings. Camera holds. Single continuous shot, every character and jet stays fully in frame.",
+     "motionPrompt": "Red jet and purple jet fly wingtip to wingtip, a cyan tether beam linking them against a swirling red vortex; engines glow. Locked camera. One continuous shot, no people.",
      "captions": [
       {
        "text": "THE PAST IS GONE, THEY RUINED",
@@ -941,10 +940,10 @@
       }
      ],
      "clip": {
-      "src": "clips/d22_a.mp4",
+      "src": "clips/d22_d.mp4",
       "in": 0.0,
       "out": 5.8,
-      "trimNote": "FLAG: a robot figure appears on the jet near the end (both takes); page turns at 73.77s, clip capped to 5.8s"
+      "trimNote": "page turns at 73.77s, clip capped to 5.8s"
      },
      "slot": "c"
     }
@@ -968,7 +967,7 @@
      "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/1a70147613238d45a1d50100c327a4beaf976b8a58dab1b1971802446bbc5cbb.jpg",
      "/workspace/deadstars-comic/refs/deadstar-court.jpg"
     ],
-    "motionPrompt": "Handsome, sleek, well-designed chrome robots and sleek chrome fighter jets. Each character and each jet keeps the exact same shape, colors and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. Both jets dive forward wingtip to wingtip as asteroids streak past. Camera tracks with them. Single continuous shot, every character and jet stays fully in frame.",
+    "motionPrompt": "Red jet and purple jet hover nose to nose in a defensive circle, cyan and white glow around them, a black spiked jet looming in the dark behind. Locked camera. One continuous shot, no people.",
     "captions": [
      {
       "text": "FROM THE GET GO, THEY BLEW IT",
@@ -985,10 +984,9 @@
      }
     ],
     "clip": {
-     "src": "clips/s23_b.mp4",
+     "src": "clips/s23_e.mp4",
      "in": 0.0,
-     "out": 6.0,
-     "trimNote": "FLAG: background robots fade in late (b is milder than a)"
+     "out": 6.0
     },
     "sfx": [
      {
@@ -1059,7 +1057,7 @@
       "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/1a70147613238d45a1d50100c327a4beaf976b8a58dab1b1971802446bbc5cbb.jpg",
       "/workspace/deadstars-comic/refs/deadstar-court.jpg"
      ],
-     "motionPrompt": "Handsome, sleek, well-designed chrome robots and sleek chrome fighter jets. Each character and each jet keeps the exact same shape, colors and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. The braided cyan and white blast surges into the flagship core, core flaring bright. Slight shake. Single continuous shot, every character and jet stays fully in frame.",
+     "motionPrompt": "Red jet streaks toward a black spiked jet, blue and red energy beams colliding, sparks and speed lines streaming. Locked camera. One continuous shot, no people.",
      "captions": [
       {
        "text": "NOBODY CAN DENY THE WAY WE LOCK INTO THE GROOVE",
@@ -1069,10 +1067,9 @@
       }
      ],
      "clip": {
-      "src": "clips/d25_b.mp4",
+      "src": "clips/d25_e.mp4",
       "in": 0.0,
-      "out": 6.0,
-      "trimNote": "FLAG: extra standing robots appear mid-dogfight from ~2 s (both takes)"
+      "out": 6.0
      },
      "sfx": [
       {
@@ -1106,7 +1103,7 @@
      "refs": [
       "/workspace/deadstars-comic/refs/deadstar-court.jpg"
      ],
-     "motionPrompt": "Handsome, sleek, well-designed chrome robots and sleek chrome fighter jets. Each character and each jet keeps the exact same shape, colors and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. The white explosion expands, shockwave ring grows, the shard crown tumbles toward camera. Screen shake. Single continuous shot, every character and jet stays fully in frame.",
+     "motionPrompt": "The black spiked jet's glowing core cracks with white light beams, shards of its hull spinning away slowly. Locked camera, slight shake. One continuous shot, no people.",
      "captions": [
       {
        "text": "WE'RE FLYING WAY TOO HIGH, WE GOT NOTHING LEFT TO PROVE",
@@ -1116,10 +1113,10 @@
       }
      ],
      "clip": {
-      "src": "clips/d26_b.mp4",
+      "src": "clips/d26_e.mp4",
       "in": 0.0,
       "out": 5.78,
-      "trimNote": "FLAG: extra robots appear around the core blast after ~4 s (both takes); page turns at 90.95s, clip capped to 5.78s"
+      "trimNote": "page turns at 90.95s, clip capped to 5.78s"
      },
      "sfx": [
       {
@@ -1208,7 +1205,7 @@
      "refs": [
       "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/1a70147613238d45a1d50100c327a4beaf976b8a58dab1b1971802446bbc5cbb.jpg"
      ],
-     "motionPrompt": "Handsome, sleek, well-designed chrome robots and sleek chrome fighter jets. Each character and each jet keeps the exact same shape, colors and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. Golden rays pulse from the star, the jets bank through their victory loop. Camera holds. Single continuous shot, every character and jet stays fully in frame.",
+     "motionPrompt": "Two jets circle a reigniting golden star, blue and purple light trails curling, golden sparks drifting. Locked wide camera. One continuous shot, no people.",
      "captions": [
       {
        "text": "THEY COULDN'T HANG, THEY KNEW IT",
@@ -1218,10 +1215,10 @@
       }
      ],
      "clip": {
-      "src": "clips/d28_b.mp4",
+      "src": "clips/d28_e.mp4",
       "in": 0.0,
       "out": 5.66,
-      "trimNote": "FLAG: jets resolve into extra standing robots after ~3 s (both takes); page turns at 97.64s, clip capped to 5.66s"
+      "trimNote": "page turns at 97.64s, clip capped to 5.66s"
      },
      "slot": "b"
     }
@@ -1244,7 +1241,7 @@
     "refs": [
      "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/1a70147613238d45a1d50100c327a4beaf976b8a58dab1b1971802446bbc5cbb.jpg"
     ],
-    "motionPrompt": "Handsome, sleek, well-designed chrome robots and sleek chrome fighter jets. Each character and each jet keeps the exact same shape, colors and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. The golden crown slowly descends and spins, light rays shimmer. Camera holds. Single continuous shot, every character and jet stays fully in frame.",
+    "motionPrompt": "A glowing golden crown descends slowly between two hovering jets, golden stardust falling, blue and purple light rings turning. Locked camera. One continuous shot, no people.",
     "captions": [
      {
       "text": "THE PAST IS GONE, THEY RUINED",
@@ -1261,7 +1258,7 @@
      }
     ],
     "clip": {
-     "src": "clips/s29_b.mp4",
+     "src": "clips/s29_d.mp4",
      "in": 0.0,
      "out": 6.0
     },

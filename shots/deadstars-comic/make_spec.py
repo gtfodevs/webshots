@@ -18,18 +18,14 @@ def next_beat(t): return B[bisect.bisect_right(B, t + 0.05)]
 LYR = [(l['t'], re.sub(r'^\([^)]*\)\s*', '', l['text']).replace('’', "'").upper()) for l in TL['lyrics'] if len(l['text'].split()) > 2]
 ASSETS = '/workspace/deadstars-comic'
 
+# v3 2026-10-13: d20/d25/d26/d28/s23 -> _e, d22/s29 -> _d (vehicle-only prompts, see motion.txt)
 # 8 fps review 2026-10-13 (contact strips + 0/2/4/5.9 s detail sheets of every take; *_oldpanel ignored)
 TAKE = {'d01': 'b', 'd02': 'b', 'd03': 'b', 'd04': 'b', 'd06': 'b', 'd07': 'a', 'd08': 'a', 'd09': 'a', 'd10': 'c',
-        'd12': 'a', 'd13': 'a', 'd14': 'c', 'd15': 'a', 'd17': 'b', 'd18': 'a', 'd19': 'a', 'd20': 'a', 'd21': 'b',
-        'd22': 'a', 'd24': 'b', 'd25': 'b', 'd26': 'b', 'd27': 'c', 'd28': 'b', 'd30': 'a', 'd31': 'a',
-        's05': 'a', 's11': 'a', 's16': 'a', 's23': 'b', 's29': 'b'}
+        'd12': 'a', 'd13': 'a', 'd14': 'c', 'd15': 'a', 'd17': 'b', 'd18': 'a', 'd19': 'a', 'd20': 'e', 'd21': 'b',
+        'd22': 'd', 'd24': 'b', 'd25': 'e', 'd26': 'e', 'd27': 'c', 'd28': 'e', 'd30': 'a', 'd31': 'a',
+        's05': 'a', 's11': 'a', 's16': 'a', 's23': 'e', 's29': 'd'}
 # flagged (played at full length, NOT trimmed to hide it; regenerate with the "only these characters" clause)
-FLAG = {'d20': 'extra robots fade in at the right after ~3 s (both takes)',
-        'd22': 'a robot figure appears on the jet near the end (both takes)',
-        'd25': 'extra standing robots appear mid-dogfight from ~2 s (both takes)',
-        'd26': 'extra robots appear around the core blast after ~4 s (both takes)',
-        'd28': 'jets resolve into extra standing robots after ~3 s (both takes)',
-        's23': 'background robots fade in late (b is milder than a)'}
+FLAG = {}   # v3: the 6 flagged ids (+ s29) were replaced by vehicle-only regenerations (_d/_e takes), clean for the full 6 s
 TRIMS = {k: (6.0, ('FLAG: ' + FLAG[k]) if k in FLAG else None) for k in TAKE}
 SHORT = {'start': 54.08, 'end': 104.48, 'note': 'sky-fight back half: NULLSTAR kills the lights, the jet dogfight, the core break and the crown descending (verse 3 -> hook -> verse 4 -> hook); cut points in word gaps'}
 FULL = 6.6  # 6 s clip + 0.44 s anticipation + margin
