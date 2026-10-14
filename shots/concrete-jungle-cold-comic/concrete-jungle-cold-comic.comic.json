@@ -182,7 +182,7 @@
    "id": "p01",
    "start": 0.0,
    "end": 33.6,
-   "layout": "three",
+   "layout": "mixed-three",
    "mood": "action",
    "panels": [
     {
@@ -233,8 +233,8 @@
        "text": "KRAKOOM!",
        "at": 1.579,
        "pos": [
-        0.72,
-        0.3
+        0.78,
+        0.25
        ],
        "rot": -8,
        "size": 0.15,
@@ -289,7 +289,8 @@
         0.4,
         0.24
        ],
-       "required": true
+       "required": true,
+       "face": true
       },
       {
        "label": "Aura face",
@@ -299,7 +300,8 @@
         0.71,
         0.24
        ],
-       "required": true
+       "required": true,
+       "face": true
       }
      ],
      "shotKind": "character",
@@ -312,10 +314,10 @@
        "text": "SPLASH!",
        "at": 10.867,
        "pos": [
-        0.72,
-        0.7
+        0.78,
+        0.75
        ],
-       "rot": 6,
+       "rot": -8,
        "size": 0.15,
        "color": [
         230,
@@ -337,7 +339,7 @@
      "captions": [
       {
        "text": "DIAMONDS IN THE ROUGH, SOULS BOUGHT AND SOLD",
-       "anchor": "tl",
+       "anchor": "bl",
        "lyric": true,
        "fill": [
         240,
@@ -361,7 +363,7 @@
       },
       {
        "text": "SURVIVAL OF THE FITTEST,",
-       "anchor": "tl",
+       "anchor": "bl",
        "lyric": true,
        "fill": [
         214,
@@ -403,7 +405,8 @@
         0.34,
         0.68
        ],
-       "required": true
+       "required": true,
+       "face": true
       },
       {
        "label": "Ferro face",
@@ -413,7 +416,8 @@
         0.66,
         0.38
        ],
-       "required": false
+       "required": false,
+       "face": true
       }
      ],
      "shotKind": "character",
@@ -426,8 +430,8 @@
        "text": "CLINK!",
        "at": 17.229,
        "pos": [
-        0.72,
-        0.3
+        0.78,
+        0.75
        ],
        "rot": -8,
        "size": 0.15,
@@ -482,7 +486,8 @@
        0.58,
        0.75
       ],
-      "required": true
+      "required": true,
+      "face": true
      },
      {
       "label": "gold 1 chain",
@@ -493,6 +498,17 @@
        0.9
       ],
       "required": true
+     },
+     {
+      "label": "Uno face",
+      "box": [
+       0.3,
+       0.15,
+       0.62,
+       0.8
+      ],
+      "required": false,
+      "face": true
      }
     ],
     "shotKind": "character",
@@ -505,10 +521,10 @@
       "text": "SHING!",
       "at": 32.113,
       "pos": [
-       0.28,
-       0.7
+       0.78,
+       0.75
       ],
-      "rot": -6,
+      "rot": -8,
       "size": 0.15,
       "color": [
        255,
@@ -525,7 +541,7 @@
    "id": "p02",
    "start": 33.6,
    "end": 49.45,
-   "layout": "wide-three",
+   "layout": "big-three",
    "mood": "action",
    "panels": [
     {
@@ -539,7 +555,7 @@
      "captions": [
       {
        "text": "PEEP THE SCRIPT, AIN'T NO ACTOR",
-       "anchor": "tl",
+       "anchor": "bl",
        "lyric": true,
        "fill": [
         240,
@@ -566,7 +582,7 @@
       "type": "slide_down",
       "dur": 0.3
      },
-     "slot": "b",
+     "slot": "a",
      "stillMotion": {
       "type": "push_in",
       "amount": 0.05,
@@ -582,7 +598,8 @@
         0.28,
         0.3
        ],
-       "required": true
+       "required": true,
+       "face": true
       },
       {
        "label": "Uno lips",
@@ -592,7 +609,8 @@
         0.55,
         0.48
        ],
-       "required": true
+       "required": true,
+       "face": true
       },
       {
        "label": "bouncer + Aura",
@@ -603,6 +621,28 @@
         0.45
        ],
        "required": false
+      },
+      {
+       "label": "Aura face",
+       "box": [
+        0.66,
+        0.2,
+        0.8,
+        0.45
+       ],
+       "required": false,
+       "face": true
+      },
+      {
+       "label": "bouncer face",
+       "box": [
+        0.8,
+        0.05,
+        0.95,
+        0.35
+       ],
+       "required": false,
+       "face": true
       }
      ],
      "shotKind": "character",
@@ -615,8 +655,8 @@
        "text": "SNAP!",
        "at": 35.666,
        "pos": [
-        0.72,
-        0.3
+        0.78,
+        0.75
        ],
        "rot": -8,
        "size": 0.15,
@@ -640,7 +680,7 @@
      "captions": [
       {
        "text": "CITY LIGHTS FLICKER, SOULS GET SICKER",
-       "anchor": "tl",
+       "anchor": "bl",
        "lyric": true,
        "fill": [
         214,
@@ -655,7 +695,7 @@
       "type": "fade",
       "dur": 0.3
      },
-     "slot": "a",
+     "slot": "b",
      "stillMotion": {
       "type": "pan_left",
       "amount": 0.05,
@@ -671,7 +711,8 @@
         0.42,
         0.22
        ],
-       "required": true
+       "required": true,
+       "face": true
       },
       {
        "label": "Ferro monocle",
@@ -681,7 +722,8 @@
         0.92,
         0.4
        ],
-       "required": true
+       "required": true,
+       "face": true
       }
      ],
      "shotKind": "character",
@@ -694,10 +736,10 @@
        "text": "WAH-WAH",
        "at": 39.892,
        "pos": [
-        0.72,
-        0.7
+        0.78,
+        0.75
        ],
-       "rot": 6,
+       "rot": -8,
        "size": 0.15,
        "color": [
         255,
@@ -719,7 +761,7 @@
      "captions": [
       {
        "text": "HUSTLE EVERY MINUTE, MAKE IT QUICKER",
-       "anchor": "tl",
+       "anchor": "bl",
        "lyric": true,
        "fill": [
         255,
@@ -759,7 +801,8 @@
         0.28,
         0.38
        ],
-       "required": false
+       "required": false,
+       "face": true
       },
       {
        "label": "Ferro face",
@@ -769,7 +812,19 @@
         0.81,
         0.3
        ],
-       "required": false
+       "required": false,
+       "face": true
+      },
+      {
+       "label": "middle face",
+       "box": [
+        0.37,
+        0.0,
+        0.49,
+        0.22
+       ],
+       "required": false,
+       "face": true
       }
      ],
      "shotKind": "character",
@@ -782,8 +837,8 @@
        "text": "CHA-CHING!",
        "at": 43.445,
        "pos": [
-        0.72,
-        0.3
+        0.78,
+        0.5
        ],
        "rot": -8,
        "size": 0.15,
@@ -817,7 +872,7 @@
     "captions": [
      {
       "text": "HUSTLE EVERY MINUTE, MAKE IT QUICKER",
-      "anchor": "tl",
+      "anchor": "bl",
       "lyric": true,
       "fill": [
        255,
@@ -828,7 +883,7 @@
      },
      {
       "text": "CONCRETE JUNGLE, COLD, STORIES UNTOLD",
-      "anchor": "bl",
+      "anchor": "tr",
       "lyric": true,
       "fill": [
        240,
@@ -854,7 +909,8 @@
        0.33,
        0.3
       ],
-      "required": true
+      "required": true,
+      "face": true
      },
      {
       "label": "Uno face",
@@ -864,7 +920,8 @@
        0.62,
        0.35
       ],
-      "required": false
+      "required": false,
+      "face": true
      },
      {
       "label": "Slick Nickel",
@@ -874,7 +931,8 @@
        0.83,
        0.4
       ],
-      "required": false
+      "required": false,
+      "face": true
      }
     ],
     "shotKind": "character",
@@ -887,8 +945,8 @@
       "text": "HMPH!",
       "at": 45.558,
       "pos": [
-       0.72,
-       0.3
+       0.78,
+       0.5
       ],
       "rot": -8,
       "size": 0.15,
@@ -907,7 +965,7 @@
    "id": "p03",
    "start": 49.45,
    "end": 66.5,
-   "layout": "side-two",
+   "layout": "tilt-two",
    "mood": "action",
    "panels": [
     {
@@ -921,7 +979,7 @@
      "captions": [
       {
        "text": "DIAMONDS IN THE ROUGH, SOULS BOUGHT AND SOLD",
-       "anchor": "tl",
+       "anchor": "bl",
        "lyric": true,
        "fill": [
         255,
@@ -974,7 +1032,19 @@
         0.86,
         0.2
        ],
-       "required": false
+       "required": false,
+       "face": true
+      },
+      {
+       "label": "Uno face",
+       "box": [
+        0.27,
+        0.08,
+        0.4,
+        0.32
+       ],
+       "required": false,
+       "face": true
       }
      ],
      "shotKind": "character",
@@ -987,8 +1057,8 @@
        "text": "THUNK!",
        "at": 51.223,
        "pos": [
-        0.72,
-        0.3
+        0.78,
+        0.75
        ],
        "rot": -8,
        "size": 0.15,
@@ -1051,8 +1121,8 @@
        "text": "SKREEEE!",
        "at": 62.531,
        "pos": [
-        0.28,
-        0.3
+        0.22,
+        0.25
        ],
        "rot": 7,
        "size": 0.15,
@@ -1089,7 +1159,7 @@
      "captions": [
       {
        "text": "BLOCK TO THE BOOTH, UNDENIABLE PROOF",
-       "anchor": "tl",
+       "anchor": "bl",
        "lyric": true,
        "fill": [
         240,
@@ -1101,7 +1171,7 @@
       },
       {
        "text": "STRUGGLE AND THE YOUTH, PAIN IN THE PROOF",
-       "anchor": "bl",
+       "anchor": "tl",
        "lyric": true,
        "fill": [
         255,
@@ -1116,7 +1186,7 @@
       "type": "zoom_pop",
       "dur": 0.3
      },
-     "slot": "b",
+     "slot": "a",
      "stillMotion": {
       "type": "push_in",
       "amount": 0.05,
@@ -1127,12 +1197,13 @@
       {
        "label": "Uno grin",
        "box": [
-        0.27,
-        0.05,
-        0.42,
-        0.38
+        0.29,
+        0.1,
+        0.41,
+        0.36
        ],
-       "required": true
+       "required": true,
+       "face": true
       },
       {
        "label": "blueprint",
@@ -1152,7 +1223,8 @@
         0.73,
         0.35
        ],
-       "required": false
+       "required": false,
+       "face": true
       }
      ],
      "shotKind": "character",
@@ -1165,8 +1237,8 @@
        "text": "WHAM!",
        "at": 68.197,
        "pos": [
-        0.72,
-        0.3
+        0.78,
+        0.75
        ],
        "rot": -8,
        "size": 0.15,
@@ -1190,7 +1262,7 @@
      "captions": [
       {
        "text": "LOST IN THE MAZE, CAUGHT IN A DAZE",
-       "anchor": "tl",
+       "anchor": "tr",
        "lyric": true,
        "fill": [
         214,
@@ -1205,7 +1277,7 @@
       "type": "wipe",
       "dur": 0.3
      },
-     "slot": "a",
+     "slot": "b",
      "stillMotion": {
       "type": "pan_left",
       "amount": 0.05,
@@ -1221,7 +1293,8 @@
         0.45,
         0.42
        ],
-       "required": true
+       "required": true,
+       "face": true
       }
      ],
      "shotKind": "character",
@@ -1234,8 +1307,8 @@
        "text": "ZZT-ZZT!",
        "at": 73.839,
        "pos": [
-        0.72,
-        0.3
+        0.78,
+        0.25
        ],
        "rot": -8,
        "size": 0.15,
@@ -1259,7 +1332,7 @@
      "captions": [
       {
        "text": "PAPER DREAMS, URBAN HAZE",
-       "anchor": "tl",
+       "anchor": "tr",
        "lyric": true,
        "fill": [
         255,
@@ -1290,7 +1363,8 @@
         0.42,
         0.55
        ],
-       "required": true
+       "required": true,
+       "face": true
       },
       {
        "label": "vault dial",
@@ -1301,6 +1375,17 @@
         0.7
        ],
        "required": true
+      },
+      {
+       "label": "Uno face",
+       "box": [
+        0.1,
+        0.02,
+        0.4,
+        0.5
+       ],
+       "required": false,
+       "face": true
       }
      ],
      "shotKind": "character",
@@ -1313,10 +1398,10 @@
        "text": "KA-CHUNK!",
        "at": 77.369,
        "pos": [
-        0.28,
-        0.7
+        0.78,
+        0.75
        ],
-       "rot": -6,
+       "rot": -8,
        "size": 0.15,
        "color": [
         190,
@@ -1338,7 +1423,7 @@
      "captions": [
       {
        "text": "CONCRETE JUNGLE, COLD, WATCHIN' IT UNFOLD",
-       "anchor": "tl",
+       "anchor": "bl",
        "lyric": true,
        "fill": [
         240,
@@ -1380,7 +1465,8 @@
         0.45,
         0.35
        ],
-       "required": true
+       "required": true,
+       "face": true
       },
       {
        "label": "Uno face",
@@ -1390,7 +1476,8 @@
         0.78,
         0.3
        ],
-       "required": true
+       "required": true,
+       "face": true
       }
      ],
      "shotKind": "character",
@@ -1403,10 +1490,10 @@
        "text": "FWOOSH!",
        "at": 79.482,
        "pos": [
-        0.72,
-        0.7
+        0.78,
+        0.75
        ],
-       "rot": 6,
+       "rot": -8,
        "size": 0.15,
        "color": [
         255,
@@ -1438,7 +1525,7 @@
     "captions": [
      {
       "text": "HEART MADE OF GOLD, IN THE COLD",
-      "anchor": "tl",
+      "anchor": "bl",
       "lyric": true,
       "fill": [
        255,
@@ -1463,7 +1550,8 @@
        0.36,
        0.35
       ],
-      "required": true
+      "required": true,
+      "face": true
      },
      {
       "label": "eyes behind the bars",
@@ -1473,7 +1561,8 @@
        0.85,
        0.55
       ],
-      "required": false
+      "required": false,
+      "face": true
      }
     ],
     "shotKind": "character",
@@ -1486,8 +1575,8 @@
       "text": "KLANG!",
       "at": 85.124,
       "pos": [
-       0.72,
-       0.3
+       0.78,
+       0.75
       ],
       "rot": -8,
       "size": 0.15,
@@ -1506,7 +1595,7 @@
    "id": "p05",
    "start": 88.95,
    "end": 100.63,
-   "layout": "side-two",
+   "layout": "slant-two",
    "mood": "eerie",
    "panels": [
     {
@@ -1573,7 +1662,8 @@
         0.95,
         0.5
        ],
-       "required": false
+       "required": false,
+       "face": true
       }
      ],
      "shotKind": "character",
@@ -1586,8 +1676,8 @@
        "text": "TIK-TIK-CLAK!",
        "at": 90.744,
        "pos": [
-        0.72,
-        0.3
+        0.78,
+        0.25
        ],
        "rot": -8,
        "size": 0.15,
@@ -1611,7 +1701,7 @@
      "captions": [
       {
        "text": "PEN IS A WEAPON, WORDS CONNECTIN'",
-       "anchor": "tl",
+       "anchor": "bl",
        "lyric": true,
        "fill": [
         240,
@@ -1623,7 +1713,7 @@
       },
       {
        "text": "SOUL RESURRECTION, NO DEFLECTION",
-       "anchor": "bl",
+       "anchor": "tr",
        "lyric": true,
        "fill": [
         255,
@@ -1653,7 +1743,8 @@
         0.5,
         0.4
        ],
-       "required": true
+       "required": true,
+       "face": true
       },
       {
        "label": "lit-up map",
@@ -1676,8 +1767,8 @@
        "text": "RRRING!",
        "at": 96.409,
        "pos": [
-        0.72,
-        0.3
+        0.78,
+        0.5
        ],
        "rot": -8,
        "size": 0.15,
@@ -1700,7 +1791,7 @@
    "id": "p06",
    "start": 100.63,
    "end": 122.9,
-   "layout": "two-up",
+   "layout": "inset-two",
    "mood": "action",
    "panels": [
     {
@@ -1726,7 +1817,7 @@
       },
       {
        "text": "DIAMONDS IN THE ROUGH, SOULS BOUGHT AND SOLD",
-       "anchor": "tl",
+       "anchor": "bl",
        "lyric": true,
        "fill": [
         255,
@@ -1757,7 +1848,8 @@
         0.43,
         0.26
        ],
-       "required": true
+       "required": true,
+       "face": true
       },
       {
        "label": "Aura face",
@@ -1767,7 +1859,8 @@
         0.72,
         0.26
        ],
-       "required": true
+       "required": true,
+       "face": true
       },
       {
        "label": "searchlight",
@@ -1790,10 +1883,10 @@
        "text": "WHOOOM!",
        "at": 102.028,
        "pos": [
-        0.72,
-        0.7
+        0.78,
+        0.75
        ],
-       "rot": 6,
+       "rot": -8,
        "size": 0.15,
        "color": [
         190,
@@ -1877,10 +1970,10 @@
        "text": "VROOOM!",
        "at": 113.267,
        "pos": [
-        0.28,
-        0.7
+        0.22,
+        0.75
        ],
-       "rot": -6,
+       "rot": 7,
        "size": 0.15,
        "color": [
         255,
@@ -1901,7 +1994,7 @@
    "id": "p07",
    "start": 122.9,
    "end": 134.27,
-   "layout": "side-two",
+   "layout": "two-up",
    "mood": "scare",
    "panels": [
     {
@@ -1915,7 +2008,7 @@
      "captions": [
       {
        "text": "THEY DIM THE LIGHT, FLAME BURNS BRIGHT",
-       "anchor": "tl",
+       "anchor": "bl",
        "lyric": true,
        "fill": [
         214,
@@ -1958,7 +2051,8 @@
         0.46,
         0.42
        ],
-       "required": true
+       "required": true,
+       "face": true
       },
       {
        "label": "Nickel face",
@@ -1968,7 +2062,19 @@
         0.92,
         0.42
        ],
-       "required": false
+       "required": false,
+       "face": true
+      },
+      {
+       "label": "Ferro face",
+       "box": [
+        0.25,
+        0.05,
+        0.48,
+        0.45
+       ],
+       "required": false,
+       "face": true
       }
      ],
      "shotKind": "character",
@@ -1981,8 +2087,8 @@
        "text": "POOF!",
        "at": 124.505,
        "pos": [
-        0.72,
-        0.3
+        0.78,
+        0.75
        ],
        "rot": -8,
        "size": 0.15,
@@ -2048,7 +2154,8 @@
         0.42,
         0.18
        ],
-       "required": true
+       "required": true,
+       "face": true
       },
       {
        "label": "Aura face",
@@ -2058,7 +2165,8 @@
         0.72,
         0.18
        ],
-       "required": true
+       "required": true,
+       "face": true
       }
      ],
      "shotKind": "character",
@@ -2071,8 +2179,8 @@
        "text": "BOOM!",
        "at": 129.451,
        "pos": [
-        0.72,
-        0.3
+        0.78,
+        0.75
        ],
        "rot": -8,
        "size": 0.15,
@@ -2109,7 +2217,7 @@
      "captions": [
       {
        "text": "CONCRETE JUNGLE, COLD, STORIES UNTOLD",
-       "anchor": "tl",
+       "anchor": "tr",
        "lyric": true,
        "fill": [
         214,
@@ -2152,7 +2260,8 @@
         0.4,
         0.4
        ],
-       "required": true
+       "required": true,
+       "face": true
       },
       {
        "label": "Ferro eyes",
@@ -2162,7 +2271,8 @@
         0.97,
         0.58
        ],
-       "required": true
+       "required": true,
+       "face": true
       }
      ],
      "shotKind": "character",
@@ -2175,10 +2285,10 @@
        "text": "KRAK!",
        "at": 135.767,
        "pos": [
-        0.72,
-        0.7
+        0.78,
+        0.75
        ],
-       "rot": 6,
+       "rot": -8,
        "size": 0.15,
        "color": [
         230,
@@ -2200,7 +2310,7 @@
      "captions": [
       {
        "text": "CONCRETE JUNGLE, COLD, WATCHIN' IT UNFOLD",
-       "anchor": "tl",
+       "anchor": "bl",
        "lyric": true,
        "fill": [
         240,
@@ -2241,7 +2351,19 @@
         0.85,
         0.5
        ],
-       "required": false
+       "required": false,
+       "face": true
+      },
+      {
+       "label": "Nickel face",
+       "box": [
+        0.69,
+        0.1,
+        0.83,
+        0.32
+       ],
+       "required": false,
+       "face": true
       }
      ],
      "shotKind": "character",
@@ -2254,8 +2376,8 @@
        "text": "YOINK!",
        "at": 147.006,
        "pos": [
-        0.72,
-        0.3
+        0.78,
+        0.75
        ],
        "rot": -8,
        "size": 0.15,
@@ -2318,10 +2440,10 @@
        "text": "SPIN-SPIN!",
        "at": 152.602,
        "pos": [
-        0.72,
-        0.7
+        0.78,
+        0.75
        ],
-       "rot": 6,
+       "rot": -8,
        "size": 0.15,
        "color": [
         255,
@@ -2368,7 +2490,7 @@
       },
       {
        "text": "DIAMONDS IN THE ROUGH, SOULS BOUGHT AND SOLD",
-       "anchor": "tl",
+       "anchor": "bl",
        "lyric": true,
        "fill": [
         255,
@@ -2423,7 +2545,8 @@
         0.48,
         0.32
        ],
-       "required": true
+       "required": true,
+       "face": true
       },
       {
        "label": "Aura face",
@@ -2433,7 +2556,8 @@
         0.75,
         0.35
        ],
-       "required": true
+       "required": true,
+       "face": true
       },
       {
        "label": "gold 1 chain",
@@ -2456,10 +2580,10 @@
        "text": "FLASH!",
        "at": 158.221,
        "pos": [
-        0.72,
-        0.7
+        0.78,
+        0.75
        ],
-       "rot": 6,
+       "rot": -8,
        "size": 0.15,
        "color": [
         255,
@@ -2481,7 +2605,7 @@
      "captions": [
       {
        "text": "CONCRETE COLD, SPIRIT BOLD",
-       "anchor": "tl",
+       "anchor": "tr",
        "lyric": true,
        "fill": [
         214,
@@ -2532,7 +2656,19 @@
         0.74,
         0.52
        ],
-       "required": false
+       "required": false,
+       "face": true
+      },
+      {
+       "label": "Aura face",
+       "box": [
+        0.25,
+        0.0,
+        0.42,
+        0.25
+       ],
+       "required": false,
+       "face": true
       }
      ],
      "shotKind": "character",
@@ -2545,8 +2681,8 @@
        "text": "TING!",
        "at": 181.348,
        "pos": [
-        0.28,
-        0.3
+        0.22,
+        0.75
        ],
        "rot": 7,
        "size": 0.15,
@@ -2569,7 +2705,7 @@
    "id": "p10",
    "start": 184.4,
    "end": 198.016,
-   "layout": "tilt-two",
+   "layout": "slant-two",
    "mood": "eerie",
    "panels": [
     {
@@ -2598,7 +2734,7 @@
       "type": "wipe",
       "dur": 0.3
      },
-     "slot": "b",
+     "slot": "a",
      "stillMotion": {
       "type": "push_in",
       "amount": 0.05,
@@ -2619,12 +2755,13 @@
       {
        "label": "Aura eyes",
        "box": [
-        0.42,
-        0.15,
-        0.66,
-        0.42
+        0.46,
+        0.1,
+        0.64,
+        0.3
        ],
-       "required": true
+       "required": true,
+       "face": true
       }
      ],
      "shotKind": "character",
@@ -2637,10 +2774,10 @@
        "text": "KSSHH...",
        "at": 186.224,
        "pos": [
-        0.72,
-        0.7
+        0.78,
+        0.75
        ],
-       "rot": 6,
+       "rot": -8,
        "size": 0.15,
        "color": [
         230,
@@ -2662,7 +2799,7 @@
      "captions": [
       {
        "text": "CONCRETE COLD, BUT THE SPIRIT BOLD",
-       "anchor": "tl",
+       "anchor": "bl",
        "lyric": true,
        "fill": [
         240,
@@ -2677,7 +2814,7 @@
       "type": "iris",
       "dur": 0.3
      },
-     "slot": "a",
+     "slot": "b",
      "stillMotion": {
       "type": "push_in",
       "amount": 0.05,
@@ -2693,7 +2830,8 @@
         0.38,
         0.35
        ],
-       "required": true
+       "required": true,
+       "face": true
       },
       {
        "label": "empty jail truck",

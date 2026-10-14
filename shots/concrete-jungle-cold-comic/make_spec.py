@@ -7,7 +7,7 @@ bg/, audio.mp3), not in git.
 
 Clips: Grok Imagine clips are not generated yet, so every panel is a still with a renderer motion preset
 (`stillMotion`). Drop a clip at /workspace/crime-comic/clips/fNN.mp4 (480p, 6 s) and re-run this builder: that
-panel switches to {"clip": {"src": "clips/fNN.mp4", "in": 0, "out": <capped to the page>}} automatically.
+panel switches (with CJC_CLIPS=1) to {"clip": {"src": "clips/fNN.mp4", "in": 0, "out": <capped to the page>}} automatically.
 """
 import bisect, json, os, re, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -87,7 +87,21 @@ PAGES = [
 # Focus regions (normalised [x0, y0, x1, y1] on the panel image), read off a 10% grid sheet of every panel:
 # the storyboard "Focus" column (required) + other faces (required when they are a named lead, else nice-to-have).
 def R(label, *box, req=True):
-    return {'label': label, 'box': list(box), 'required': req}
+    r = {'label': label, 'box': list(box), 'required': req}
+    if any(k in label.lower().replace('headline', '').split() for k in ('face', 'grin', 'smirk', 'eyes', 'eye', 'lips', 'reflection', 'monocle', 'grill', 'ear', 'nickel', 'head')):
+        r['face'] = True
+    return r
+# extra face-only boxes (not required): every character visible in a panel, so captions / SFX can steer clear
+FACES = {
+ 'f04': [R('Uno face', 0.30, 0.15, 0.62, 0.80, req=False)],
+ 'f07': [R('middle face', 0.37, 0.0, 0.49, 0.22, req=False)],
+ 'f09': [R('Uno face', 0.27, 0.08, 0.40, 0.32, req=False)],
+ 'f13': [R('Uno face', 0.10, 0.02, 0.40, 0.50, req=False)],
+ 'f20': [R('Ferro face', 0.25, 0.05, 0.48, 0.45, req=False)],
+ 'f23': [R('Nickel face', 0.69, 0.10, 0.83, 0.32, req=False)],
+ 'f26': [R('Aura face', 0.25, 0.0, 0.42, 0.25, req=False)],
+ 'f05': [R('Aura face', 0.66, 0.20, 0.80, 0.45, req=False), R('bouncer face', 0.80, 0.05, 0.95, 0.35, req=False)],
+}
 FOCUS_REGIONS = {
  'f01': [R('skyline spire', 0.45, 0.10, 0.57, 0.55), R('lightning', 0.48, 0.0, 0.75, 0.30, req=False)],
  'f02': [R('Uno face', 0.27, 0.02, 0.40, 0.24), R('Aura face', 0.58, 0.02, 0.71, 0.24)],
@@ -99,7 +113,7 @@ FOCUS_REGIONS = {
  'f08': [R('Ferro grin', 0.19, 0.02, 0.33, 0.30), R('Uno face', 0.47, 0.10, 0.62, 0.35, req=False), R('Slick Nickel', 0.72, 0.20, 0.83, 0.40, req=False)],
  'f09': [R('Uno + crate swing', 0.13, 0.08, 0.48, 0.82), R('Aura face', 0.76, 0.02, 0.86, 0.20, req=False)],
  'f10': [R('car grille', 0.56, 0.28, 0.76, 0.70)],
- 'f11': [R('Uno grin', 0.27, 0.05, 0.42, 0.38), R('blueprint', 0.30, 0.70, 0.70, 0.90), R('Aura face', 0.60, 0.08, 0.73, 0.35, req=False)],
+ 'f11': [R('Uno grin', 0.29, 0.10, 0.41, 0.36), R('blueprint', 0.30, 0.70, 0.70, 0.90), R('Aura face', 0.60, 0.08, 0.73, 0.35, req=False)],
  'f12': [R('Aura face in lasers', 0.28, 0.15, 0.45, 0.42)],
  'f13': [R('Uno ear + face', 0.12, 0.05, 0.42, 0.55), R('vault dial', 0.62, 0.22, 0.84, 0.70)],
  'f14': [R('Aura face', 0.32, 0.12, 0.45, 0.35), R('Uno face', 0.62, 0.02, 0.78, 0.30)],
@@ -115,7 +129,7 @@ FOCUS_REGIONS = {
  'f24': [R('headline', 0.22, 0.12, 0.90, 0.45)],
  'f25': [R('Uno face', 0.31, 0.05, 0.48, 0.32), R('Aura face', 0.58, 0.05, 0.75, 0.35), R('gold 1 chain', 0.15, 0.0, 0.30, 0.45, req=False)],
  'f26': [R('hand on hat', 0.47, 0.06, 0.60, 0.28), R('glass', 0.74, 0.48, 0.88, 0.80), R('Uno face', 0.54, 0.18, 0.74, 0.52, req=False)],
- 'f27': [R('envelope seal', 0.10, 0.25, 0.45, 0.70), R('Aura eyes', 0.42, 0.15, 0.66, 0.42)],
+ 'f27': [R('envelope seal', 0.10, 0.25, 0.45, 0.70), R('Aura eyes', 0.46, 0.10, 0.64, 0.30)],
  'f28': [R('monocle glint', 0.22, 0.05, 0.38, 0.35), R('empty jail truck', 0.56, 0.30, 1.0, 0.90, req=False)],
 }
 SHORT = {'start': 128.30, 'end': 177.95,
@@ -156,12 +170,12 @@ def unit(fid, land, sfx, impact, ent, motion, k, slot=None):
     if slot:
         u['slot'] = slot
     clip = os.path.join(ASSETS, 'clips', f'{fid}.mp4')
-    if os.path.exists(clip):
+    if os.environ.get('CJC_CLIPS') == '1' and os.path.exists(clip):
         u['clip'] = {'src': f'clips/{fid}.mp4', 'in': 0.0, 'out': CLIP_LEN}
     else:
         u['stillMotion'] = {'type': motion, 'amount': 0.05, 'dur': 6.0}
         u['clipPending'] = f'clips/{fid}.mp4'
-    u['focusRegions'] = FOCUS_REGIONS.get(fid, [])
+    u['focusRegions'] = FOCUS_REGIONS.get(fid, []) + FACES.get(fid, [])
     u['shotKind'] = 'fx' if fid in ('f01', 'f24') else ('vehicle' if fid in ('f10', 'f19') else 'character')
     if fid not in ('f01', 'f10', 'f19', 'f24'):
         u['refs'] = ['/workspace/progressive-slop-refs/uno-locked.jpg', '/workspace/progressive-slop-refs/aura-locked.jpg']
@@ -248,7 +262,10 @@ def build():
             'pages': pages}
     spec['_dir'] = HERE
     for line in fix_layouts(spec):
-        print('layout fix:', line)
+        print('layout:', line)
+    for line in place_lettering(spec):
+        if 'cover 0.0' not in line:
+            print('lettering:', line)
     spec.pop('_dir')
     path = os.path.join(HERE, 'concrete-jungle-cold-comic.comic.json')
     json.dump(spec, open(path, 'w'), indent=1, ensure_ascii=False)
@@ -256,38 +273,106 @@ def build():
 
 
 def fix_layouts(spec):
-    """Scene-aware layout pass (as in shots/fright-night-comic/make_spec.py): when a page's crops cannot fit every
-    required focus region, try every layout with the same panel count and every slot order; keep the fewest misses
-    (16:9 and the Short weigh fully, vertical pages outside the Short count half), never repeating a neighbour's layout."""
-    import itertools
+    """Scene-aware layout pass. Panels always keep story order (slot a, b, c, d = reading order, never permuted).
+    Per page, every layout with the right panel count is scored on required focus misses: hard = 16:9 + panels inside
+    the Short (QA fails), soft = vertical panels outside the Short (QA warns). Only layouts with the page's minimum hard
+    misses are allowed; a global search over those picks the combination with no neighbour repeats, the lowest maximum
+    reuse of any layout, the fewest plain `side-two` pages, the most distinct layouts, then the fewest soft misses."""
     import comic_lib as C
-    pages = spec['pages']; report = []
+    from collections import Counter
+    pages = spec['pages']; report = []; used = Counter({'side-two': 1})   # plain columns: fallback only
     s0, s1 = spec['short']['start'], spec['short']['end']
-    def score(pg, layout, slots):
+    def score(pg, layout):
+        slots = sorted(C.LAYOUTS[layout]['slots'])
         sub = dict(spec, panels=[dict(u, slot=s) for u, s in zip(pg['panels'], slots)], layout=layout, page=pg['id'],
                    song=dict(spec['song'], start=pg['start'], end=pg['end']))
         in_short = {u['id'] for u in pg['panels'] if u['at'] < s1 and pg['end'] > s0}
-        return round(sum(f for *_, f in C.page_focus_problems(spec, sub, 'landscape')) +
-                     sum(f * (1.0 if uid in in_short else 0.3) for uid, *_, f in C.page_focus_problems(spec, sub, 'vertical')), 3)
-    for i, pg in enumerate(pages):
-        n = len(pg['panels'])
-        orig = (pg['layout'], tuple(u['slot'] for u in pg['panels']))
-        best = (score(pg, *orig), 0, orig)
-        if best[0] > 0:
-            for name, L in C.LAYOUTS.items():
-                if L['n'] != n or (i and pages[i - 1]['layout'] == name) or (i + 1 < len(pages) and pages[i + 1]['layout'] == name):
-                    continue
-                for perm in itertools.permutations(sorted(L['slots'])):
-                    sc = score(pg, name, perm)
-                    if (sc, 1) < best[:2]:
-                        best = (sc, 1, (name, perm))
-        if best[2] != orig:
-            report.append(f"{pg['id']}: {orig[0]} {''.join(orig[1])} -> {best[2][0]} {''.join(best[2][1])} (misses {score(pg, *orig)} -> {best[0]})")
-            pg['layout'] = best[2][0]
-            for u, sl in zip(pg['panels'], best[2][1]):
-                u['slot'] = sl
-        elif best[0] > 0:
-            report.append(f"{pg['id']}: {orig[0]} kept, misses {best[0]}")
+        vp = C.page_focus_problems(spec, sub, 'vertical')
+        hard = sum(f for *_, f in C.page_focus_problems(spec, sub, 'landscape')) + sum(f for uid, *_, f in vp if uid in in_short)
+        soft = sum(f for uid, *_, f in vp if uid not in in_short)   # QA only warns on these
+        return round(hard, 3), round(soft, 3)
+    import itertools
+    opts = []
+    for pg in pages:
+        sc = {name: score(pg, name) for name, L in C.LAYOUTS.items() if L['n'] == len(pg['panels'])}
+        hmin = min(h for h, _ in sc.values())
+        opts.append({k: v for k, v in sc.items() if v[0] <= hmin + 1e-6})
+    best = None
+    for combo in itertools.product(*[sorted(o) for o in opts]):
+        if any(a == b for a, b in zip(combo, combo[1:])):
+            continue
+        cnt = Counter(combo)
+        key = (max(cnt.values()), cnt['side-two'], -len(cnt), round(sum(o[c][1] for o, c in zip(opts, combo)), 2))
+        if best is None or key < best[0]:
+            best = (key, combo)
+    for pg, o, name in zip(pages, opts, best[1]):
+        report.append(f"{pg['id']}: {pg['layout']} -> {name} (misses hard/soft {o[name]}; options {sorted(o)})")
+        pg['layout'] = name
+        for u, sl in zip(pg['panels'], sorted(C.LAYOUTS[name]['slots'])):
+            u['slot'] = sl
+    return report
+
+
+def _overlap(a, b):
+    """Overlap area of rect a (x, y, w, h) with box b (x0, y0, x1, y1)."""
+    return max(0, min(a[0] + a[2], b[2]) - max(a[0], b[0])) * max(0, min(a[1] + a[3], b[3]) - max(a[1], b[1]))
+
+
+def place_lettering(spec):
+    """Face-aware lettering pass: every caption anchor (tl/tr/bl/br) and SFX spot is chosen so its measured box (the
+    renderer's own caption_box / sfx_rect, after auto-fit) covers as little of ANY face in the panel as possible, in 16:9
+    and in the Short (vertical pages outside the Short count x0.2). Captions on screen together use different
+    top/bottom rows so they never stack."""
+    import comic_lib as C
+    s0, s1 = spec['short']['start'], spec['short']['end']
+    report = []
+    for pg in spec['pages']:
+        units = [(u, u['slot']) for u in pg['panels']] + ([(pg['splash'], 'splash')] if pg.get('splash') else [])
+        ctx = {}
+        for orient in ('landscape', 'vertical'):
+            G = C.layout_geo(orient, pg['layout'], pg.get('splashStyle', 'full'))
+            Lr = C.layout(orient, pg['layout'], pg.get('splashStyle', 'full'))
+            for u, sl in units:
+                size, crop, regions, _, _ = C.unit_fit(spec, u, G[sl], spec.get('fps', 30))
+                faces = [C.region_to_frame(r['box'], size, crop, G[sl]) for r in regions if r.get('face')]
+                land = u.get('at', pg.get('transition', {}).get('at', pg['start']))
+                w = 1.0 if orient == 'landscape' or (land < s1 and pg['end'] > s0) else 0.2
+                ctx[(u['id'], orient)] = (G[sl], Lr[sl], faces, w)
+        def cost_rect(uid, rect_fn):
+            c = 0.0
+            for orient in ('landscape', 'vertical'):
+                geo, slot, faces, w = ctx[(uid, orient)]
+                r = rect_fn(geo, slot, orient)
+                c += w * sum(_overlap(r, f) for f in faces) / max(1, r[2] * r[3])
+            return c
+        for u, sl in units:
+            caps = u.get('captions', [])
+            for i, c in enumerate(caps):
+                end_c = c.get('until', pg['end'])
+                busy = {o['anchor'][0] for o in caps[:i] if o['at'] < end_c and o.get('until', pg['end']) > c['at']}
+                best = None
+                for a in ('tl', 'tr', 'bl', 'br'):
+                    if a[0] in busy:
+                        continue
+                    cc = cost_rect(u['id'], lambda geo, slot, o: C.caption_box(dict(c, anchor=a), slot, geo, C.TEXT_SAFE[o])[0])
+                    key = (round(cc, 3), a != c.get('anchor'))
+                    if best is None or key < best[0]:
+                        best = (key, a)
+                if best:
+                    c['anchor'] = best[1]
+            for sx in u.get('sfx', []):
+                best = None
+                for px in (0.22, 0.5, 0.78):
+                    for py in (0.25, 0.5, 0.75):
+                        cand = dict(sx, pos=[px, py])
+                        cc = cost_rect(u['id'], lambda geo, slot, o: C.sfx_rect(cand, slot, C.SFX_PEAK, geo, C.TEXT_SAFE[o],
+                                                                               C.unit_caption_rects(u, slot, geo, C.TEXT_SAFE[o]))[0])
+                        key = (round(cc, 3), abs(px - sx['pos'][0]) + abs(py - sx['pos'][1]))
+                        if best is None or key < best[0]:
+                            best = (key, [px, py])
+                sx['pos'] = best[1]
+                sx['rot'] = -8 if best[1][0] > 0.5 else 7
+                report.append(f"{u['id']}: sfx {sx['text']} at {best[1]} face cover {best[0][0]}")
     return report
 
 

@@ -308,3 +308,12 @@ Every comic video should level up beyond Kingdom Come: real story, real hits. Ex
   draw a gold deco sunburst behind the logo / end card, `endCard.fills` sets the box colours.
 - **Layout pass weighting:** score vertical misses only for panels visible inside the Short window (others ×0.3),
   so a panel after the Short does not force a worse 16:9 layout.
+- **Story order is fixed:** the layout pass never permutes slots (a, b, c, d = reading order); it only swaps layouts.
+  A global search over the layouts with the page's minimum hard focus misses (16:9 + Short) picks the combination with
+  no neighbour repeats, the lowest reuse of any layout and the fewest plain `side-two` pages.
+- **Face-aware lettering:** tag every visible face as a focus region (`"face": true`; `required: false` for ones the
+  crop need not keep). `place_lettering` in the builder picks each caption anchor (tl/tr/bl/br, with captions on screen
+  at the same time in different rows) and each SFX spot (3x3 grid) by measuring the renderer's own fitted boxes against
+  the face boxes mapped through the real crop, in 16:9 and the Short.
+- **Clip timing at slow tempos:** at 86 BPM one beat is 0.70 s, above the 0.6 s hold limit; clips need an explicit
+  `clip.at` (half-beat) or a QA exception before the final render with clips.
