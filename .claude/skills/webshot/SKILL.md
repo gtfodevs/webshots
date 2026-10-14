@@ -45,6 +45,9 @@ Claude-specific notes:
 - **Short pages cannot carry a splash zoom.** A page under about 9 s with a zoom-transition splash caps its clips at 2-4 s, or even below zero. Make that panel a regular slot, so every clip still gets about 5.3-6 s.
 - **Short cut points:** whisper word boundaries can be back to back, with no gap. When they are, cut exactly on a word boundary (QA allows ±0.03 s).
 - **Render audit CLI:** `python3 scripts/comic_render_audit.py SPEC LANDSCAPE.mp4 SHORT.mp4 --out DIR` exits 1 if any caption or SFX is sliced by the frame edge.
+- **Two-level transitions (default):** every panel animates in with its own entrance (no two consecutive panels alike; captions only after it lands), and every page change gets its own transition.
+- **Page transitions:** pages never hard-cut. They get 0.3-0.8 s transitions picked by mood (`pages[i].pageTransition` overrides), never the same type twice in a row, and the lettering is never moved or masked (see the music-video skill). `spec.tbc` adds a TO BE CONTINUED card before the end card.
+- **Themed loop background (required plan step):** `scripts/make_loop_bg.py --theme blinking_eyes|starfield|neon_rain|embers` (both orientations, with a seam check), wired in as `spec.bg_video` + `loop: true`.
 
 ### Impact bursts are solid (rule, 2026-10-13)
 - **Bursts are never hollow.** The breakout impact burst (the star that breaks out over a splash border behind "BAM!"-style SFX) used to be a cutout of the panel art. Video showed through a black-outlined star, which looked strange. `paint_burst` now fills it solid: an opaque radial white-yellow-orange gradient with halftone dots that grow toward the rim, an ink outline, and the SFX lettering on top.

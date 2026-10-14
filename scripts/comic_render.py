@@ -7,6 +7,8 @@ Writes (never overwriting; -v2, -v3 ... suffixes):
   DIR/comic-scene-1080p.mp4   1920x1080, song section, loudnorm to spec.song.loudness (default -14 LUFS)
   DIR/comic-scene-short.mp4   1080x1920 vertical variant
   DIR/comic-scene-sheet.png   contact sheet of the beats
+Page boundaries get smooth transitions (C.page_transitions: per-page pageTransition or the mood auto-picker;
+lettering is never moved or masked by them); spec.tbc adds a hard cut to black + 'TO BE CONTINUED...' card before the end card.
 Every video and Short opens on the title logo intro (spec.intro, default on; --intro-test writes the stills) and ends on an end card (spec.endCard, default C.ENDCARD_DEFAULT: ~3 s,
 'BROUGHT TO YOU BY PROGRESSIVE SLOP' / 'LIKE AND SUBSCRIBE FOR MORE!'); the song tail fades under it.
 """
@@ -22,7 +24,8 @@ def master_audio(spec, wav, t0=None, t1=None):
     dur = s['end'] - s['start']
     lufs = s.get('loudness', -14)
     ec = C.endcard(spec)
-    card = ec['seconds'] if ec else 0.0
+    tb = C.tbc(spec)
+    card = (ec['seconds'] if ec else 0.0) + (tb['seconds'] if tb else 0.0)
     # no hard cut at the end: let the song ring on under the end card when there is more of it,
     # and fade the tail naturally (C.TAIL_FADE s, longer when the song continues), then pad silence
     ext = max(0.0, min(card, C.probe_duration(src) - s['end']))
@@ -59,40 +62,64 @@ def render(spec, orient, out_path, wav, sheet_path=None, t0=None, t1=None):
     shots = []
     ic = C.intro(spec)
     ts_intro = C.intro_slam(spec, t_song0) if ic else None
-    for sub in C.subspecs(spec):
+    subs = C.subspecs(spec)
+    # page transitions replace the hard cuts; in a Short only boundaries fully inside the window get one
+    trs = [tr for tr in C.page_transitions(spec)
+           if tr['dur'] > 0 and t_song0 + tr['dur'] / 2 < tr['at'] < t_song1 - tr['dur'] / 2]
+    cache = {}
+    def scene(i):
+        if i not in cache:
+            for k in [k for k in cache if k < i - 1]:
+                del cache[k]
+            cache[i] = C.Scene(subs[i], orient)
+        return cache[i]
+    keep = {}
+    for i, sub in enumerate(subs):
         if sub['song']['end'] <= t_song0 + 1e-3 or sub['song']['start'] >= t_song1 - 1e-3:
             continue
-        sc = C.Scene(sub, orient)
-        # contact sheet moments: each panel landing, each clip mid/freeze, transition
-        marks = {}
-        for u in sc.all_units():
-            marks[C.T(sub, u['at']) + 0.3] = f"{u['id']} lands"
-            if u.get('clip'):
-                c = u['clip']; t0 = C.T(sub, C.clip_start(sub, u))
-                marks[t0 + (c['out'] - c['in']) / 2] = f"{u['id']} clip {c['in']:.1f}-{c['out']:.1f}s"
-                marks[t0 + (c['out'] - c['in']) + 0.3] = f"{u['id']} freeze"
+        # contact sheet moments: each panel landing, each clip mid/freeze, zoom
+        for u in sub['panels']:
+            keep[sub['song']['start'] - t_song0 + C.T(sub, u['at']) + 0.3] = f"{u['id']} lands"
         tr = sub.get('transition')
         if tr:
-            marks[C.T(sub, tr['at']) - tr['dur'] / 2] = 'zoom into ' + tr['panel']
-        # frames are counted on the global clock so pages butt together without drift
-        end_frame = int(round((min(sub['song']['end'], t_song1) - t_song0) * fps))
-        keep = {}
-        for t, lbl in marks.items():
-            keep[int(round((sub['song']['start'] - t_song0 + t) * fps))] = lbl
-        while written < end_frame:
-            t = (written / fps) - (sub['song']['start'] - t_song0)
-            f = sc.frame(max(t, 0.0))
-            if ic:
-                f = C.intro_frame(f, orient, ic, written / fps, ts_intro, fps)
-                if written == int(round((ts_intro + 0.5) * fps)):
-                    shots.append((written / fps, 'title intro', f))
-            enc.stdin.write(f.tobytes())
-            if written in keep:
-                shots.append((written / fps, keep[written], f))
+            keep[C.T(sub, tr['at']) + sub['song']['start'] - t_song0 - tr['dur'] / 2] = 'zoom into ' + tr['panel']
+    for tr in trs:
+        keep[tr['at'] - t_song0 - tr['dur'] / 4] = f"{tr['type']} -> {tr['into']}"
+    keep = {int(round(k * fps)): v for k, v in keep.items()}
+    end_frame = int(round((t_song1 - t_song0) * fps))
+    starts = [x['song']['start'] for x in subs]
+    f = None
+    while written < end_frame:
+        s = t_song0 + written / fps
+        i = max(0, sum(1 for st in starts if st <= s + 1e-9) - 1)
+        tr = next((x for x in trs if abs(s - x['at']) < x['dur'] / 2), None)
+        if tr:
+            j = next(k for k, x in enumerate(subs) if abs(x['song']['start'] - tr['at']) < 1e-6)
+            scA, scB = scene(j - 1), scene(j)
+            f = C.transition_frame(scA, s - subs[j - 1]['song']['start'], scB, s - subs[j]['song']['start'], tr, s)
+        else:
+            f = scene(i).frame(max(s - subs[i]['song']['start'], 0.0))
+        if ic:
+            f = C.intro_frame(f, orient, ic, written / fps, ts_intro, fps)
+            if written == int(round((ts_intro + 0.5) * fps)):
+                shots.append((written / fps, 'title intro', f))
+        enc.stdin.write(f.tobytes())
+        if written in keep:
+            shots.append((written / fps, keep[written], f))
+        written += 1
+    last = f
+    tb = C.tbc(spec)
+    if tb and written:   # hard cut to black, TO BE CONTINUED...
+        n = int(round(tb['seconds'] * fps))
+        for k in range(n):
+            card = C.tbc_frame(orient, tb, k / fps)
+            enc.stdin.write(card.tobytes())
+            if k == int(n * 0.6):
+                shots.append((written / fps, 'to be continued', card))
             written += 1
     ec = C.endcard(spec)
     if ec and written:
-        card = C.endcard_frame(f, orient, ec)
+        card = C.endcard_frame(last, orient, ec)
         shots.append((written / fps + 0.5, 'end card', card))
         b = card.tobytes()
         for _ in range(int(round(ec['seconds'] * fps))):
@@ -115,12 +142,35 @@ def render(spec, orient, out_path, wav, sheet_path=None, t0=None, t1=None):
         sheet.save(sheet_path)
 
 
+def transition_test(spec, out):
+    """Sheet of every transition type at 25/50/75% (synthetic pages: A = warm paper w/ caption, B = cool) + TBC card."""
+    import numpy as np
+    W, H = 640, 360
+    A = np.zeros((H, W, 3), np.float32); A[:] = (200, 120, 60); A[60:300, 40:300] = (240, 220, 160)
+    B = np.zeros((H, W, 3), np.float32); B[:] = (40, 70, 130); B[80:280, 340:600] = (120, 200, 230)
+    types = [t for t in C.TRANSITIONS if t != 'cut']
+    sheet = Image.new('RGB', (3 * (W // 2 + 8) + 180, len(types) * (H // 2 + 8) + 8), (30, 30, 30))
+    d = ImageDraw.Draw(sheet)
+    for r, typ in enumerate(types):
+        d.text((8, 8 + r * (H // 2 + 8) + H // 4 - 12), typ, font=C.font(26), fill=(240, 240, 240))
+        for k, p in enumerate((0.25, 0.5, 0.75)):
+            im = Image.fromarray(np.clip(C.transition_mix(A, B, typ, p, 3), 0, 255).astype('uint8')).resize((W // 2, H // 2))
+            sheet.paste(im, (180 + k * (W // 2 + 8), 8 + r * (H // 2 + 8)))
+    p = C.next_free(os.path.join(out, 'transition_test.png')); sheet.save(p); print('transitions', p)
+    tb = C.tbc(spec) or dict(C.TBC_DEFAULT, enabled=True)
+    L = C.tbc_frame('landscape', tb, 1.5); V = C.tbc_frame('vertical', tb, 1.5)
+    V = V.resize((int(V.width * 1080 / 1920), 1080), Image.LANCZOS)
+    im = Image.new('RGB', (L.width + V.width + 30, 1080), (30, 30, 30)); im.paste(L, (0, 0)); im.paste(V, (L.width + 30, 0))
+    p = C.next_free(os.path.join(out, 'tbc_test.png')); im.save(p); print('tbc', p)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('spec')
     ap.add_argument('--out', default='/workspace/comic-experiment/out')
     ap.add_argument('--only', choices=['landscape', 'vertical'])
     ap.add_argument('--intro-test', action='store_true', help='only write OUT/intro_test_landscape.png + intro_test_vertical.png (title logo over the opening frame) and exit')
+    ap.add_argument('--transition-test', action='store_true', help='write OUT/transition_test.png: every transition type at 25/50/75%% over two synthetic pages, plus the TO BE CONTINUED card; works on drafts')
     ap.add_argument('--endcard-test', action='store_true', help='only write OUT/endcard_test.png (both orientations side by side) and exit; works on drafts')
     ap.add_argument('--short', choices=['full', 'cut'], default='cut',
                     help='vertical: "cut" uses spec.short {start,end} when present (a ~45 s Short), "full" renders the whole spec')
@@ -140,6 +190,9 @@ def main():
             im = C.intro_frame(base, orient, ic, ts + 0.5, ts, spec.get('fps', 30))
             p = C.next_free(os.path.join(a.out, f'intro_test_{orient}.png')); im.save(p); print('intro', orient, p)
         return
+    if a.transition_test:
+        os.makedirs(a.out, exist_ok=True)
+        transition_test(spec, a.out); return
     if a.endcard_test:
         os.makedirs(a.out, exist_ok=True)
         ec = C.endcard(spec) or C.ENDCARD_DEFAULT

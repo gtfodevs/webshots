@@ -440,9 +440,11 @@ def check_page(sub, draft):
             a = np.asarray(sc.frame(t), np.float32)
             live = [u for u in sc.units if t >= C.T(sub, u['at']) + 0.15] if t < tr_t else [sc.splash]
             for u in live:
-                x, y, w, h = u['slotrect']
-                r = a[y:y + h, x:x + w]
-                lum = r.mean(axis=2)
+                # measure inside the panel's clip path only (a black 'blinking_eyes' gutter is not empty art)
+                x, y, w, h = u['geo']['bbox']
+                mk = np.asarray(u['mask'])[:max(0, min(h, a.shape[0] - y)), :max(0, min(w, a.shape[1] - x))] > 127
+                r = a[y:y + h, x:x + w][:mk.shape[0], :mk.shape[1]][mk]
+                lum = r.mean(axis=-1)
                 dark = float((lum < 12).mean())
                 if r.std() < 18 or lum.mean() < 10 or dark > 0.85:   # dark art (silhouettes, night: n04 mean 21, std 40) is fine; flat/black is not
                     fail(f"{pid} {orient}: slot of {u['id']} looks empty/black at {t:.2f}s")
@@ -508,6 +510,102 @@ def check_layouts(spec, subs):
         ok(f"{distinct} distinct layouts over {len(names)} pages, no consecutive repeats: " + ', '.join(f'{la}{"+" + sa if sa else ""}' for _, la, sa in names))
 
 
+def check_entrances(spec, subs):
+    """Level 1 of the two-level transition rule: every panel enters with its own entrance, never the same type as
+    the panel before it (across the whole video), 0.2-0.4 s, finished before its clip starts; captions/SFX wait for it."""
+    print('panel entrances:')
+    n0 = len(problems)
+    seq, prev = [], None
+    for sub in subs:
+        for u in sorted(sub['panels'], key=lambda u: u['at']):
+            en = C.entrance_of(u)
+            if en['type'] not in C.ENTRANCES:
+                fail(f"{u['id']}: unknown entrance '{en['type']}' (use one of {', '.join(C.ENTRANCES)})")
+            if en['type'] == prev:
+                fail(f"{u['id']}: entrance '{en['type']}' repeats the previous panel's - vary them")
+            if not C.ENTRANCE_MIN - 1e-6 <= en['dur'] <= C.ENTRANCE_MAX + 1e-6:
+                fail(f"{u['id']}: entrance {en['dur']}s outside {C.ENTRANCE_MIN}-{C.ENTRANCE_MAX}s")
+            if u.get('clip') and C.clip_start(sub, u) < u['at'] + en['dur'] - 1e-3:
+                fail(f"{u['id']}: clip starts before its {en['type']} entrance finishes")
+            prev = en['type']; seq.append(f"{u['id']}:{en['type']}")
+    if len(problems) == n0:
+        ok(f"{len(seq)} panels, no back-to-back entrance repeats, {C.ENTRANCE_MIN}-{C.ENTRANCE_MAX}s, each done before its clip; lettering waits for the entrance: " + ' '.join(seq))
+
+
+def check_transitions(spec, subs, draft, deep=True):
+    """Page transitions: valid types, 0.3-0.8 s, never the same type twice in a row, no sung line split across a
+    boundary without its caption carried over, little clip time under a transition, and (rendered, non-draft)
+    the lettering at mid-transition frames is pixel-identical to the plain frame (never moved, masked or cut)."""
+    print('transitions:')
+    n0 = len(problems)
+    trs = C.page_transitions(spec)
+    if not trs:
+        ok('single page - no transitions'); return
+    lines = timeline(spec).get('lyrics', [])
+    prev = None
+    for k, tr in enumerate(trs):
+        A, B = subs[k], subs[k + 1]
+        if tr['type'] not in C.TRANSITIONS:
+            fail(f"{tr['into']}: unknown transition '{tr['type']}' (use one of {', '.join(C.TRANSITIONS)})")
+        if tr['type'] == prev:
+            fail(f"{tr['into']}: '{tr['type']}' twice in a row - vary the transitions")
+        elif prev and C.TRANSITION_FAMILY.get(tr['type']) == C.TRANSITION_FAMILY.get(prev) and tr['auto']:
+            warn(f"{tr['into']}: auto-picked '{tr['type']}' is the same family as the previous '{prev}'")
+        prev = tr['type']
+        if tr['type'] != 'cut' and not C.TRANS_MIN - 1e-6 <= tr['dur'] <= C.TRANS_MAX + 1e-6:
+            fail(f"{tr['into']}: transition {tr['dur']}s outside {C.TRANS_MIN}-{C.TRANS_MAX}s")
+        b, h = tr['at'], tr['dur'] / 2
+        # a line sung across the boundary must be carried onto the incoming page (lettering swaps at the boundary)
+        for l in lines:
+            if l['t'] < b - 0.1 and sung_end(l) > b + 0.1:
+                want = norm(l['text'])
+                carried = any(c.get('lyric') and norm(c['text']) == want and c.get('at', u['at']) <= b + 0.05
+                              for u in B['panels'] for c in u.get('captions', []))
+                if not carried:
+                    fail(f"{tr['into']}: '{l['text']}' is sung across the page turn at {b:.2f}s but its caption is not carried onto the new page")
+        # clip time under the transition (the clip keeps playing underneath, but keep it short)
+        for sub in (A, B):
+            for u in sub['panels']:
+                if not u.get('clip'):
+                    continue
+                c0 = C.clip_start(sub, u); L = u['clip']['out'] - u['clip']['in']
+                ov = max(0.0, min(c0 + L, b + h) - max(c0, b - h))
+                if ov > 0.15 * L:
+                    warn(f"{tr['into']}: {u['id']} clip has {ov:.2f}s of its {L:.2f}s under the {tr['type']} transition")
+    if not draft and deep and len(problems) == n0:
+        bad = 0
+        for orient in ('landscape', 'vertical'):
+            for k, tr in enumerate(trs):
+                if tr['dur'] <= 0:
+                    continue
+                A, B = subs[k], subs[k + 1]
+                scA, scB = C.Scene(A, orient), C.Scene(B, orient)
+                for s in (tr['at'] - tr['dur'] * 0.3, tr['at'] - 0.5 / 30, tr['at'], tr['at'] + tr['dur'] * 0.3):
+                    f = np.asarray(C.transition_frame(scA, s - A['song']['start'], scB, s - B['song']['start'], tr, s), np.int16)
+                    sc, ts = (scA, s - A['song']['start']) if s < tr['at'] else (scB, s - B['song']['start'])
+                    full = np.asarray(sc.frame(ts), np.int16)
+                    m = C.lettering_mask(full, np.asarray(sc.frame(ts, letters=False)))
+                    diff = int((np.abs(f - full).max(-1)[m] > 3).sum())
+                    if diff:
+                        fail(f"{orient} {tr['type']} into {tr['into']} at {s:.2f}s: {diff} lettering px differ from the plain frame"); bad += 1
+                del scA, scB
+    if len(problems) == n0:
+        seq = ' > '.join(f"{t['type']}({t['dur']:.2f})" for t in trs)
+        ok(f"{len(trs)} transitions, no consecutive repeats, {C.TRANS_MIN}-{C.TRANS_MAX}s, sung lines carried across turns"
+           + ('' if draft or not deep else ', lettering pixel-identical mid-transition') + f": {seq}")
+    tb = C.tbc(spec)
+    if tb:
+        for orient in ('landscape', 'vertical'):
+            lost = C.intro_ink_lost(C.tbc_ic(tb), orient)
+            r = C.tbc_rect(tb, orient); x0, y0, x1, y1 = C.SAFE[orient]
+            if lost > 0:
+                fail(f"TO BE CONTINUED {orient}: tile loses {lost} ink px")
+            if r[0] < x0 or r[1] < y0 or r[0] + r[2] > x1 or r[1] + r[3] > y1:
+                fail(f"TO BE CONTINUED {orient}: lettering {[int(v) for v in r]} leaves the title-safe area")
+        if len(problems) == n0:
+            ok(f"'{tb['text']}' card ({tb['seconds']}s, hard cut to black, before the end card): no ink lost, title-safe")
+
+
 def main(path):
     spec = C.load_spec(path)
     draft = bool(spec.get('draft'))
@@ -523,6 +621,8 @@ def main(path):
     check_audio(spec)
     check_intro(spec)
     check_endcard(spec)
+    check_entrances(spec, subs)
+    check_transitions(spec, subs, draft, deep='--deep' in sys.argv)
     out = os.path.join(C.ROOT, 'out', os.path.basename(os.path.dirname(spec['_path'])), 'qa')
     os.makedirs(out, exist_ok=True)
     with open(os.path.join(out, 'comic-qa.json'), 'w') as f:
@@ -533,4 +633,4 @@ def main(path):
 
 
 if __name__ == '__main__':
-    sys.exit(main(sys.argv[1]))
+    sys.exit(main([a for a in sys.argv[1:] if not a.startswith('--')][0]))

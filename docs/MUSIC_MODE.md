@@ -710,3 +710,40 @@ Every comic video should level up beyond Kingdom Come: real story, real hits. Ex
 ### Vehicle- and FX-only clips (rule, 2026-10-13)
 - **For vehicle- or FX-only clips (jets, ships, explosions, beams, crowns), never name characters and never say "robot" in the motion prompt.** Use a short prompt of vehicles, action and camera that ends with "one continuous shot, no people". Example: "Red jet streaks toward a black spiked jet, blue and red energy beams colliding, sparks and speed lines streaming. Locked camera. One continuous shot, no people."
 - **Why:** in Deadstars, the no-new-characters clause alone (anchor plus "only these characters in shot") failed 2 of 2 retries; the model kept growing standing robots out of the jets. The vehicle-only prompt fixed 5 of 5 on the first try (d20, d25, d26, d28, s23; d22 and s29 also came out clean). The character anchor only belongs in shots where characters are actually visible.
+
+### Page transitions (rule, 2026-10-13, FRIGHT NIGHT)
+- **No hard cuts between pages.** `C.page_transitions(spec)` gives every page boundary a 0.3-0.8 s transition centred on the turn: `crossfade`, `fade_black`, `slide_left` / `slide_right` / `slide_up` (push), `wipe_linear`, `wipe_diag`, `iris`, `whip` (push with motion blur), `flash`, `glitch` (`cut` only when asked for).
+- **Spec:** `pages[i].pageTransition = {"type": ..., "dur": ...}` (the transition INTO page i), or leave it out for the mood auto-picker. Mood comes from `pages[i].mood`, else a page that opens on an impact SFX counts as `scare`, else `spec.mood`. `eerie` picks slower fades, dissolves to black, iris and diagonal wipes; `action` picks whips, flashes, slides and linear wipes; `scare` picks glitch or flash.
+- **Never the same type twice in a row.** The picker also avoids the last 3 types and the previous family. A transition is never longer than 40% of either neighbouring page.
+- **Only the art transitions.** The outgoing page keeps playing (clips freeze) and the incoming page shows its landed panels. Lettering is laid back on top unmoved and unmasked: the outgoing page's lettering until the boundary, the incoming page's from the boundary, just like a hard cut. So a caption can never be slid, wiped or cut, and clip timing is unchanged.
+- **QA (`check_transitions`):**
+  - valid types, 0.3-0.8 s, no consecutive repeats
+  - a line sung across a page turn must be carried onto the new page
+  - a warning when >15% of a clip sits under a transition
+  - `--deep`: mid-transition frames' lettering must be pixel-identical to the plain frame
+- **Test stills:** `comic_render.py SPEC --transition-test` writes a sheet of every type at 25/50/75%, plus the TO BE CONTINUED card.
+- **TO BE CONTINUED card:** `spec.tbc = {"enabled": true, "text": "TO BE CONTINUED...", "seconds": 2.5}`. It hard-cuts to black after the last page, then the end card follows. Its seconds are added to the audio pad. QA checks ink loss and title-safe.
+- **Spooky intro:** `intro.style: "drip"` hangs ink drips off the glyphs. `intro.lightning: true` replaces the sparkles with a lightning double-flicker and a forked bolt. Presets are in `C.INTRO_DRIP`.
+
+### Themed looping backgrounds (required step, 2026-10-13)
+- **Pick a background theme per song in the plan.** `scripts/make_loop_bg.py --theme <blinking_eyes|starfield|neon_rain|embers> --orient landscape|vertical --out <assets>/bg/<theme>-<orient>.mp4` (default 9.6 s).
+- **Generate both orientations.** Every motion is periodic in the loop, and a seam check (last->first frame diff vs the median frame diff) fails with exit 1 on a jump.
+- **Theme guide:**
+  - horror: `blinking_eyes`
+  - space: `starfield`
+  - cyber / dojo: `neon_rain`
+  - fantasy: `embers` (embers + smoke)
+- **Spec:** `"bg_video": {"landscape": "bg/x-landscape.mp4", "vertical": "bg/x-vertical.mp4"}, "loop": true`. It plays full-frame behind every page on the song clock (seamless across page turns), and panels simply cover it, so no placement logic is needed. Media stays out of git.
+- **QA's empty-slot check measures inside the panel clip path only**, so a black gutter is not flagged as empty art.
+
+### Two-level transitions (standing rule, 2026-10-13; renderer default)
+1. **Panel entrances.** Every panel/cell animates in when it lands. The types are `fade`, `slide_left`, `slide_right`, `slide_up`, `slide_down`, `wipe`, `iris`, `zoom_pop`, `whip` (slide with motion blur) and `glitch` (scares/impacts).
+   - Duration is 0.2-0.4 s.
+   - No two consecutive panels in the whole video share an entrance.
+   - The picker is auto by page mood: eerie gets fades, irises, wipes and slow slides; action gets whips, pops and fast slides; a panel with an impact SFX gets glitch, pop or whip. Override with `panels[i].entrance = {"type", "dur"}`.
+   - Only the panel's own pixels move, revealing it over the background (e.g. the looping eyes).
+   - The entrance finishes before the clip starts, so the anticipation beat is kept.
+   - **Captions and SFX appear only after their panel's entrance has finished** and are never moved, so they cannot be clipped.
+   - Exits are handled by the page transition. There are no per-panel exit animations yet.
+2. **Page transitions.** Every page change gets its own transition (see "Page transitions" above). It always differs from the previous page's.
+- **QA:** `check_entrances` covers level 1 (types, durations, no back-to-back repeats, done before the clip). `check_transitions` covers level 2.

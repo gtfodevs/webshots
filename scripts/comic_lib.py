@@ -51,6 +51,7 @@ MAX_HOLD = 0.6             # QA fails if clip start - panel land > this
 def subspecs(spec):
     """A spec is one page (panels/transition/splash) or a whole song ("pages": [...]).
     Returns one page-level spec per page with song.start/end set to the page's span."""
+    assign_entrances(spec)
     if 'pages' not in spec:
         return [spec]
     out = []
@@ -662,7 +663,8 @@ class Scene:
         self.W, self.H = SIZES[orient]
         self.fps = fps or spec.get('fps', 30)
         self.G = layout_geo(orient, spec.get('layout', 'three'), spec.get('splashStyle', 'full'))
-        self.paper = Image.fromarray(paper(self.W, self.H))
+        self.bgv = bg_video(spec, orient)
+        self.paper = Image.new('RGB', (self.W, self.H), (0, 0, 0)) if self.bgv else Image.fromarray(paper(self.W, self.H))
         self.L = layout(orient, spec.get('layout', 'three'), spec.get('splashStyle', 'full'))
         self.units = [dict(p, slotrect=self.L[p['slot']], geo=self.G[p['slot']]) for p in spec['panels']]
         sp = splash_unit(spec)
@@ -695,6 +697,8 @@ class Scene:
         crop = cover_crop(img.width, img.height, w, h, tuple(focus), within)
         u['crop'] = crop
         u['static'] = comic_finish(upscale(img, crop, (w, h), sharpen=False))
+        if u.get('eyeShift') and not u.get('clip'):
+            u['static_alt'] = comic_finish(upscale(eye_shift_image(img, u['eyeShift']), crop, (w, h), sharpen=False))
         if u.get('clip'):
             rx, ry, rw, rh = u['reg']
             fw, fh = frames[0].size
@@ -707,6 +711,12 @@ class Scene:
     def art(self, u, t):
         """Panel art at scene time t: static hold -> clip (3-frame crossfade in) -> freeze on last frame."""
         if not u.get('clip'):
+            es = u.get('eyeShift')
+            if es and 'static_alt' in u:   # still panel: hold the start colour, crossfade the eyes once, hold the end colour
+                k = (t - T(self.spec, u['at']) - es.get('hold', 2.0)) / es.get('fade', 1.0)
+                if k <= 0:
+                    return u['static']
+                return u['static_alt'] if k >= 1 else Image.blend(u['static'], u['static_alt'], ease_io(k))
             return u['static']
         t0 = T(self.spec, clip_start(self.spec, u))
         if t < t0:
@@ -752,10 +762,10 @@ class Scene:
         slot = u['slotrect']
         S = TEXT_SAFE[self.orient]
         for c in u.get('captions', []):
-            if t >= T(self.spec, c.get('at', u['at'])) and ('until' not in c or t < T(self.spec, c['until'])):
+            if t >= max(T(self.spec, c.get('at', u['at'])), T(self.spec, u['at']) + entrance_of(u)['dur']) and ('until' not in c or t < T(self.spec, c['until'])):
                 draw_caption(img, c, slot, u['geo'], S)
         for s in u.get('sfx', []):
-            ts = T(self.spec, s['at'])
+            ts = max(T(self.spec, s['at']), T(self.spec, u['at']) + entrance_of(u)['dur'])
             if t >= ts:
                 k = min((t - ts) * self.fps / 3, 1.0)
                 scale = 1.25 - 0.25 * ease(k)          # quick 3-frame stamp, then still
@@ -764,28 +774,34 @@ class Scene:
                     tile = tile.resize((rect[2], rect[3]), Image.BICUBIC)
                 img.paste(tile, rect[:2], tile)
 
-    def page(self, t, letters_only=None):
-        img = self.paper.copy()
+    def background(self, t):
+        if self.bgv:   # looping background video on the song clock (seamless across page turns)
+            return self.bgv.at(t + self.spec['song']['start'], self.spec.get('loop', True)).copy()
+        return self.paper.copy()
+
+    def page(self, t, letters_only=None, letters=True):
+        img = self.background(t)
         for u in sorted(self.units, key=lambda u: u['geo']['z']):
             ta = T(self.spec, u['at'])
             if t < ta:
                 continue
-            k = ease((t - ta) / 0.14)
-            if k < 1:
+            en = entrance_of(u)
+            if t - ta < en['dur']:
                 fr = img.copy(); self._paint(fr, u, t)
-                img = Image.blend(img, fr, k)
+                img = panel_entrance(img, fr, u['geo']['bbox'], en['type'], (t - ta) / en['dur'], seed=int(ta * 10))
             else:
                 self._paint(img, u, t)
-        for u in self.units:
+        for u in (self.units if letters else []):
             if t >= T(self.spec, u['at']) and (letters_only is None or u['id'] == letters_only):
                 self._letter(img, u, t)
         return img
 
-    def splash_frame(self, t):
-        img = self.paper.copy()
+    def splash_frame(self, t, letters=True):
+        img = self.background(t)
         u = self.splash
         self._paint(img, u, t, 9)
-        self._letter(img, u, t)
+        if letters:
+            self._letter(img, u, t)
         return img
 
     IMPACT_FLASH = 0.18     # s of white-out decay on an impact SFX
@@ -800,8 +816,10 @@ class Scene:
                 k = max(k, 0.6 * (1 - (t - ts) / self.IMPACT_FLASH))
         return k
 
-    def frame(self, t):
-        img = self._frame(t)
+    def frame(self, t, letters=True):
+        """Frame at scene time t. letters=False gives the art only (page transitions composite art, then lay the
+        lettering back on unmoved and unmasked so it can never be clipped)."""
+        img = self._frame(t, letters)
         tr = self.spec.get('transition')
         live = [self.splash] if (tr and self.splash and t >= T(self.spec, tr['at'])) else self.units
         amp = 0.0
@@ -856,21 +874,21 @@ class Scene:
         y0 = min(max((self.H - zh) / 2 + A * math.cos(n * 3.9), 0), self.H - zh)
         return (x0, y0, zw, zh)
 
-    def _frame(self, t):
+    def _frame(self, t, letters=True):
         tr = self.spec.get('transition')
         if not tr:
-            return self.page(t)
+            return self.page(t, letters=letters)
         t_land = T(self.spec, tr['at'])
         dur = tr.get('dur', 0.4)
         if t >= t_land:
-            return self.splash_frame(t)
+            return self.splash_frame(t, letters)
         if t < t_land - dur:
-            return self.page(t)
+            return self.page(t, letters=letters)
         # zoom into the target panel, then hard cut to the splash on the beat
-        key = round(t_land - dur, 4)
+        key = (round(t_land - dur, 4), letters)
         if key not in self._page_cache:
             # only the zoom target keeps its lettering: other panels' words would be sliced by the frame edge
-            self._page_cache[key] = self.page(t_land - dur, letters_only=tr['panel'])
+            self._page_cache[key] = self.page(t_land - dur, letters_only=tr['panel'], letters=letters)
         src = self._page_cache[key]
         target = next(u for u in self.units if u['id'] == tr['panel'])['geo']['bbox']
         a = self.W / self.H
@@ -1042,7 +1060,8 @@ def _intro_fonts(ic, orient):
     W, H = SIZES[orient]
     maxw = W * ic.get('width', 0.78) / INTRO_PEAK
     words = ic['title'].split()
-    lines = [ic['title']] if orient == 'landscape' or len(words) < 2 else [' '.join(words[:len(words) // 2]), ' '.join(words[len(words) // 2:])]
+    k = min(range(1, max(2, len(words))), key=lambda k: abs(len(' '.join(words[:k])) - len(' '.join(words[k:]))))
+    lines = [ic['title']] if orient == 'landscape' or len(words) < 2 else [' '.join(words[:k]), ' '.join(words[k:])]
     px = int(H * (0.26 if orient == 'landscape' else 0.15))
     while px > 40 and max(font(px).getlength(l) for l in lines) + 2 * max(6, px // 9) > maxw:
         px -= 4
@@ -1063,7 +1082,9 @@ def intro_tile(ic, orient, pad=None):
     sb = fs.getbbox(sub, stroke_width=max(3, spx // 8)) if sub else (0, 0, 0, 0)
     gap = int(px * 0.08)
     tw = max(lw, sb[2] - sb[0]) + 2 * P
-    th = (sb[3] - sb[1] + gap if sub else 0) + sum(lh) + gap * (len(lines) - 1) + 2 * P
+    drip = ic.get('style') == 'drip'
+    D = int(px * 0.5) if drip else 0          # room under the last line for ink drips
+    th = (sb[3] - sb[1] + gap if sub else 0) + sum(lh) + gap * (len(lines) - 1) + 2 * P + D
     text = Image.new('L', (tw, th), 0); outer = Image.new('L', (tw, th), 0); fill = Image.new('L', (tw, th), 0)
     dt, do, df = ImageDraw.Draw(text), ImageDraw.Draw(outer), ImageDraw.Draw(fill)
     y = P
@@ -1077,6 +1098,21 @@ def intro_tile(ic, orient, pad=None):
         do.text(o, l, font=f, fill=255, stroke_width=2 * sw, stroke_fill=255)
         dt.text(o, l, font=f, fill=255, stroke_width=sw, stroke_fill=255)
         df.text(o, l, font=f, fill=255)
+    if drip:   # dripping ink: runs hanging off the glyph bottoms (fill, keyline and outline all follow them)
+        rnd = np.random.default_rng(ic.get('seed', 13))
+        fa0 = np.asarray(fill)
+        for l, o in pos:
+            yb = o[1] + f.getbbox('H')[3]      # baseline (descending punctuation would hog the drips)
+            cols = np.nonzero(fa0[max(0, yb - 4)] > 128)[0]
+            if not len(cols):
+                continue
+            for x in rnd.choice(cols, size=min(len(cols), max(4, int(len(l.replace(' ', '')) * 1.2))), replace=False):
+                ln = rnd.uniform(0.1, 0.42) * px * (D / (px * 0.5) if l == pos[-1][0] else 0.55)
+                w = rnd.uniform(0.05, 0.1) * px
+                for dd, extra in ((df, 0), (dt, sw), (do, 2 * sw)):
+                    dd.rounded_rectangle([x - w / 2 - extra, yb - w - extra, x + w / 2 + extra, yb + ln + extra], radius=w / 2 + extra, fill=255)
+                    r = w * 0.8 + extra
+                    dd.ellipse([x - r, yb + ln - r, x + r, yb + ln + r], fill=255)
     # neon glow (two colours), white keyline, ink outline, chrome bevel gradient fill with a hot specular band
     tile = Image.new('RGBA', (tw, th), (0, 0, 0, 0))
     for col, r, k in ((ic['glow2'], glow_r * 2, 0.8), (ic['glow'], glow_r, 1.0)):
@@ -1092,7 +1128,7 @@ def intro_tile(ic, orient, pad=None):
         y0, y1 = o[1] + f.getbbox(l)[1], o[1] + f.getbbox(l)[3]
         ys = np.clip((np.arange(th) - y0) / max(1, y1 - y0), 0, 1)
         g = np.stack([np.interp(ys, xs, stops[:, c]) for c in range(3)], -1)
-        m = (np.arange(th) >= y0 - sw) & (np.arange(th) <= y1 + sw)
+        m = (np.arange(th) >= y0 - sw) & (np.arange(th) <= y1 + sw + (int(px * 0.5) if drip else 0))
         rgb[m] = g[m][:, None, :]
     rgb = np.clip(rgb, 0, 255).astype(np.uint8)
     fill_rgba = Image.fromarray(np.dstack([rgb, np.asarray(fill)]), 'RGBA')
@@ -1203,7 +1239,12 @@ def intro_frame(base, orient, ic, t, ts, fps=30):
     if a < 1:
         al = tl.getchannel('A').point(lambda v: int(v * a)); tl = tl.copy(); tl.putalpha(al)
     img.paste(tl, (int(round(r[0])), int(round(r[1]))), tl)
-    _sparkles(img, r, t, ts)
+    if ic.get('lightning'):
+        flash = lightning_flash(t - ts)
+        if flash > 0.3:
+            draw_bolt(img, orient, t - ts, seed=ic.get('seed', 13))
+    else:
+        _sparkles(img, r, t, ts)
     if flash > 0:
         img = Image.blend(img, Image.new('RGB', (W, H), (255, 255, 255)), flash)
     sb = intro_shake_box(orient, t, shake, fps)
@@ -1211,3 +1252,371 @@ def intro_frame(base, orient, ic, t, ts, fps=30):
         x0, y0, zw, zh = sb
         img = img.resize((W, H), Image.BICUBIC, box=(x0, y0, x0 + zw, y0 + zh))
     return img
+
+
+# ---------------------------------------------------------------- spooky title styles (FRIGHT NIGHT)
+# intro.style "drip": the logo lettering hangs ink drips off its glyph bottoms. intro.lightning: the slam lands
+# on a lightning double-flicker (flash, dip, second flash) with a jagged bolt instead of sparkles.
+INTRO_DRIP = {'style': 'drip', 'lightning': True, 'glow': [120, 255, 90], 'glow2': [150, 40, 220],
+              'chrome': [[235, 255, 210], [170, 230, 120], [90, 150, 60], [20, 40, 18], [120, 190, 80], [215, 250, 180]],
+              'subColor': [200, 255, 170], 'rot': -3, 'dim': 0.6}
+
+
+def lightning_flash(age):
+    """White-out strength of a lightning double flicker, age = s since the strike."""
+    if age < 0:
+        return 0.0
+    if age < 0.07:
+        return 0.9
+    if age < 0.13:
+        return 0.12
+    if age < 0.33:
+        return 0.75 * (1 - (age - 0.13) / 0.2)
+    return 0.0
+
+
+def draw_bolt(img, orient, age, seed=13):
+    """Jagged forked lightning bolt from the top edge (pale core, violet glow); a new fork on the second flicker."""
+    from PIL import ImageFilter
+    W, H = SIZES[orient]
+    rnd = np.random.default_rng(seed + (0 if age < 0.1 else 1))
+    x = W * rnd.uniform(0.15, 0.35) if rnd.random() < 0.5 else W * rnd.uniform(0.65, 0.85)
+    pts = [(x, -10)]
+    y = -10
+    while y < H * 0.62:
+        y += H * rnd.uniform(0.04, 0.09); x += W * rnd.uniform(-0.05, 0.05); pts.append((x, y))
+    layer = Image.new('L', (W, H), 0); d = ImageDraw.Draw(layer)
+    d.line(pts, fill=255, width=max(4, W // 240), joint='curve')
+    k = len(pts) // 2
+    fx, fy = pts[k]; fork = [(fx, fy)]
+    for _ in range(4):
+        fy += H * rnd.uniform(0.03, 0.07); fx += W * rnd.uniform(-0.06, 0.02); fork.append((fx, fy))
+    d.line(fork, fill=255, width=max(3, W // 400), joint='curve')
+    glow = layer.filter(ImageFilter.GaussianBlur(W / 120)).point(lambda v: min(255, v * 3))
+    img.paste(Image.new('RGB', (W, H), (190, 150, 255)), (0, 0), glow)
+    img.paste(Image.new('RGB', (W, H), (250, 250, 255)), (0, 0), layer)
+
+
+# ---------------------------------------------------------------- TO BE CONTINUED card
+# spec.tbc: hard cut to black after the last page, a dripping-ink "TO BE CONTINUED..." card, then the end card.
+TBC_DEFAULT = {'enabled': False, 'seconds': 2.5, 'text': 'TO BE CONTINUED...'}
+
+
+def tbc(spec):
+    c = dict(TBC_DEFAULT, **(spec.get('tbc') or {}))
+    return c if c.get('enabled') and c.get('seconds', 0) > 0 else None
+
+
+def tbc_ic(c):
+    """The card's lettering is an intro-style tile (same overhang-safe recipe, QA'd with intro_ink_lost)."""
+    ic = dict(INTRO_DEFAULT); ic.update(INTRO_DRIP)
+    ic.update(title=c['text'].upper(), subtitle=None, rot=-2, width=0.86, seed=c.get('seed', 29), lightning=False)
+    ic.update(c.get('style') or {})
+    return ic
+
+
+def tbc_frame(orient, c, t):
+    """Card at card-relative time t: black, lettering eases in (0.45 s) with a slow creep down and a faint flicker."""
+    W, H = SIZES[orient]
+    ic = tbc_ic(c)
+    img = Image.new('RGB', (W, H), (4, 3, 6))
+    tile = _intro_tile_cached(ic, orient)
+    r = intro_rect(ic, orient, 1.0)
+    a = min(1.0, max(0.0, t / 0.45))
+    a *= 0.88 + 0.12 * (0.5 + 0.5 * math.sin(t * 23.0)) if t > 0.45 else 1.0
+    tl = tile.resize((max(1, int(r[2])), max(1, int(r[3]))), Image.BICUBIC) if (int(r[2]), int(r[3])) != tile.size else tile
+    tl = tl.copy(); tl.putalpha(tl.getchannel('A').point(lambda v: int(v * a)))
+    img.paste(tl, (int(round(r[0])), int(round(r[1] + 6 * min(t, c['seconds']) / c['seconds']))), tl)
+    return img
+
+
+def tbc_rect(c, orient):
+    ic = tbc_ic(c); r = intro_rect(ic, orient, 1.0)
+    return [r[0], r[1], r[2], r[3] + 7]
+
+
+# ---------------------------------------------------------------- page transitions (replace hard cuts)
+# Each page boundary gets a short (0.3-0.8 s) transition centred on the boundary. Only the ART is transitioned:
+# the outgoing page keeps playing past its end (clips freeze), the incoming page shows its landed panels. The
+# lettering is laid back on top, unmoved and unmasked: the outgoing page's lettering up to the boundary, the
+# incoming page's from the boundary - exactly when a hard cut would swap it - so a caption can never be cut,
+# slid off frame or wiped mid-line, and clip timing is unchanged (clips still play full length).
+# spec: pages[i].pageTransition = {"type": ..., "dur": ...} (transition INTO page i; "auto" or absent = picked),
+# spec.mood / pages[i].mood = "eerie" | "action" | "scare". Never the same type twice in a row.
+TRANSITIONS = ['crossfade', 'fade_black', 'slide_left', 'slide_right', 'slide_up', 'wipe_linear', 'wipe_diag', 'iris',
+               'whip', 'flash', 'glitch', 'cut']
+TRANSITION_FAMILY = {'crossfade': 'dissolve', 'fade_black': 'dissolve', 'slide_left': 'slide', 'slide_right': 'slide',
+                     'slide_up': 'slide', 'wipe_linear': 'wipe', 'wipe_diag': 'wipe', 'iris': 'wipe', 'whip': 'whip',
+                     'flash': 'flash', 'glitch': 'flash', 'cut': 'cut'}
+TRANS_MIN, TRANS_MAX = 0.3, 0.8
+MOOD_POOLS = {   # (type, dur) in preference order
+    'eerie': [('fade_black', 0.8), ('crossfade', 0.7), ('iris', 0.7), ('wipe_diag', 0.6), ('slide_up', 0.6), ('crossfade', 0.8), ('fade_black', 0.7)],
+    'action': [('whip', 0.35), ('flash', 0.3), ('slide_left', 0.4), ('wipe_linear', 0.4), ('whip', 0.4), ('iris', 0.45), ('slide_right', 0.4)],
+    'scare': [('glitch', 0.35), ('flash', 0.3), ('whip', 0.35), ('wipe_linear', 0.35)],
+}
+
+
+def page_mood(spec, pg):
+    if pg.get('mood'):
+        return pg['mood']
+    if any(s.get('impact') and abs(s['at'] - pg['start']) < 1.0 for p in pg['panels'] for s in p.get('sfx', [])):
+        return 'scare'          # the page opens on an impact: hit it with glitch/flash
+    return spec.get('mood', 'eerie')
+
+
+def page_transitions(spec):
+    """[{at, type, dur, into, mood, auto}] for every page boundary (song time), deterministic."""
+    pages = spec.get('pages') or []
+    out, prev = [], None
+    for i in range(1, len(pages)):
+        pg = pages[i]
+        b = pg['start']
+        want = pg.get('pageTransition') or 'auto'
+        mood = page_mood(spec, pg)
+        if isinstance(want, dict) and want.get('type', 'auto') != 'auto':
+            typ, dur, auto = want['type'], want.get('dur', 0.5), False
+        else:
+            pool = MOOD_POOLS.get(mood, MOOD_POOLS['eerie'])
+            k = (i * 3) % len(pool)
+            cand = pool[k:] + pool[:k]
+            fam_prev = TRANSITION_FAMILY.get(prev) if prev else None
+            recent = [x['type'] for x in out[-3:]]
+            typ, dur = next(((t_, d_) for t_, d_ in cand if t_ not in recent and TRANSITION_FAMILY[t_] != fam_prev),
+                            next(((t_, d_) for t_, d_ in cand if t_ != prev and TRANSITION_FAMILY[t_] != fam_prev),
+                                 next(((t_, d_) for t_, d_ in cand if t_ != prev), cand[0])))
+            auto = True
+        if typ != 'cut':
+            # never longer than 40% of either neighbouring page (clips must still read near full length)
+            room = min(b - pages[i - 1]['start'], pg['end'] - b) * 0.4
+            dur = max(TRANS_MIN, min(TRANS_MAX, dur, room))
+        out.append({'at': b, 'type': typ, 'dur': 0.0 if typ == 'cut' else round(dur, 3), 'into': pg['id'], 'mood': mood, 'auto': auto})
+        prev = typ
+    return out
+
+
+def _whip_blur(a, n):
+    if n < 2:
+        return a
+    c = np.cumsum(np.pad(a, ((0, 0), (n, 0), (0, 0)), mode='edge'), axis=1, dtype=np.float32)
+    return (c[:, n:] - c[:, :-n]) / n
+
+
+def transition_mix(A, B, typ, p, seed=0):
+    """Art composite of outgoing A and incoming B (float32 HxWx3) at progress p in [0, 1]."""
+    H, W = A.shape[:2]
+    e = ease_io(min(max(p, 0.0), 1.0))
+    if typ == 'crossfade':
+        return A * (1 - e) + B * e
+    if typ == 'fade_black':
+        return A * max(0.0, 1 - 2 * p) if p < 0.5 else B * min(1.0, 2 * p - 1)
+    if typ in ('slide_left', 'slide_right', 'slide_up', 'whip'):
+        out = np.empty_like(A)
+        if typ == 'slide_up':
+            dy = int(round(e * H))
+            out[:H - dy] = A[dy:]; out[H - dy:] = B[:dy]
+            return out
+        dx = int(round(e * W))
+        if typ == 'slide_right':
+            out[:, dx:] = A[:, :W - dx]; out[:, :dx] = B[:, W - dx:]
+        else:
+            out[:, :W - dx] = A[:, dx:]; out[:, W - dx:] = B[:, :dx]
+        if typ == 'whip':   # motion blur proportional to the push speed
+            out = _whip_blur(out, int(W * 0.09 * math.sin(math.pi * p)))
+        return out
+    if typ in ('wipe_linear', 'wipe_diag', 'iris'):
+        yy, xx = np.mgrid[0:H, 0:W].astype(np.float32)
+        if typ == 'wipe_linear':
+            f, soft = xx / W, 0.02
+        elif typ == 'wipe_diag':
+            f, soft = (xx / W + yy / H) / 2, 0.02
+        else:
+            f, soft = np.hypot(xx - W / 2, yy - H / 2) / math.hypot(W / 2, H / 2), 0.015
+        edge = e * (1 + soft) - soft
+        m = np.clip((edge - f) / soft + 0.5, 0, 1)[..., None]
+        return A * (1 - m) + B * m
+    if typ == 'flash':
+        wht = np.full_like(A, 255.0)
+        return A + (wht - A) * min(1, p / 0.45) if p < 0.45 else B + (wht - B) * max(0.0, 1 - (p - 0.45) / 0.55)
+    if typ == 'glitch':
+        src = A if p < 0.5 else B
+        rnd = np.random.default_rng(seed + int(p * 40))
+        amt = math.sin(math.pi * p)
+        out = src.copy()
+        sh = int(W * 0.02 * amt) + 1
+        out[..., 0] = np.roll(src[..., 0], sh, axis=1); out[..., 2] = np.roll(src[..., 2], -sh, axis=1)
+        for _ in range(int(10 * amt) + 1):
+            y0 = int(rnd.uniform(0, H)); h = int(rnd.uniform(0.01, 0.06) * H)
+            out[y0:y0 + h] = np.roll(out[y0:y0 + h], int(rnd.uniform(-0.12, 0.12) * W * amt), axis=1)
+        if 0.42 < p < 0.58:
+            out = out + (255 - out) * 0.6
+        return out
+    return B if p >= 0.5 else A
+
+
+def lettering_mask(full, art, thr=10):
+    """Pixels where the lettered frame differs from its art-only twin = the lettering (captions, SFX)."""
+    return np.abs(full.astype(np.int16) - art.astype(np.int16)).max(-1) > thr
+
+
+def transition_frame(scA, tA, scB, tB, tr, s):
+    """Full frame during the page transition `tr` at song time s. scA/scB scenes with scene times tA/tB."""
+    p = (s - (tr['at'] - tr['dur'] / 2)) / tr['dur']
+    Aart = np.asarray(scA.frame(tA, letters=False), np.float32)
+    u0 = min(scB.units, key=lambda u: u['at'])
+    Bart = np.asarray(scB.frame(max(tB, T(scB.spec, u0['at']) + entrance_of(u0)['dur'] + 0.02), letters=False), np.float32)
+    out = transition_mix(Aart, Bart, tr['type'], p, seed=int(tr['at'] * 10))
+    # lettering back on top, unmoved: outgoing up to the boundary, incoming from it (as a hard cut would)
+    sc, ts, art = (scA, tA, Aart) if s < tr['at'] else (scB, tB, None)
+    full = np.asarray(sc.frame(ts), np.float32)
+    if art is None:
+        art = np.asarray(sc.frame(ts, letters=False), np.float32)
+    m = lettering_mask(full, art)
+    out[m] = full[m]
+    return Image.fromarray(np.clip(out, 0, 255).astype(np.uint8))
+
+
+# ---------------------------------------------------------------- bg_video (FRIGHT NIGHT "blinking eyes")
+# spec.bg_video = {"landscape": path, "vertical": path} (or one path with "{orient}") + "loop": true: a pre-rendered
+# seamless loop (scripts/make_eyes_loop.py) plays full-frame behind every page instead of the paper; panels simply
+# cover it. Frames are held JPEG-compressed in memory and decoded on demand (looped on the song clock).
+_BGV = {}
+class BgVideo:
+    def __init__(self, path, size, fps):
+        import io
+        W, H = size
+        raw = subprocess.run(['ffmpeg', '-v', 'error', '-i', path, '-vf', f'scale={W}:{H},fps={fps}', '-f', 'rawvideo',
+                              '-pix_fmt', 'rgb24', '-'], capture_output=True, check=True).stdout
+        n = len(raw) // (W * H * 3)
+        self.frames = []
+        for k in range(n):
+            b = io.BytesIO()
+            Image.frombytes('RGB', (W, H), raw[k * W * H * 3:(k + 1) * W * H * 3]).save(b, 'JPEG', quality=92)
+            self.frames.append(b.getvalue())
+        self.fps, self.last = fps, (None, None)
+
+    def at(self, t, loop=True):
+        import io
+        k = int(round(t * self.fps))
+        k = k % len(self.frames) if loop else min(max(k, 0), len(self.frames) - 1)
+        if self.last[0] != k:
+            self.last = (k, Image.open(io.BytesIO(self.frames[k])).convert('RGB'))
+        return self.last[1]
+
+
+def bg_video(spec, orient):
+    bv = spec.get('bg_video')
+    if not bv:
+        return None
+    path = bv.get(orient) if isinstance(bv, dict) else bv.replace('{orient}', orient)
+    path = resolve(spec, path)
+    key = (path, orient)
+    if key not in _BGV:
+        _BGV[key] = BgVideo(path, SIZES[orient], spec.get('fps', 30))
+    return _BGV[key]
+
+
+def eye_shift_image(img, es):
+    """Recolour glowing red eyes to ghost-green inside es.boxes (normalised [x0, y0, x1, y1] of the source image),
+    so red hair / outfits outside the boxes are untouched. Weight follows how 'hot red' a pixel is."""
+    a = np.asarray(img, np.float32).copy()
+    H, W = a.shape[:2]
+    to = np.array(es.get('color', [110, 255, 160]), np.float32)
+    for x0, y0, x1, y1 in es['boxes']:
+        X0, Y0, X1, Y1 = int(x0 * W), int(y0 * H), int(x1 * W), int(y1 * H)
+        r = a[Y0:Y1, X0:X1]
+        R, G, B = r[..., 0], r[..., 1], r[..., 2]
+        wgt = np.clip((R - np.maximum(G, B) - 50) / 90, 0, 1)[..., None]
+        lum = (0.5 * R + 0.5 * np.maximum(G, B))[..., None] / 255.0
+        green = np.clip(to * (0.35 + 0.9 * lum), 0, 255)
+        a[Y0:Y1, X0:X1] = r * (1 - wgt) + green * wgt
+    return Image.fromarray(np.clip(a, 0, 255).astype(np.uint8))
+
+
+# ---------------------------------------------------------------- panel entrances (rule, 2026-10-13: two-level transitions)
+# Every panel animates in with its own entrance when it lands; no two consecutive panels (across the whole video)
+# share one. Its captions/SFX appear only after the entrance has finished and are never moved, so they cannot be
+# clipped. Spec: panels[i].entrance = {"type": ..., "dur": ...} or omitted for the auto-picker (page mood).
+ENTRANCES = ['fade', 'slide_left', 'slide_right', 'slide_up', 'slide_down', 'wipe', 'iris', 'zoom_pop', 'whip', 'glitch']
+ENTRANCE_MIN, ENTRANCE_MAX = 0.2, 0.4
+ENTRANCE_POOLS = {
+    'eerie': [('fade', 0.36), ('iris', 0.34), ('slide_up', 0.32), ('wipe', 0.32), ('zoom_pop', 0.3), ('slide_left', 0.32), ('slide_down', 0.32)],
+    'action': [('whip', 0.24), ('zoom_pop', 0.26), ('slide_right', 0.26), ('slide_left', 0.26), ('wipe', 0.26), ('iris', 0.28)],
+    'scare': [('glitch', 0.26), ('zoom_pop', 0.24), ('whip', 0.24)],
+}
+
+
+def entrance_of(u):
+    e = u.get('entranceUsed') or u.get('entrance') or {'type': 'fade', 'dur': 0.14}
+    return {'type': e.get('type', 'fade'), 'dur': min(ENTRANCE_MAX, max(0.05, e.get('dur', 0.3)))}
+
+
+def assign_entrances(spec):
+    """Deterministic entrance per panel (explicit panels[i].entrance wins), never the same type twice in a row."""
+    pages = spec.get('pages') or [dict(spec, id=spec.get('page', 'p'), start=spec['song']['start'])]
+    prev, i = None, 0
+    for pg in pages:
+        mood = page_mood(spec, pg) if 'pages' in spec else spec.get('mood', 'eerie')
+        mood = 'eerie' if mood == 'scare' else mood
+        for u in sorted(pg['panels'], key=lambda u: u['at']):
+            e = u.get('entrance')
+            if e and e.get('type', 'auto') != 'auto':
+                u['entranceUsed'] = {'type': e['type'], 'dur': e.get('dur', 0.3), 'auto': False}
+            else:
+                pool = ENTRANCE_POOLS['scare'] if any(s.get('impact') for s in u.get('sfx', [])) else ENTRANCE_POOLS.get(mood, ENTRANCE_POOLS['eerie'])
+                k = (i * 5) % len(pool)
+                cand = pool[k:] + pool[:k]
+                typ, dur = next(((t_, d_) for t_, d_ in cand if t_ != prev), cand[0])
+                u['entranceUsed'] = {'type': typ, 'dur': dur, 'auto': True}
+            prev = u['entranceUsed']['type']; i += 1
+    return spec
+
+
+def panel_entrance(base, painted, bbox, typ, p, seed=0):
+    """Composite a panel (painted = base + panel) entering at progress p: only the panel's own pixels move."""
+    p = min(max(p, 0.0), 1.0)
+    B = np.asarray(base, np.float32); F = np.asarray(painted, np.float32)
+    m = (np.abs(F - B).max(-1) > 0).astype(np.float32)
+    H, W = m.shape
+    x, y, w, h = bbox
+    e = ease(p)
+    layer, alpha = F, m
+    def shift(arr, dx, dy):
+        out = np.zeros_like(arr)
+        dx, dy = int(round(dx)), int(round(dy))
+        xs0, xs1 = max(0, -dx), min(W, W - dx); ys0, ys1 = max(0, -dy), min(H, H - dy)
+        out[ys0 + dy:ys1 + dy, xs0 + dx:xs1 + dx] = arr[ys0:ys1, xs0:xs1]
+        return out
+    if typ == 'fade':
+        alpha = m * e
+    elif typ in ('slide_left', 'slide_right', 'slide_up', 'slide_down', 'whip'):
+        d = {'slide_left': (1, 0), 'whip': (1, 0), 'slide_right': (-1, 0), 'slide_up': (0, 1), 'slide_down': (0, -1)}[typ]
+        dist = (0.6 if typ == 'whip' else 0.25) * (w if d[0] else h)
+        off = (1 - e) * dist
+        layer, alpha = shift(F, d[0] * off, d[1] * off), shift(m, d[0] * off, d[1] * off) * min(1.0, 0.3 + e)
+        if typ == 'whip':
+            n = int(0.06 * w * (1 - e))
+            if n > 1:
+                c = np.cumsum(np.pad(layer, ((0, 0), (n, 0), (0, 0)), mode='edge'), axis=1, dtype=np.float32)
+                layer = (c[:, n:] - c[:, :-n]) / n
+    elif typ == 'wipe':
+        xx = np.arange(W, dtype=np.float32)[None, :]
+        alpha = m * np.clip((x + e * w * 1.05 - xx) / 12, 0, 1)
+    elif typ == 'iris':
+        yy, xx = np.mgrid[0:H, 0:W].astype(np.float32)
+        r = np.hypot(xx - (x + w / 2), yy - (y + h / 2))
+        alpha = m * np.clip((e * math.hypot(w, h) / 2 * 1.02 - r) / 8, 0, 1)
+    elif typ == 'zoom_pop':
+        sc = 0.7 + 0.3 * e + 0.06 * math.sin(math.pi * e)
+        cx, cy = x + w / 2, y + h / 2
+        A = (1 / sc, 0, cx - cx / sc, 0, 1 / sc, cy - cy / sc)
+        layer = np.asarray(Image.fromarray(F.astype(np.uint8)).transform((W, H), Image.AFFINE, A, Image.BILINEAR), np.float32)
+        alpha = np.asarray(Image.fromarray((m * 255).astype(np.uint8)).transform((W, H), Image.AFFINE, A, Image.BILINEAR), np.float32) / 255 * min(1, 0.2 + e)
+    elif typ == 'glitch':
+        rnd = np.random.default_rng(seed + int(p * 30))
+        layer = F.copy(); sh = int(0.02 * w * (1 - p)) + 1
+        layer[..., 0] = np.roll(F[..., 0], sh, 1); layer[..., 2] = np.roll(F[..., 2], -sh, 1)
+        alpha = m * (1.0 if rnd.random() < 0.3 + 0.7 * p else 0.25)
+        if p < 0.3:
+            layer = layer + (255 - layer) * (0.7 * (1 - p / 0.3))
+    out = B * (1 - alpha[..., None]) + layer * alpha[..., None]
+    return Image.fromarray(np.clip(out, 0, 255).astype(np.uint8))
