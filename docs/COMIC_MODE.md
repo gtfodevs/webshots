@@ -403,3 +403,7 @@ The story comes from the order of the panels, not from any single clip.
   24->30 judder). Crops use PIL's float `box` resize, so pans are sub-pixel exact.
 - **Sequence layouts** `seq-*-low`: inset strip along the bottom (16:9) / lower half (Short) for payoffs whose faces
   sit high in the art. Sequence insets may be stills (`stillOk`) and are exempt from the every-panel-clip gate.
+- **No dead air (default):** finished clips loop FORWARD with a 0.6 s crossfade seam (`clip_loop`), never a
+  frozen hold and never reversed. Sequence insets land on half beats so the payoff never waits behind an empty cell.
+  Every render runs `scripts/motion_qa.py` (ffmpeg `blackdetect` d>=0.25 s + `freezedetect` -60 dB d>=0.5 s); any hit
+  fails the delivery gate (`*-motion.json` next to the MP4).

@@ -80,15 +80,15 @@ PAGES = [
     # v5 sequence S2 (showdown): shoes square off, Uno's eyes flare, Ferro's monocle glints (insets), the hat flies
     # (big panel under the strip) -> full-frame payoff f22 (splash zoom out of the hat panel)
     ('p08', 134.27, 142.30, 'seq-four', 'slide_left', 'action',
-     [('f22a', 'a', 134.28, None, False, 'slide_down', 'pan_right'), ('f22b', 'b', 134.98, None, False, 'slide_left', 'push_in'),
-      ('f22c', 'c', 135.68, None, False, 'slide_right', 'push_in'), ('f22d', 'd', 136.37, None, False, 'zoom_pop', 'drift_up')],
-     ('f22', 137.77, 'KRAK!', True, 'full', 'f22d')),
+     [('f22a', 'a', 134.28, None, False, 'slide_down', 'pan_right'), ('f22b', 'b', 134.63, None, False, 'slide_left', 'push_in'),
+      ('f22c', 'c', 134.98, None, False, 'slide_right', 'push_in'), ('f22d', 'd', 135.33, None, False, 'zoom_pop', 'drift_up')],
+     ('f22', 136.37, 'KRAK!', True, 'full', 'f22d')),
     # v5 sequence S3 (the catch): Nickel's feet run, Aura waits under the lamp, the bowler tumbles, sirens sweep the
     # alley (4 insets along the bottom) -> payoff f23 (clip f23_new: Aura with the hat, Nickel slumped at the lamp post)
     ('p08b', 142.30, 156.56, 'seq-five-low', 'whip', 'action',
-     [('f23a', 'a', 142.33, None, False, 'slide_up', 'pan_left'), ('f23b', 'b', 143.03, None, False, 'iris', 'push_in'),
-      ('f23c', 'c', 143.72, None, False, 'slide_up', 'drift_up'), ('f23d', 'd', 144.42, None, False, 'wipe', 'pan_right'),
-      ('f23', 'e', 145.12, 'YOINK!', False, 'zoom_pop', 'push_in')],
+     [('f23a', 'a', 142.33, None, False, 'slide_up', 'pan_left'), ('f23b', 'b', 142.68, None, False, 'iris', 'push_in'),
+      ('f23c', 'c', 143.03, None, False, 'slide_up', 'drift_up'), ('f23d', 'd', 143.38, None, False, 'wipe', 'pan_right'),
+      ('f23', 'e', 143.72, 'YOINK!', False, 'zoom_pop', 'push_in')],
      ('f24', 150.98, 'SPIN-SPIN!', False, 'tilt', 'f23')),
     # living panels: the triumph splash f25 holds the whole frame (16:9 and Short) until the toast f26 joins it
     ('p09', 156.56, 184.40, 'reflow-two', 'crossfade', 'action',
@@ -335,7 +335,7 @@ def build():
         if ptr:
             out['pageTransition'] = {'type': ptr, 'dur': 0.5}
         for j, (fid, slot, land, sfx, imp, ent, mot) in enumerate(panels):
-            land = round(B[bisect.bisect_left(B, start - 0.03)], 3) if j == 0 and land <= start + 0.5 else snap(land)
+            land = round(B[bisect.bisect_left(B, start - 0.03)], 3) if j == 0 and land <= start + 0.5 else (round(land, 3) if layout.startswith('seq-') else snap(land))   # sequence insets land on half beats: no empty wait
             out['panels'].append(unit(fid, land, sfx, imp, ent, mot, k, slot)); k += 1
         sp_at = None
         if splash:

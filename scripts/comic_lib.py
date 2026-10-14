@@ -380,6 +380,24 @@ TAIL_SPEED = 0.5
 NO_REVERSE = True
 
 
+LOOP_XF = 0.6   # s: forward-only crossfade loop overlap
+
+
+def clip_loop(c, t_rel):
+    """Never reverse video and never freeze (Jason 2026-10-14): once the clip has played, it keeps playing FORWARD
+    in a loop whose seam is a crossfade: over [L-XF, L] the end blends into the start [0, XF].
+    Returns (time A, time B, weight of B); weight 0 = A only."""
+    L = c['out'] - c['in']
+    xf = min(LOOP_XF, L * 0.3)
+    if t_rel < L - xf:
+        return max(t_rel, 0.0), 0.0, 0.0
+    C_ = L - xf
+    u = (t_rel - C_) % C_
+    if u < xf:
+        return C_ + u, u, u / xf
+    return u, 0.0, 0.0
+
+
 def clip_time(c, t_rel, fps):
     """Clip-relative time for scene time t_rel (s since the clip started): plays once, then ping-pongs its last
     TAIL_LOOP s at TAIL_SPEED forever (a slow-mo breathing tail), so the panel never freezes."""
@@ -387,7 +405,8 @@ def clip_time(c, t_rel, fps):
     if t_rel < L:
         return max(t_rel, 0.0)
     if NO_REVERSE:
-        return L - 1e-3   # never reverse video (Jason 2026-10-14): hold the last frame
+        ta, tb, w = clip_loop(c, t_rel)
+        return tb if w >= 0.5 else ta
     T_ = min(TAIL_LOOP, L * 0.5)
     m = ((t_rel - L) * TAIL_SPEED) % (2 * T_)
     return L - (m if m < T_ else 2 * T_ - m)
@@ -907,8 +926,10 @@ class Scene:
         cbox = ((win[0] - rx) * sx, (win[1] - ry) * sy, win[2] * sx, win[3] * sy)
         if t < t0:
             return comic_finish(upscale(u['src_img'], win, tuple(size), sharpen=False))
-        i = min(int(clip_time(u['clip'], t - t0, self.fps) * self.fps), len(u['raw']) - 1)
-        fr = comic_finish(upscale(u['raw'][i], cbox, size))
+        ta, tb, wb = clip_loop(u['clip'], t - t0)
+        fi = lambda tt: u['raw'][min(int(tt * self.fps), len(u['raw']) - 1)]
+        src = fi(ta) if wb <= 0 else Image.blend(fi(ta), fi(tb), wb)
+        fr = comic_finish(upscale(src, cbox, size))
         xf = 3 / self.fps
         if t - t0 < xf:
             st = comic_finish(upscale(u['src_img'], win, tuple(size), sharpen=False))

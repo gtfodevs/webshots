@@ -1805,7 +1805,7 @@
     {
      "id": "f22b",
      "image": "panels/f22b.jpg",
-     "at": 135.094,
+     "at": 134.63,
      "captions": [],
      "entrance": {
       "type": "slide_left",
@@ -1815,9 +1815,9 @@
      "clip": {
       "src": "clips/v5/f22b.mp4",
       "in": 0.0,
-      "out": 2.01,
+      "out": 1.29,
       "firstFrameNcc": 0.964,
-      "trimNote": "splash zooms in at 137.88s, clip capped to 2.01s"
+      "trimNote": "splash zooms in at 136.49s, clip capped to 1.29s"
      },
      "focusRegions": [
       {
@@ -1841,7 +1841,7 @@
     {
      "id": "f22c",
      "image": "panels/f22c.jpg",
-     "at": 135.767,
+     "at": 134.98,
      "captions": [],
      "entrance": {
       "type": "slide_right",
@@ -1853,7 +1853,7 @@
       "in": 0.0,
       "out": 1.29,
       "firstFrameNcc": 0.979,
-      "trimNote": "splash zooms in at 137.88s, clip capped to 1.29s"
+      "trimNote": "splash zooms in at 136.49s, clip capped to 1.29s"
      },
      "focusRegions": [
       {
@@ -1877,7 +1877,7 @@
     {
      "id": "f22d",
      "image": "panels/f22d.jpg",
-     "at": 136.487,
+     "at": 135.33,
      "captions": [],
      "entrance": {
       "type": "zoom_pop",
@@ -1926,8 +1926,8 @@
    "transition": {
     "type": "zoom",
     "panel": "f22d",
-    "at": 137.88,
-    "dur": 0.697
+    "at": 136.487,
+    "dur": 0.72
    },
    "splash": {
     "id": "f22",
@@ -1940,9 +1940,9 @@
     "clip": {
      "src": "clips/v5/f22.mp4",
      "in": 0.0,
-     "out": 3.62,
+     "out": 5.02,
      "firstFrameNcc": 0.908,
-     "trimNote": "page turns at 142.30s, clip capped to 3.62s"
+     "trimNote": "page turns at 142.30s, clip capped to 5.02s"
     },
     "focusRegions": [
      {
@@ -1986,7 +1986,7 @@
     "sfx": [
      {
       "text": "KRAK!",
-      "at": 139.273,
+      "at": 137.88,
       "pos": [
        0.78,
        0.75
@@ -2048,7 +2048,7 @@
     {
      "id": "f23b",
      "image": "panels/f23b.jpg",
-     "at": 142.803,
+     "at": 142.68,
      "captions": [],
      "entrance": {
       "type": "iris",
@@ -2083,7 +2083,7 @@
     {
      "id": "f23c",
      "image": "panels/f23c.jpg",
-     "at": 143.499,
+     "at": 143.03,
      "captions": [],
      "entrance": {
       "type": "slide_up",
@@ -2127,7 +2127,7 @@
     {
      "id": "f23d",
      "image": "panels/f23d.jpg",
-     "at": 144.196,
+     "at": 143.38,
      "captions": [],
      "entrance": {
       "type": "wipe",
@@ -2161,7 +2161,7 @@
     {
      "id": "f23",
      "image": "panels/f23_new.jpg",
-     "at": 144.893,
+     "at": 143.72,
      "moment": "Aura lassos Slick Nickel's bowler hat with her glowing wire hair and yanks him off his feet as he runs. YOINK",
      "cast": "Aura, Slick Nickel",
      "focusNote": "Aura's smile",
@@ -2175,9 +2175,8 @@
      "clip": {
       "src": "clips/v5/f23_new.mp4",
       "in": 0.0,
-      "out": 5.52,
-      "firstFrameNcc": 0.95,
-      "trimNote": "splash zooms in at 151.23s, clip capped to 5.52s"
+      "out": 6.0,
+      "firstFrameNcc": 0.95
      },
      "focusRegions": [
       {
@@ -2221,7 +2220,7 @@
      "sfx": [
       {
        "text": "YOINK!",
-       "at": 146.309,
+       "at": 144.893,
        "pos": [
         0.22,
         0.5

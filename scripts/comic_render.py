@@ -150,6 +150,12 @@ def render(spec, orient, out_path, wav, sheet_path=None, t0=None, t1=None):
     if sc.returncode:
         print(sc.stdout)
         STATIC_FAIL.append(out_path)
+    # dead-air gate: ffmpeg blackdetect + freezedetect (scripts/motion_qa.py) - any black/frozen segment fails
+    mq = subprocess.run([sys.executable, os.path.join(os.path.dirname(__file__), 'motion_qa.py'), out_path,
+                         '--json', os.path.splitext(out_path)[0] + '-motion.json'], capture_output=True, text=True)
+    print(mq.stdout.strip())
+    if mq.returncode:
+        STATIC_FAIL.append(out_path)
     if sheet_path:
         shots.sort(key=lambda s: s[0])
         tw = 480 if orient == 'landscape' else 270
