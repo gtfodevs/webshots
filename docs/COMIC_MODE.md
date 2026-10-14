@@ -390,3 +390,16 @@ The story comes from the order of the panels, not from any single clip.
   per page and keep the slots a, b, c, d in reading order. Each newcomer lands full frame on its beat and settles into
   the reflowed grid one beat later. Clips keep playing through the move. `check_reflow` gates faces-in-cell through
   every state and move.
+
+### Camera rule: reveal pans only, never reverse video (default, Jason 2026-10-14)
+- **Reveal pan (default, `camera.py` `REVEAL`, spec `"camera": {"rule": "reveal"}`; `"legacy"` restores the old moves).**
+  Every cut uses the largest window of the cell's aspect (no zoom). If the art is wider (or taller) than the cell, the
+  window pans ONCE, in one direction, eased, across exactly the part the crop hides, limited so required faces stay in
+  frame for the whole move. Art that fits gets no pan (static). No breathing zoom, no sweeps, no back-and-forth.
+  Applies to stills and clips; living-panel cells only re-shape and clamp.
+- **Never reverse video.** `clip_time` holds the clip's last frame once it ends (`NO_REVERSE`); no ping-pong tails.
+  Trim a clip (`TRIMS`) when it drifts; never loop it backwards.
+- **Smooth rate conversion:** clips are read with `framerate=fps=30` (blended) instead of `fps=30` (duplicated frames,
+  24->30 judder). Crops use PIL's float `box` resize, so pans are sub-pixel exact.
+- **Sequence layouts** `seq-*-low`: inset strip along the bottom (16:9) / lower half (Short) for payoffs whose faces
+  sit high in the art. Sequence insets may be stills (`stillOk`) and are exempt from the every-panel-clip gate.

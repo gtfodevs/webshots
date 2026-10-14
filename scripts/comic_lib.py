@@ -166,20 +166,25 @@ def _reflow(n, land='wide', vert='rows'):
 
 # ---- sequence strips (lead-up / sub-action panels, COMIC_MODE.md "Sequence strips"): a run of small keylined
 # insets along the top that land on consecutive beats (story told by their order), over a big payoff panel.
-def _seq(n):
+def _seq(n, low=False):
+    """low=True: the inset strip runs along the BOTTOM of the 16:9 frame over a payoff that fills the top 78 %, for
+    payoffs whose faces sit high in the art (a top strip would cover them). Vertical is the same either way."""
     k = n - 1                      # insets
     w = (1 - 0.04 - 0.02 * (k - 1)) / k
-    ins = {chr(97 + i): ('rot', 0.02 + w / 2 + i * (w + 0.02), 0.20, w, 0.36, (-2, 2)[i % 2], {'z': 1, 'keyline': True})
+    ins = {chr(97 + i): ('rot', 0.02 + w / 2 + i * (w + 0.02), 0.80 if low else 0.20, w, 0.36, (-2, 2)[i % 2], {'z': 1, 'keyline': True})
            for i in range(k)}
-    ins[chr(97 + k)] = ('rect', 0, 0.22, 1, 0.78, {'inner': (0, 0.42, 1, 0.58)})
+    ins[chr(97 + k)] = (('rect', 0, 0, 1, 0.78, {'inner': (0, 0, 1, 0.58)}) if low else
+                        ('rect', 0, 0.22, 1, 0.78, {'inner': (0, 0.42, 1, 0.58)}))
     vk = {}
     cols = 2 if k >= 4 else k
     rows = -(-k // cols)
     vw = (1 - 0.04 - 0.03 * (cols - 1)) / cols; vh = 0.40 / rows
     for i in range(k):
         r_, c_ = divmod(i, cols)
-        vk[chr(97 + i)] = ('rot', 0.02 + vw / 2 + c_ * (vw + 0.03), 0.02 + vh / 2 + r_ * (vh + 0.012), vw, vh, (-2, 2)[i % 2], {'z': 1, 'keyline': True})
-    vk[chr(97 + k)] = ('rect', 0, 0.40, 1, 0.60, {'inner': (0, 0.52, 1, 0.48)})
+        vy = (0.58 if low else 0.02) + vh / 2 + r_ * (vh + 0.012)
+        vk[chr(97 + i)] = ('rot', 0.02 + vw / 2 + c_ * (vw + 0.03), vy, vw, vh, (-2, 2)[i % 2], {'z': 1, 'keyline': True})
+    vk[chr(97 + k)] = (('rect', 0, 0, 1, 0.60, {'inner': (0, 0, 1, 0.48)}) if low else
+                       ('rect', 0, 0.40, 1, 0.60, {'inner': (0, 0.52, 1, 0.48)}))
     return {'n': n, 'vert': 'own', 'sequence': True, 'slots': ins, 'vslots': vk}
 LAYOUTS = {
     # ---- two panels
@@ -229,6 +234,7 @@ LAYOUTS = {
         'b': ('rot', 0.81, 0.27, 0.36, 0.48, -4, {'z': 1, 'keyline': True}),
         'c': ('rot', 0.80, 0.74, 0.37, 0.47, 3, {'z': 2, 'keyline': True})}},
     'seq-four': _seq(4), 'seq-five': _seq(5), 'seq-six': _seq(6),
+    'seq-four-low': _seq(4, True), 'seq-five-low': _seq(5, True), 'seq-six-low': _seq(6, True),
     'reflow-two': _reflow(2), 'reflow-three': _reflow(3), 'reflow-four': _reflow(4),
     'reflow-grid-two': _reflow(2, 'grid'), 'reflow-grid-three': _reflow(3, 'grid'), 'reflow-grid-four': _reflow(4, 'grid'),
 }
@@ -371,6 +377,7 @@ def cover_crop(src_w, src_h, dst_w, dst_h, focus=(0.5, 0.5), within=None):
 import camera as CAM
 TAIL_LOOP = 2.0      # s of the clip's tail that ping-pongs after it ends (half speed): nothing ever freezes
 TAIL_SPEED = 0.5
+NO_REVERSE = True
 
 
 def clip_time(c, t_rel, fps):
@@ -379,6 +386,8 @@ def clip_time(c, t_rel, fps):
     L = c['out'] - c['in']
     if t_rel < L:
         return max(t_rel, 0.0)
+    if NO_REVERSE:
+        return L - 1e-3   # never reverse video (Jason 2026-10-14): hold the last frame
     T_ = min(TAIL_LOOP, L * 0.5)
     m = ((t_rel - L) * TAIL_SPEED) % (2 * T_)
     return L - (m if m < T_ else 2 * T_ - m)
@@ -388,6 +397,7 @@ _PLAN_CACHE = {}
 def unit_plan(spec, u, geo, fps=30, regions=None, img_size=None, within=None):
     """Per-cut camera move (scripts/camera.py) for a panel / splash in this cell. Clock = scene time (s since the
     page's song.start). Faces = required focus regions, tracked through the clip at 1 fps."""
+    CAM.REVEAL = spec.get('camera', {}).get('rule', 'reveal') == 'reveal'   # default rule; 'legacy' = old moves
     if img_size is None or regions is None:
         img_size, _, regions, _, within = unit_fit(spec, u, geo, fps)
     iw, ih = img_size
@@ -487,7 +497,8 @@ def read_clip(path, t_in, t_out, fps):
                                     'stream=width,height', '-of', 'csv=p=0', path],
                                    capture_output=True, text=True).stdout.strip().split(','))
     raw = subprocess.run(['ffmpeg', '-v', 'error', '-ss', f'{t_in:.3f}', '-i', path, '-t', f'{t_out - t_in:.3f}',
-                          '-vf', f'fps={fps}', '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-'],
+                          '-vf', f'framerate=fps={fps}',   # blended rate conversion (24->30 without duplicate-frame judder)
+                          '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-'],
                          capture_output=True, check=True).stdout
     n = len(raw) // (w * h * 3)
     arr = np.frombuffer(raw, np.uint8)[: n * w * h * 3].reshape(n, h, w, 3)
@@ -2280,6 +2291,11 @@ def cell_window(plan, t, geo, img_size, within):
     # a slow breathing zoom so the camera keeps moving while the cell changes shape (e.g. a full-frame arrival)
     # the breath runs between kmax (8 % room in the footage) and kmin (10 % tighter, never tighter than the faces need
     # with a 2 % margin), on a cosine, so it only touches either end for an instant
+    if CAM.REVEAL:   # reveal rule: no breathing zoom, no sweep; keep the plan's position, clamped to the footage
+        if ex:
+            cx = min(max(cx, ux1 - w2 / 2), ux0 + w2 / 2) if ux1 - ux0 < w2 else (ux0 + ux1) / 2
+            cy = min(max(cy, uy1 - h2 / 2), uy0 + h2 / 2) if uy1 - uy0 < h2 else (uy0 + uy1) / 2
+        return (min(max(cx - w2 / 2, bx), bx + bw - w2), min(max(cy - h2 / 2, by), by + bh - h2), w2, h2)
     kmax = min(1.0, 0.92 * bw / w2, 0.92 * bh / h2)
     kmin = max(kmax * 0.90, min(1.0, max((ux1 - ux0) / 0.96 / w2, (uy1 - uy0) / 0.96 / h2)) if ex else 0.0)
     kmax = max(kmax, kmin)

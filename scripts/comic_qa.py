@@ -804,7 +804,7 @@ def check_no_still_cards(spec):
 def check_all_clips(spec, subs):
     """HARD GATE (Jason, 2026-10-14): every panel (and splash) in a comic video has a QA-passed animated clip.
     No still-only panels. Fails unless the spec is an explicit preview (`allowStills: true` or `draft`)."""
-    missing = [u['id'] for sub in subs for u in all_units(sub) if not u.get('clip')]
+    missing = [u['id'] for sub in subs for u in all_units(sub) if not u.get('clip') and not u.get('stillOk')]   # stillOk: sequence lead-up insets
     if not missing:
         ok(f'clips: every panel animated ({sum(len(all_units(s)) for s in subs)} panels)'); return
     msg = f"{len(missing)} panel(s) without a clip (still-only is not allowed): {', '.join(dict.fromkeys(missing))}"

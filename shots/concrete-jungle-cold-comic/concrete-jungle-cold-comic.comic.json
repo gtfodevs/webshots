@@ -6,9 +6,9 @@
  "defaults": {
   "holdBeats": 1
  },
- "mood": "action",
- "bgTheme": "deco_gold",
- "loop": true,
+ "camera": {
+  "rule": "reveal"
+ },
  "bg_video": {
   "landscape": "bg/deco_gold-landscape.mp4",
   "vertical": "bg/deco_gold-vertical.mp4"
@@ -254,7 +254,7 @@
     },
     {
      "id": "f02",
-     "image": "panels/f02_clipstart.jpg",
+     "image": "panels/f02.jpg",
      "at": 9.427,
      "moment": "Low worm's-eye shot: Uno and Aura step out of a rain-soaked alley as nobodies, Uno's overcoat whipping in the wind, puddle SPLASH",
      "cast": "Uno, Aura",
@@ -267,21 +267,19 @@
      },
      "slot": "b",
      "clip": {
-      "src": "clips/f02.mp4",
+      "src": "clips/v5/f02.mp4",
       "in": 0.0,
       "out": 6.0,
-      "firstFrameNcc": 0.252
+      "firstFrameNcc": 0.887
      },
-     "panelOriginal": "panels/f02.jpg",
-     "clipStartStill": true,
      "focusRegions": [
       {
        "label": "Uno face",
        "box": [
-        0.25,
-        0.08,
+        0.29,
+        0.0,
         0.42,
-        0.28
+        0.17
        ],
        "required": true,
        "face": true
@@ -289,10 +287,10 @@
       {
        "label": "Aura face",
        "box": [
-        0.58,
+        0.6,
         0.08,
-        0.75,
-        0.28
+        0.72,
+        0.26
        ],
        "required": true,
        "face": true
@@ -400,29 +398,27 @@
    },
    "splash": {
     "id": "f04",
-    "image": "panels/f04_clipstart.jpg",
+    "image": "panels/f04.jpg",
     "moment": "Close-up: Uno flips his gold \"1\" chain in his fist like a vow, gold flare. SHING",
     "cast": "Uno",
     "focusNote": "chain + grill",
     "storyTransition": "Punch-in zoom",
     "captions": [],
     "clip": {
-     "src": "clips/f04.mp4",
+     "src": "clips/v5/f04.mp4",
      "in": 0.0,
      "out": 2.08,
-     "trimNote": "page turns at 33.60s, clip capped to 2.08s",
-     "firstFrameNcc": -0.014
+     "firstFrameNcc": 0.917,
+     "trimNote": "page turns at 33.60s, clip capped to 2.08s"
     },
-    "panelOriginal": "panels/f04.jpg",
-    "clipStartStill": true,
     "focusRegions": [
      {
       "label": "Uno face",
       "box": [
-       0.36,
+       0.52,
        0.0,
-       0.68,
-       0.56
+       0.82,
+       0.6
       ],
       "required": true,
       "face": true
@@ -430,10 +426,10 @@
      {
       "label": "gold 1 chain",
       "box": [
-       0.33,
-       0.48,
-       0.67,
-       0.92
+       0.38,
+       0.25,
+       0.62,
+       0.75
       ],
       "required": false
      }
@@ -468,12 +464,12 @@
    "id": "p02",
    "start": 33.6,
    "end": 49.45,
-   "layout": "mixed-three",
+   "layout": "wide-three",
    "mood": "action",
    "panels": [
     {
      "id": "f05",
-     "image": "panels/f05_clipstart.jpg",
+     "image": "panels/f05.jpg",
      "at": 34.226,
      "moment": "Speakeasy door slot SNAPS open. Dutch angle as Uno rap-talks the password, and Aura already slips past the bouncer bot",
      "cast": "Uno, Aura",
@@ -486,21 +482,18 @@
      },
      "slot": "a",
      "clip": {
-      "src": "clips/f05.mp4",
+      "src": "clips/v5/f05.mp4",
       "in": 0.0,
-      "out": 3.25,
-      "trimNote": "hard reframe / new figure at ~3.75 s, Uno skull-like from ~5.25 s; cut 0.5 s before the break",
-      "firstFrameNcc": 0.115
+      "out": 6.0,
+      "firstFrameNcc": 0.936
      },
-     "panelOriginal": "panels/f05.jpg",
-     "clipStartStill": true,
      "focusRegions": [
       {
        "label": "slot eyes",
        "box": [
-        0.16,
+        0.08,
         0.18,
-        0.37,
+        0.25,
         0.42
        ],
        "required": true,
@@ -509,23 +502,24 @@
       {
        "label": "Uno face",
        "box": [
-        0.46,
-        0.08,
-        0.64,
+        0.3,
+        0.05,
+        0.52,
         0.42
        ],
        "required": true,
        "face": true
       },
       {
-       "label": "bouncer",
+       "label": "Aura face",
        "box": [
-        0.68,
-        0.0,
-        0.92,
-        0.42
+        0.62,
+        0.05,
+        0.8,
+        0.38
        ],
-       "required": false
+       "required": true,
+       "face": true
       }
      ],
      "shotKind": "character",
@@ -554,7 +548,7 @@
     },
     {
      "id": "f06",
-     "image": "panels/f06_clipstart.jpg",
+     "image": "panels/f06.jpg",
      "at": 37.059,
      "moment": "Smoky jazz club splash: Aura sings on stage mid-twirl, beads flying. Don Ferro in the booth tips his monocle. Jazz notes, WAH-WAH",
      "cast": "Aura, Don Ferro",
@@ -567,23 +561,32 @@
      },
      "slot": "b",
      "clip": {
-      "src": "clips/f06.mp4",
+      "src": "clips/v5/f06.mp4",
       "in": 0.0,
       "out": 6.0,
-      "firstFrameNcc": 0.25
+      "firstFrameNcc": 0.966
      },
-     "panelOriginal": "panels/f06.jpg",
-     "clipStartStill": true,
      "focusRegions": [
       {
        "label": "Aura face",
        "box": [
-        0.28,
-        0.12,
-        0.47,
-        0.42
+        0.52,
+        0.08,
+        0.66,
+        0.35
        ],
        "required": true,
+       "face": true
+      },
+      {
+       "label": "Ferro face",
+       "box": [
+        0.88,
+        0.3,
+        0.98,
+        0.5
+       ],
+       "required": false,
        "face": true
       }
      ],
@@ -627,55 +630,43 @@
      },
      "slot": "c",
      "clip": {
-      "src": "clips/f07.mp4",
+      "src": "clips/v5/f07.mp4",
       "in": 0.0,
       "out": 4.85,
-      "firstFrameNcc": 0.932,
+      "firstFrameNcc": 0.958,
       "trimNote": "splash zooms in at 44.14s, clip capped to 4.85s"
      },
      "focusRegions": [
       {
-       "label": "coin burst",
+       "label": "Uno face",
        "box": [
-        0.48,
-        0.48,
-        0.74,
-        0.92
+        0.52,
+        0.04,
+        0.66,
+        0.3
+       ],
+       "required": true,
+       "face": true
+      },
+      {
+       "label": "cards",
+       "box": [
+        0.68,
+        0.15,
+        0.86,
+        0.45
        ],
        "required": true
       },
       {
-       "label": "Uno face",
+       "label": "coins",
        "box": [
-        0.07,
-        0.02,
-        0.28,
-        0.38
+        0.2,
+        0.7,
+        0.45,
+        1.0
        ],
-       "required": false,
-       "face": true
-      },
-      {
-       "label": "Ferro face",
-       "box": [
-        0.69,
-        0.02,
-        0.81,
-        0.3
-       ],
-       "required": false,
-       "face": true
-      },
-      {
-       "label": "middle face",
-       "box": [
-        0.37,
-        0.0,
-        0.49,
-        0.22
-       ],
-       "required": false,
-       "face": true
+       "required": false
       }
      ],
      "shotKind": "character",
@@ -716,53 +707,51 @@
    },
    "splash": {
     "id": "f08",
-    "image": "panels/f08_clipstart.jpg",
+    "image": "panels/f08.jpg",
     "moment": "Ferro grabs Uno's shoulder from a towering low angle, cigar exhaust puffing, and recruits them. Slick Nickel smirks behind. HMPH",
     "cast": "Uno, Ferro, Slick Nickel",
     "focusNote": "Ferro grin",
     "storyTransition": "Page turn",
     "captions": [],
     "clip": {
-     "src": "clips/f08.mp4",
+     "src": "clips/v5/f08.mp4",
      "in": 0.0,
      "out": 4.49,
-     "firstFrameNcc": 0.277,
+     "firstFrameNcc": 0.957,
      "trimNote": "page turns at 49.45s, clip capped to 4.49s"
     },
-    "panelOriginal": "panels/f08.jpg",
-    "clipStartStill": true,
     "focusRegions": [
      {
-      "label": "Ferro grin",
+      "label": "Ferro face",
       "box": [
-       0.12,
-       0.08,
-       0.32,
-       0.35
+       0.28,
+       0.0,
+       0.48,
+       0.32
       ],
       "required": true,
       "face": true
      },
      {
-      "label": "Uno face",
+      "label": "Nickel face",
       "box": [
-       0.42,
-       0.15,
-       0.58,
-       0.4
+       0.52,
+       0.0,
+       0.68,
+       0.35
       ],
       "required": false,
       "face": true
      },
      {
-      "label": "Nickel face",
+      "label": "Uno face",
       "box": [
-       0.65,
-       0.15,
-       0.8,
-       0.4
+       0.72,
+       0.0,
+       0.92,
+       0.35
       ],
-      "required": false,
+      "required": true,
       "face": true
      }
     ],
@@ -796,12 +785,12 @@
    "id": "p03",
    "start": 49.45,
    "end": 66.5,
-   "layout": "tilt-two",
+   "layout": "inset-two",
    "mood": "action",
    "panels": [
     {
      "id": "f09",
-     "image": "panels/f09_clipstart.jpg",
+     "image": "panels/f09.jpg",
      "at": 49.83,
      "moment": "Montage strip: Uno and Aura on runs, crates swinging off cranes at the docks, deco tower climbing. THUNK",
      "cast": "Uno, Aura",
@@ -814,44 +803,32 @@
      },
      "slot": "a",
      "clip": {
-      "src": "clips/f09.mp4",
+      "src": "clips/v5/f09.mp4",
       "in": 0.0,
       "out": 6.0,
-      "firstFrameNcc": 0.587
+      "firstFrameNcc": 0.898
      },
-     "panelOriginal": "panels/f09.jpg",
-     "clipStartStill": true,
      "focusRegions": [
-      {
-       "label": "Uno + crate swing",
-       "box": [
-        0.15,
-        0.25,
-        0.5,
-        0.85
-       ],
-       "required": true
-      },
       {
        "label": "Uno face",
        "box": [
-        0.28,
         0.25,
-        0.42,
-        0.42
+        0.0,
+        0.4,
+        0.2
        ],
-       "required": false,
+       "required": true,
        "face": true
       },
       {
        "label": "Aura face",
        "box": [
-        0.68,
-        0.05,
-        0.82,
-        0.22
+        0.57,
+        0.12,
+        0.69,
+        0.3
        ],
-       "required": false,
+       "required": true,
        "face": true
       }
      ],
@@ -865,10 +842,10 @@
        "text": "THUNK!",
        "at": 51.223,
        "pos": [
-        0.22,
-        0.75
+        0.78,
+        0.5
        ],
-       "rot": 7,
+       "rot": -8,
        "size": 0.15,
        "color": [
         255,
@@ -941,13 +918,13 @@
   {
    "id": "p04",
    "start": 66.5,
-   "end": 88.95,
+   "end": 82.68,
    "layout": "four-grid",
    "mood": "action",
    "panels": [
     {
      "id": "f11",
-     "image": "panels/f11_clipstart.jpg",
+     "image": "panels/f11.jpg",
      "at": 66.781,
      "moment": "The heist plan: Uno slams a blueprint of the FIRST CHROME BANK vault onto the table, extreme close on his gold grill grin. WHAM",
      "cast": "Uno, Aura",
@@ -960,32 +937,19 @@
      },
      "slot": "a",
      "clip": {
-      "src": "clips/f11.mp4",
+      "src": "clips/v5/f11.mp4",
       "in": 0.0,
       "out": 6.0,
-      "firstFrameNcc": 0.483
+      "firstFrameNcc": 0.967
      },
-     "panelOriginal": "panels/f11.jpg",
-     "clipStartStill": true,
      "focusRegions": [
       {
        "label": "Uno face",
        "box": [
-        0.23,
+        0.45,
         0.0,
-        0.42,
-        0.32
-       ],
-       "required": true,
-       "face": true
-      },
-      {
-       "label": "Aura face",
-       "box": [
-        0.58,
-        0.0,
-        0.77,
-        0.32
+        0.62,
+        0.25
        ],
        "required": true,
        "face": true
@@ -993,9 +957,9 @@
       {
        "label": "blueprint",
        "box": [
-        0.3,
-        0.68,
-        0.76,
+        0.25,
+        0.65,
+        0.85,
         1.0
        ],
        "required": false
@@ -1012,7 +976,7 @@
        "at": 68.197,
        "pos": [
         0.78,
-        0.75
+        0.5
        ],
        "rot": -8,
        "size": 0.15,
@@ -1027,7 +991,7 @@
     },
     {
      "id": "f12",
-     "image": "panels/f12_clipstart.jpg",
+     "image": "panels/f12.jpg",
      "at": 72.446,
      "moment": "Aura, in her crimson coat, cartwheels through a red laser grid in the bank's marble corridor, mid-flip. ZZT-ZZT",
      "cast": "Aura",
@@ -1040,21 +1004,19 @@
      },
      "slot": "b",
      "clip": {
-      "src": "clips/f12.mp4",
+      "src": "clips/v5/f12.mp4",
       "in": 0.0,
       "out": 6.0,
-      "firstFrameNcc": 0.302
+      "firstFrameNcc": 0.892
      },
-     "panelOriginal": "panels/f12.jpg",
-     "clipStartStill": true,
      "focusRegions": [
       {
        "label": "Aura face in lasers",
        "box": [
         0.38,
-        0.3,
-        0.58,
-        0.55
+        0.08,
+        0.52,
+        0.3
        ],
        "required": true,
        "face": true
@@ -1086,8 +1048,8 @@
     },
     {
      "id": "f13",
-     "image": "panels/f13_clipstart.jpg",
-     "at": 75.952,
+     "image": "panels/f13.jpg",
+     "at": 75.256,
      "moment": "Vault door cracked: Uno spins the giant brass dial, his headphones listening to the tumblers, gold light blasting out. KA-CHUNK",
      "cast": "Uno",
      "focusNote": "dial + ear",
@@ -1099,22 +1061,19 @@
      },
      "slot": "c",
      "clip": {
-      "src": "clips/f13.mp4",
+      "src": "clips/v5/f13.mp4",
       "in": 0.0,
-      "out": 4.0,
-      "trimNote": "from ~4.5 s the gold flare washes Uno's face toward a bright skull look; ends before it",
-      "firstFrameNcc": 0.205
+      "out": 6.0,
+      "firstFrameNcc": 0.931
      },
-     "panelOriginal": "panels/f13.jpg",
-     "clipStartStill": true,
      "focusRegions": [
       {
-       "label": "Uno ear + face",
+       "label": "Uno face",
        "box": [
-        0.18,
-        0.02,
-        0.45,
-        0.42
+        0.35,
+        0.0,
+        0.55,
+        0.3
        ],
        "required": true,
        "face": true
@@ -1123,11 +1082,11 @@
        "label": "vault dial",
        "box": [
         0.62,
-        0.4,
-        0.85,
+        0.25,
+        0.9,
         0.75
        ],
-       "required": true
+       "required": false
       }
      ],
      "shotKind": "character",
@@ -1152,12 +1111,13 @@
        ],
        "impact": false
       }
-     ]
+     ],
+     "landNote": "landed 0.70s early (from 75.952) so the clip plays out before the page turn"
     },
     {
      "id": "f14",
-     "image": "panels/f14_clipstart.jpg",
-     "at": 77.369,
+     "image": "panels/f14.jpg",
+     "at": 76.649,
      "moment": "Interior splash: the vault, mountains of gold bars and bonds. Aura tosses a stack and paper flutters. FWOOSH",
      "cast": "Uno, Aura",
      "focusNote": "both, gold glow",
@@ -1169,31 +1129,29 @@
      },
      "slot": "d",
      "clip": {
-      "src": "clips/f14.mp4",
+      "src": "clips/v5/f14.mp4",
       "in": 0.0,
-      "out": 5.54,
-      "firstFrameNcc": 0.595,
-      "trimNote": "splash zooms in at 83.73s, clip capped to 5.54s"
+      "out": 5.21,
+      "firstFrameNcc": 0.949,
+      "trimNote": "page turns at 82.68s, clip capped to 5.21s"
      },
-     "panelOriginal": "panels/f14.jpg",
-     "clipStartStill": true,
      "focusRegions": [
       {
-       "label": "Aura face",
+       "label": "Uno face",
        "box": [
-        0.28,
-        0.08,
-        0.47,
-        0.37
+        0.27,
+        0.0,
+        0.45,
+        0.25
        ],
        "required": true,
        "face": true
       },
       {
-       "label": "Uno face",
+       "label": "Aura face",
        "box": [
-        0.56,
-        0.0,
+        0.6,
+        0.08,
         0.75,
         0.32
        ],
@@ -1224,84 +1182,144 @@
        "impact": false
       }
      ],
-     "landNote": "landed 0.72s early (from 78.089) so the clip plays out before the page turn"
+     "landNote": "landed 1.44s early (from 78.089) so the clip plays out before the page turn"
     }
    ],
    "pageTransition": {
     "type": "whip",
     "dur": 0.5
-   },
-   "transition": {
-    "type": "zoom",
-    "panel": "f14",
-    "at": 83.731,
-    "dur": 0.72
-   },
-   "splash": {
-    "id": "f15",
-    "image": "panels/f15_clipstart.jpg",
-    "moment": "BETRAYAL: the vault door SLAMS behind them, and through the bars Slick Nickel tips his bowler and pockets the key. KLANG",
-    "cast": "Slick Nickel (Uno, Aura bg)",
-    "focusNote": "Nickel smirk",
-    "storyTransition": "Hard flash (beat)",
-    "captions": [],
-    "clip": {
-     "src": "clips/f15.mp4",
-     "in": 0.0,
-     "out": 4.42,
-     "firstFrameNcc": 0.278,
-     "trimNote": "page turns at 88.95s, clip capped to 4.42s"
-    },
-    "panelOriginal": "panels/f15.jpg",
-    "clipStartStill": true,
-    "focusRegions": [
-     {
-      "label": "Nickel face",
-      "box": [
-       0.23,
-       0.08,
-       0.42,
-       0.42
-      ],
-      "required": true,
-      "face": true
+   }
+  },
+  {
+   "id": "p04b",
+   "start": 82.68,
+   "end": 88.95,
+   "layout": "inset-two",
+   "mood": "scare",
+   "panels": [
+    {
+     "id": "f15c",
+     "image": "panels/f15c.jpg",
+     "at": 83.011,
+     "captions": [],
+     "entrance": {
+      "type": "glitch",
+      "dur": 0.3
      },
-     {
-      "label": "brass key",
-      "box": [
-       0.23,
-       0.53,
-       0.42,
-       0.82
-      ],
-      "required": false
-     }
-    ],
-    "shotKind": "character",
-    "refs": [
-     "/workspace/progressive-slop-refs/uno-locked.jpg",
-     "/workspace/progressive-slop-refs/aura-locked.jpg"
-    ],
-    "sfx": [
-     {
-      "text": "KLANG!",
-      "at": 85.124,
-      "pos": [
-       0.78,
-       0.25
-      ],
-      "rot": -8,
-      "size": 0.15,
-      "color": [
-       255,
-       150,
-       40
-      ],
-      "impact": true
-     }
-    ]
-   },
-   "splashStyle": "tilt"
+     "slot": "a",
+     "clip": {
+      "src": "clips/v5/f15c.mp4",
+      "in": 0.0,
+      "out": 5.12,
+      "firstFrameNcc": 0.963,
+      "trimNote": "page turns at 88.95s, clip capped to 5.12s"
+     },
+     "focusRegions": [
+      {
+       "label": "Nickel face",
+       "box": [
+        0.31,
+        0.04,
+        0.42,
+        0.2
+       ],
+       "required": true,
+       "face": true
+      },
+      {
+       "label": "Nickel figure",
+       "box": [
+        0.2,
+        0.0,
+        0.5,
+        0.98
+       ],
+       "required": false,
+       "face": true
+      }
+     ],
+     "shotKind": "character",
+     "refs": [
+      "/workspace/progressive-slop-refs/uno-locked.jpg",
+      "/workspace/progressive-slop-refs/aura-locked.jpg"
+     ]
+    },
+    {
+     "id": "f15",
+     "image": "panels/f15_clipstart.jpg",
+     "at": 84.428,
+     "moment": "BETRAYAL: the vault door SLAMS behind them, and through the bars Slick Nickel tips his bowler and pockets the key. KLANG",
+     "cast": "Slick Nickel (Uno, Aura bg)",
+     "focusNote": "Nickel smirk",
+     "storyTransition": "Hard flash (beat)",
+     "captions": [],
+     "entrance": {
+      "type": "zoom_pop",
+      "dur": 0.3
+     },
+     "slot": "b",
+     "clip": {
+      "src": "clips/f15.mp4",
+      "in": 0.0,
+      "out": 3.73,
+      "firstFrameNcc": 0.278,
+      "trimNote": "page turns at 88.95s, clip capped to 3.73s"
+     },
+     "panelOriginal": "panels/f15.jpg",
+     "clipStartStill": true,
+     "focusRegions": [
+      {
+       "label": "Nickel face",
+       "box": [
+        0.23,
+        0.08,
+        0.42,
+        0.42
+       ],
+       "required": true,
+       "face": true
+      },
+      {
+       "label": "brass key",
+       "box": [
+        0.23,
+        0.53,
+        0.42,
+        0.82
+       ],
+       "required": false
+      }
+     ],
+     "shotKind": "character",
+     "refs": [
+      "/workspace/progressive-slop-refs/uno-locked.jpg",
+      "/workspace/progressive-slop-refs/aura-locked.jpg"
+     ],
+     "sfx": [
+      {
+       "text": "KLANG!",
+       "at": 86.541,
+       "pos": [
+        0.78,
+        0.5
+       ],
+       "rot": -8,
+       "size": 0.15,
+       "color": [
+        255,
+        200,
+        60
+       ],
+       "impact": true
+      }
+     ],
+     "landNote": "landed 0.70s early (from 85.124) so the clip plays out before the page turn"
+    }
+   ],
+   "pageTransition": {
+    "type": "flash",
+    "dur": 0.5
+   }
   },
   {
    "id": "p05",
@@ -1312,7 +1330,7 @@
    "panels": [
     {
      "id": "f16",
-     "image": "panels/f16_clipstart.jpg",
+     "image": "panels/f16.jpg",
      "at": 89.35,
      "moment": "Aura's glowing red wire hair snakes into the lock and picks it. Extreme macro, sparks. TIK-TIK-CLAK",
      "cast": "Aura",
@@ -1325,23 +1343,32 @@
      },
      "slot": "a",
      "clip": {
-      "src": "clips/f16.mp4",
+      "src": "clips/v5/f16.mp4",
       "in": 0.0,
       "out": 6.0,
-      "firstFrameNcc": 0.094
+      "firstFrameNcc": 0.945
      },
-     "panelOriginal": "panels/f16.jpg",
-     "clipStartStill": true,
      "focusRegions": [
       {
-       "label": "hair strands in lock",
+       "label": "Aura face",
        "box": [
-        0.3,
-        0.22,
-        0.7,
+        0.25,
+        0.05,
+        0.55,
+        0.55
+       ],
+       "required": true,
+       "face": true
+      },
+      {
+       "label": "lock",
+       "box": [
+        0.6,
+        0.2,
+        0.95,
         0.8
        ],
-       "required": true
+       "required": false
       }
      ],
      "shotKind": "character",
@@ -1355,13 +1382,13 @@
        "at": 90.744,
        "pos": [
         0.78,
-        0.25
+        0.75
        ],
        "rot": -8,
        "size": 0.15,
        "color": [
-        255,
-        200,
+        230,
+        40,
         60
        ],
        "impact": false
@@ -1383,32 +1410,22 @@
      },
      "slot": "b",
      "clip": {
-      "src": "clips/f17.mp4",
+      "src": "clips/v5/f17.mp4",
       "in": 0.0,
       "out": 6.0,
-      "firstFrameNcc": 0.936
+      "firstFrameNcc": 0.915
      },
      "focusRegions": [
       {
        "label": "Uno face",
        "box": [
-        0.28,
-        0.08,
-        0.5,
-        0.4
+        0.35,
+        0.0,
+        0.53,
+        0.32
        ],
        "required": true,
        "face": true
-      },
-      {
-       "label": "lit-up map",
-       "box": [
-        0.52,
-        0.0,
-        0.95,
-        0.55
-       ],
-       "required": false
       }
      ],
      "shotKind": "character",
@@ -1422,14 +1439,14 @@
        "at": 96.409,
        "pos": [
         0.78,
-        0.25
+        0.5
        ],
        "rot": -8,
        "size": 0.15,
        "color": [
-        230,
-        40,
-        60
+        190,
+        120,
+        255
        ],
        "impact": false
       }
@@ -1464,18 +1481,18 @@
      },
      "slot": "a",
      "clip": {
-      "src": "clips/f18.mp4",
+      "src": "clips/v5/f18.mp4",
       "in": 0.0,
       "out": 6.0,
-      "firstFrameNcc": 0.834
+      "firstFrameNcc": 0.958
      },
      "focusRegions": [
       {
        "label": "Uno face",
        "box": [
-        0.3,
-        0.04,
         0.43,
+        0.06,
+        0.55,
         0.26
        ],
        "required": true,
@@ -1485,22 +1502,12 @@
        "label": "Aura face",
        "box": [
         0.6,
-        0.04,
-        0.72,
-        0.26
+        0.12,
+        0.7,
+        0.3
        ],
        "required": true,
        "face": true
-      },
-      {
-       "label": "searchlight",
-       "box": [
-        0.45,
-        0.3,
-        0.65,
-        0.9
-       ],
-       "required": false
       }
      ],
      "shotKind": "character",
@@ -1519,9 +1526,9 @@
        "rot": -8,
        "size": 0.15,
        "color": [
-        190,
-        120,
-        255
+        255,
+        245,
+        230
        ],
        "impact": true
       }
@@ -1582,8 +1589,8 @@
        "size": 0.15,
        "color": [
         255,
-        245,
-        230
+        150,
+        40
        ],
        "impact": false
       }
@@ -1604,7 +1611,7 @@
    "panels": [
     {
      "id": "f20",
-     "image": "panels/f20_clipstart.jpg",
+     "image": "panels/f20.jpg",
      "at": 123.135,
      "moment": "DOUBLE-CROSS: at Ferro's warehouse Nickel hands Ferro the stolen gold, then swaps the crates. They are filled with Uno's purple confetti. Ferro roars. POOF!",
      "cast": "Don Ferro, Slick Nickel",
@@ -1617,35 +1624,32 @@
      },
      "slot": "a",
      "clip": {
-      "src": "clips/f20.mp4",
+      "src": "clips/v5/f20.mp4",
       "in": 0.0,
       "out": 6.0,
-      "firstFrameNcc": 0.313
+      "firstFrameNcc": 0.938
      },
-     "panelOriginal": "panels/f20.jpg",
-     "clipStartStill": true,
      "focusRegions": [
       {
-       "label": "Ferro's furious face",
+       "label": "Ferro face",
        "box": [
-        0.18,
-        0.03,
-        0.47,
-        0.47
+        0.37,
+        0.0,
+        0.6,
+        0.4
        ],
        "required": true,
        "face": true
       },
       {
-       "label": "Nickel face",
+       "label": "confetti",
        "box": [
-        0.68,
-        0.13,
-        0.9,
-        0.47
+        0.6,
+        0.1,
+        0.85,
+        0.8
        ],
-       "required": false,
-       "face": true
+       "required": false
       }
      ],
      "shotKind": "character",
@@ -1659,14 +1663,14 @@
        "at": 124.505,
        "pos": [
         0.78,
-        0.75
+        0.5
        ],
        "rot": -8,
        "size": 0.15,
        "color": [
         255,
-        150,
-        40
+        200,
+        60
        ],
        "impact": true
       }
@@ -1674,8 +1678,8 @@
     },
     {
      "id": "f21",
-     "image": "panels/f21_clipstart.jpg",
-     "at": 127.338,
+     "image": "panels/f21.jpg",
+     "at": 128.035,
      "moment": "Uno kicks the warehouse doors in, Aura at his side, prop tommy-gun case slung and closed. Dramatic backlight. BOOM",
      "cast": "Uno, Aura",
      "focusNote": "both faces",
@@ -1687,21 +1691,42 @@
      },
      "slot": "b",
      "clip": {
-      "src": "clips/f21.mp4",
+      "src": "clips/v5/f21.mp4",
       "in": 0.0,
-      "out": 6.0,
-      "firstFrameNcc": 0.206
+      "out": 2.5,
+      "trimNote": "v5 clip pushes in on the pair; feet leave the cell from ~3 s, so it ends (and ping-pongs) before that",
+      "firstFrameNcc": 0.983
      },
-     "panelOriginal": "panels/f21.jpg",
-     "clipStartStill": true,
      "focusRegions": [
       {
-       "label": "light seam between the doors",
+       "label": "Uno face",
        "box": [
-        0.42,
-        0.25,
-        0.58,
-        0.75
+        0.38,
+        0.14,
+        0.47,
+        0.3
+       ],
+       "required": true,
+       "face": true
+      },
+      {
+       "label": "Aura face",
+       "box": [
+        0.55,
+        0.16,
+        0.64,
+        0.32
+       ],
+       "required": true,
+       "face": true
+      },
+      {
+       "label": "Uno + Aura full figures",
+       "box": [
+        0.34,
+        0.12,
+        0.66,
+        0.93
        ],
        "required": true
       }
@@ -1717,91 +1742,7 @@
        "at": 129.451,
        "pos": [
         0.78,
-        0.25
-       ],
-       "rot": -8,
-       "size": 0.15,
-       "color": [
-        255,
-        200,
-        60
-       ],
-       "impact": true
-      }
-     ],
-     "landNote": "landed 0.70s early (from 128.035) so the clip plays out before the page turn"
-    }
-   ],
-   "pageTransition": {
-    "type": "flash",
-    "dur": 0.5
-   }
-  },
-  {
-   "id": "p08",
-   "start": 134.27,
-   "end": 156.56,
-   "layout": "three",
-   "mood": "action",
-   "panels": [
-    {
-     "id": "f22",
-     "image": "panels/f22_clipstart.jpg",
-     "at": 134.374,
-     "moment": "Showdown: Uno and Ferro grapple chest to chest, coats flaring, and Uno flips Ferro onto the confetti pile. KRAK!",
-     "cast": "Uno, Don Ferro",
-     "focusNote": "locked eyes",
-     "storyTransition": "Beat-cut",
-     "captions": [],
-     "entrance": {
-      "type": "zoom_pop",
-      "dur": 0.3
-     },
-     "slot": "a",
-     "clip": {
-      "src": "clips/f22.mp4",
-      "in": 0.0,
-      "out": 6.0,
-      "firstFrameNcc": 0.072
-     },
-     "panelOriginal": "panels/f22.jpg",
-     "clipStartStill": true,
-     "focusRegions": [
-      {
-       "label": "Uno face",
-       "box": [
-        0.05,
-        0.02,
-        0.32,
-        0.3
-       ],
-       "required": true,
-       "face": true
-      },
-      {
-       "label": "Nickel eyes",
-       "box": [
-        0.52,
-        0.05,
-        0.75,
-        0.42
-       ],
-       "required": true,
-       "face": true
-      }
-     ],
-     "shotKind": "character",
-     "refs": [
-      "/workspace/progressive-slop-refs/uno-locked.jpg",
-      "/workspace/progressive-slop-refs/aura-locked.jpg"
-     ],
-     "sfx": [
-      {
-       "text": "KRAK!",
-       "at": 135.767,
-       "pos": [
-        0.78,
-        0.75
+        0.5
        ],
        "rot": -8,
        "size": 0.15,
@@ -1813,50 +1754,463 @@
        "impact": true
       }
      ]
+    }
+   ],
+   "pageTransition": {
+    "type": "flash",
+    "dur": 0.5
+   }
+  },
+  {
+   "id": "p08",
+   "start": 134.27,
+   "end": 142.3,
+   "layout": "seq-four",
+   "mood": "action",
+   "panels": [
+    {
+     "id": "f22a",
+     "image": "panels/f22a.jpg",
+     "at": 134.374,
+     "captions": [],
+     "entrance": {
+      "type": "slide_down",
+      "dur": 0.3
+     },
+     "slot": "a",
+     "stillMotion": {
+      "type": "pan_right",
+      "amount": 0.12,
+      "dur": 5.0
+     },
+     "stillOk": "sequence lead-up inset (no clip by design): gentle pan/zoom of the still",
+     "focusRegions": [
+      {
+       "label": "shoes",
+       "box": [
+        0.2,
+        0.62,
+        0.6,
+        0.88
+       ],
+       "required": true
+      }
+     ],
+     "shotKind": "character",
+     "refs": [
+      "/workspace/progressive-slop-refs/uno-locked.jpg",
+      "/workspace/progressive-slop-refs/aura-locked.jpg"
+     ]
+    },
+    {
+     "id": "f22b",
+     "image": "panels/f22b.jpg",
+     "at": 135.094,
+     "captions": [],
+     "entrance": {
+      "type": "slide_left",
+      "dur": 0.3
+     },
+     "slot": "b",
+     "clip": {
+      "src": "clips/v5/f22b.mp4",
+      "in": 0.0,
+      "out": 2.01,
+      "firstFrameNcc": 0.964,
+      "trimNote": "splash zooms in at 137.88s, clip capped to 2.01s"
+     },
+     "focusRegions": [
+      {
+       "label": "Uno face",
+       "box": [
+        0.35,
+        0.08,
+        0.46,
+        0.22
+       ],
+       "required": true,
+       "face": true
+      }
+     ],
+     "shotKind": "character",
+     "refs": [
+      "/workspace/progressive-slop-refs/uno-locked.jpg",
+      "/workspace/progressive-slop-refs/aura-locked.jpg"
+     ]
+    },
+    {
+     "id": "f22c",
+     "image": "panels/f22c.jpg",
+     "at": 135.767,
+     "captions": [],
+     "entrance": {
+      "type": "slide_right",
+      "dur": 0.3
+     },
+     "slot": "c",
+     "clip": {
+      "src": "clips/v5/f22c.mp4",
+      "in": 0.0,
+      "out": 1.29,
+      "firstFrameNcc": 0.979,
+      "trimNote": "splash zooms in at 137.88s, clip capped to 1.29s"
+     },
+     "focusRegions": [
+      {
+       "label": "Ferro face",
+       "box": [
+        0.43,
+        0.08,
+        0.54,
+        0.26
+       ],
+       "required": true,
+       "face": true
+      }
+     ],
+     "shotKind": "character",
+     "refs": [
+      "/workspace/progressive-slop-refs/uno-locked.jpg",
+      "/workspace/progressive-slop-refs/aura-locked.jpg"
+     ]
+    },
+    {
+     "id": "f22d",
+     "image": "panels/f22d.jpg",
+     "at": 136.487,
+     "captions": [],
+     "entrance": {
+      "type": "zoom_pop",
+      "dur": 0.3
+     },
+     "slot": "d",
+     "stillMotion": {
+      "type": "drift_up",
+      "amount": 0.12,
+      "dur": 5.0
+     },
+     "stillOk": "sequence lead-up inset (no clip by design): gentle pan/zoom of the still",
+     "focusRegions": [
+      {
+       "label": "flying fedora",
+       "box": [
+        0.45,
+        0.25,
+        0.75,
+        0.55
+       ],
+       "required": true
+      },
+      {
+       "label": "confetti pile",
+       "box": [
+        0.25,
+        0.5,
+        0.75,
+        0.95
+       ],
+       "required": false
+      }
+     ],
+     "shotKind": "character",
+     "refs": [
+      "/workspace/progressive-slop-refs/uno-locked.jpg",
+      "/workspace/progressive-slop-refs/aura-locked.jpg"
+     ]
+    }
+   ],
+   "pageTransition": {
+    "type": "slide_left",
+    "dur": 0.5
+   },
+   "transition": {
+    "type": "zoom",
+    "panel": "f22d",
+    "at": 137.88,
+    "dur": 0.697
+   },
+   "splash": {
+    "id": "f22",
+    "image": "panels/f22.jpg",
+    "moment": "Showdown: Uno and Ferro grapple chest to chest, coats flaring, and Uno flips Ferro onto the confetti pile. KRAK!",
+    "cast": "Uno, Don Ferro",
+    "focusNote": "locked eyes",
+    "storyTransition": "Beat-cut",
+    "captions": [],
+    "clip": {
+     "src": "clips/v5/f22.mp4",
+     "in": 0.0,
+     "out": 3.62,
+     "firstFrameNcc": 0.908,
+     "trimNote": "page turns at 142.30s, clip capped to 3.62s"
+    },
+    "focusRegions": [
+     {
+      "label": "Uno face",
+      "box": [
+       0.52,
+       0.02,
+       0.68,
+       0.25
+      ],
+      "required": true,
+      "face": true
+     },
+     {
+      "label": "Ferro head",
+      "box": [
+       0.05,
+       0.52,
+       0.25,
+       0.75
+      ],
+      "required": true,
+      "face": true
+     },
+     {
+      "label": "Uno figure",
+      "box": [
+       0.45,
+       0.0,
+       0.75,
+       0.75
+      ],
+      "required": false
+     }
+    ],
+    "shotKind": "character",
+    "refs": [
+     "/workspace/progressive-slop-refs/uno-locked.jpg",
+     "/workspace/progressive-slop-refs/aura-locked.jpg"
+    ],
+    "sfx": [
+     {
+      "text": "KRAK!",
+      "at": 139.273,
+      "pos": [
+       0.78,
+       0.75
+      ],
+      "rot": -8,
+      "size": 0.15,
+      "color": [
+       230,
+       40,
+       60
+      ],
+      "impact": true
+     }
+    ]
+   },
+   "splashStyle": "full"
+  },
+  {
+   "id": "p08b",
+   "start": 142.3,
+   "end": 156.56,
+   "layout": "seq-five-low",
+   "mood": "action",
+   "panels": [
+    {
+     "id": "f23a",
+     "image": "panels/f23a.jpg",
+     "at": 142.803,
+     "captions": [],
+     "entrance": {
+      "type": "slide_up",
+      "dur": 0.3
+     },
+     "slot": "a",
+     "stillMotion": {
+      "type": "pan_left",
+      "amount": 0.12,
+      "dur": 5.0
+     },
+     "stillOk": "sequence lead-up inset (no clip by design): gentle pan/zoom of the still",
+     "focusRegions": [
+      {
+       "label": "running feet",
+       "box": [
+        0.35,
+        0.4,
+        0.75,
+        0.9
+       ],
+       "required": true
+      }
+     ],
+     "shotKind": "character",
+     "refs": [
+      "/workspace/progressive-slop-refs/uno-locked.jpg",
+      "/workspace/progressive-slop-refs/aura-locked.jpg"
+     ]
+    },
+    {
+     "id": "f23b",
+     "image": "panels/f23b.jpg",
+     "at": 142.803,
+     "captions": [],
+     "entrance": {
+      "type": "iris",
+      "dur": 0.3
+     },
+     "slot": "b",
+     "clip": {
+      "src": "clips/v5/f23b.mp4",
+      "in": 0.0,
+      "out": 6.0,
+      "firstFrameNcc": 0.954
+     },
+     "focusRegions": [
+      {
+       "label": "Aura face",
+       "box": [
+        0.36,
+        0.08,
+        0.53,
+        0.36
+       ],
+       "required": true,
+       "face": true
+      }
+     ],
+     "shotKind": "character",
+     "refs": [
+      "/workspace/progressive-slop-refs/uno-locked.jpg",
+      "/workspace/progressive-slop-refs/aura-locked.jpg"
+     ]
+    },
+    {
+     "id": "f23c",
+     "image": "panels/f23c.jpg",
+     "at": 143.499,
+     "captions": [],
+     "entrance": {
+      "type": "slide_up",
+      "dur": 0.3
+     },
+     "slot": "c",
+     "stillMotion": {
+      "type": "drift_up",
+      "amount": 0.12,
+      "dur": 5.0
+     },
+     "stillOk": "sequence lead-up inset (no clip by design): gentle pan/zoom of the still",
+     "focusRegions": [
+      {
+       "label": "bowler hat",
+       "box": [
+        0.15,
+        0.4,
+        0.45,
+        0.75
+       ],
+       "required": true
+      },
+      {
+       "label": "streetlamp",
+       "box": [
+        0.5,
+        0.1,
+        0.7,
+        0.4
+       ],
+       "required": false
+      }
+     ],
+     "shotKind": "character",
+     "refs": [
+      "/workspace/progressive-slop-refs/uno-locked.jpg",
+      "/workspace/progressive-slop-refs/aura-locked.jpg"
+     ]
+    },
+    {
+     "id": "f23d",
+     "image": "panels/f23d.jpg",
+     "at": 144.196,
+     "captions": [],
+     "entrance": {
+      "type": "wipe",
+      "dur": 0.3
+     },
+     "slot": "d",
+     "stillMotion": {
+      "type": "pan_right",
+      "amount": 0.12,
+      "dur": 5.0
+     },
+     "stillOk": "sequence lead-up inset (no clip by design): gentle pan/zoom of the still",
+     "focusRegions": [
+      {
+       "label": "alley lights",
+       "box": [
+        0.4,
+        0.3,
+        0.6,
+        0.8
+       ],
+       "required": true
+      }
+     ],
+     "shotKind": "character",
+     "refs": [
+      "/workspace/progressive-slop-refs/uno-locked.jpg",
+      "/workspace/progressive-slop-refs/aura-locked.jpg"
+     ]
     },
     {
      "id": "f23",
-     "image": "panels/f23_clipstart.jpg",
-     "at": 145.612,
+     "image": "panels/f23_new.jpg",
+     "at": 144.893,
      "moment": "Aura lassos Slick Nickel's bowler hat with her glowing wire hair and yanks him off his feet as he runs. YOINK",
      "cast": "Aura, Slick Nickel",
      "focusNote": "Aura's smile",
      "storyTransition": "Whip pan",
      "captions": [],
      "entrance": {
-      "type": "slide_right",
+      "type": "zoom_pop",
       "dur": 0.3
      },
-     "slot": "b",
+     "slot": "e",
      "clip": {
-      "src": "clips/f23.mp4",
+      "src": "clips/v5/f23_new.mp4",
       "in": 0.0,
-      "out": 6.0,
-      "firstFrameNcc": 0.243
+      "out": 5.52,
+      "firstFrameNcc": 0.95,
+      "trimNote": "splash zooms in at 151.23s, clip capped to 5.52s"
      },
-     "panelOriginal": "panels/f23.jpg",
-     "clipStartStill": true,
      "focusRegions": [
       {
-       "label": "Aura's smile",
+       "label": "Aura face",
        "box": [
-        0.1,
-        0.08,
-        0.38,
-        0.45
+        0.32,
+        0.04,
+        0.4,
+        0.14
        ],
-       "required": true
+       "required": true,
+       "face": true
       },
       {
        "label": "Nickel face",
        "box": [
-        0.62,
-        0.18,
-        0.85,
-        0.45
+        0.6,
+        0.28,
+        0.75,
+        0.5
        ],
-       "required": false,
+       "required": true,
        "face": true
+      },
+      {
+       "label": "bowler hat",
+       "box": [
+        0.25,
+        0.6,
+        0.4,
+        0.85
+       ],
+       "required": false
       }
      ],
      "shotKind": "character",
@@ -1867,91 +2221,103 @@
      "sfx": [
       {
        "text": "YOINK!",
-       "at": 147.006,
+       "at": 146.309,
        "pos": [
-        0.78,
-        0.75
+        0.22,
+        0.5
        ],
-       "rot": -8,
+       "rot": 7,
        "size": 0.15,
        "color": [
-        190,
-        120,
-        255
+        230,
+        40,
+        60
        ],
        "impact": false
       }
      ]
-    },
-    {
-     "id": "f24",
-     "image": "panels/f24.jpg",
-     "at": 149.119,
-     "moment": "Newsboy-bot newspaper spinning in, extreme dutch: \"UNO & AURA RULE CHROMOPOLIS!\" Gold flare. SPIN-SPIN",
-     "cast": "fx (newspaper)",
-     "focusNote": "headline",
-     "storyTransition": "Spinning newspaper",
-     "captions": [],
-     "entrance": {
-      "type": "iris",
-      "dur": 0.3
-     },
-     "slot": "c",
-     "clip": {
-      "src": "clips/f24.mp4",
-      "in": 0.0,
-      "out": 6.0,
-      "firstFrameNcc": 0.936
-     },
-     "focusRegions": [
-      {
-       "label": "headline",
-       "box": [
-        0.22,
-        0.12,
-        0.9,
-        0.45
-       ],
-       "required": true
-      }
-     ],
-     "shotKind": "fx",
-     "sfx": [
-      {
-       "text": "SPIN-SPIN!",
-       "at": 152.602,
-       "pos": [
-        0.78,
-        0.75
-       ],
-       "rot": -8,
-       "size": 0.15,
-       "color": [
-        255,
-        245,
-        230
-       ],
-       "impact": false
-      }
-     ],
-     "landNote": "landed 2.11s early (from 151.232) so the clip plays out before the page turn"
     }
    ],
    "pageTransition": {
-    "type": "slide_left",
+    "type": "whip",
     "dur": 0.5
-   }
+   },
+   "transition": {
+    "type": "zoom",
+    "panel": "f23",
+    "at": 151.232,
+    "dur": 0.72
+   },
+   "splash": {
+    "id": "f24",
+    "image": "panels/f24.jpg",
+    "moment": "Newsboy-bot newspaper spinning in, extreme dutch: \"UNO & AURA RULE CHROMOPOLIS!\" Gold flare. SPIN-SPIN",
+    "cast": "fx (newspaper)",
+    "focusNote": "headline",
+    "storyTransition": "Spinning newspaper",
+    "captions": [],
+    "clip": {
+     "src": "clips/f24.mp4",
+     "in": 0.0,
+     "out": 4.56,
+     "firstFrameNcc": 0.936,
+     "trimNote": "page turns at 156.56s, clip capped to 4.56s"
+    },
+    "focusRegions": [
+     {
+      "label": "headline",
+      "box": [
+       0.22,
+       0.12,
+       0.9,
+       0.45
+      ],
+      "required": true
+     },
+     {
+      "label": "headline text",
+      "box": [
+       0.15,
+       0.1,
+       0.92,
+       0.62
+      ],
+      "required": false,
+      "face": true
+     }
+    ],
+    "shotKind": "fx",
+    "sfx": [
+     {
+      "text": "SPIN-SPIN!",
+      "at": 152.602,
+      "pos": [
+       0.22,
+       0.75
+      ],
+      "rot": 7,
+      "size": 0.15,
+      "color": [
+       190,
+       120,
+       255
+      ],
+      "impact": false
+     }
+    ]
+   },
+   "splashStyle": "tilt"
   },
   {
    "id": "p09",
    "start": 156.56,
    "end": 184.4,
-   "layout": "side-two",
+   "layout": "reflow-two",
    "mood": "action",
    "panels": [
     {
      "id": "f25",
-     "image": "panels/f25_clipstart.jpg",
+     "image": "panels/f25.jpg",
      "at": 156.828,
      "moment": "TRIUMPH PENTHOUSE splash: Uno and Aura on a deco penthouse balcony, gold dust raining, the city lit below. Uno raises his \"1\" chain and Aura's beads glitter. FLASH",
      "cast": "Uno, Aura",
@@ -1964,21 +2330,19 @@
      },
      "slot": "a",
      "clip": {
-      "src": "clips/f25.mp4",
+      "src": "clips/v5/f25.mp4",
       "in": 0.0,
       "out": 6.0,
-      "firstFrameNcc": 0.708
+      "firstFrameNcc": 0.9
      },
-     "panelOriginal": "panels/f25.jpg",
-     "clipStartStill": true,
      "focusRegions": [
       {
        "label": "Uno face",
        "box": [
-        0.34,
-        0.1,
-        0.49,
-        0.32
+        0.28,
+        0.08,
+        0.45,
+        0.35
        ],
        "required": true,
        "face": true
@@ -1986,21 +2350,21 @@
       {
        "label": "Aura face",
        "box": [
-        0.57,
-        0.1,
+        0.58,
+        0.12,
         0.73,
-        0.36
+        0.38
        ],
        "required": true,
        "face": true
       },
       {
-       "label": "gold 1 chain",
+       "label": "gold 1 chain fist",
        "box": [
-        0.2,
-        0.18,
-        0.3,
-        0.67
+        0.05,
+        0.0,
+        0.25,
+        0.45
        ],
        "required": false
       }
@@ -2015,15 +2379,15 @@
        "text": "FLASH!",
        "at": 158.221,
        "pos": [
-        0.78,
+        0.22,
         0.75
        ],
-       "rot": -8,
+       "rot": 7,
        "size": 0.15,
        "color": [
         255,
-        150,
-        40
+        245,
+        230
        ],
        "impact": true
       }
@@ -2031,7 +2395,7 @@
     },
     {
      "id": "f26",
-     "image": "panels/f26_clipstart.jpg",
+     "image": "panels/f26.jpg",
      "at": 178.538,
      "moment": "Quiet beat: Aura sets the gold crown-shaped hat on Uno, and the clinking oil-soda glasses spark. TING",
      "cast": "Uno, Aura",
@@ -2044,44 +2408,42 @@
      },
      "slot": "b",
      "clip": {
-      "src": "clips/f26.mp4",
+      "src": "clips/v5/f26.mp4",
       "in": 0.0,
       "out": 5.06,
-      "firstFrameNcc": 0.172,
+      "firstFrameNcc": 0.888,
       "trimNote": "page turns at 184.40s, clip capped to 5.06s"
      },
-     "panelOriginal": "panels/f26.jpg",
-     "clipStartStill": true,
      "focusRegions": [
+      {
+       "label": "Uno face",
+       "box": [
+        0.19,
+        0.04,
+        0.34,
+        0.27
+       ],
+       "required": true,
+       "face": true
+      },
       {
        "label": "Aura face",
        "box": [
-        0.28,
-        0.0,
-        0.47,
+        0.6,
+        0.05,
+        0.75,
         0.32
        ],
        "required": true,
        "face": true
       },
       {
-       "label": "Uno face",
+       "label": "glasses",
        "box": [
-        0.5,
-        0.0,
-        0.68,
-        0.37
-       ],
-       "required": true,
-       "face": true
-      },
-      {
-       "label": "soda glass",
-       "box": [
-        0.33,
-        0.73,
-        0.52,
-        1.0
+        0.4,
+        0.15,
+        0.6,
+        0.4
        ],
        "required": false
       }
@@ -2096,15 +2458,15 @@
        "text": "TING!",
        "at": 181.348,
        "pos": [
-        0.22,
-        0.5
+        0.5,
+        0.25
        ],
        "rot": 7,
        "size": 0.15,
        "color": [
         255,
-        200,
-        60
+        150,
+        40
        ],
        "impact": false
       }
@@ -2126,7 +2488,7 @@
    "panels": [
     {
      "id": "f27",
-     "image": "panels/f27_clipstart.jpg",
+     "image": "panels/f27.jpg",
      "at": 184.831,
      "moment": "TWIST: an envelope slides under the penthouse door with a black wax seal shaped like a monocle. Aura picks it up and her eyes flare",
      "cast": "Aura",
@@ -2139,21 +2501,19 @@
      },
      "slot": "a",
      "clip": {
-      "src": "clips/f27.mp4",
+      "src": "clips/v5/f27.mp4",
       "in": 0.0,
       "out": 6.0,
-      "firstFrameNcc": 0.348
+      "firstFrameNcc": 0.965
      },
-     "panelOriginal": "panels/f27.jpg",
-     "clipStartStill": true,
      "focusRegions": [
       {
        "label": "Aura face",
        "box": [
-        0.4,
-        0.0,
-        0.6,
-        0.32
+        0.55,
+        0.05,
+        0.78,
+        0.4
        ],
        "required": true,
        "face": true
@@ -2161,10 +2521,10 @@
       {
        "label": "envelope seal",
        "box": [
-        0.23,
-        0.48,
-        0.47,
-        0.82
+        0.35,
+        0.38,
+        0.51,
+        0.58
        ],
        "required": true
       }
@@ -2185,8 +2545,8 @@
        "rot": -8,
        "size": 0.15,
        "color": [
-        230,
-        40,
+        255,
+        200,
         60
        ],
        "impact": false
@@ -2208,32 +2568,33 @@
      },
      "slot": "b",
      "clip": {
-      "src": "clips/f28.mp4",
+      "src": "clips/v5/f28.mp4",
       "in": 0.0,
-      "out": 6.0,
-      "firstFrameNcc": 0.782
+      "out": 4.0,
+      "trimNote": "v5 clip pushes in until Ferro fills the frame; keep the first 4 s so the full figure stays in",
+      "firstFrameNcc": 0.927
      },
      "focusRegions": [
       {
-       "label": "monocle glint",
+       "label": "Ferro head",
        "box": [
-        0.22,
-        0.05,
-        0.38,
-        0.35
+        0.24,
+        0.08,
+        0.33,
+        0.26
        ],
        "required": true,
        "face": true
       },
       {
-       "label": "empty jail truck",
+       "label": "Ferro full figure",
        "box": [
-        0.56,
-        0.3,
-        1.0,
-        0.9
+        0.19,
+        0.08,
+        0.35,
+        0.92
        ],
-       "required": false
+       "required": true
       }
      ],
      "shotKind": "character",

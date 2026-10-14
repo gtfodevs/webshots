@@ -50,6 +50,8 @@ def ease_io(x):
 
 def progress(x, curve='io'):
     x = min(max(x, 0.0), 1.0)
+    if curve == 'linear':
+        return x
     e = ease_io(x) if curve == 'io' else x ** 2.2   # 'in' accelerates into a whip
     return (1 - LINEAR) * e + LINEAR * x
 
@@ -180,6 +182,37 @@ def _place(lo_need, hi_need, size, lo_lim, hi_lim, pref):
     return a + (b - a) * pref, True
 
 
+REVEAL = True   # default camera rule 'reveal' (Jason 2026-10-14): pan only across the part the crop hides, one direction, eased, never back
+
+
+def _reveal_plan(img_wh, cell_wh, within, faces_at, t0, t1, n_faces, F, PAD, Ww, Wh, bx, by, bw, bh, dx, dy):
+    """Largest window of the cell's aspect (no zoom). If the art is wider/taller than the cell, pan linearly ONE way
+    across the hidden slack (limited so the required faces stay in for the whole move); no slack = static."""
+    w, h = Ww, Wh
+    horiz = bw - w > bh - h
+    slack = (bw - w) if horiz else (bh - h)
+    lo, hi = (bx, bx + bw - w) if horiz else (by, by + bh - h)
+    if n_faces and F and F[0]:
+        U = _union([b for fs in F for b in fs])
+        k = (0, 2) if horiz else (1, 3); size = w if horiz else h
+        pad = PAD * size
+        a = max(lo, U[k[1]] + pad - size); b = min(hi, U[k[0]] - pad)
+        if a <= b:
+            lo, hi = a, b
+        else:
+            c = min(max((U[k[0]] + U[k[1]]) / 2 - size / 2, lo), hi); lo = hi = c
+    cx, cy = bx + (bw - w) / 2, by + (bh - h) / 2
+    def W_(v):
+        return (v, cy, w, h) if horiz else (cx, v, w, h)
+    if slack < 0.02 * (w if horiz else h) or hi - lo < 2:
+        v = (lo + hi) / 2
+        return Plan('static', [(0, W_(v)), (1, W_(v))], 'linear', t0, t1, faces_at, lambda t: list(range(n_faces)), why='art fits: no pan')
+    sg = (dx if horiz else dy) or 1
+    a, b = (lo, hi) if sg > 0 else (hi, lo)
+    return Plan('reveal_pan', [(0, W_(a)), (1, W_(b))], 'io', t0, t1, faces_at, lambda t: list(range(n_faces)),
+                why='linear one-way pan across the cropped-off ' + ('width' if horiz else 'height'))
+
+
 def plan_move(img_wh, cell_wh, within, faces_at, t0, t1, n_faces, out_tr=None, in_tr=None, splash=False,
               base=None, pad=PAD):
     PAD = pad
@@ -200,6 +233,8 @@ def plan_move(img_wh, cell_wh, within, faces_at, t0, t1, n_faces, out_tr=None, i
         Y, oky = _place(need[1] - ph, need[3] + ph, h, by, by + bh, pref[1])
         return (X, Y, w, h), okx and oky
     allidx = list(range(n_faces))
+    if REVEAL:
+        return _reveal_plan(img_wh, cell_wh, within, faces_at, t0, t1, n_faces, F, PAD, Ww, Wh, bx, by, bw, bh, dx, dy)
     if n_faces == 0:
         pref0 = (0.5 - 0.5 * dx, 0.5 - 0.5 * dy) if (dx or dy) else (0.5, 0.5)
         w0, _ = win(1.0, None); w1, _ = win(PUSH, None, (0.5 + 0.3 * dx, 0.5 + 0.3 * dy))

@@ -60,10 +60,14 @@ PAGES = [
     ('p03', 49.45, 66.50, 'tilt-two', 'slide_up', 'action',
      [('f09', 'a', 49.84, 'THUNK!', False, 'slide_up', 'push_in'), ('f10', 'b', 60.90, 'SKREEEE!', True, 'whip', 'pan_right')],
      None),
-    ('p04', 66.50, 88.95, 'four-grid', 'whip', 'action',
+    ('p04', 66.50, 82.68, 'four-grid', 'whip', 'action',
      [('f11', 'a', 66.76, 'WHAM!', True, 'zoom_pop', 'push_in'), ('f12', 'b', 72.42, 'ZZT-ZZT!', False, 'wipe', 'pan_left'),
       ('f13', 'c', 75.86, 'KA-CHUNK!', False, 'iris', 'push_in'), ('f14', 'd', 78.36, 'FWOOSH!', False, 'slide_right', 'pull_out')],
-     ('f15', 83.38, 'KLANG!', True, 'tilt', 'f14')),
+     None),
+    # v5: the betrayal gets its own page: Nickel at the vault door (new clip), then the bars slam (payoff)
+    ('p04b', 82.68, 88.95, 'tilt-two', 'flash', 'scare',
+     [('f15c', 'a', 82.68, None, False, 'glitch', 'push_in'), ('f15', 'b', 84.78, 'KLANG!', True, 'zoom_pop', 'push_in')],
+     None),
     ('p05', 88.95, 100.63, 'inset-two', 'iris', 'eerie',
      [('f16', 'a', 89.32, 'TIK-TIK-CLAK!', False, 'fade', 'push_in'), ('f17', 'b', 94.66, 'RRRING!', False, 'wipe', 'pan_right')],
      None),
@@ -73,11 +77,21 @@ PAGES = [
     ('p07', 122.90, 134.27, 'tilt-two', 'flash', 'scare',
      [('f20', 'a', 123.00, 'POOF!', True, 'glitch', 'push_in'), ('f21', 'b', 128.32, 'BOOM!', True, 'whip', 'pull_out')],
      None),
-    ('p08', 134.27, 156.56, 'three', 'slide_left', 'action',
-     [('f22', 'a', 134.28, 'KRAK!', True, 'zoom_pop', 'push_in'), ('f23', 'b', 145.54, 'YOINK!', False, 'slide_right', 'pan_left'),
-      ('f24', 'c', 150.98, 'SPIN-SPIN!', False, 'iris', 'push_in')],
-     None),
-    ('p09', 156.56, 184.40, 'side-two', 'crossfade', 'action',
+    # v5 sequence S2 (showdown): shoes square off, Uno's eyes flare, Ferro's monocle glints (insets), the hat flies
+    # (big panel under the strip) -> full-frame payoff f22 (splash zoom out of the hat panel)
+    ('p08', 134.27, 142.30, 'seq-four', 'slide_left', 'action',
+     [('f22a', 'a', 134.28, None, False, 'slide_down', 'pan_right'), ('f22b', 'b', 134.98, None, False, 'slide_left', 'push_in'),
+      ('f22c', 'c', 135.68, None, False, 'slide_right', 'push_in'), ('f22d', 'd', 136.37, None, False, 'zoom_pop', 'drift_up')],
+     ('f22', 137.77, 'KRAK!', True, 'full', 'f22d')),
+    # v5 sequence S3 (the catch): Nickel's feet run, Aura waits under the lamp, the bowler tumbles, sirens sweep the
+    # alley (4 insets along the bottom) -> payoff f23 (clip f23_new: Aura with the hat, Nickel slumped at the lamp post)
+    ('p08b', 142.30, 156.56, 'seq-five-low', 'whip', 'action',
+     [('f23a', 'a', 142.33, None, False, 'slide_up', 'pan_left'), ('f23b', 'b', 143.03, None, False, 'iris', 'push_in'),
+      ('f23c', 'c', 143.72, None, False, 'slide_up', 'drift_up'), ('f23d', 'd', 144.42, None, False, 'wipe', 'pan_right'),
+      ('f23', 'e', 145.12, 'YOINK!', False, 'zoom_pop', 'push_in')],
+     ('f24', 150.98, 'SPIN-SPIN!', False, 'tilt', 'f23')),
+    # living panels: the triumph splash f25 holds the whole frame (16:9 and Short) until the toast f26 joins it
+    ('p09', 156.56, 184.40, 'reflow-two', 'crossfade', 'action',
      [('f25', 'a', 156.68, 'FLASH!', True, 'glitch', 'push_in'), ('f26', 'b', 179.94, 'TING!', False, 'fade', 'pull_out')],
      None),
     ('p10', 184.40, END, 'inset-two', 'fade_black', 'eerie',
@@ -139,9 +153,21 @@ SHORT = {'start': 128.30, 'end': 177.95,
 CAPTION_FILLS = [[255, 226, 150], [240, 232, 214], [255, 190, 190], [214, 200, 255]]   # deco gold, ivory, crimson blush, lilac
 SFX_COLORS = [[255, 200, 60], [230, 40, 60], [190, 120, 255], [255, 245, 230], [255, 150, 40]]
 CLIP_LEN = 6.0
+# v5 (2026-10-14): new clips in clips/v5 (never *_take1); unit id -> clip file when it differs from clips/v5/<id>.mp4
+CLIP_SRC = {'f23': 'clips/v5/f23_new.mp4', 'f23x': 'clips/v5/f23.mp4'}
+UNIT_IMAGE = {'f23': 'panels/f23_new.jpg', 'f23x': 'panels/f23.jpg'}
+# sequence lead-up sub-panels with no clip: gentle pan/zoom of the still (allowed only as sequence insets)
+NO_CLIP = {'f22a', 'f22d', 'f23a', 'f23c', 'f23d'}
+def clip_rel(fid):
+    if fid in NO_CLIP:
+        return None
+    for rel in (CLIP_SRC.get(fid), f'clips/v5/{fid}.mp4', f'clips/{fid}.mp4'):
+        if rel and os.path.exists(os.path.join(ASSETS, rel)):
+            return rel
+    return None
 # Clip review (2026-10-14, 1 fps strips + first-frame match). DROP: no clip until a keepable take lands.
 DROP_CLIPS = {}  # f21 new take approved 2026-10-14 09:27
-TRIMS = {'f04': (2.25, 'face drifts to a pale skull look from ~2.75 s (low-angle mask); cut 0.5 s before'),
+TRIMS_V4 = {'f04': (2.25, 'face drifts to a pale skull look from ~2.75 s (low-angle mask); cut 0.5 s before'),
          'f05': (3.25, 'hard reframe / new figure at ~3.75 s, Uno skull-like from ~5.25 s; cut 0.5 s before the break'),
          'f13': (4.0, 'from ~4.5 s the gold flare washes Uno\'s face toward a bright skull look; ends before it')}
 # Clip-start stills: when a clip's first frame does not register on its panel (NCC < 0.75), the panel still is
@@ -171,6 +197,47 @@ CLIPSTART_FOCUS.update({
  'f26': [R('Aura face', 0.28, 0.0, 0.47, 0.32), R('Uno face', 0.50, 0.0, 0.68, 0.37), R('soda glass', 0.33, 0.73, 0.52, 1.0, req=False)],
  'f27': [R('Aura face', 0.40, 0.0, 0.60, 0.32), R('envelope seal', 0.23, 0.48, 0.47, 0.82)],
 })
+TRIMS = {'f21': (2.5, 'v5 clip pushes in on the pair; feet leave the cell from ~3 s, so it ends (and ping-pongs) before that'), 'f28': (4.0, 'v5 clip pushes in until Ferro fills the frame; keep the first 4 s so the full figure stays in')}
+# v5 focus regions, read off a 10% grid sheet of the v5 panel art (the v5 clips' start images)
+V5_FOCUS = {
+ 'f02': [R('Uno face', 0.29, 0.0, 0.42, 0.17), R('Aura face', 0.60, 0.08, 0.72, 0.26)],
+ 'f04': [R('Uno face', 0.52, 0.0, 0.82, 0.60), R('gold 1 chain', 0.38, 0.25, 0.62, 0.75, req=False)],
+ 'f05': [R('slot eyes', 0.08, 0.18, 0.25, 0.42), R('Uno face', 0.30, 0.05, 0.52, 0.42), R('Aura face', 0.62, 0.05, 0.80, 0.38)],
+ 'f06': [R('Aura face', 0.52, 0.08, 0.66, 0.35), R('Ferro face', 0.88, 0.30, 0.98, 0.50, req=False)],
+ 'f07': [R('Uno face', 0.52, 0.04, 0.66, 0.30), R('cards', 0.68, 0.15, 0.86, 0.45), R('coins', 0.20, 0.70, 0.45, 1.0, req=False)],
+ 'f08': [R('Ferro face', 0.28, 0.0, 0.48, 0.32), R('Nickel face', 0.52, 0.0, 0.68, 0.35, req=False), R('Uno face', 0.72, 0.0, 0.92, 0.35)],
+ 'f09': [R('Uno face', 0.25, 0.0, 0.40, 0.20), R('Aura face', 0.57, 0.12, 0.69, 0.30)],
+ 'f11': [R('Uno face', 0.45, 0.0, 0.62, 0.25), R('blueprint', 0.25, 0.65, 0.85, 1.0, req=False)],
+ 'f12': [R('Aura face in lasers', 0.38, 0.08, 0.52, 0.30)],
+ 'f13': [R('Uno face', 0.35, 0.0, 0.55, 0.30), R('vault dial', 0.62, 0.25, 0.90, 0.75, req=False)],
+ 'f14': [R('Uno face', 0.27, 0.0, 0.45, 0.25), R('Aura face', 0.60, 0.08, 0.75, 0.32)],
+ 'f15c': [R('Nickel face', 0.31, 0.04, 0.42, 0.20), R('Nickel figure', 0.20, 0.0, 0.50, 0.98, req=False)],
+ 'f16': [R('Aura face', 0.25, 0.05, 0.55, 0.55), R('lock', 0.60, 0.20, 0.95, 0.80, req=False)],
+ 'f17': [R('Uno face', 0.35, 0.0, 0.53, 0.32)],
+ 'f18': [R('Uno face', 0.43, 0.06, 0.55, 0.26), R('Aura face', 0.60, 0.12, 0.70, 0.30)],
+ 'f20': [R('Ferro face', 0.37, 0.0, 0.60, 0.40), R('confetti', 0.60, 0.10, 0.85, 0.80, req=False)],
+ 'f21': [R('Uno face', 0.38, 0.14, 0.47, 0.30), R('Aura face', 0.55, 0.16, 0.64, 0.32), R('Uno + Aura full figures', 0.34, 0.12, 0.66, 0.93)],
+ 'f22': [R('Uno face', 0.52, 0.02, 0.68, 0.25), R('Ferro head', 0.05, 0.52, 0.25, 0.75), R('Uno figure', 0.45, 0.0, 0.75, 0.75, req=False)],
+ 'f22b': [R('Uno face', 0.35, 0.08, 0.46, 0.22)],
+ 'f22c': [R('Ferro face', 0.43, 0.08, 0.54, 0.26)],
+ 'f23': [R('Aura face', 0.32, 0.04, 0.40, 0.14), R('Nickel face', 0.60, 0.28, 0.75, 0.50), R('bowler hat', 0.25, 0.60, 0.40, 0.85, req=False)],
+ 'f23x': [R('Aura face', 0.22, 0.05, 0.38, 0.30), R('Nickel face', 0.74, 0.38, 0.86, 0.55, req=False), R('bowler hat', 0.08, 0.12, 0.22, 0.35, req=False)],
+ 'f23b': [R('Aura face', 0.36, 0.08, 0.53, 0.36)],
+ 'f25': [R('Uno face', 0.28, 0.08, 0.45, 0.35), R('Aura face', 0.58, 0.12, 0.73, 0.38), R('gold 1 chain fist', 0.05, 0.0, 0.25, 0.45, req=False)],
+ 'f26': [R('Uno face', 0.19, 0.04, 0.34, 0.27), R('Aura face', 0.60, 0.05, 0.75, 0.32), R('glasses', 0.40, 0.15, 0.60, 0.40, req=False)],
+ 'f27': [R('Aura face', 0.55, 0.05, 0.78, 0.40), R('envelope seal', 0.35, 0.38, 0.51, 0.58)],
+ 'f28': [R('Ferro head', 0.24, 0.08, 0.33, 0.26), R('Ferro full figure', 0.19, 0.08, 0.35, 0.92)],
+ 'f24': [R('headline', 0.22, 0.12, 0.90, 0.45), dict(R('headline text', 0.15, 0.10, 0.92, 0.62, req=False), face=True)],
+ 'f15': [R('Nickel face', 0.25, 0.0, 0.42, 0.42), R('eyes behind the bars', 0.60, 0.30, 0.90, 0.60, req=False)],
+ 'f15a': [R('vault bars', 0.20, 0.10, 0.80, 0.90)],
+ 'f15b': [R('hand + key', 0.10, 0.10, 0.85, 0.80)],
+ 'f22a': [R('shoes', 0.20, 0.62, 0.60, 0.88)],
+ 'f22d': [R('flying fedora', 0.45, 0.25, 0.75, 0.55), R('confetti pile', 0.25, 0.5, 0.75, 0.95, req=False)],
+ 'f23a': [R('running feet', 0.35, 0.40, 0.75, 0.90)],
+ 'f23c': [R('bowler hat', 0.15, 0.40, 0.45, 0.75), R('streetlamp', 0.50, 0.10, 0.70, 0.40, req=False)],
+ 'f23d': [R('alley lights', 0.40, 0.30, 0.60, 0.80)],
+}
+FORCE_LAYOUT = {'p09': 'reflow-two', 'p10': 'inset-two', 'p04b': 'inset-two'}   # p04b: a 3.8:1 strip cuts Nickel's head   # f28's full figure needs the wide inset (slant-two cuts it)
 MATCH_MIN = 0.75
 BEAT = 60 / 86.1
 
@@ -180,12 +247,13 @@ def clip_start_still(fid):
     clip-start still (written once from the first frame)."""
     import comic_lib as C
     from PIL import Image, ImageFilter
-    clip = os.path.join(ASSETS, 'clips', f'{fid}.mp4')
-    panel = Image.open(os.path.join(ASSETS, 'panels', f'{fid}.jpg')).convert('RGB')
+    clip = os.path.join(ASSETS, clip_rel(fid))
+    img_rel = UNIT_IMAGE.get(fid, f'panels/{fid}.jpg')
+    panel = Image.open(os.path.join(ASSETS, img_rel)).convert('RGB')
     fr = C.first_frame(clip)
     _, score = C.register(panel, fr)
     if score >= MATCH_MIN:
-        return f'panels/{fid}.jpg', round(score, 3)
+        return img_rel, round(score, 3)
     out = os.path.join(ASSETS, 'panels', f'{fid}_clipstart.jpg')
     if not os.path.exists(out) or os.path.getmtime(out) < os.path.getmtime(clip):
         fr.resize((1280, 720), Image.LANCZOS).filter(ImageFilter.UnsharpMask(radius=1.6, percent=60, threshold=2)).save(out, quality=95)
@@ -218,13 +286,13 @@ def next_beat(t, k=1):
 
 
 def unit(fid, land, sfx, impact, ent, motion, k, slot=None):
-    u = {'id': fid, 'image': f'panels/{fid}.jpg', 'at': land, **MOMENTS.get(fid, {}), 'captions': [],
+    u = {'id': fid, 'image': UNIT_IMAGE.get(fid, f'panels/{fid}.jpg'), 'at': land, **MOMENTS.get(fid, {}), 'captions': [],
          'entrance': {'type': ent, 'dur': 0.3}}
     if slot:
         u['slot'] = slot
-    clip = os.path.join(ASSETS, 'clips', f'{fid}.mp4')
-    if os.environ.get('CJC_CLIPS') == '1' and os.path.exists(clip) and fid not in DROP_CLIPS:
-        u['clip'] = {'src': f'clips/{fid}.mp4', 'in': 0.0, 'out': CLIP_LEN}
+    rel = clip_rel(fid)
+    if os.environ.get('CJC_CLIPS') == '1' and rel and fid not in DROP_CLIPS:
+        u['clip'] = {'src': rel, 'in': 0.0, 'out': CLIP_LEN}
         if fid in TRIMS:
             u['clip']['out'], u['clip']['trimNote'] = TRIMS[fid]
         img, score = clip_start_still(fid)
@@ -233,9 +301,16 @@ def unit(fid, land, sfx, impact, ent, motion, k, slot=None):
             u['panelOriginal'] = u['image']; u['image'] = img
             u['clipStartStill'] = True
     else:
-        u['stillMotion'] = {'type': motion, 'amount': 0.05, 'dur': 6.0}
-        u['clipPending'] = f'clips/{fid}.mp4'
-    u['focusRegions'] = (CLIPSTART_FOCUS[fid] if u.get('clipStartStill') else FOCUS_REGIONS.get(fid, []) + FACES.get(fid, []))
+        if fid in NO_CLIP:
+            u['stillMotion'] = {'type': motion, 'amount': 0.12, 'dur': 5.0}
+            u['stillOk'] = 'sequence lead-up inset (no clip by design): gentle pan/zoom of the still'
+        else:
+            u['stillMotion'] = {'type': motion, 'amount': 0.05, 'dur': 6.0}
+            u['clipPending'] = f'clips/{fid}.mp4'
+    if fid in V5_FOCUS and not u.get('clipStartStill'):
+        u['focusRegions'] = V5_FOCUS[fid]
+    else:
+        u['focusRegions'] = (CLIPSTART_FOCUS[fid] if u.get('clipStartStill') else FOCUS_REGIONS.get(fid, []) + FACES.get(fid, []))
     if fid in DROP_CLIPS:
         u['clipDropped'] = DROP_CLIPS[fid]
     u['shotKind'] = 'fx' if fid in ('f01', 'f24') else ('vehicle' if fid in ('f10', 'f19') else 'character')
@@ -300,7 +375,7 @@ def build():
         for u in out['panels'] + ([out['splash']] if splash else []):
             for i, c in enumerate(u['captions']):
                 c['anchor'] = ['bl', 'tl'][i % 2] if u['id'] in ('f02', 'f18', 'f21', 'f25') else ['tl', 'bl'][i % 2]
-            if u.get('clip') and u is not out.get('splash'):
+            if u.get('clip') and u is not out.get('splash') and not layout.startswith('seq-'):
                 # richer motion (v3): when the page turn would cut this clip, land the panel earlier (whole beats,
                 # never sooner than 2 beats after the previous panel on the page) so the clip plays out
                 want = u['clip']['out'] - u['clip']['in']
@@ -326,7 +401,7 @@ def build():
                     u['clip']['trimNote'] = f"{'page turns' if end_ == end else 'splash zooms in'} at {end_:.2f}s, clip capped to {avail}s"
         pages.append(out)
     spec = {'title': 'Concrete Jungle Cold - comic mode (Progressive Slop)', 'outName': 'concrete-jungle-cold', 'assetsDir': ASSETS, 'fps': 30,
-            'defaults': {'holdBeats': 1}, 'mood': 'action', 'bgTheme': 'deco_gold', 'loop': True,
+            'defaults': {'holdBeats': 1}, 'camera': {'rule': 'reveal'},   # pan only across the crop-hidden part, one way, linear; no ping-pong (clips hold their last frame) 'mood': 'action', 'bgTheme': 'deco_gold', 'loop': True,
             'bg_video': {'landscape': 'bg/deco_gold-landscape.mp4', 'vertical': 'bg/deco_gold-vertical.mp4'},  # scripts/make_loop_bg.py --theme deco_gold
             'song': {'suno': '007325bb-143d-467d-90bc-cc25083181d6', 'audio': 'audio.mp3',
                      'audioNote': 'relative to assetsDir; not committed', 'timeline': 'shots/concrete-jungle-cold-comic/timeline.json',
@@ -354,7 +429,7 @@ def build():
             print('lettering:', line)
     spec.pop('_dir')
     # HARD GATE: every panel animated. Without CJC_CLIPS=1 this is a preview spec (QA warns, not deliverable).
-    still = [u['id'] for p in pages for u in p['panels'] + ([p['splash']] if p.get('splash') else []) if not u.get('clip')]
+    still = [u['id'] for p in pages for u in p['panels'] + ([p['splash']] if p.get('splash') else []) if not u.get('clip') and not u.get('stillOk')]
     if os.environ.get('CJC_CLIPS') != '1':
         spec['allowStills'] = True
     elif still:
@@ -389,7 +464,12 @@ def fix_layouts(spec):
     import itertools
     opts = []
     for pg in pages:
-        sc = {name: score(pg, name) for name, L in C.LAYOUTS.items() if L['n'] == len(pg['panels']) and not L.get('reflow')}   # living panels: opt-in per page only
+        if pg['layout'].startswith('seq-'):
+            sc = {pg['layout']: score(pg, pg['layout'])}   # v5 sequence strips: forced
+        elif pg['id'] in FORCE_LAYOUT:
+            sc = {FORCE_LAYOUT[pg['id']]: score(pg, FORCE_LAYOUT[pg['id']])}
+        else:
+            sc = {name: score(pg, name) for name, L in C.LAYOUTS.items() if L['n'] == len(pg['panels']) and not L.get('reflow') and not L.get('sequence')}   # living panels: opt-in per page only
         hmin = min(h for h, _ in sc.values())
         opts.append({k: v for k, v in sc.items() if v[0] <= hmin + 1e-6})
     best = None
