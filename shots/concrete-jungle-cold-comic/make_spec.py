@@ -139,8 +139,10 @@ CAPTION_FILLS = [[255, 226, 150], [240, 232, 214], [255, 190, 190], [214, 200, 2
 SFX_COLORS = [[255, 200, 60], [230, 40, 60], [190, 120, 255], [255, 245, 230], [255, 150, 40]]
 CLIP_LEN = 6.0
 # Clip review (2026-10-14, 1 fps strips + first-frame match). DROP: no clip until a keepable take lands.
-DROP_CLIPS = {'f21': 'takes 1-4 rejected (Uno skeletal / missing headphones / bare legs); still-only until a keepable take lands'}
-TRIMS = {'f13': (4.0, 'from ~4.5 s the gold flare washes Uno\'s face toward a bright skull look; ends before it')}
+DROP_CLIPS = {}  # f21 new take approved 2026-10-14 09:27
+TRIMS = {'f04': (2.25, 'face drifts to a pale skull look from ~2.75 s (low-angle mask); cut 0.5 s before'),
+         'f05': (3.25, 'hard reframe / new figure at ~3.75 s, Uno skull-like from ~5.25 s; cut 0.5 s before the break'),
+         'f13': (4.0, 'from ~4.5 s the gold flare washes Uno\'s face toward a bright skull look; ends before it')}
 # Clip-start stills: when a clip's first frame does not register on its panel (NCC < 0.75), the panel still is
 # replaced by the clip's first frame (Lanczos 2x-ish upscale to 1280x720 + light unsharp), saved as
 # panels/fNN_clipstart.jpg, so the still->clip handoff is seamless. Focus regions re-derived on those stills.
@@ -154,6 +156,20 @@ CLIPSTART_FOCUS = {
  'f23': [R("Aura's smile", 0.10, 0.08, 0.38, 0.45), R('Nickel face', 0.62, 0.18, 0.85, 0.45, req=False)],
  'f25': [R('Uno face', 0.34, 0.10, 0.49, 0.32), R('Aura face', 0.57, 0.10, 0.73, 0.36), R('gold 1 chain', 0.20, 0.18, 0.30, 0.67, req=False)],
 }
+CLIPSTART_FOCUS.update({
+ 'f03': [R("Aura's reflection", 0.26, 0.12, 0.56, 0.58), R('diamond crate', 0.58, 0.52, 0.92, 0.88, req=False)],
+ 'f04': [R('Uno face', 0.36, 0.0, 0.68, 0.56), R('gold 1 chain', 0.33, 0.48, 0.67, 0.92, req=False)],
+ 'f05': [R('slot eyes', 0.16, 0.18, 0.37, 0.42), R('Uno face', 0.46, 0.08, 0.64, 0.42), R('bouncer', 0.68, 0.0, 0.92, 0.42, req=False)],
+ 'f06': [R('Aura face', 0.28, 0.12, 0.47, 0.42)],
+ 'f11': [R('Uno face', 0.23, 0.0, 0.42, 0.32), R('Aura face', 0.58, 0.0, 0.77, 0.32), R('blueprint', 0.30, 0.68, 0.76, 1.0, req=False)],
+ 'f14': [R('Aura face', 0.28, 0.08, 0.47, 0.37), R('Uno face', 0.56, 0.0, 0.75, 0.32)],
+ 'f15': [R('Nickel face', 0.23, 0.08, 0.42, 0.42), R('brass key', 0.23, 0.53, 0.42, 0.82, req=False)],
+ 'f16': [R('hair strands in lock', 0.30, 0.22, 0.70, 0.80)],
+ 'f20': [R("Ferro's furious face", 0.18, 0.03, 0.47, 0.47), R('Nickel face', 0.68, 0.13, 0.90, 0.47, req=False)],
+ 'f21': [R('warehouse doors + light seam', 0.30, 0.02, 0.70, 0.92)],
+ 'f26': [R('Aura face', 0.28, 0.0, 0.47, 0.32), R('Uno face', 0.50, 0.0, 0.68, 0.37), R('soda glass', 0.33, 0.73, 0.52, 1.0, req=False)],
+ 'f27': [R('Aura face', 0.40, 0.0, 0.60, 0.32), R('envelope seal', 0.23, 0.48, 0.47, 0.82)],
+})
 MATCH_MIN = 0.75
 
 
@@ -279,11 +295,30 @@ def build():
         for u in out['panels'] + ([out['splash']] if splash else []):
             for i, c in enumerate(u['captions']):
                 c['anchor'] = ['bl', 'tl'][i % 2] if u['id'] in ('f02', 'f18', 'f21', 'f25') else ['tl', 'bl'][i % 2]
+            if u.get('clip') and u is not out.get('splash'):
+                # richer motion (v3): when the page turn would cut this clip, land the panel earlier (whole beats,
+                # never sooner than 2 beats after the previous panel on the page) so the clip plays out
+                want = u['clip']['out'] - u['clip']['in']
+                prev = max((p['at'] for p in out['panels'] if p['at'] < u['at'] - 0.01), default=start)
+                orig = u['at']
+                # never move a panel across a Short boundary (the Short's first/last panels stay put)
+                floor_ = max([x for x in (SHORT['start'], SHORT['end']) if orig >= x - 0.05], default=-1)
+                end_ = sp_at if sp_at is not None else end   # a splash zoom cuts the page's panels too
+                while end_ - next_beat(u['at']) - 0.1 < want - 0.01:
+                    cand = max((b for b in B if b < u['at'] - 0.05), default=None)
+                    if cand is None or cand < next_beat(prev, 2) - 0.01 or cand < start + 0.3 or cand < floor_ + 0.3:
+                        break
+                    u['at'] = round(cand, 3)
+                    u['landNote'] = f"landed {orig - u['at']:.2f}s early (from {orig:.3f}) so the clip plays out before the page turn"
+                for c in u['captions']:
+                    c['at'] = round(max(c['at'], u['at']), 3)
             if u.get('clip'):
-                avail = round(end - next_beat(u.get('at', sp_at or start)) - 0.1, 2)
+                is_sp = u is out.get('splash')
+                end_ = end if (is_sp or sp_at is None) else sp_at
+                avail = round(end_ - next_beat(u.get('at', sp_at or start)) - 0.1, 2)
                 if avail < u['clip']['out'] - 0.01:
                     u['clip']['out'] = avail
-                    u['clip']['trimNote'] = f'page turns at {end:.2f}s, clip capped to {avail}s'
+                    u['clip']['trimNote'] = f"{'page turns' if end_ == end else 'splash zooms in'} at {end_:.2f}s, clip capped to {avail}s"
         pages.append(out)
     spec = {'title': 'Concrete Jungle Cold - comic mode (Progressive Slop)', 'outName': 'concrete-jungle-cold', 'assetsDir': ASSETS, 'fps': 30,
             'defaults': {'holdBeats': 1}, 'mood': 'action', 'bgTheme': 'deco_gold', 'loop': True,
