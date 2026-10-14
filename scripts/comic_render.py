@@ -48,6 +48,9 @@ def measure_lufs(path):
     return float(tail.split('I:')[1].split('LUFS')[0])
 
 
+STATIC_FAIL = []
+
+
 def render(spec, orient, out_path, wav, sheet_path=None, t0=None, t1=None):
     """Renders every page of the spec back to back into one MP4 (single-page specs are one page)."""
     W, H = C.SIZES[orient]
@@ -108,25 +111,42 @@ def render(spec, orient, out_path, wav, sheet_path=None, t0=None, t1=None):
             shots.append((written / fps, keep[written], f))
         written += 1
     last = f
+    # Nothing is ever a still (Jason): the TO BE CONTINUED card and the end card sit over the LIVE last page,
+    # whose clips keep ping-ponging and whose camera keeps moving, instead of a frozen last frame.
+    li = len(subs) - 1
+    while li > 0 and subs[li]['song']['start'] >= t_song1 - 1e-3:
+        li -= 1
+    t_live = t_song1 - subs[li]['song']['start']
+    def live(k):
+        return scene(li).frame(t_live + k / fps)
+    k_live = 0
     tb = C.tbc(spec)
-    if tb and written:   # hard cut to black, TO BE CONTINUED...
+    if tb and written:   # cut to the dimmed live page, TO BE CONTINUED...
         n = int(round(tb['seconds'] * fps))
         for k in range(n):
-            card = C.tbc_frame(orient, tb, k / fps)
+            card = C.tbc_frame(orient, tb, k / fps, base=live(k_live)); k_live += 1
             enc.stdin.write(card.tobytes())
             if k == int(n * 0.6):
                 shots.append((written / fps, 'to be continued', card))
             written += 1
     ec = C.endcard(spec)
     if ec and written:
-        card = C.endcard_frame(last, orient, ec)
-        shots.append((written / fps + 0.5, 'end card', card))
-        b = card.tobytes()
-        for _ in range(int(round(ec['seconds'] * fps))):
-            enc.stdin.write(b)
+        n = int(round(ec['seconds'] * fps))
+        for k in range(n):
+            card = C.endcard_frame(live(k_live), orient, ec, t=k / fps); k_live += 1
+            if k == int(0.5 * fps):
+                shots.append((written / fps, 'end card', card))
+            enc.stdin.write(card.tobytes()); written += 1
     enc.stdin.close()
     if enc.wait():
         raise SystemExit('ffmpeg encode failed')
+    # delivery gate: no near-static stretch > 0.4 s anywhere in the final render (frame differencing)
+    sc = subprocess.run([sys.executable, os.path.join(os.path.dirname(__file__), 'static_check.py'), out_path, '--max', '0.4',
+                         '--json', os.path.splitext(out_path)[0] + '-static.json'], capture_output=True, text=True)
+    print(sc.stdout.strip().splitlines()[-1] if sc.stdout.strip() else 'static check: no output')
+    if sc.returncode:
+        print(sc.stdout)
+        STATIC_FAIL.append(out_path)
     if sheet_path:
         shots.sort(key=lambda s: s[0])
         tw = 480 if orient == 'landscape' else 270
@@ -228,6 +248,8 @@ def main():
     for k, p in results.items():
         extra = f'  {measure_lufs(p):.1f} LUFS' if p.endswith('.mp4') else ''
         print(f'{k:10s} {p}{extra}')
+    if STATIC_FAIL:
+        raise SystemExit('DELIVERY GATE FAIL: static stretch > 0.4 s in ' + ', '.join(STATIC_FAIL) + ' (see *-static.json); not deliverable')
 
 
 if __name__ == '__main__':

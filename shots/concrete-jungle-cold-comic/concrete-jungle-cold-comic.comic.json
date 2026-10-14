@@ -35,7 +35,8 @@
    "JUNGLE COLD"
   ],
   "subtitle": "PROGRESSIVE SLOP PRESENTS",
-  "seconds": 2.6,
+  "seconds": 2.787,
+  "logotype": "title/cjc-logotype.jpg",
   "glow": [
    255,
    196,
@@ -1573,7 +1574,7 @@
    "id": "p05",
    "start": 88.95,
    "end": 100.63,
-   "layout": "slant-two",
+   "layout": "side-two",
    "mood": "eerie",
    "panels": [
     {
@@ -1737,7 +1738,7 @@
        "at": 96.409,
        "pos": [
         0.78,
-        0.5
+        0.25
        ],
        "rot": -8,
        "size": 0.15,
@@ -1761,7 +1762,7 @@
    "id": "p06",
    "start": 100.63,
    "end": 122.9,
-   "layout": "inset-two",
+   "layout": "two-up",
    "mood": "action",
    "panels": [
     {
@@ -2110,12 +2111,12 @@
      "clipStartStill": true,
      "focusRegions": [
       {
-       "label": "warehouse doors + light seam",
+       "label": "light seam between the doors",
        "box": [
-        0.3,
-        0.02,
-        0.7,
-        0.92
+        0.42,
+        0.25,
+        0.58,
+        0.75
        ],
        "required": true
       }
@@ -2410,7 +2411,7 @@
    "id": "p09",
    "start": 156.56,
    "end": 184.4,
-   "layout": "two-up",
+   "layout": "side-two",
    "mood": "action",
    "panels": [
     {
@@ -2622,10 +2623,10 @@
        "text": "TING!",
        "at": 181.348,
        "pos": [
-        0.78,
+        0.22,
         0.5
        ],
-       "rot": -8,
+       "rot": 7,
        "size": 0.15,
        "color": [
         255,
@@ -2647,7 +2648,7 @@
    "id": "p10",
    "start": 184.4,
    "end": 198.016,
-   "layout": "slant-two",
+   "layout": "inset-two",
    "mood": "eerie",
    "panels": [
     {

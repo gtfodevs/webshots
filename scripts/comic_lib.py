@@ -77,6 +77,9 @@ def subspecs(spec):
                    layout=pg.get('layout', 'three'), splashStyle=pg.get('splashStyle', 'full'),
                    song=dict(spec['song'], start=pg['start'], end=pg['end']))
         out.append(sub)
+    trs = {round(tr['at'], 3): tr['type'] for tr in page_transitions(spec)}
+    for sub in out:
+        sub['outTransition'] = trs.get(round(sub['song']['end'], 3))
     return out
 
 
@@ -149,6 +152,24 @@ SIZES = {'landscape': (1920, 1080), 'vertical': (1080, 1920)}
 # 'vert' says how the layout becomes 1080x1920: 'same' (same normalised geometry in the tall content box)
 # or 'T' (transpose u<->v, so left/right splits become top/bottom splits).
 GX, GY = 0.013, 0.024   # gutters in normalised units (~24 px)
+
+# ---- sequence strips (lead-up / sub-action panels, COMIC_MODE.md "Sequence strips"): a run of small keylined
+# insets along the top that land on consecutive beats (story told by their order), over a big payoff panel.
+def _seq(n):
+    k = n - 1                      # insets
+    w = (1 - 0.04 - 0.02 * (k - 1)) / k
+    ins = {chr(97 + i): ('rot', 0.02 + w / 2 + i * (w + 0.02), 0.20, w, 0.36, (-2, 2)[i % 2], {'z': 1, 'keyline': True})
+           for i in range(k)}
+    ins[chr(97 + k)] = ('rect', 0, 0.22, 1, 0.78, {'inner': (0, 0.42, 1, 0.58)})
+    vk = {}
+    cols = 2 if k >= 4 else k
+    rows = -(-k // cols)
+    vw = (1 - 0.04 - 0.03 * (cols - 1)) / cols; vh = 0.40 / rows
+    for i in range(k):
+        r_, c_ = divmod(i, cols)
+        vk[chr(97 + i)] = ('rot', 0.02 + vw / 2 + c_ * (vw + 0.03), 0.02 + vh / 2 + r_ * (vh + 0.012), vw, vh, (-2, 2)[i % 2], {'z': 1, 'keyline': True})
+    vk[chr(97 + k)] = ('rect', 0, 0.40, 1, 0.60, {'inner': (0, 0.52, 1, 0.48)})
+    return {'n': n, 'vert': 'own', 'sequence': True, 'slots': ins, 'vslots': vk}
 LAYOUTS = {
     # ---- two panels
     'two-up': {'n': 2, 'vert': 'same', 'slots': {
@@ -196,6 +217,7 @@ LAYOUTS = {
         'a': ('rot', 0.40, 0.50, 0.78, 0.94, 1.5, {'inner': (0.04, 0.06, 0.55, 0.88)}),
         'b': ('rot', 0.81, 0.27, 0.36, 0.48, -4, {'z': 1, 'keyline': True}),
         'c': ('rot', 0.80, 0.74, 0.37, 0.47, 3, {'z': 2, 'keyline': True})}},
+    'seq-four': _seq(4), 'seq-five': _seq(5), 'seq-six': _seq(6),
 }
 # legacy slot names (single-page specs written before the library)
 ALIASES = {'top-left': 'a', 'top-right': 'b', 'bottom': 'c', 'top': 'a'}
@@ -331,6 +353,75 @@ def cover_crop(src_w, src_h, dst_w, dst_h, focus=(0.5, 0.5), within=None):
     cx = min(max(bx + focus[0] * src_w - cw / 2, bx), bx + bw - cw)
     cy = min(max(by + focus[1] * src_h - ch / 2, by), by + bh - ch)
     return (cx, cy, cw, ch)
+
+# ---------------------------------------------------------------- camera (shared: scripts/camera.py)
+import camera as CAM
+TAIL_LOOP = 2.0      # s of the clip's tail that ping-pongs after it ends (half speed): nothing ever freezes
+TAIL_SPEED = 0.5
+
+
+def clip_time(c, t_rel, fps):
+    """Clip-relative time for scene time t_rel (s since the clip started): plays once, then ping-pongs its last
+    TAIL_LOOP s at TAIL_SPEED forever (a slow-mo breathing tail), so the panel never freezes."""
+    L = c['out'] - c['in']
+    if t_rel < L:
+        return max(t_rel, 0.0)
+    T_ = min(TAIL_LOOP, L * 0.5)
+    m = ((t_rel - L) * TAIL_SPEED) % (2 * T_)
+    return L - (m if m < T_ else 2 * T_ - m)
+
+
+_PLAN_CACHE = {}
+def unit_plan(spec, u, geo, fps=30, regions=None, img_size=None, within=None):
+    """Per-cut camera move (scripts/camera.py) for a panel / splash in this cell. Clock = scene time (s since the
+    page's song.start). Faces = required focus regions, tracked through the clip at 1 fps."""
+    if img_size is None or regions is None:
+        img_size, _, regions, _, within = unit_fit(spec, u, geo, fps)
+    iw, ih = img_size
+    x, y, w, h = geo['bbox']
+    req = [r for r in regions if r.get('required', True)]
+    t_land = T(spec, u['at'])
+    sp = spec.get('transition')
+    is_splash = u.get('id') == (spec.get('splash') or {}).get('id', 'splash') and sp is not None and abs(u['at'] - sp['at']) < 1e-6
+    t_exit = T(spec, spec['song']['end']) + 0.6
+    if sp is not None and not is_splash:
+        t_exit = T(spec, sp['at']) + 0.6
+    # outgoing transition: the next panel's entrance on this page, else the page transition
+    later = sorted([p for p in spec['panels'] if p['at'] > u['at'] + 1e-3], key=lambda p: p['at'])
+    out_tr = entrance_of(later[0])['type'] if later and not is_splash else (sp.get('type') if sp and not is_splash else spec.get('outTransition'))
+    key = (u['id'], tuple(geo['bbox']), spec.get('page'), json.dumps([r['box'] for r in req]), out_tr, round(t_land, 3), round(t_exit, 3))
+    if key in _PLAN_CACHE:
+        return _PLAN_CACHE[key]
+    c = u.get('clip')
+    tracks = None
+    if c and req:
+        cp = resolve(spec, c['src']); ip = resolve(spec, u['image'])
+        reg, _ = register_cached(ip, cp, Image.open(ip).convert('RGB'), fps)
+        rx, ry, rw, rh = reg
+        boxes = [[(r['box'][0] * iw - rx) / rw, (r['box'][1] * ih - ry) / rh, (r['box'][2] * iw - rx) / rw, (r['box'][3] * ih - ry) / rh] for r in req]
+        boxes = [[min(max(v, 0.0), 1.0) for v in b] for b in boxes]
+        tracks = CAM.track_regions(cp, boxes, 1.0, os.path.join(ROOT, 'out', '.cache', 'tracks.json'), c['in'], c['out'])
+        t0c = T(spec, clip_start(spec, u))
+        def faces_at(t, tracks=tracks, reg=reg, t0c=t0c, c=c):
+            tc = c['in'] + clip_time(c, t - t0c, fps) if t >= t0c else c['in']
+            bs = CAM.interp_boxes(tracks, tc)
+            return [[rx + b[0] * rw, ry + b[1] * rh, rx + b[2] * rw, ry + b[3] * rh] for b in bs]
+    else:
+        fixed = [[r['box'][0] * iw, r['box'][1] * ih, r['box'][2] * iw, r['box'][3] * ih] for r in req]
+        faces_at = lambda t, fixed=fixed: fixed
+    plan = None
+    for pad in (0.06, 0.10, 0.15, 0.20):   # widen the face margin until the cell's real (slanted, inset) shape holds them
+        cand = CAM.plan_move((iw, ih), (w, h), within, faces_at, t_land, t_exit, len(req), out_tr=out_tr,
+                             in_tr=entrance_of(u)['type'], splash=is_splash, pad=pad)
+        plan = plan or cand
+        if not cand.fits:
+            break
+        if not _plan_misses(cand, req, (iw, ih), geo):
+            plan = cand; break
+    plan.labels = [r['label'] for r in req]
+    _PLAN_CACHE[key] = plan
+    return plan
+
 
 # ---------------------------------------------------------------- clip registration
 def gray_small(img, w=320):
@@ -749,6 +840,8 @@ class Scene:
         u['crop'] = crop
         u['_imgsize'] = img.size
         u['static'] = comic_finish(upscale(img, crop, (w, h), sharpen=False))
+        u['src_img'] = img
+        u['plan'] = unit_plan(self.spec, u, u['geo'], self.fps, u['focusRegions'], img.size, within)
         if u.get('eyeShift') and not u.get('clip'):
             u['static_alt'] = comic_finish(upscale(eye_shift_image(img, u['eyeShift']), crop, (w, h), sharpen=False))
         if u.get('clip'):
@@ -756,32 +849,32 @@ class Scene:
             fw, fh = frames[0].size
             cbox = ((crop[0] - rx) * fw / rw, (crop[1] - ry) * fh / rh, crop[2] * fw / rw, crop[3] * fh / rh)
             u['clipbox'] = cbox
+            u['clipscale'] = (fw / rw, fh / rh, rx, ry)
             u['raw'] = frames            # small source frames; upscaled + finished lazily (6 s clips at 1080p would not fit in RAM)
             u['size'] = (w, h)
             u['_cache'] = (None, None)
 
     def art(self, u, t):
-        """Panel art at scene time t: static hold -> clip (3-frame crossfade in) -> freeze on last frame."""
+        """Panel art at scene time t. The per-cut camera move (unit_plan) moves a crop window over the art the whole
+        time the panel is on screen: over the still before its clip starts, then over every clip frame (same
+        window, so the hand-off never jumps). After the clip ends its tail ping-pongs in slow motion, so a panel
+        never freezes."""
+        plan = u.get('plan')
+        win = plan.window(t) if plan else u['crop']
+        size = u['geo']['bbox'][2:]
         if not u.get('clip'):
-            es = u.get('eyeShift')
-            if es and 'static_alt' in u:   # still panel: hold the start colour, crossfade the eyes once, hold the end colour
-                k = (t - T(self.spec, u['at']) - es.get('hold', 2.0)) / es.get('fade', 1.0)
-                if k <= 0:
-                    return u['static']
-                return u['static_alt'] if k >= 1 else Image.blend(u['static'], u['static_alt'], ease_io(k))
-            if u.get('stillMotion'):
-                return still_motion_frame(self.spec, u, t)
-            return u['static']
+            return comic_finish(upscale(u['src_img'], win, tuple(size), sharpen=False))
         t0 = T(self.spec, clip_start(self.spec, u))
+        sx, sy, rx, ry = u['clipscale']
+        cbox = ((win[0] - rx) * sx, (win[1] - ry) * sy, win[2] * sx, win[3] * sy)
         if t < t0:
-            return u['static']
-        i = min(int((t - t0) * self.fps), len(u['raw']) - 1)
-        if u['_cache'][0] != i:
-            u['_cache'] = (i, comic_finish(upscale(u['raw'][i], u['clipbox'], u['size'])))
-        fr = u['_cache'][1]
+            return comic_finish(upscale(u['src_img'], win, tuple(size), sharpen=False))
+        i = min(int(clip_time(u['clip'], t - t0, self.fps) * self.fps), len(u['raw']) - 1)
+        fr = comic_finish(upscale(u['raw'][i], cbox, u['size']))
         xf = 3 / self.fps
         if t - t0 < xf:
-            return Image.blend(u['static'], fr, (t - t0) / xf)
+            st = comic_finish(upscale(u['src_img'], win, tuple(size), sharpen=False))
+            return Image.blend(st, fr, (t - t0) / xf)
         return fr
 
     def _ink(self, img, r, w=7):
@@ -1017,8 +1110,9 @@ def endcard_text_bounds(item):
     return res
 
 
-def endcard_frame(base, orient, ec):
-    """Final frame: the last page dimmed under halftone, with the two lettering boxes on top."""
+def endcard_frame(base, orient, ec, t=0.0):
+    """End card over the LIVE last page (base keeps moving), dimmed under halftone, with the two lettering boxes on
+    top; the boxes bob a few px and the sunburst breathes so the card itself is never static either."""
     W, H = SIZES[orient]
     if isinstance(base, np.ndarray):
         base = Image.fromarray(np.clip(base, 0, 255).astype(np.uint8)).convert('RGB')
@@ -1028,8 +1122,9 @@ def endcard_frame(base, orient, ec):
     arr = arr * (1 - 0.25 * (dots < 0.22)[..., None])
     img = Image.fromarray(np.clip(arr, 0, 255).astype(np.uint8))
     if ec.get('sunburst'):
-        draw_sunburst(img, W / 2, H / 2, ec['sunburst'].get('color', [230, 180, 70]), ec['sunburst'].get('alpha', 0.8))
-    for it in endcard_layout(ec, orient):
+        draw_sunburst(img, W / 2, H / 2, ec['sunburst'].get('color', [230, 180, 70]), ec['sunburst'].get('alpha', 0.8) * (0.85 + 0.15 * math.sin(t * 2.4)))
+    for j, it in enumerate(endcard_layout(ec, orient)):
+        it = dict(it, rect=[it['rect'][0], int(it['rect'][1] + 5 * math.sin(t * 2.2 + j * 1.7)), it['rect'][2], it['rect'][3]])
         x, y, w, h = it['rect']
         tile = Image.new('RGBA', (w + 20, h + 20), (0, 0, 0, 0))
         d = ImageDraw.Draw(tile)
@@ -1102,6 +1197,8 @@ def intro(spec):
     if not ic.get('title'):
         ic['title'] = re.split(r'\s+[-\u2013\u2014]\s+', spec.get('title', 'UNTITLED'))[0]
     ic['title'] = ic['title'].upper()
+    if ic.get('logotype'):   # per-song designed logotype (required, QA): resolved once so the tile cache can load it
+        ic['logotype'] = resolve(spec, ic['logotype']) if '_dir' in spec or spec.get('assetsDir') or os.environ.get('COMIC_ASSETS') else ic['logotype']
     return ic if ic.get('enabled', True) and ic.get('seconds', 0) > 0 else None
 
 
@@ -1274,10 +1371,35 @@ def intro_ink_lost(ic, orient):
 
 
 _INTRO_CACHE = {}
+def logotype_tile(path, max_w=1600):
+    """Designed logotype art (JPG/PNG) -> RGBA tile: transparent where the flat outer background is (flood fill
+    from the border, so the badge's own dark interior stays opaque), trimmed, soft 2 px edge."""
+    from PIL import ImageFilter
+    from scipy import ndimage
+    im = Image.open(path).convert('RGBA')
+    if im.getchannel('A').getextrema()[0] < 250:      # already has alpha
+        a = np.asarray(im.getchannel('A')) > 8
+    else:
+        rgb = np.asarray(im.convert('RGB'), np.float32)
+        bg = np.median(np.concatenate([rgb[0], rgb[-1], rgb[:, 0], rgb[:, -1]]), axis=0)
+        near = np.abs(rgb - bg).max(2) < 28
+        lab, _ = ndimage.label(near)
+        edge = set(np.unique(np.concatenate([lab[0], lab[-1], lab[:, 0], lab[:, -1]]))) - {0}
+        a = ~np.isin(lab, list(edge))
+        a = ndimage.binary_fill_holes(ndimage.binary_opening(a, iterations=2))
+    m = Image.fromarray((a * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(1.2))
+    im.putalpha(m)
+    bb = m.point(lambda v: 255 if v > 20 else 0).getbbox()
+    im = im.crop(bb)
+    if im.width > max_w:
+        im = im.resize((max_w, round(im.height * max_w / im.width)), Image.LANCZOS)
+    return im
+
+
 def _intro_tile_cached(ic, orient):
     k = (json.dumps(ic, sort_keys=True), orient)
     if k not in _INTRO_CACHE:
-        _INTRO_CACHE[k] = intro_tile(ic, orient)
+        _INTRO_CACHE[k] = logotype_tile(ic['logotype']) if ic.get('logotype') else intro_tile(ic, orient)
     return _INTRO_CACHE[k]
 
 
@@ -1341,8 +1463,73 @@ def _sparkles(img, rect, t, ts, seed=7):
                    (cx, cy + 2.6 * r), (cx - 0.5 * r, cy + 0.5 * r), (cx - 2.6 * r, cy), (cx - 0.5 * r, cy - 0.5 * r)], fill=col)
 
 
+LOGO_RAYS, LOGO_DRAW, LOGO_SHINE, LOGO_GLINT = (0.0, 0.55), (0.12, 0.80), (0.55, 1.15), 1.2
+
+
+def logotype_intro_frame(base, orient, ic, t, ts):
+    """Logotype build-in over the (moving) opening frame, starting on the slam beat ts:
+    gold sunburst rays sweep round (0-0.55 s) -> the badge draws on clockwise from 12 o'clock (0.12-0.8 s) ->
+    a shine band sweeps across the letters (0.55-1.15 s) -> a light glint pops on the top (1.2 s) -> a slow 3 %
+    push for the rest of the hold -> fade. Never static: the push runs the whole hold and the page moves under it."""
+    a = t - ts; end = ic['seconds']
+    if a < 0 or a >= end:
+        return base
+    W, H = SIZES[orient]
+    img = base.convert('RGB').copy()
+    fade = 1.0 if a < end - INTRO_FADE else max(0.0, (end - a) / INTRO_FADE)
+    img = Image.blend(img, Image.new('RGB', (W, H), (8, 6, 16)), ic.get('dim', 0.45) * min(1.0, a / 0.25) * fade)
+    tile = _intro_tile_cached(ic, orient)
+    sc = 0.97 + 0.03 * min(1.0, a / end)              # slow push the whole hold
+    r = intro_rect(ic, orient, sc)
+    cx, cy = r[0] + r[2] / 2, r[1] + r[3] / 2
+    def sweep_mask(size, ang, cxy):
+        w_, h_ = size
+        yy, xx = np.mgrid[0:h_, 0:w_].astype(np.float32)
+        th = (np.degrees(np.arctan2(xx - cxy[0], -(yy - cxy[1]))) + 360) % 360   # 0 at 12 o'clock, clockwise
+        return np.clip((ang - th) / 12.0, 0, 1)
+    # 1) rays sweep
+    k = min(1.0, max(0.0, (a - LOGO_RAYS[0]) / (LOGO_RAYS[1] - LOGO_RAYS[0])))
+    if ic.get('sunburst') is not False and k > 0:
+        lay = Image.new('RGB', (W, H), (0, 0, 0))
+        col = (ic.get('sunburst') or {}).get('color', [230, 180, 70])
+        draw_sunburst(lay, cx, cy, col, 1.0)
+        m = sweep_mask((W, H), 360 * ease_io(k) + 12, (cx, cy)) * 0.55 * fade
+        arr = np.asarray(img, np.float32); L = np.asarray(lay, np.float32)
+        img = Image.fromarray(np.clip(arr + L * m[..., None] * 0.6, 0, 255).astype(np.uint8))
+    # 2) badge draws on
+    kd = min(1.0, max(0.0, (a - LOGO_DRAW[0]) / (LOGO_DRAW[1] - LOGO_DRAW[0])))
+    if kd <= 0:
+        return img
+    tl = tile.resize((max(1, int(r[2])), max(1, int(r[3]))), Image.LANCZOS)
+    al = np.asarray(tl.getchannel('A'), np.float32) / 255
+    if kd < 1:
+        al = al * sweep_mask(tl.size, 360 * ease_io(kd) + 12, (tl.width / 2, tl.height / 2))
+    # 3) shine band (diagonal, additive, inside the badge)
+    ks = (a - LOGO_SHINE[0]) / (LOGO_SHINE[1] - LOGO_SHINE[0])
+    rgb = np.asarray(tl.convert('RGB'), np.float32)
+    if 0 <= ks <= 1:
+        yy, xx = np.mgrid[0:tl.height, 0:tl.width].astype(np.float32)
+        pos = (xx + 0.45 * yy) / (tl.width + 0.45 * tl.height)
+        band = np.exp(-((pos - (-0.15 + 1.3 * ks)) / 0.05) ** 2)
+        rgb = rgb + band[..., None] * np.array([255, 235, 170], np.float32) * 0.55
+    tlr = Image.fromarray(np.clip(rgb, 0, 255).astype(np.uint8)).convert('RGBA')
+    tlr.putalpha(Image.fromarray(np.clip(al * fade * 255, 0, 255).astype(np.uint8)))
+    img.paste(tlr, (int(round(r[0])), int(round(r[1]))), tlr)
+    # 4) glint: a 4-point star on the badge's top centre (spire), pops and fades
+    kg = (a - LOGO_GLINT) / 0.45
+    if 0 <= kg <= 1:
+        d = ImageDraw.Draw(img, 'RGBA'); gx, gy = cx, r[1] + r[3] * 0.18
+        s_ = (1 - abs(2 * kg - 1)) * r[3] * 0.10
+        al8 = int(230 * (1 - abs(2 * kg - 1)) * fade)
+        d.polygon([(gx, gy - s_), (gx + s_ * 0.16, gy), (gx, gy + s_), (gx - s_ * 0.16, gy)], fill=(255, 250, 225, al8))
+        d.polygon([(gx - s_, gy), (gx, gy - s_ * 0.16), (gx + s_, gy), (gx, gy + s_ * 0.16)], fill=(255, 250, 225, al8))
+    return img
+
+
 def intro_frame(base, orient, ic, t, ts, fps=30):
     """Composite the logo intro over a rendered frame (video-relative time t, slam at ts)."""
+    if ic.get('logotype'):
+        return logotype_intro_frame(base, orient, ic, t, ts)
     st = intro_state(ic, orient, t, ts)
     if not st:
         return base
@@ -1435,11 +1622,14 @@ def tbc_ic(c):
     return ic
 
 
-def tbc_frame(orient, c, t):
-    """Card at card-relative time t: black, lettering eases in (0.45 s) with a slow creep down and a faint flicker."""
+def tbc_frame(orient, c, t, base=None):
+    """Card at card-relative time t: lettering eases in (0.45 s) with a slow creep down and a faint flicker, over
+    the live last page dimmed to ~18 % (base; still moving underneath) or black when no base is given."""
     W, H = SIZES[orient]
     ic = tbc_ic(c)
     img = Image.new('RGB', (W, H), (4, 3, 6))
+    if base is not None:
+        img = Image.blend(img, base.convert('RGB').resize((W, H)), 0.18)
     tile = _intro_tile_cached(ic, orient)
     r = intro_rect(ic, orient, 1.0)
     a = min(1.0, max(0.0, t / 0.45))
@@ -1904,6 +2094,30 @@ def region_to_frame(box, img_size, crop, geo):
     return [a, b, c, d]
 
 
+def _plan_misses(plan, req, size, geo, n=10):
+    worst = {}; iw, ih = size
+    for t in np.linspace(plan.t0, plan.t1, n):
+        win = plan.window(t); fs = plan.faces_at(t)
+        for i in plan.expected(t):
+            b = fs[i]
+            r = dict(req[i], box=[b[0] / iw, b[1] / ih, b[2] / iw, b[3] / ih])
+            for _, frac in crop_misses(win, iw, ih, geo, [r], None):
+                worst[i] = max(worst.get(i, 0.0), frac)
+    return worst
+
+
+def camera_misses(spec, u, geo, size, regions, within, n=10):
+    """[(region, worst fraction outside the cell)] for the faces the per-cut camera move promises, sampled over
+    the whole time the panel is on screen (tracked faces). A move that cannot hold a face reports it with 1.0
+    (\"needs a bigger cell\")."""
+    plan = unit_plan(spec, u, geo, spec.get('fps', 30), regions, size, within)
+    req = [r for r in regions if r.get('required', True)]
+    if not plan.fits:
+        return [(dict(req[0], label=req[0]['label'] + ' (needs a bigger cell: ' + plan.why + ')'), 1.0)] if req else []
+    worst = _plan_misses(plan, req, size, geo, n)
+    return [(req[i], round(f, 3)) for i, f in sorted(worst.items())]
+
+
 def page_focus_problems(spec, sub, orient):
     """[(unit id, label, kind, fraction)] for one page in one orientation: 'clipped' (outside the cell / frame)
     or 'occluded' (under a panel drawn above it)."""
@@ -1914,7 +2128,11 @@ def page_focus_problems(spec, sub, orient):
     masks = {u['id']: clip_path_mask(G[u['slot']], W, H, inset=0) for u in units}
     for u in units:
         geo = G[u['slot']]
-        size, crop, regions, miss, _ = unit_fit(spec, u, geo, spec.get('fps', 30))
+        size, crop, regions, miss, within = unit_fit(spec, u, geo, spec.get('fps', 30))
+        pv = sub if 'song' in sub and 'panels' in sub else dict({k: v for k, v in spec.items() if k != 'pages'}, panels=sub['panels'],
+                 transition=sub.get('transition'), splash=sub.get('splash'), page=sub.get('id', sub.get('page')),
+                 song=dict(spec['song'], start=sub.get('start', spec['song']['start']), end=sub.get('end', spec['song']['end'])))
+        miss = camera_misses(pv, u, geo, size, regions, within)
         for r, frac in miss:
             probs.append((u['id'], r['label'], 'clipped', frac))
         above = [o for o in units if o is not u and G[o['slot']]['z'] > geo['z']]

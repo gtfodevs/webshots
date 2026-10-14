@@ -197,6 +197,14 @@ def check_intro(spec):
     if not ic:
         fail('intro: the title logo intro is missing/disabled (required on every video and Short)')
         return
+    # standing rule (Jason, 2026-10-14): a custom per-song logotype, animated in over a moving background
+    lp = ic.get('logotype')
+    if not lp:
+        fail('intro: no logotype asset (intro.logotype) - every video opens with a custom logotype designed for its song/world, animated in over a moving background')
+    elif not os.path.exists(lp):
+        fail(f'intro: logotype asset missing on disk: {lp}')
+    else:
+        ok(f'intro: logotype {os.path.basename(lp)} (rays sweep, draw-on, shine, glint over the live opening page)')
     bad = 0
     for orient in ('landscape', 'vertical'):
         W, H = C.SIZES[orient]
@@ -693,6 +701,15 @@ def check_transitions(spec, subs, draft, deep=True):
             ok(f"'{tb['text']}' card ({tb['seconds']}s, hard cut to black, before the end card): no ink lost, title-safe")
 
 
+def check_no_still_cards(spec):
+    """Nothing on screen is a still (Jason, 2026-10-14): the end card / TO BE CONTINUED must sit over the live
+    last page (the renderer default), never over a frozen frame or a still image."""
+    for name, cfg in (('endCard', spec.get('endCard') or {}), ('tbc', spec.get('tbc') or {})):
+        if cfg.get('bg') not in (None, 'live') and not str(cfg.get('bg', '')).endswith('.mp4'):
+            fail(f"{name}: background '{cfg.get('bg')}' is a still - use the live last page (default) or a looping clip")
+    ok('end card / TO BE CONTINUED over the live last page (clips keep moving underneath)')
+
+
 def check_all_clips(spec, subs):
     """HARD GATE (Jason, 2026-10-14): every panel (and splash) in a comic video has a QA-passed animated clip.
     No still-only panels. Fails unless the spec is an explicit preview (`allowStills: true` or `draft`)."""
@@ -717,6 +734,7 @@ def main(path):
         if len(problems) == n0:
             ok(f"{sub.get('page', 'page')}: {len(all_units(sub))} panels - clips, hold {C.MIN_HOLD}-{C.MAX_HOLD}s, beats, text")
     check_all_clips(spec, subs)
+    check_no_still_cards(spec)
     check_layouts(spec, subs)
     check_unique(spec, subs)
     check_audio(spec)

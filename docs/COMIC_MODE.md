@@ -352,3 +352,20 @@ Every comic video should level up beyond Kingdom Come: real story, real hits. Ex
   frame) on the panel; that is what makes the still->clip handoff seamless. Sampling a window at the render fps can miss
   the real first frame (f10 scored 0.79 at 4 fps, 0.90 on frame 0). Drift is reported separately and never fails the
   check: per-second NCC of each sampled frame against the clip's first frame (`driftPerSecond` in the QA report).
+
+
+### Sequence strips: lead-up / sub-action panels (rule 2026-10-14)
+
+Tell a complicated beat (a catch, a fight, a slam) as a run of 3-5 small inset panels on one page, each with a
+SIMPLE clip (feet running, a hand reaching, a hat in the air, eyes flaring), then the end-pose payoff panel.
+The story comes from the order of the panels, not from any single clip.
+
+- Layouts `seq-four` / `seq-five` / `seq-six` (3 / 4 / 5 insets + payoff): keylined, alternately tilted insets in
+  a strip along the top (a 2-column grid in the Short), over a big payoff panel; slots land in name order.
+- Timing: insets land on consecutive beats (every 1-2 beats); each clip starts one beat after its inset lands, so
+  several play at once and overlap; the payoff lands last and gets the longest clip. Everything keeps moving
+  (camera move + ping-pong tail) until the page turns.
+- Use sparingly: 2-4 sequences per video, never on consecutive pages (QA's no-consecutive-layout rule applies).
+- Each sub-panel is its own simple panel image (GenerateImage from the locked refs, then the panel check) with a
+  short clip prompt that follows *Clip prompt design* (VIDEO_PIPELINE.md). Close-ups of hands/feet/props carry
+  no face; faces stay medium-sized.

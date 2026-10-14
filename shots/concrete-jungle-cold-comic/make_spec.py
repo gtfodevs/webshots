@@ -166,11 +166,12 @@ CLIPSTART_FOCUS.update({
  'f15': [R('Nickel face', 0.23, 0.08, 0.42, 0.42), R('brass key', 0.23, 0.53, 0.42, 0.82, req=False)],
  'f16': [R('hair strands in lock', 0.30, 0.22, 0.70, 0.80)],
  'f20': [R("Ferro's furious face", 0.18, 0.03, 0.47, 0.47), R('Nickel face', 0.68, 0.13, 0.90, 0.47, req=False)],
- 'f21': [R('warehouse doors + light seam', 0.30, 0.02, 0.70, 0.92)],
+ 'f21': [R('light seam between the doors', 0.42, 0.25, 0.58, 0.75)],
  'f26': [R('Aura face', 0.28, 0.0, 0.47, 0.32), R('Uno face', 0.50, 0.0, 0.68, 0.37), R('soda glass', 0.33, 0.73, 0.52, 1.0, req=False)],
  'f27': [R('Aura face', 0.40, 0.0, 0.60, 0.32), R('envelope seal', 0.23, 0.48, 0.47, 0.82)],
 })
 MATCH_MIN = 0.75
+BEAT = 60 / 86.1
 
 
 def clip_start_still(fid):
@@ -328,7 +329,8 @@ def build():
                      'start': 0.0, 'end': END, 'loudness': -14},
             'short': SHORT,
             'intro': {'enabled': True, 'title': 'CONCRETE JUNGLE COLD', 'lines': ['CONCRETE', 'JUNGLE COLD'],
-                      'subtitle': 'PROGRESSIVE SLOP PRESENTS', 'seconds': 2.6,
+                      'subtitle': 'PROGRESSIVE SLOP PRESENTS', 'seconds': round(4 * BEAT, 3),   # 4 beats: build-in + short hold
+                      'logotype': 'title/cjc-logotype.jpg',   # approved 2026-10-14 (Art Deco gold badge)
                       'glow': [255, 196, 70], 'glow2': [200, 20, 50],
                       'chrome': [[255, 250, 215], [255, 215, 110], [196, 140, 40], [90, 52, 8], [210, 160, 60], [255, 236, 170]],
                       'subColor': [255, 226, 150], 'rot': -3, 'dim': 0.5, 'sunburst': {'color': [230, 180, 70], 'alpha': 0.3}},

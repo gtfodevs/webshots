@@ -22,7 +22,11 @@ mode doc for the video you are making. Mode docs only add rules; they never rela
 5. **Lay out** with **focus regions** so faces and key moments survive both 16:9 and the 9:16 Short.
 6. **Assemble** with a **title intro**, **varied transitions**, a **seamless looping themed background** where
    the frame shows one, and an **end card**.
-7. **QA** (`npm run check -- <name>`, plus the mode's QA) → render 16:9 and the Short → upload as *Not made for kids*.
+7. **QA** (`npm run check -- <name>`, plus the mode's QA) → render 16:9 and the Short → **render gate**
+   (`scripts/static_check.py`, run automatically by the renderer: no near-static stretch > 0.4 s) → upload as
+   *Not made for kids*.
+0. **Logotype first (REQUIRED STEP, Jason 2026-10-14):** every video opens with a custom logotype designed for
+   that song's world and era (not a caption font), animated in over a moving background. See *Logotype intro*.
 
 ## Reference-first generation (HARD REQUIRED STEP, Jason's rule)
 
@@ -215,3 +219,83 @@ entrance) gets a transition, and two consecutive changes never share a type. Thi
   robot (**no humans**, no living creatures).
 - Upload to YouTube as **"No, it's not made for kids"** (audience setting), for both the video and the Short.
 - Never commit media (images, video, audio); commit specs, code and docs only.
+
+
+## Logotype intro (required on every video and Short, rule 2026-10-14)
+
+- Design a per-song **logotype** image (badge/wordmark in the song's world and era: e.g. Art Deco gold for a 1920s
+  crime story). Get Jason's approval, then set `intro.logotype` (path relative to assetsDir). QA **fails** a
+  spec whose intro has no logotype asset, or whose file is missing.
+- Build-in (`comic_lib.logotype_intro_frame`, starts on the first downbeat): gold sunburst rays sweep round
+  (0-0.55 s) → the badge draws on clockwise (0.12-0.8 s) → a shine band sweeps across the letters (0.55-1.15 s)
+  → a light glint pops (1.2 s) → slow 3 % push through the hold → fade. The flat outer background of the art is
+  keyed out (flood fill from the border); the badge's own dark interior stays.
+- The background is always moving: the logotype sits over the live opening page (its first panel is a clip, e.g.
+  rain + searchlights over the city), dimmed ~45 %.
+- Hold no longer than the beat needs: `intro.seconds` = a whole number of beats (4 beats ≈ 2.8 s at 86 BPM).
+
+## Nothing on screen is ever static (rule 2026-10-14, delivery gate)
+
+v3 felt like "it stops, then jumps": panels froze on their last clip frame for up to 15 s, splashes held one beat
+on a still, and the end card was a frozen frame. Rules (shared renderer, `scripts/comic_lib.py` + `camera.py`):
+
+- **Before a clip starts** the panel already moves: the per-cut camera move runs over the still from the moment it
+  lands (the anticipation beat is a camera beat, not a freeze).
+- **After a clip ends** it never freezes: its last 2 s ping-pong at half speed (slow-mo breathing tail,
+  `TAIL_LOOP`/`TAIL_SPEED`) while the camera move continues.
+- **Panels overlap in time**: the next panel lands while the current one is still moving; there is no dead
+  wait because every landed panel keeps moving until the page leaves.
+- **Page transitions flow**: the outgoing page keeps rendering live (clips looping, camera moving) until the
+  incoming page covers it.
+- **TO BE CONTINUED / end card** sit over the **live** last page (dimmed), never a frozen frame; the end-card boxes
+  bob and the sunburst breathes. QA fails an end card / TBC configured with a still background.
+- **No stills, ever**: every panel, splash, intro and end card has moving footage under it. Ken Burns on a still
+  does not count (QA `check_all_clips` fails still-only panels).
+- **Render gate** (`scripts/static_check.py VIDEO --max 0.4`): frame differencing (mean |Δluma| at 192 px wide,
+  threshold 0.35) on the FINAL render; any stretch > 0.4 s **fails** and the renderer exits non-zero
+  (`DELIVERY GATE FAIL`, details in `<video>-static.json`). Never deliver a render that fails it.
+- The Short gets the same engine; cut denser (more, shorter panels) if the window still has slow stretches.
+
+## Camera moves per cut (pan-in-place, shared: `scripts/camera.py`)
+
+When a clip's aspect does not match its cell (e.g. a 16:9 clip in a tall half-screen cell) a fixed crop cuts
+faces. Every cut instead gets ONE eased camera move: a crop window at the cell's aspect that moves over the
+footage for the whole time the panel is on screen, steered by the **tracked** focus regions (faces / key action
+are followed through the clip at ~1 fps with an NCC template search and interpolated in between). The same
+window is applied to the still before the clip and to every clip frame, so the hand-off never jumps.
+Explainers and any other renderer that crops footage into a cell use the same module (`camera.plan_move`,
+`camera.track_regions`).
+
+Move selection (per cut, from its faces, its cell, and the transitions on either side):
+
+| situation | move |
+|---|---|
+| one face, a splash, or an outgoing zoom / iris | **push_in** (slow push toward the face, never tighter than the faces need: no extreme face close-ups) |
+| 2+ faces that fill the cell with < 10 % slack | **pull_back** reveal (tight on the lead face → all faces) |
+| faces fit with slack, outgoing whip | **whip** hand-off (pan accelerating into the whip's direction) |
+| faces fit with slack | **drift** pan along the slack, ending in the outgoing transition's direction |
+| faces fit together at every moment but travel further than the cell allows | **follow** (window tracks them) |
+| faces spread side to side wider than the cell | **pan_h** face A → face B (hold, move, hold) |
+| faces stacked / action up-down taller than the cell | **tilt_v** face A → face B |
+| a single face is larger than the cell at some moment | **needs_bigger_cell**: the layout engine must give the panel a bigger cell (QA fails it as clipped; the builder's layout search scores it as a hard miss and picks another layout) |
+
+- Direction flows into the outgoing transition (next panel's entrance on the page, else the page transition):
+  `slide_left`/`wipe_left` → the move ends travelling left, `whip`/`wipe`/`slide_right` → right, `slide_up` → up.
+- Every move eases in and out with a 25 % linear floor, so its speed is never zero (no static frames).
+- Face margin: the planner widens its pad (6 → 20 %) until the cell's real (slanted, inset) shape holds the faces.
+- **QA** (`camera_misses`, inside the focus check of `npm run check`): samples the move over the panel's whole
+  screen time and fails when a face the move promises at that moment leaves the cell window (> 5 %).
+
+## Clip prompt design (what Grok Imagine does well, rule 2026-10-14)
+
+- **One simple action per clip.** At most 2 characters doing anything; anyone else is static / background.
+- **The camera carries the drama**: push-ins, orbits, crane moves, rack focus, rain, smoke, light. Characters
+  move little: a turn, a head tilt, a coat flare, a walk.
+- **No contact or complex physics**: no grabbing, lassoing, grappling, handing objects over, hair used as a tool.
+  Show the result (pose / aftermath) or keep it off-screen.
+- **Faces medium-sized and stable**: no extreme push-in to a face close-up (that is where Uno turns into a
+  skull); prefer 3/4 or profile, mouth closed. Lock wording: "smooth gunmetal face, closed full lips, no exposed
+  teeth, no skull, no bone".
+- **Start from a panel that already shows the end pose**: the clip only adds motion and atmosphere.
+- **Too hard? Simplify the panel** and redraw it to what the generator can do, or split the beat into a
+  comic sequence strip of simple sub-panels (COMIC_MODE.md, *Sequence strips*).
