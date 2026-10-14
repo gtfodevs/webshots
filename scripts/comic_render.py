@@ -53,6 +53,11 @@ STATIC_FAIL = []
 
 def render(spec, orient, out_path, wav, sheet_path=None, t0=None, t1=None):
     """Renders every page of the spec back to back into one MP4 (single-page specs are one page)."""
+    reps = C.repeat_report(spec, t0, t1)
+    if reps and not spec.get('allowRepeats') and '--allow-repeats' not in sys.argv:
+        for r in reps:
+            print(f'  REPEAT {r[0]} {r[1]} {r[2]:.2f}-{r[3]:.2f}s ({r[4]}s): {r[5]}')
+        raise SystemExit(f'NO-REPEAT GATE FAIL ({orient}): {len(reps)} repeated segment(s), {sum(r[4] for r in reps):.1f}s - add NEW shots (no shot may replay)')
     W, H = C.SIZES[orient]
     fps = spec.get('fps', 30)
     enc = subprocess.Popen(['ffmpeg', '-v', 'error', '-y', '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-s', f'{W}x{H}',

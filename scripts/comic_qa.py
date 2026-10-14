@@ -801,6 +801,18 @@ def check_no_still_cards(spec):
     ok('end card / TO BE CONTINUED over the live last page (clips keep moving underneath)')
 
 
+def check_no_repeats(spec):
+    """No shot may repeat within a video (16:9 or Short); title intro + end card exempt."""
+    for name, (a, b) in (('16:9', (None, None)), ('Short', ((spec.get('short') or {}).get('start'), (spec.get('short') or {}).get('end')))):
+        if name == 'Short' and a is None:
+            continue
+        reps = C.repeat_report(spec, a, b)
+        for r in reps:
+            fail(f"{name}: {r[0]} repeats {r[1]} {r[2]:.2f}-{r[3]:.2f}s ({r[4]}s): {r[5]}")
+        if not reps:
+            ok(f'{name}: no repeated shots')
+
+
 def check_all_clips(spec, subs):
     """HARD GATE (Jason, 2026-10-14): every panel (and splash) in a comic video has a QA-passed animated clip.
     No still-only panels. Fails unless the spec is an explicit preview (`allowStills: true` or `draft`)."""
@@ -818,6 +830,7 @@ def main(path):
     spec = C.load_spec(path)
     draft = bool(spec.get('draft'))
     subs = C.subspecs(spec)
+    check_no_repeats(spec)
     print(f"{'DRAFT ' if draft else ''}spec, {len(subs)} page(s):")
     for sub in subs:
         n0 = len(problems)

@@ -95,6 +95,8 @@ def clip_start(spec, u):
         return c['at']
     # first beat strictly after the land: the anticipation hold. (A panel lands on a beat, so "at or after" would
     # start the clip at 0 s and kill the hold; "after" keeps one beat and the tempo-aware max allows it.)
+    if spec.get('camera', {}).get('rule', 'reveal') == 'reveal':
+        return round(u['at'] + MIN_HOLD, 3)   # no dead air (Jason 2026-10-14): shortest anticipation hold, never > 0.5 s
     beats = [b for b in song_beats(spec) if b > u['at'] + 0.05]
     return beats[0] if beats else u['at'] + 0.45
 
@@ -2523,3 +2525,34 @@ def page_focus_problems(spec, sub, orient):
             if occ.mean() > 0.04:
                 probs.append((u['id'], r['label'], 'occluded', round(float(occ.mean()), 3)))
     return probs
+
+
+# ---------------------------------------------------------------- no-repeat gate (Jason 2026-10-14)
+REPEAT_TOL = 0.15   # s a finished clip may linger (one transition frame or two)
+
+
+def repeat_report(spec, t0=None, t1=None):
+    """Every source segment may appear ONCE per video. Returns [(unit id, src, from, to, seconds, why)] for (a) any
+    clip/panel source used by two units and (b) any clip still on screen after it has played through once (a loop /
+    hold = a replay). Song window [t0, t1]; the title intro and end card are exempt (the end card's live page is not
+    counted). Stills with no clip (sequence insets) are a single shot while visible."""
+    t0 = spec['song']['start'] if t0 is None else t0
+    t1 = spec['song']['end'] if t1 is None else t1
+    out, seen = [], {}
+    for pg in spec['pages']:
+        sp = pg.get('splash'); spat = pg.get('transition', {}).get('at')
+        units = [(u, u['at'], spat if sp else pg['end']) for u in pg['panels']] + ([(sp, spat, pg['end'])] if sp else [])
+        for u, land, exit_ in units:
+            if exit_ <= t0 or land >= t1:
+                continue
+            c = u.get('clip')
+            src = (c['src'], round(c['in'], 2), round(c['out'], 2)) if c else (u['image'], None, None)
+            if src in seen:
+                out.append((u['id'], src[0], max(land, t0), min(exit_, t1), round(min(exit_, t1) - max(land, t0), 2), f'same source as {seen[src]}'))
+            seen[src] = u['id']
+            if c:
+                once = clip_start(spec, dict(u, at=land)) + (c['out'] - c['in'])
+                a, b = max(once, t0), min(exit_, t1)
+                if b - a > REPEAT_TOL:
+                    out.append((u['id'], c['src'], round(a, 2), round(b, 2), round(b - a, 2), 'clip ends, cell keeps replaying it'))
+    return out

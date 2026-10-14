@@ -407,3 +407,8 @@ The story comes from the order of the panels, not from any single clip.
   frozen hold and never reversed. Sequence insets land on half beats so the payoff never waits behind an empty cell.
   Every render runs `scripts/motion_qa.py` (ffmpeg `blackdetect` d>=0.25 s + `freezedetect` -60 dB d>=0.5 s); any hit
   fails the delivery gate (`*-motion.json` next to the MP4).
+- **No repeated shots (gate, Jason 2026-10-14):** no clip/panel source may be used twice and no cell may keep
+  showing a clip after it has played once (loop/hold = replay) in the 16:9 or the Short; title intro and end card are
+  exempt. `C.repeat_report` drives `check_no_repeats` (comic QA) and aborts `comic_render.py` before encoding
+  (`--allow-repeats` / `allowRepeats` for previews only). Fill the time with NEW shots: when a cell's clip ends,
+  cut that cell to a new clip (alternate angle, insert, reaction, establishing, fx) or turn the page.
