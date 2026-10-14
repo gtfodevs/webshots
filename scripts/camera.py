@@ -189,6 +189,7 @@ def _reveal_plan(img_wh, cell_wh, within, faces_at, t0, t1, n_faces, F, PAD, Ww,
     """Largest window of the cell's aspect (no zoom). If the art is wider/taller than the cell, pan linearly ONE way
     across the hidden slack (limited so the required faces stay in for the whole move); no slack = static."""
     w, h = Ww, Wh
+    spread = False
     horiz = bw - w > bh - h
     slack = (bw - w) if horiz else (bh - h)
     lo, hi = (bx, bx + bw - w) if horiz else (by, by + bh - h)
@@ -200,7 +201,10 @@ def _reveal_plan(img_wh, cell_wh, within, faces_at, t0, t1, n_faces, F, PAD, Ww,
         if a <= b:
             lo, hi = a, b
         else:
-            c = min(max((U[k[0]] + U[k[1]]) / 2 - size / 2, lo), hi); lo = hi = c
+            # the faces cannot share one window (a wide two-shot in a tall cell): pan ONCE from the first face to the
+            # last, so each is revealed in turn (still one direction, never back)
+            lo, hi = min(max(U[k[0]] - pad, lo), hi), max(min(U[k[1]] + pad - size, hi), lo)
+            spread = True
     cx, cy = bx + (bw - w) / 2, by + (bh - h) / 2
     def W_(v):
         return (v, cy, w, h) if horiz else (cx, v, w, h)
@@ -208,7 +212,17 @@ def _reveal_plan(img_wh, cell_wh, within, faces_at, t0, t1, n_faces, F, PAD, Ww,
         v = (lo + hi) / 2
         return Plan('static', [(0, W_(v)), (1, W_(v))], 'linear', t0, t1, faces_at, lambda t: list(range(n_faces)), why='art fits: no pan')
     sg = (dx if horiz else dy) or 1
+    if spread:
+        sg = 1
     a, b = (lo, hi) if sg > 0 else (hi, lo)
+    plan = Plan('reveal_pan', [(0, W_(a)), (1, W_(b))], 'io', t0, t1, faces_at, lambda t: list(range(n_faces)),
+                why='linear one-way pan across the cropped-off ' + ('width' if horiz else 'height'))
+    if spread:   # promise only the faces the window holds at t
+        def active(t, plan=plan):
+            X, Y, W2, H2 = plan.window(t)
+            return [i for i, f in enumerate(faces_at(t)) if f[0] >= X - 1 and f[2] <= X + W2 + 1 and f[1] >= Y - 1 and f[3] <= Y + H2 + 1]
+        plan.active = active
+    return plan
     return Plan('reveal_pan', [(0, W_(a)), (1, W_(b))], 'io', t0, t1, faces_at, lambda t: list(range(n_faces)),
                 why='linear one-way pan across the cropped-off ' + ('width' if horiz else 'height'))
 

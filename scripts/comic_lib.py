@@ -2230,7 +2230,7 @@ def arrival_box(spec, orient, u, box):
         wb = within or (0, 0) + tuple(size)
         ok_ = all(not fs or cell_fits_faces(list(fs), bw / bh, wb)
                   for fs in (plan.faces_at(plan.t0 + (plan.t1 - plan.t0) * i / 8) for i in range(9)))
-        if ok_:
+        if ok_ or CAM.REVEAL:   # reveal rule: fill the box and pan face to face instead of letterboxing
             _ARRIVAL[key] = tuple(box)
         else:
             h = min(bh, bw * wb[3] / wb[2])
@@ -2315,6 +2315,8 @@ def cell_window(plan, t, geo, img_size, within):
     # the breath runs between kmax (8 % room in the footage) and kmin (10 % tighter, never tighter than the faces need
     # with a 2 % margin), on a cosine, so it only touches either end for an instant
     if CAM.REVEAL:   # reveal rule: no breathing zoom, no sweep; keep the plan's position, clamped to the footage
+        if ex and not cell_fits_faces(ex, a, (bx, by, bw, bh)):
+            ex = []   # faces spread wider than the cell: follow the plan's one-way pan
         if ex:
             cx = min(max(cx, ux1 - w2 / 2), ux0 + w2 / 2) if ux1 - ux0 < w2 else (ux0 + ux1) / 2
             cy = min(max(cy, uy1 - h2 / 2), uy0 + h2 / 2) if uy1 - uy0 < h2 else (uy0 + uy1) / 2
