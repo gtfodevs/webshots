@@ -158,6 +158,11 @@ LAYOUTS = {
         'a': ('rect', 0, 0, 1, 0.47, {'inner': (0, 0, 0.62, 0.47)}),
         'b': ('rect', 0, 0.47 + GY, 1, 0.53 - GY, {'inner': (0, 0.47 + GY, 0.62, 0.53 - GY)}),
         'c': ('rot', 0.81, 0.49, 0.32, 0.44, -4, {'z': 2, 'keyline': True})}},
+    # wide cells for scene-aware cropping: one big cell + two halves (picked when focus regions do not fit)
+    'big-three': {'n': 3, 'vert': 'T', 'slots': {
+        'a': ('rect', 0, 0, 0.6, 1), 'b': ('rect', 0.6 + GX, 0, 0.4 - GX, 0.5 - GY / 2), 'c': ('rect', 0.6 + GX, 0.5 + GY / 2, 0.4 - GX, 0.5 - GY / 2)}},
+    'wide-three': {'n': 3, 'vert': 'same', 'slots': {
+        'a': ('rect', 0, 0, 1, 0.5 - GY / 2), 'b': ('rect', 0, 0.5 + GY / 2, 0.5 - GX / 2, 0.5 - GY / 2), 'c': ('rect', 0.5 + GX / 2, 0.5 + GY / 2, 0.5 - GX / 2, 0.5 - GY / 2)}},
     'tilt-three': {'n': 3, 'vert': 'T', 'slots': {
         'a': ('rot', 0.40, 0.50, 0.78, 0.94, 1.5, {'inner': (0.04, 0.06, 0.55, 0.88)}),
         'b': ('rot', 0.81, 0.27, 0.36, 0.48, -4, {'z': 1, 'keyline': True}),
@@ -685,7 +690,7 @@ class Scene:
             c = u['clip']
             path = resolve(self.spec, c['src'])
             frames = read_clip(path, c['in'], c['out'], self.fps)
-            reg, score = register(img, read_clip(path, 0.0, 0.05, self.fps)[0])
+            reg, score = register_cached(resolve(self.spec, u['image']), path, img, self.fps)
             u['reg'], u['regScore'] = reg, score
             # keep the crop inside the area the clip covers so static -> clip lines up exactly
             rx, ry, rw, rh = reg
@@ -694,7 +699,9 @@ class Scene:
         if focus is None:
             focus = default_focus(img.width, img.height, w, h)
         u['focusUsed'] = focus
-        crop = cover_crop(img.width, img.height, w, h, tuple(focus), within)
+        # scene-aware crop: slide the cover crop so every focus region (faces, key action) sits inside the cell
+        u['focusRegions'] = focus_regions(self.spec, u, img)
+        crop, u['focusMiss'] = fit_crop(img.width, img.height, u['geo'], u['focusRegions'], within, tuple(focus))
         u['crop'] = crop
         u['static'] = comic_finish(upscale(img, crop, (w, h), sharpen=False))
         if u.get('eyeShift') and not u.get('clip'):
@@ -1620,3 +1627,196 @@ def panel_entrance(base, painted, bbox, typ, p, seed=0):
             layer = layer + (255 - layer) * (0.7 * (1 - p / 0.3))
     out = B * (1 - alpha[..., None]) + layer * alpha[..., None]
     return Image.fromarray(np.clip(out, 0, 255).astype(np.uint8))
+
+
+# ---------------------------------------------------------------- scene-aware cropping (rule, 2026-10-13)
+# Every panel carries focus regions (faces + key action) in normalised source-image coords:
+#   panels[i].focusRegions = [{"label": "Uno face", "box": [x0, y0, x1, y1], "required": true}, ...]
+# Manual regions win; otherwise auto_focus_regions() finds glowing robot-eye pairs (brand: red eyes) and boxes
+# the head around them. fit_crop() slides the (largest) cover crop so every required region lands inside the
+# cell's clip path (eroded past the ink); QA check_focus() fails a page when a region is clipped, occluded by a
+# panel above it or cut by the frame, in landscape and vertical, and writes debug crops. Builders that hit a miss
+# pick another layout / slot order (see shots/fright-night-comic/make_spec.py fix_layouts).
+FOCUS_TOL = 0.05   # share of a region's sample grid allowed to graze the edge (its outermost row touching the ink)
+FOCUS_INSET = 12   # px a focus region keeps from the cell's clip path edge (ink is 7-9 px)
+_REG_CACHE_PATH = os.path.join(ROOT, 'out', '.register-cache.json')
+_REG_CACHE = None
+
+
+def register_cached(img_path, clip_path, img, fps):
+    """register() of a clip's first frame on its panel, cached on disk by file size + mtime (it costs seconds)."""
+    global _REG_CACHE
+    if _REG_CACHE is None:
+        try:
+            _REG_CACHE = json.load(open(_REG_CACHE_PATH))
+        except Exception:
+            _REG_CACHE = {}
+    st = lambda p: f'{os.path.getsize(p)}:{int(os.path.getmtime(p))}'
+    key = f'{img_path}|{st(img_path)}|{clip_path}|{st(clip_path)}'
+    if key not in _REG_CACHE:
+        reg, score = register(img, read_clip(clip_path, 0.0, 0.05, fps)[0])
+        _REG_CACHE[key] = [list(reg), score]
+        os.makedirs(os.path.dirname(_REG_CACHE_PATH), exist_ok=True)
+        json.dump(_REG_CACHE, open(_REG_CACHE_PATH, 'w'))
+    reg, score = _REG_CACHE[key]
+    return tuple(reg), score
+
+
+def auto_focus_regions(img):
+    """Glowing eye pairs (red, or ghost-green) -> head boxes. Heuristic for the chrome-robot cast; unpaired
+    glows (lanterns, sparks) are ignored. Returns [{"label", "box", "required", "src"}] in normalised coords."""
+    from scipy import ndimage as ndi
+    a = np.asarray(img.convert('RGB').resize((640, round(640 * img.height / img.width))), np.int16)
+    H, W = a.shape[:2]
+    R, G, B = a[..., 0], a[..., 1], a[..., 2]
+    m = ((R > 190) & (R - G > 70) & (R - B > 70)) | ((G > 190) & (G - R > 50) & (G - B > 20))
+    lab, n = ndi.label(ndi.binary_opening(m))
+    blobs = []
+    for i, sl in enumerate(ndi.find_objects(lab)):
+        ys, xs = sl
+        area = int((lab[sl] == i + 1).sum())
+        w, h = xs.stop - xs.start, ys.stop - ys.start
+        if 6 <= area <= 0.01 * W * H and 0.3 < w / max(h, 1) < 3.5:
+            blobs.append(((xs.start + xs.stop) / 2, (ys.start + ys.stop) / 2, max(w, h)))
+    out, used = [], set()
+    for i, (x1, y1, s1) in enumerate(blobs):
+        for j, (x2, y2, s2) in enumerate(blobs):
+            if j <= i or i in used or j in used:
+                continue
+            d = math.hypot(x2 - x1, y2 - y1)
+            if 1.3 * max(s1, s2) < d < 7 * max(s1, s2) and abs(y2 - y1) < 0.45 * d and 0.5 < s1 / s2 < 2:
+                cx, cy = (x1 + x2) / 2, (y1 + y2) / 2
+                box = [max(0, cx - 1.4 * d) / W, max(0, cy - 1.5 * d) / H, min(W, cx + 1.4 * d) / W, min(H, cy + 1.6 * d) / H]
+                out.append({'label': 'face (auto: eye pair)', 'box': [round(v, 3) for v in box], 'required': True, 'src': 'auto', 'size': d})
+                used |= {i, j}
+    if out:   # background extras (small faces) are optional: the cast are the big ones
+        big = max(r['size'] for r in out)
+        for r in out:
+            r['required'] = r['size'] >= 0.45 * big
+            r.pop('size')
+    return out
+
+
+def focus_regions(spec, u, img=None):
+    if u.get('focusRegions') is not None:
+        return [dict(r, src=r.get('src', 'manual'), required=r.get('required', True)) for r in u['focusRegions']]
+    if spec.get('focusAuto', True) and img is not None:
+        return auto_focus_regions(img)
+    return []
+
+
+_EMASK = {}
+def _eroded_mask(geo, inset=FOCUS_INSET):
+    key = (json.dumps(geo['polys']), json.dumps(geo['burst']), tuple(geo['bbox']), inset)
+    if key not in _EMASK:
+        from PIL import ImageFilter
+        m = slot_mask(geo)
+        for _ in range(max(1, inset // 2)):
+            m = m.filter(ImageFilter.MinFilter(5))
+        _EMASK[key] = np.asarray(m) > 127
+    return _EMASK[key]
+
+
+def _region_pts(box, img_w, img_h, n=6):
+    x0, y0, x1, y1 = box
+    xs = np.linspace(x0 * img_w, x1 * img_w, n); ys = np.linspace(y0 * img_h, y1 * img_h, n)
+    return np.array([(x, y) for x in xs for y in ys])
+
+
+def crop_misses(crop, img_w, img_h, geo, regions, within=None):
+    """[(region, fraction of its sample points outside the cell)] for required regions under `crop`."""
+    cx, cy, cw, ch = crop
+    x, y, w, h = geo['bbox']
+    mk = _eroded_mask(geo)
+    out = []
+    for r in regions:
+        if not r.get('required', True):
+            continue
+        P = _region_pts(r['box'], img_w, img_h)
+        if within is not None:   # only what the clip covers exists in the video
+            P[:, 0] = np.clip(P[:, 0], within[0], within[0] + within[2]); P[:, 1] = np.clip(P[:, 1], within[1], within[1] + within[3])
+        lx = ((P[:, 0] - cx) / cw * w).round().astype(int); ly = ((P[:, 1] - cy) / ch * h).round().astype(int)
+        inside = (lx >= 0) & (ly >= 0) & (lx < w) & (ly < h)
+        ok = np.zeros(len(P), bool)
+        ok[inside] = mk[ly[inside], lx[inside]]
+        frac = 1 - ok.mean()
+        if frac > FOCUS_TOL:
+            out.append((r, round(float(frac), 3)))
+    return out
+
+
+def fit_crop(img_w, img_h, geo, regions, within=None, focus=(0.5, 0.5)):
+    """Cover crop (largest at the cell aspect) positioned so every required focus region fits the cell's clip path.
+    Returns (crop, misses); misses is empty when everything fits, else the best position's misses."""
+    x, y, w, h = geo['bbox']
+    base = cover_crop(img_w, img_h, w, h, focus, within)
+    if not any(r.get('required', True) for r in regions):
+        return base, []
+    bx, by, bw, bh = within or (0, 0, img_w, img_h)
+    cw, ch = base[2], base[3]
+    best = None
+    for X in np.linspace(bx, bx + bw - cw, 21) if bw - cw > 1 else [base[0]]:
+        for Y in np.linspace(by, by + bh - ch, 21) if bh - ch > 1 else [base[1]]:
+            miss = crop_misses((X, Y, cw, ch), img_w, img_h, geo, regions, within)
+            key = (round(sum(f for _, f in miss), 3), abs(X - base[0]) + abs(Y - base[1]))
+            if best is None or key < best[0]:
+                best = (key, (float(X), float(Y), cw, ch), miss)
+    return best[1], best[2]
+
+
+_IMG_CACHE = {}
+def unit_fit(spec, u, geo, fps=30):
+    """Geometry-only twin of Scene._prep's crop (no clip decoding): (img_size, crop, regions, misses, within)."""
+    ip = resolve(spec, u['image'])
+    if ip not in _IMG_CACHE:
+        _IMG_CACHE[ip] = Image.open(ip).convert('RGB')
+    img = _IMG_CACHE[ip]
+    x, y, w, h = geo['bbox']
+    within = None
+    if u.get('clip'):
+        reg, _ = register_cached(ip, resolve(spec, u['clip']['src']), img, fps)
+        rx, ry, rw, rh = reg
+        within = (max(rx, 0), max(ry, 0), min(rx + rw, img.width) - max(rx, 0), min(ry + rh, img.height) - max(ry, 0))
+    focus = u.get('focus') or default_focus(img.width, img.height, w, h)
+    regions = focus_regions(spec, u, img)
+    crop, miss = fit_crop(img.width, img.height, geo, regions, within, tuple(focus))
+    return img.size, crop, regions, miss, within
+
+
+def region_to_frame(box, img_size, crop, geo):
+    """Normalised source-image box -> frame-px box through the crop into the cell."""
+    iw, ih = img_size; cx, cy, cw, ch = crop; x, y, w, h = geo['bbox']
+    f = lambda X, Y: (x + (X * iw - cx) / cw * w, y + (Y * ih - cy) / ch * h)
+    (a, b), (c, d) = f(box[0], box[1]), f(box[2], box[3])
+    return [a, b, c, d]
+
+
+def page_focus_problems(spec, sub, orient):
+    """[(unit id, label, kind, fraction)] for one page in one orientation: 'clipped' (outside the cell / frame)
+    or 'occluded' (under a panel drawn above it)."""
+    W, H = SIZES[orient]
+    G = layout_geo(orient, sub.get('layout', 'three'), sub.get('splashStyle', 'full'))
+    probs = []
+    units = sub['panels']
+    masks = {u['id']: clip_path_mask(G[u['slot']], W, H, inset=0) for u in units}
+    for u in units:
+        geo = G[u['slot']]
+        size, crop, regions, miss, _ = unit_fit(spec, u, geo, spec.get('fps', 30))
+        for r, frac in miss:
+            probs.append((u['id'], r['label'], 'clipped', frac))
+        above = [o for o in units if o is not u and G[o['slot']]['z'] > geo['z']]
+        for r in regions:
+            if not r.get('required', True) or any(m[0] is r for m in miss):
+                continue
+            fb = region_to_frame(r['box'], size, crop, geo)
+            P = _region_pts([fb[0] / W, fb[1] / H, fb[2] / W, fb[3] / H], W, H)
+            px = np.clip(P[:, 0].round().astype(int), 0, W - 1); py = np.clip(P[:, 1].round().astype(int), 0, H - 1)
+            off = ((P[:, 0] < 0) | (P[:, 1] < 0) | (P[:, 0] >= W) | (P[:, 1] >= H)).mean()
+            if off > 0:
+                probs.append((u['id'], r['label'], 'clipped', round(float(off), 3)))
+            occ = np.zeros(len(P), bool)
+            for o in above:
+                occ |= masks[o['id']][py, px]
+            if occ.mean() > 0.04:
+                probs.append((u['id'], r['label'], 'occluded', round(float(occ.mean()), 3)))
+    return probs

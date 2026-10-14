@@ -532,6 +532,83 @@ def check_entrances(spec, subs):
         ok(f"{len(seq)} panels, no back-to-back entrance repeats, {C.ENTRANCE_MIN}-{C.ENTRANCE_MAX}s, each done before its clip; lettering waits for the entrance: " + ' '.join(seq))
 
 
+def check_refs(spec, subs):
+    """Reference-first rule (Jason, 2026-10-13): every panel showing a recurring character or setting must have been
+    generated from reference images, never text alone. It must list them: panels[i].refs = ["refs/uno-front.png", ...]
+    (files must exist). Text-only is allowed only for vehicle / effects shots: panels[i].shotKind = "vehicle" | "fx".
+    A panel is a character panel when a focus region names a cast member (spec.cast, default Uno/Aura) or a
+    face/head/eyes, or when it sets recurring: true."""
+    print('reference images (reference-first rule):')
+    n0 = len(problems)
+    cast = [c.lower() for c in spec.get('cast', ['Uno', 'Aura'])]
+    n = 0
+    for sub in subs:
+        for u in sub['panels']:
+            if u.get('shotKind') in ('vehicle', 'fx'):
+                continue
+            labels = ' '.join(r.get('label', '') for r in (u.get('focusRegions') or [])).lower()
+            if not (u.get('recurring') or any(c in labels for c in cast) or any(k in labels for k in ('face', 'head', 'eyes'))):
+                continue
+            n += 1
+            refs = u.get('refs') or []
+            if not refs:
+                fail(f"{sub['page']}/{u['id']}: character/recurring panel lists no reference images (refs) - generate it from the locked sheets, never text alone")
+            for r in refs:
+                if not os.path.exists(C.resolve(spec, r)):
+                    fail(f"{sub['page']}/{u['id']}: reference image missing: {r}")
+    if len(problems) == n0:
+        ok(f"{n} character/recurring panels all list existing reference images")
+
+
+def check_focus(spec, subs):
+    """Scene-aware cropping: every required focus region (faces, key action) of every panel must sit inside its
+    cell (clip path eroded past the ink), inside the frame and not under a panel drawn above it - landscape (16:9)
+    and vertical (the Short). Debug crops for every miss go to out/<shot>/qa/focus/."""
+    print('focus regions:')
+    n0 = len(problems)
+    out = os.path.join(C.ROOT, 'out', os.path.basename(os.path.dirname(spec['_path'])), 'qa', 'focus')
+    os.makedirs(out, exist_ok=True)
+    nreg = nauto = 0
+    short = spec.get('short')
+    for sub in subs:
+        for orient in ('landscape', 'vertical'):
+            where = '16:9' if orient == 'landscape' else ('Short' if short and sub['song']['end'] > short['start'] and sub['song']['start'] < short['end'] else 'vertical (not in Short)')
+            probs = C.page_focus_problems(spec, sub, orient)
+            if orient == 'landscape':
+                for u in sub['panels']:
+                    G = C.layout_geo(orient, sub.get('layout', 'three'), sub.get('splashStyle', 'full'))
+                    regs = C.unit_fit(spec, u, G[u['slot']])[2]
+                    nreg += len(regs); nauto += sum(r['src'] == 'auto' for r in regs)
+                    if not regs:
+                        warn(f"{sub['page']}/{u['id']}: no focus regions (add focusRegions: faces + key action)")
+            for uid, label, kind, frac in probs:
+                (fail if 'not in Short' not in where else warn)(f"{sub['page']}/{uid} {where}: '{label}' {kind} ({frac:.0%} of it) - move the crop, widen the cell or change the layout")
+                focus_debug(spec, sub, orient, uid, os.path.join(out, f"{sub['page']}-{uid}-{orient}.jpg"))
+    if len(problems) == n0:
+        ok(f"{nreg} focus regions ({nauto} auto) fit their cells in 16:9 and the Short, none clipped or occluded")
+
+
+def focus_debug(spec, sub, orient, uid, path):
+    """Source panel with the crop (cyan), the cell's clip path mapped back (white) and the focus regions (green ok / red miss)."""
+    from PIL import ImageDraw
+    G = C.layout_geo(orient, sub.get('layout', 'three'), sub.get('splashStyle', 'full'))
+    u = next(x for x in sub['panels'] if x['id'] == uid)
+    geo = G[u['slot']]
+    (iw, ih), crop, regions, miss, within = C.unit_fit(spec, u, geo)
+    img = Image.open(C.resolve(spec, u['image'])).convert('RGB')
+    d = ImageDraw.Draw(img)
+    cx, cy, cw, ch = crop; x, y, w, h = geo['bbox']
+    d.rectangle([cx, cy, cx + cw, cy + ch], outline=(0, 255, 255), width=4)
+    for poly in geo['polys']:
+        d.line([(cx + (px - x) / w * cw, cy + (py - y) / h * ch) for px, py in poly + [poly[0]]], fill=(255, 255, 255), width=3)
+    bad = {id(r) for r, _ in miss}
+    for r in regions:
+        b = r['box']
+        d.rectangle([b[0] * iw, b[1] * ih, b[2] * iw, b[3] * ih], outline=(255, 40, 40) if id(r) in bad else (40, 255, 80), width=4)
+        d.text((b[0] * iw + 4, b[1] * ih + 4), r['label'], fill=(255, 255, 0))
+    img.save(C.next_free(path), quality=85)
+
+
 def check_transitions(spec, subs, draft, deep=True):
     """Page transitions: valid types, 0.3-0.8 s, never the same type twice in a row, no sung line split across a
     boundary without its caption carried over, little clip time under a transition, and (rendered, non-draft)
@@ -622,6 +699,8 @@ def main(path):
     check_intro(spec)
     check_endcard(spec)
     check_entrances(spec, subs)
+    check_focus(spec, subs)
+    check_refs(spec, subs)
     check_transitions(spec, subs, draft, deep='--deep' in sys.argv)
     out = os.path.join(C.ROOT, 'out', os.path.basename(os.path.dirname(spec['_path'])), 'qa')
     os.makedirs(out, exist_ok=True)

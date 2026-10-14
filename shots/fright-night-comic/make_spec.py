@@ -5,7 +5,7 @@ manually placed lyric lines). Media lives on the box in /workspace/halloween-com
   python3 shots/fright-night-comic/make_spec.py      # rebuild after changing TAKE / timings
 Clip slots point at clips/<id>_<TAKE>.mp4 (all '_a' until the takes are reviewed); every clip is budgeted at the full 6 s.
 """
-import bisect, json, os, re
+import bisect, json, os, re, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.abspath(os.path.join(HERE, '../..'))
 ASSETS = '/workspace/halloween-comic'
@@ -64,6 +64,38 @@ PAGES = [
 # 8 fps review 2026-10-13 (8-frame strips of all 50 takes): _a everywhere except
 #   f02 -> b (the _a push-in drifts Aura's face toward human-looking at the end), f16 -> b (_a morphs Uno's dome into a red visor)
 #   f06 -> a (the Leaners in _b multiply), f23 -> a (_b faces morph in the last second), f09 -> a (clock hands stay stuck on three)
+
+# Focus regions (normalised [x0, y0, x1, y1] on the panel image): every face and the key action of each shot.
+# Authored from a 10% grid sheet of the panels (auto eye-pair detection misses small/dim robot eyes here).
+def R(label, *box, req=True):
+    return {'label': label, 'box': list(box), 'required': req}
+FOCUS_REGIONS = {
+ 'f01': [R('mansion + red windows', 0.28, 0.15, 0.68, 0.58)],
+ 'f02': [R('Uno face', 0.31, 0.15, 0.42, 0.33), R('Aura face', 0.48, 0.12, 0.57, 0.30)],
+ 'f03': [R('rattling deadbolt', 0.22, 0.22, 0.45, 0.62), R('scratch marks', 0.58, 0.15, 0.86, 0.58)],
+ 'f04': [R('Uno face', 0.32, 0.15, 0.48, 0.40), R('Aura', 0.75, 0.04, 0.86, 0.26), R('clawed prints', 0.30, 0.65, 0.75, 0.95, req=False)],
+ 'f05': [R('Aura eyes + face', 0.42, 0.12, 0.82, 0.72)],
+ 'f06': [R('Aura face', 0.40, 0.15, 0.50, 0.32), R('Uno face', 0.52, 0.30, 0.62, 0.48), R('Leaners', 0.0, 0.1, 1.0, 0.6, req=False)],
+ 'f07': [R('Uno face', 0.35, 0.04, 0.48, 0.22), R('Aura face', 0.55, 0.05, 0.65, 0.25), R('cyan magic', 0.70, 0.0, 0.88, 0.25)],
+ 'f08': [R('Uno', 0.44, 0.40, 0.52, 0.56), R('Aura', 0.53, 0.46, 0.60, 0.60)],
+ 'f09': [R('chrome cat', 0.50, 0.10, 0.78, 0.35), R('clock at three', 0.50, 0.35, 0.75, 0.66)],
+ 'f10': [R('Uno head', 0.27, 0.30, 0.36, 0.45), R('Aura head', 0.39, 0.30, 0.50, 0.48), R('shadow eyes', 0.55, 0.12, 0.90, 0.38)],
+ 'f11': [R('Aura', 0.48, 0.05, 0.60, 0.30), R('Uno face', 0.33, 0.45, 0.46, 0.65)],
+ 'f12': [R('chrome wolves', 0.05, 0.45, 0.42, 0.75), R('moon', 0.27, 0.05, 0.55, 0.48, req=False)],
+ 'f13': [R('Uno head', 0.10, 0.0, 0.28, 0.25), R('Aura head', 0.68, 0.05, 0.88, 0.35)],
+ 'f14': [R('wolf head', 0.40, 0.10, 0.60, 0.45), R('Uno face', 0.62, 0.10, 0.82, 0.45)],
+ 'f15': [R('Aura face', 0.18, 0.10, 0.30, 0.30), R('cyan blast', 0.45, 0.15, 0.80, 0.70)],
+ 'f16': [R('Uno face', 0.22, 0.0, 0.40, 0.35), R('Aura face', 0.62, 0.10, 0.78, 0.32)],
+ 'f17': [R('Aura face', 0.08, 0.10, 0.25, 0.35), R('mirror ghost', 0.45, 0.10, 0.75, 0.60)],
+ 'f18': [R('mirror ghost', 0.12, 0.0, 0.42, 0.55), R('fist + glass', 0.40, 0.25, 0.62, 0.55), R('Aura face', 0.76, 0.05, 1.0, 0.42)],
+ 'f19': [R('Uno face', 0.24, 0.15, 0.40, 0.40), R('Aura face', 0.55, 0.15, 0.68, 0.42)],
+ 'f20': [R('red eyes in the cracks', 0.30, 0.12, 0.75, 0.60)],
+ 'f21': [R('Uno eyes', 0.15, 0.45, 0.27, 0.60), R('Aura eyes', 0.77, 0.45, 0.90, 0.60)],
+ 'f22': [R('Uno face', 0.28, 0.05, 0.42, 0.30), R('door blast', 0.45, 0.15, 0.70, 0.60), R('Aura face', 0.73, 0.20, 0.88, 0.42)],
+ 'f23': [R('Uno face', 0.20, 0.20, 0.32, 0.45), R('Aura face', 0.40, 0.25, 0.52, 0.48)],
+ 'f24': [R('ghost in the window', 0.42, 0.15, 0.58, 0.45)],
+ 'f25': [R('both eyes (red -> green)', 0.22, 0.18, 0.80, 0.50)],
+}
 TAKE = {f'f{i:02d}': 'a' for i in range(1, 26)}
 TAKE.update(f02='b', f16='b', f25='b')   # f25_b: red-start re-take, eyes turn green once at ~3.25 s (never *_greenstart)
 F25_SHIFT = {'boxes': [[0.23, 0.22, 0.44, 0.46], [0.56, 0.21, 0.78, 0.44]], 'hold': 2.0, 'fade': 1.0, 'color': [110, 255, 160]}
@@ -106,6 +138,7 @@ def build():
                 # (hold red 2 s, fade to ghost-green over 1 s, hold green) - red -> green exactly once
                 del u['clip']
                 u['eyeShift'] = F25_SHIFT
+            u['focusRegions'] = FOCUS_REGIONS.get(fid, [])
             if fid in FOCUS:
                 u['focus'] = FOCUS[fid]
             if sfx:
@@ -152,9 +185,47 @@ def build():
             'tbc': {'enabled': True, 'text': 'TO BE CONTINUED...', 'seconds': 2.5},
             'endCard': {'enabled': True, 'seconds': 3.0, 'lines': ['BROUGHT TO YOU BY PROGRESSIVE SLOP', 'LIKE AND SUBSCRIBE FOR MORE!']},
             'pages': pages}
+    spec['_dir'] = HERE
+    for line in fix_layouts(spec):
+        print('layout fix:', line)
+    spec.pop('_dir')
     path = os.path.join(HERE, 'fright-night-comic.comic.json')
     json.dump(spec, open(path, 'w'), indent=1, ensure_ascii=False)
     print(os.path.relpath(path, REPO), sum(len(p['panels']) for p in pages), 'panels', len(pages), 'pages')
+
+
+def fix_layouts(spec):
+    """Scene-aware layout pass: when a page's crops cannot fit every required focus region (both orientations),
+    try the other layouts with the same panel count and every slot order; keep the one with the fewest misses
+    (original wins ties), never repeating the neighbouring pages' layouts."""
+    import itertools
+    sys.path.insert(0, os.path.join(REPO, 'scripts'))
+    import comic_lib as C
+    pages = spec['pages']
+    report = []
+    def score(pg, layout, slots):
+        sub = dict(spec, panels=[dict(u, slot=s) for u, s in zip(pg['panels'], slots)], layout=layout, page=pg['id'],
+                   song=dict(spec['song'], start=pg['start'], end=pg['end']))
+        pr = C.page_focus_problems(spec, sub, 'landscape') + C.page_focus_problems(spec, sub, 'vertical')
+        return round(sum(f for *_, f in pr), 3), pr
+    for i, pg in enumerate(pages):
+        n = len(pg['panels'])
+        orig = (pg['layout'], tuple(u['slot'] for u in pg['panels']))
+        best = (score(pg, *orig)[0], 0, orig)
+        if best[0] > 0:
+            for name, L in C.LAYOUTS.items():
+                if L['n'] != n or (i and pages[i - 1]['layout'] == name) or (i + 1 < len(pages) and pages[i + 1]['layout'] == name):
+                    continue
+                for perm in itertools.permutations(sorted(L['slots'])):
+                    sc = score(pg, name, perm)[0]
+                    if (sc, 1) < best[:2]:
+                        best = (sc, 1, (name, perm))
+        if best[2] != orig:
+            report.append(f"{pg['id']}: {orig[0]} {''.join(orig[1])} -> {best[2][0]} {''.join(best[2][1])} (focus misses {score(pg, *orig)[0]} -> {best[0]})")
+            pg['layout'] = best[2][0]
+            for u, sl in zip(pg['panels'], best[2][1]):
+                u['slot'] = sl
+    return report
 
 
 def C_start(u):

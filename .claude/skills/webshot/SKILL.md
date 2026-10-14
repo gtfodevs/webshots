@@ -57,3 +57,16 @@ Claude-specific notes:
 ### Vehicle- and FX-only clips (rule, 2026-10-13)
 - **For vehicle- or FX-only clips (jets, ships, explosions, beams, crowns), never name characters and never say "robot" in the motion prompt.** Use a short prompt of vehicles, action and camera that ends with "one continuous shot, no people". Example: "Red jet streaks toward a black spiked jet, blue and red energy beams colliding, sparks and speed lines streaming. Locked camera. One continuous shot, no people."
 - **Why:** in Deadstars, the no-new-characters clause alone (anchor plus "only these characters in shot") failed 2 of 2 retries; the model kept growing standing robots out of the jets. The vehicle-only prompt fixed 5 of 5 on the first try (d20, d25, d26, d28, s23; d22 and s29 also came out clean). The character anchor only belongs in shots where characters are actually visible.
+
+
+### Reference-first generation (HARD REQUIRED STEP, Jason's rule, 2026-10-13)
+Any scene that needs consistency (recurring characters or recurring settings) MUST be generated from reference
+images first, never from text alone: panels by image-editing from the locked sheets / setting plates, clips by
+reference-to-video (or image-to-video from such a panel plus the sheets). Text-only prompts are allowed ONLY for
+vehicle or effects shots. In the spec every character/recurring panel lists what it was made from:
+`"refs": ["refs/uno-front.png", "refs/uno-face.png", "refs/aura-front.png"]`; vehicle/FX panels set
+`"shotKind": "vehicle"` or `"fx"` instead. `comic_qa.py check_refs` FAILS any character panel (focus region naming a
+cast member from `spec.cast`, or a face/head/eyes, or `recurring: true`) without `refs`, or whose refs files are missing.
+Order of work: plan -> lock reference sheets/plates (B) -> panels from refs (B) -> clips from refs (B) -> drift check -> spec with refs -> QA.
+
+Also standing: scene-aware cropping (focusRegions + fit_crop + check_focus) and the Grok Imagine consistency workflow with `scripts/clip_drift_check.py`; see docs/MUSIC_MODE.md.

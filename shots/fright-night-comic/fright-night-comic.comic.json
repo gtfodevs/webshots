@@ -102,7 +102,7 @@
    "id": "p01",
    "start": 0.0,
    "end": 9.497,
-   "layout": "slant-two",
+   "layout": "two-up",
    "panels": [
     {
      "id": "f01",
@@ -116,7 +116,19 @@
       "src": "clips/f01_a.mp4",
       "in": 0.0,
       "out": 6.0
-     }
+     },
+     "focusRegions": [
+      {
+       "label": "mansion + red windows",
+       "box": [
+        0.28,
+        0.15,
+        0.68,
+        0.58
+       ],
+       "required": true
+      }
+     ]
     },
     {
      "id": "f02",
@@ -143,6 +155,28 @@
       "in": 0.0,
       "out": 6.0
      },
+     "focusRegions": [
+      {
+       "label": "Uno face",
+       "box": [
+        0.31,
+        0.15,
+        0.42,
+        0.33
+       ],
+       "required": true
+      },
+      {
+       "label": "Aura face",
+       "box": [
+        0.48,
+        0.12,
+        0.57,
+        0.3
+       ],
+       "required": true
+      }
+     ],
      "sfx": [
       {
        "text": "SLAM!",
@@ -168,11 +202,11 @@
    "id": "p02",
    "start": 9.497,
    "end": 20.735,
-   "layout": "tilt-two",
+   "layout": "slant-two",
    "panels": [
     {
      "id": "f03",
-     "slot": "a",
+     "slot": "b",
      "image": "panels/f03.jpg",
      "at": 9.497,
      "moment": "\"Deadbolt shaking\": close on deadbolt rattling; scratch marks appear on the hall wall.",
@@ -195,11 +229,33 @@
       "src": "clips/f03_a.mp4",
       "in": 0.0,
       "out": 6.0
-     }
+     },
+     "focusRegions": [
+      {
+       "label": "rattling deadbolt",
+       "box": [
+        0.22,
+        0.22,
+        0.45,
+        0.62
+       ],
+       "required": true
+      },
+      {
+       "label": "scratch marks",
+       "box": [
+        0.58,
+        0.15,
+        0.86,
+        0.58
+       ],
+       "required": true
+      }
+     ]
     },
     {
      "id": "f04",
-     "slot": "b",
+     "slot": "a",
      "image": "panels/f04.jpg",
      "at": 13.677,
      "moment": "\"Mud on the carpet\": clawed footprints leading INTO the wall; Uno kneels, eyes flare.",
@@ -232,7 +288,39 @@
       "src": "clips/f04_a.mp4",
       "in": 0.0,
       "out": 6.0
-     }
+     },
+     "focusRegions": [
+      {
+       "label": "Uno face",
+       "box": [
+        0.32,
+        0.15,
+        0.48,
+        0.4
+       ],
+       "required": true
+      },
+      {
+       "label": "Aura",
+       "box": [
+        0.75,
+        0.04,
+        0.86,
+        0.26
+       ],
+       "required": true
+      },
+      {
+       "label": "clawed prints",
+       "box": [
+        0.3,
+        0.65,
+        0.75,
+        0.95
+       ],
+       "required": false
+      }
+     ]
     }
    ]
   },
@@ -266,7 +354,19 @@
       "src": "clips/f05_a.mp4",
       "in": 0.0,
       "out": 6.0
-     }
+     },
+     "focusRegions": [
+      {
+       "label": "Aura eyes + face",
+       "box": [
+        0.42,
+        0.12,
+        0.82,
+        0.72
+       ],
+       "required": true
+      }
+     ]
     },
     {
      "id": "f06",
@@ -292,7 +392,39 @@
       "src": "clips/f06_a.mp4",
       "in": 0.0,
       "out": 6.0
-     }
+     },
+     "focusRegions": [
+      {
+       "label": "Aura face",
+       "box": [
+        0.4,
+        0.15,
+        0.5,
+        0.32
+       ],
+       "required": true
+      },
+      {
+       "label": "Uno face",
+       "box": [
+        0.52,
+        0.3,
+        0.62,
+        0.48
+       ],
+       "required": true
+      },
+      {
+       "label": "Leaners",
+       "box": [
+        0.0,
+        0.1,
+        1.0,
+        0.6
+       ],
+       "required": false
+      }
+     ]
     },
     {
      "id": "f07",
@@ -329,7 +461,39 @@
       "src": "clips/f07_a.mp4",
       "in": 0.0,
       "out": 6.0
-     }
+     },
+     "focusRegions": [
+      {
+       "label": "Uno face",
+       "box": [
+        0.35,
+        0.04,
+        0.48,
+        0.22
+       ],
+       "required": true
+      },
+      {
+       "label": "Aura face",
+       "box": [
+        0.55,
+        0.05,
+        0.65,
+        0.25
+       ],
+       "required": true
+      },
+      {
+       "label": "cyan magic",
+       "box": [
+        0.7,
+        0.0,
+        0.88,
+        0.25
+       ],
+       "required": true
+      }
+     ]
     }
    ]
   },
@@ -337,11 +501,11 @@
    "id": "p04",
    "start": 32.299,
    "end": 46.5,
-   "layout": "diagonal-three",
+   "layout": "wide-three",
    "panels": [
     {
      "id": "f08",
-     "slot": "a",
+     "slot": "b",
      "image": "panels/f08.jpg",
      "at": 32.299,
      "moment": "\"Looking for the door\": maze of identical doors, extreme dutch angle.",
@@ -376,11 +540,33 @@
       "src": "clips/f08_a.mp4",
       "in": 0.0,
       "out": 6.0
-     }
+     },
+     "focusRegions": [
+      {
+       "label": "Uno",
+       "box": [
+        0.44,
+        0.4,
+        0.52,
+        0.56
+       ],
+       "required": true
+      },
+      {
+       "label": "Aura",
+       "box": [
+        0.53,
+        0.46,
+        0.6,
+        0.6
+       ],
+       "required": true
+      }
+     ]
     },
     {
      "id": "f09",
-     "slot": "b",
+     "slot": "c",
      "image": "panels/f09.jpg",
      "at": 36.432,
      "moment": "\"Black cat screaming, clock stuck on three\": chrome black cat hisses; grandfather clock frozen at 3:00.",
@@ -390,11 +576,33 @@
       "src": "clips/f09_a.mp4",
       "in": 0.0,
       "out": 6.0
-     }
+     },
+     "focusRegions": [
+      {
+       "label": "chrome cat",
+       "box": [
+        0.5,
+        0.1,
+        0.78,
+        0.35
+       ],
+       "required": true
+      },
+      {
+       "label": "clock at three",
+       "box": [
+        0.5,
+        0.35,
+        0.75,
+        0.66
+       ],
+       "required": true
+      }
+     ]
     },
     {
      "id": "f10",
-     "slot": "c",
+     "slot": "a",
      "image": "panels/f10.jpg",
      "at": 39.753,
      "moment": "\"Every shadow got a name\": shadows on the wall spell UNO and AURA.",
@@ -427,7 +635,39 @@
       "src": "clips/f10_a.mp4",
       "in": 0.0,
       "out": 6.0
-     }
+     },
+     "focusRegions": [
+      {
+       "label": "Uno head",
+       "box": [
+        0.27,
+        0.3,
+        0.36,
+        0.45
+       ],
+       "required": true
+      },
+      {
+       "label": "Aura head",
+       "box": [
+        0.39,
+        0.3,
+        0.5,
+        0.48
+       ],
+       "required": true
+      },
+      {
+       "label": "shadow eyes",
+       "box": [
+        0.55,
+        0.12,
+        0.9,
+        0.38
+       ],
+       "required": true
+      }
+     ]
     }
    ]
   },
@@ -435,7 +675,7 @@
    "id": "p05",
    "start": 46.5,
    "end": 59.536,
-   "layout": "mixed-three",
+   "layout": "three",
    "panels": [
     {
      "id": "f11",
@@ -474,7 +714,29 @@
       "src": "clips/f11_a.mp4",
       "in": 0.0,
       "out": 6.0
-     }
+     },
+     "focusRegions": [
+      {
+       "label": "Aura",
+       "box": [
+        0.48,
+        0.05,
+        0.6,
+        0.3
+       ],
+       "required": true
+      },
+      {
+       "label": "Uno face",
+       "box": [
+        0.33,
+        0.45,
+        0.46,
+        0.65
+       ],
+       "required": true
+      }
+     ]
     },
     {
      "id": "f12",
@@ -488,7 +750,29 @@
       "src": "clips/f12_a.mp4",
       "in": 0.0,
       "out": 6.0
-     }
+     },
+     "focusRegions": [
+      {
+       "label": "chrome wolves",
+       "box": [
+        0.05,
+        0.45,
+        0.42,
+        0.75
+       ],
+       "required": true
+      },
+      {
+       "label": "moon",
+       "box": [
+        0.27,
+        0.05,
+        0.55,
+        0.48
+       ],
+       "required": false
+      }
+     ]
     },
     {
      "id": "f13",
@@ -526,7 +810,29 @@
       "src": "clips/f13_a.mp4",
       "in": 0.0,
       "out": 6.0
-     }
+     },
+     "focusRegions": [
+      {
+       "label": "Uno head",
+       "box": [
+        0.1,
+        0.0,
+        0.28,
+        0.25
+       ],
+       "required": true
+      },
+      {
+       "label": "Aura head",
+       "box": [
+        0.68,
+        0.05,
+        0.88,
+        0.35
+       ],
+       "required": true
+      }
+     ]
     }
    ]
   },
@@ -534,11 +840,11 @@
    "id": "p06",
    "start": 59.536,
    "end": 72.64,
-   "layout": "inset-three",
+   "layout": "big-three",
    "panels": [
     {
      "id": "f14",
-     "slot": "a",
+     "slot": "b",
      "image": "panels/f14.jpg",
      "at": 59.536,
      "moment": "Wolf crashes through the window: Uno uppercut mid-strike, KRAK! (fight beat-cut).",
@@ -574,6 +880,28 @@
       "in": 0.0,
       "out": 6.0
      },
+     "focusRegions": [
+      {
+       "label": "wolf head",
+       "box": [
+        0.4,
+        0.1,
+        0.6,
+        0.45
+       ],
+       "required": true
+      },
+      {
+       "label": "Uno face",
+       "box": [
+        0.62,
+        0.1,
+        0.82,
+        0.45
+       ],
+       "required": true
+      }
+     ],
      "sfx": [
       {
        "text": "KRAK!",
@@ -595,7 +923,7 @@
     },
     {
      "id": "f15",
-     "slot": "b",
+     "slot": "c",
      "image": "panels/f15.jpg",
      "at": 62.415,
      "moment": "Aura cyan blast throws two wolves back, FWOOSH!",
@@ -606,6 +934,28 @@
       "in": 0.0,
       "out": 6.0
      },
+     "focusRegions": [
+      {
+       "label": "Aura face",
+       "box": [
+        0.18,
+        0.1,
+        0.3,
+        0.3
+       ],
+       "required": true
+      },
+      {
+       "label": "cyan blast",
+       "box": [
+        0.45,
+        0.15,
+        0.8,
+        0.7
+       ],
+       "required": true
+      }
+     ],
      "sfx": [
       {
        "text": "FWOOSH!",
@@ -627,7 +977,7 @@
     },
     {
      "id": "f16",
-     "slot": "c",
+     "slot": "a",
      "image": "panels/f16.jpg",
      "at": 65.295,
      "moment": "\"Need out tonight\": the pair sprint down the corridor, candles dying behind them one by one.",
@@ -661,7 +1011,29 @@
       "src": "clips/f16_b.mp4",
       "in": 0.0,
       "out": 6.0
-     }
+     },
+     "focusRegions": [
+      {
+       "label": "Uno face",
+       "box": [
+        0.22,
+        0.0,
+        0.4,
+        0.35
+       ],
+       "required": true
+      },
+      {
+       "label": "Aura face",
+       "box": [
+        0.62,
+        0.1,
+        0.78,
+        0.32
+       ],
+       "required": true
+      }
+     ]
     }
    ]
   },
@@ -669,7 +1041,7 @@
    "id": "p07",
    "start": 72.64,
    "end": 86.216,
-   "layout": "tilt-three",
+   "layout": "three",
    "panels": [
     {
      "id": "f17",
@@ -696,7 +1068,29 @@
       "src": "clips/f17_a.mp4",
       "in": 0.0,
       "out": 6.0
-     }
+     },
+     "focusRegions": [
+      {
+       "label": "Aura face",
+       "box": [
+        0.08,
+        0.1,
+        0.25,
+        0.35
+       ],
+       "required": true
+      },
+      {
+       "label": "mirror ghost",
+       "box": [
+        0.45,
+        0.1,
+        0.75,
+        0.6
+       ],
+       "required": true
+      }
+     ]
     },
     {
      "id": "f18",
@@ -724,6 +1118,38 @@
       "in": 0.0,
       "out": 6.0
      },
+     "focusRegions": [
+      {
+       "label": "mirror ghost",
+       "box": [
+        0.12,
+        0.0,
+        0.42,
+        0.55
+       ],
+       "required": true
+      },
+      {
+       "label": "fist + glass",
+       "box": [
+        0.4,
+        0.25,
+        0.62,
+        0.55
+       ],
+       "required": true
+      },
+      {
+       "label": "Aura face",
+       "box": [
+        0.76,
+        0.05,
+        1.0,
+        0.42
+       ],
+       "required": true
+      }
+     ],
      "sfx": [
       {
        "text": "SMASH!",
@@ -778,7 +1204,29 @@
       "src": "clips/f19_a.mp4",
       "in": 0.0,
       "out": 6.0
-     }
+     },
+     "focusRegions": [
+      {
+       "label": "Uno face",
+       "box": [
+        0.24,
+        0.15,
+        0.4,
+        0.4
+       ],
+       "required": true
+      },
+      {
+       "label": "Aura face",
+       "box": [
+        0.55,
+        0.15,
+        0.68,
+        0.42
+       ],
+       "required": true
+      }
+     ]
     }
    ],
    "mood": "action"
@@ -787,11 +1235,11 @@
    "id": "p08",
    "start": 86.216,
    "end": 99.335,
-   "layout": "diagonal-three",
+   "layout": "wide-three",
    "panels": [
     {
      "id": "f20",
-     "slot": "a",
+     "slot": "b",
      "image": "panels/f20.jpg",
      "at": 86.216,
      "moment": "\"I hear 'em at the ceiling\": dozens of red eyes through cracks overhead.",
@@ -814,11 +1262,23 @@
       "src": "clips/f20_a.mp4",
       "in": 0.0,
       "out": 6.0
-     }
+     },
+     "focusRegions": [
+      {
+       "label": "red eyes in the cracks",
+       "box": [
+        0.3,
+        0.12,
+        0.75,
+        0.6
+       ],
+       "required": true
+      }
+     ]
     },
     {
      "id": "f21",
-     "slot": "b",
+     "slot": "c",
      "image": "panels/f21.jpg",
      "at": 89.095,
      "moment": "\"Doors start buckling, candles die\": front door in sight, doors bowing, last candle snuffs out. Darkness, only their red eyes.",
@@ -842,6 +1302,28 @@
       "in": 0.0,
       "out": 6.0
      },
+     "focusRegions": [
+      {
+       "label": "Uno eyes",
+       "box": [
+        0.15,
+        0.45,
+        0.27,
+        0.6
+       ],
+       "required": true
+      },
+      {
+       "label": "Aura eyes",
+       "box": [
+        0.77,
+        0.45,
+        0.9,
+        0.6
+       ],
+       "required": true
+      }
+     ],
      "focus": [
       0.27,
       0.45
@@ -849,7 +1331,7 @@
     },
     {
      "id": "f22",
-     "slot": "c",
+     "slot": "a",
      "image": "panels/f22.jpg",
      "at": 92.369,
      "moment": "Uno and Aura blast the front door open together, BOOM!, and tumble out into the dawn.",
@@ -884,6 +1366,38 @@
       "in": 0.0,
       "out": 6.0
      },
+     "focusRegions": [
+      {
+       "label": "Uno face",
+       "box": [
+        0.28,
+        0.05,
+        0.42,
+        0.3
+       ],
+       "required": true
+      },
+      {
+       "label": "door blast",
+       "box": [
+        0.45,
+        0.15,
+        0.7,
+        0.6
+       ],
+       "required": true
+      },
+      {
+       "label": "Aura face",
+       "box": [
+        0.73,
+        0.2,
+        0.88,
+        0.42
+       ],
+       "required": true
+      }
+     ],
      "sfx": [
       {
        "text": "BOOM!",
@@ -910,7 +1424,7 @@
    "id": "p09",
    "start": 99.335,
    "end": 114.0,
-   "layout": "inset-three",
+   "layout": "three",
    "panels": [
     {
      "id": "f23",
@@ -937,7 +1451,29 @@
       "src": "clips/f23_a.mp4",
       "in": 0.0,
       "out": 6.0
-     }
+     },
+     "focusRegions": [
+      {
+       "label": "Uno face",
+       "box": [
+        0.2,
+        0.2,
+        0.32,
+        0.45
+       ],
+       "required": true
+      },
+      {
+       "label": "Aura face",
+       "box": [
+        0.4,
+        0.25,
+        0.52,
+        0.48
+       ],
+       "required": true
+      }
+     ]
     },
     {
      "id": "f24",
@@ -964,7 +1500,19 @@
       "src": "clips/f24_a.mp4",
       "in": 0.0,
       "out": 6.0
-     }
+     },
+     "focusRegions": [
+      {
+       "label": "ghost in the window",
+       "box": [
+        0.42,
+        0.15,
+        0.58,
+        0.45
+       ],
+       "required": true
+      }
+     ]
     },
     {
      "id": "f25",
@@ -990,7 +1538,19 @@
       "src": "clips/f25_b.mp4",
       "in": 0.0,
       "out": 6.0
-     }
+     },
+     "focusRegions": [
+      {
+       "label": "both eyes (red -> green)",
+       "box": [
+        0.22,
+        0.18,
+        0.8,
+        0.5
+       ],
+       "required": true
+      }
+     ]
     }
    ],
    "mood": "eerie"

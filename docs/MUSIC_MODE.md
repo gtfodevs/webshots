@@ -747,3 +747,82 @@ Every comic video should level up beyond Kingdom Come: real story, real hits. Ex
    - Exits are handled by the page transition. There are no per-panel exit animations yet.
 2. **Page transitions.** Every page change gets its own transition (see "Page transitions" above). It always differs from the previous page's.
 - **QA:** `check_entrances` covers level 1 (types, durations, no back-to-back repeats, done before the clip). `check_transitions` covers level 2.
+
+### Scene-aware cropping (standing rule, 2026-10-13; renderer default)
+Why: in the FRIGHT NIGHT Short, f25's red-to-green eye change was cropped out, and the p01 diagonal cell hid Uno's face.
+- **Every panel has focus regions**: `panels[i].focusRegions = [{"label": "Uno face", "box": [x0, y0, x1, y1], "required": true}]`
+  in normalised panel-image coords, covering every face and the key action (the beat the shot is about: an eye change,
+  a fist, a blast, a ghost). Manual regions win. Without them the renderer auto-detects glowing robot-eye pairs
+  (`auto_focus_regions`) and boxes the head; this misses small or dim eyes, so author regions for real videos
+  (make a 10%-grid sheet of the panels and read the boxes off it). `required: false` = nice to have (crowds, moons).
+- **The cropper fits them** (`fit_crop`): the cover crop slides inside the clip's registered area until every required
+  region sits inside the cell's clip path, `FOCUS_INSET` px clear of the ink. Same code in landscape and vertical.
+- **Builders pick a wider cell when it cannot**: run a layout pass (`fix_layouts` in `shots/fright-night-comic/make_spec.py`)
+  that tries every layout with the same panel count and every slot order, keeps the fewest misses, and never repeats
+  a neighbour's layout. `big-three` (one 60% cell + two halves) and `wide-three` (full-width top + two halves) exist
+  for this. If nothing fits, split the page, or reframe/regenerate the art. A region at the panel's own edge cannot be
+  saved by cropping.
+- **QA** (`check_focus`, part of `comic_qa.py`): FAILS any page where a required region is clipped by its cell, cut by
+  the frame or occluded by a panel drawn above it, in 16:9 and in the Short (vertical pages outside the Short window
+  only warn). It also warns on panels with no regions. Debug crops go to `out/<shot>/qa/focus/<page>-<id>-<orient>.jpg`:
+  the source panel with the crop (cyan), the cell path mapped back (white) and the regions (green fits, red misses).
+- Limitation: regions are checked against the panel still and the clip's registered area, not tracked through the
+  clip. Keep camera moves gentle, or give the region headroom for a push-in.
+
+### Character consistency in Grok Imagine (standing rule, 2026-10-13)
+Why: drift in Grok Imagine clips (Aura reading as human, Uno's dome turning into a visor, extra characters) ruined
+otherwise good FRIGHT NIGHT shots. Here is what the public docs say (checked 2026-10-13):
+- **Image-to-video locks the first frame** to the single start image and animates from it. The more the clip moves
+  away from that frame, the more it can drift ([xAI docs: Image-to-Video](https://docs.x.ai/developers/model-capabilities/video/image-to-video)).
+- **Reference-to-video** (`grok-imagine-video-1.5`): up to 14 reference images through the API (7 in the app and on the
+  older model), tagged in the prompt as `<IMAGE_0>`, `<IMAGE_1>`, ... References carry a character, outfit or location
+  *without* locking the first frame. Pin frames with `image` (first frame; it then takes `<IMAGE_0>`), `last_frame`, and up
+  to 4 `keyframes` inside the clip. Up to 15 s at 720p. The docs advise: "give each [reference] a single role and a fixed
+  place in the scene, keep the cast small, and keep props static". They also say pins work best when generated as one
+  still and then edited ([xAI docs: Reference-to-Video](https://docs.x.ai/developers/model-capabilities/video/reference-to-video),
+  [announcement](https://x.ai/news/grok-imagine-video-1-5-references): "Each reference image locks one thing in place - a
+  face, a product, a location ... Up to seven references per generation"; launched on grok.com/imagine and iOS).
+- **App UI** (community report, not official): Imagine -> Video -> "Animate Photos" -> pick up to 7 images. Insert
+  each one into the prompt where it belongs (on desktop, type `@`). Using the same character image twice starts the
+  clip directly in the prompted scene instead of morphing out of the photo. Several images of one character improve
+  likeness ([r/grok](https://www.reddit.com/r/grok/comments/1rujbi3/demonstration_of_using_multiple_reference_images/)).
+- **Image editing**: `grok-imagine-image-2.0` edits from a base image, takes up to 5 input images per edit, supports
+  multi-turn editing (chain outputs), and the app has a magic-wand region edit
+  ([Image Editing](https://docs.x.ai/developers/model-capabilities/images/editing),
+  [Multi-Image Editing](https://docs.x.ai/developers/model-capabilities/images/multi-image-editing),
+  [Image 2.0](https://x.ai/news/grok-imagine-image-2)).
+- I found no dedicated "character mode" or saved-character feature. Multi-reference is the official mechanism.
+
+Workflow (B = browser step, run by the browser worker on grok.com/imagine; the rest runs on the box):
+1. **Lock reference sheets** (`refs/<name>-front.png`, `-side.png`, `-back.png`, plus `-face.png`, a tight head crop).
+   For Aura and Uno, start from the best on-model panels (Aura face: f05/f25; Uno face: f19/f22; backs: f10/f13).
+   **B:** image-edit each into a clean turnaround on plain dark grey, one view per edit, with the character panel as the
+   base plus one more on-model panel as a second input. Keep the views. They are locked: never regenerate them per song.
+2. **Panels**: **B:** make each new panel by image-editing with that character's sheet images attached ("the robot from
+   image 1 ..."), not from text alone. Check every face with `clip_drift_check.py`'s still checks before animating.
+3. **Clips**: **B:** use Video with references (Animate Photos with several images), not plain single-image animate.
+   Attach the panel as the pinned first frame, then `<name>-face` and `<name>-front` (and `-side` when the shot turns)
+   for each character on screen. For loops or holds, also pin `last_frame`. At most 2 characters per clip, and props static.
+4. **Prompt template** (one role per reference, the cast named and counted, the negatives said plainly):
+   `Start exactly on <IMAGE_0>. The chrome robot from <IMAGE_1>/<IMAGE_2> (Uno: smooth mirror-chrome dome head, two round
+   red glowing eyes, NO visor, NO face plate, purple fur coat, gold "1" chain) [action]. The robot woman from <IMAGE_3>/<IMAGE_4>
+   (Aura: grey metal robot face with panel seams, red glowing eyes, crimson hair, NOT human skin) [action]. Only these
+   two characters; no other people or figures appear. Camera: [one simple move]. Keep the faces exactly as in the references.`
+5. **Drift check** (`python3 scripts/clip_drift_check.py SPEC --clips 'clips/{id}_*.mp4' [--refs refs/]`): samples each clip
+   at 4 fps and tracks every face region from frame 0. It FLAGS a clip for regeneration when a face changes (NCC against the
+   frame-0 face < 0.35 for 3+ samples), turns human (skin-tone share rising >18 pts or >35%), or its eyes become a
+   wide red visor band. It lists *possible extra characters* (sustained extra glowing eye pairs) for a human look.
+   With `--refs`, it also scores each face against the locked sheet. It writes `out/<shot>/drift/drift-report.json`
+   plus a sheet per clip. Regenerate flagged takes (**B**), then re-run. Pick takes only from unflagged clips.
+   These are pixel heuristics. They catch morphs and skin-tone faces but miss subtle off-model detail, so still review takes at 8 fps.
+
+
+### Reference-first generation (HARD REQUIRED STEP, Jason's rule, 2026-10-13)
+Any scene that needs consistency (recurring characters or recurring settings) MUST be generated from reference
+images first, never from text alone: panels by image-editing from the locked sheets / setting plates, clips by
+reference-to-video (or image-to-video from such a panel plus the sheets). Text-only prompts are allowed ONLY for
+vehicle or effects shots. In the spec every character/recurring panel lists what it was made from:
+`"refs": ["refs/uno-front.png", "refs/uno-face.png", "refs/aura-front.png"]`; vehicle/FX panels set
+`"shotKind": "vehicle"` or `"fx"` instead. `comic_qa.py check_refs` FAILS any character panel (focus region naming a
+cast member from `spec.cast`, or a face/head/eyes, or `recurring: true`) without `refs`, or whose refs files are missing.
+Order of work: plan -> lock reference sheets/plates (B) -> panels from refs (B) -> clips from refs (B) -> drift check -> spec with refs -> QA.
