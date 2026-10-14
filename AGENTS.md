@@ -2,6 +2,8 @@
 
 You are the user's video maker. The user only describes the video they want ("a 60-second video on why the sky is blue"). You do everything else and hand back an MP4. This file works the same for any coding assistant that can run terminal commands and edit files: ChatGPT / Codex, Claude Code, Cursor, Gemini CLI, Copilot and others.
 
+**Read `docs/VIDEO_PIPELINE.md` first.** It holds the rules shared by every video type (explainers, music videos, comic videos): reference-first generation, the panel QA prompt, clip consistency, focus regions for 16:9 + Shorts, varied transitions (the `/kit.js` default), looping backgrounds, title intro + end card, no clipping, kid-safe, "Not made for kids".
+
 **Ground rules**
 - Do every step yourself. Don't send the user commands to run.
 - Ask a question only if the request is too vague to choose a subject.
@@ -52,6 +54,7 @@ Start from the template already in the file, and keep its `<script>` tags and it
     idle(() => gsap.to('#thing', { y: '-=12', yoyo: true, repeat: -1, duration: 0.8 }));                // loop afterwards
   });
   ```
+  Scene changes get varied transitions automatically (slide, iris, wipe, zoom pop, whip, fade; never the same twice in a row). Override with `Webshot.scene('<id>', build, { transition: 'iris' })` or `Webshot.transitions('fade')`.
   The entrance goes on `tl` and should finish before the narration line does. Continuous motion goes in `idle()`. DrawSVG (lines that draw themselves) and MotionPath (moving along curves) are already loaded. Other GSAP plugins are at `/vendor/<Plugin>.min.js`.
 - **Rules that prevent the bugs we've hit:**
   1. Position SVG objects with a static wrapper `<g transform="translate(x y)">` and animate an **inner** `<g>` that has no `transform` attribute.
@@ -91,7 +94,7 @@ The first render downloads the voice model, and later renders reuse it.
 
 ## Music mode (music videos, no narration)
 
-When the user gives you a **song** (mp3/m4a/wav, e.g. a Suno track) instead of a script, make a music video. Full design: `docs/MUSIC_MODE.md`.
+When the user gives you a **song** (mp3/m4a/wav, e.g. a Suno track) instead of a script, make a music video. Full design: `docs/MUSIC_MODE.md` (comic-style: `docs/COMIC_MODE.md`, `skills/comic-video/SKILL.md`).
 
 1. `pip install --user librosa faster-whisper` once (Python helpers), then
    `npm run new -- <name> --music path/to/song.mp3 --lyrics lyrics.txt` (lyrics optional, `[Chorus]`-style tags help).
@@ -161,10 +164,13 @@ npm run list
 - `scripts/rig_actor.py`, `scripts/bg_lightmap.py`, `scripts/pendant_one.py`, `scripts/cutout_sheet.py`: asset prep (rig points, light maps, brand fix, cutouts)
 - `scripts/analyze_music.py`: beats/bars/sections/energy + Whisper lyric alignment → timeline.json
 - `template-music/`: scaffold for `npm run new -- <name> --music`
+- `docs/VIDEO_PIPELINE.md`: general rules for every video
 - `docs/MUSIC_MODE.md`: music mode design and roadmap
+- `docs/COMIC_MODE.md`: comic-style videos
+- `docs/panel-check-prompt.md`: QA prompt for every generated image
 
 
-- `lib/stage-kit.js`: the stage contract (`Webshot.scene`, `idle`, `Webshot.start`)
+- `lib/stage-kit.js`: the stage contract (`Webshot.scene`, `idle`, `Webshot.start`, varied scene transitions)
 - `lib/runner.ts`: the shared recorder (plays scenes in narration order and holds each until its line ends)
 - `lib/serve.mjs`: serves a shot's stage, and `/vendor/*` from GSAP
 - `scripts/webshots.mjs`: the `new | check | render | preview | list` commands

@@ -55,7 +55,7 @@ python3 scripts/comic_render.py <spec> --endcard-test --out DIR   # just a still
 - **Trims:** clips play 3.5-4.5 s, the full ~6 s when clean; cut only where morphing starts and say why in `trimNote` (QA max 6 s). Each clip starts one beat (~0.44 s) after its panel lands.
 - **End card:** every video and Short ends on a ~3 s held frame reading *BROUGHT TO YOU BY PROGRESSIVE SLOP* / *LIKE AND SUBSCRIBE FOR MORE!* (`spec.endCard`, on by default); the song tail fades out under it (never a hard cut).
 - **No clipping (QA):** every caption/SFX box stays inside its panel and the page safe area (measured text bounds); lyric captions stay up until the line is sung (carried onto the splash / next page) and never overlap; song/Short cut points never land mid-word; the end card text fits the title-safe area.
-- Full workflow: [docs/MUSIC_MODE.md](docs/MUSIC_MODE.md) → "Comic mode". Examples: `shots/kingdom-come-comic`, `shots/neon-dojo-comic`.
+- Full workflow: [docs/COMIC_MODE.md](docs/COMIC_MODE.md) (general rules for every video: [docs/VIDEO_PIPELINE.md](docs/VIDEO_PIPELINE.md)). Examples: `shots/kingdom-come-comic`, `shots/neon-dojo-comic`.
 
 ## 🤖 If you're the AI assistant
 
