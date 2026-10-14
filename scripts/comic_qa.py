@@ -271,8 +271,11 @@ def check_page(sub, draft):
         if not c:
             continue
         land, start = u['at'], C.clip_start(sub, u)
-        if start - land > C.MAX_HOLD + 1e-6:
-            fail(f"{pid}/{u['id']}: clip starts {start - land:.2f}s after the panel lands (max {C.MAX_HOLD}s)")
+        # tempo-aware: a slow song's beat is longer than 0.6 s, so the one-beat hold may be up to one beat
+        # beat spacing in a real timeline jitters a few % around the tempo, so allow the beat-grid tolerance (60 ms)
+        limit = max(C.MAX_HOLD, C.beat_period(sub) + 0.06)
+        if start - land > limit + 1e-6:
+            fail(f"{pid}/{u['id']}: clip starts {start - land:.2f}s after the panel lands (max {limit:.2f}s = max({C.MAX_HOLD}s, one beat + 60 ms))")
         elif start - land < C.MIN_HOLD - 1e-6:
             fail(f"{pid}/{u['id']}: clip starts {start - land:.2f}s after landing - keep the anticipation beat (>= {C.MIN_HOLD}s)")
         if c.get('in') is None or c.get('out') is None:
@@ -423,11 +426,18 @@ def check_page(sub, draft):
                 scale = rw / img.width
                 rin, _ = C.register(img, C.read_clip(C.resolve(sub, u['clip']['src']), u['clip']['in'], u['clip']['in'] + 0.05, 30)[0])
                 shift = max(abs(a - b) for a, b in zip(rin, u['reg'])) / img.width
-                report[f"{pid}/{u['id']}"] = {'register': [round(v, 1) for v in u['reg']], 'ncc0': round(u['regScore'], 3), 'inShift': round(shift, 4)}
+                # drift is reported separately: per-second NCC of each sampled frame against the clip's first frame
+                # (a low score here is motion/morphing, not a bad handoff)
+                c0 = C.gray_small(C.first_frame(C.resolve(sub, u['clip']['src'])), 160)
+                drift = [round(C.ncc(c0, C.gray_small(fr, 160)), 2)
+                         for fr in C.read_clip(C.resolve(sub, u['clip']['src']), u['clip']['in'], u['clip']['out'], 1)]
+                report[f"{pid}/{u['id']}"] = {'register': [round(v, 1) for v in u['reg']], 'ncc0': round(u['regScore'], 3),
+                                              'inShift': round(shift, 4), 'driftPerSecond': drift}
                 if u['regScore'] < 0.75 or not (0.9 < scale < 1.1):
-                    fail(f"{pid}/{u['id']}: clip does not line up with its panel (ncc {u['regScore']:.2f}, scale {scale:.2f})")
+                    fail(f"{pid}/{u['id']}: clip's first frame does not line up with its panel (ncc {u['regScore']:.2f}, scale {scale:.2f})")
                 elif shift > 0.03:
                     fail(f"{pid}/{u['id']}: first used frame (in={u['clip']['in']}s) is re-framed {shift:.1%} vs the panel")
+                warn(f"{pid}/{u['id']}: drift vs the clip's first frame, per second: {drift}")
         samples = set()
         for u in sc.all_units():
             samples.add(C.T(sub, u['at']) + 0.2)

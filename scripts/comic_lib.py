@@ -33,12 +33,28 @@ def resolve(spec, p):
     cand = os.path.join(base, p)
     return cand if os.path.exists(cand) else os.path.join(ROOT, p)
 
-def song_beats(spec):
+def song_timeline(spec):
     tl = spec['song'].get('timeline')
     if not tl:
-        return []
+        return {}
     with open(resolve(spec, tl)) as f:
-        return json.load(f).get('beats', [])
+        return json.load(f)
+
+
+def song_beats(spec):
+    return song_timeline(spec).get('beats', [])
+
+
+def beat_period(spec):
+    """Seconds per beat: the timeline's tempo when it has one, else the median beat spacing."""
+    tl = song_timeline(spec)
+    if tl.get('tempo'):
+        return 60.0 / tl['tempo']
+    b = tl.get('beats', [])
+    if len(b) < 3:
+        return 0.5
+    d = sorted(b[i + 1] - b[i] for i in range(len(b) - 1))
+    return d[len(d) // 2]
 
 def T(spec, song_t):
     return song_t - spec['song']['start']
@@ -65,13 +81,16 @@ def subspecs(spec):
 
 
 def clip_start(spec, u):
-    """Song time the clip starts: explicit clip.at, else DEFAULT_HOLD_BEATS beats after the panel lands."""
+    """Song time the clip starts: explicit clip.at, else the first beat at/after the panel lands
+    (the one-beat anticipation hold: the first beat after the panel lands). Slow songs (one beat > MAX_HOLD) are
+    allowed: QA caps the delay at max(MAX_HOLD, one beat), so snapping to that beat always passes."""
     c = u['clip']
     if c.get('at') is not None:
         return c['at']
+    # first beat strictly after the land: the anticipation hold. (A panel lands on a beat, so "at or after" would
+    # start the clip at 0 s and kill the hold; "after" keeps one beat and the tempo-aware max allows it.)
     beats = [b for b in song_beats(spec) if b > u['at'] + 0.05]
-    hold = spec.get('defaults', {}).get('holdBeats', DEFAULT_HOLD_BEATS)
-    return beats[hold - 1] if len(beats) >= hold else u['at'] + 0.45
+    return beats[0] if beats else u['at'] + 0.45
 
 
 def splash_unit(spec):
@@ -349,6 +368,16 @@ def register(panel, frame):
     return best[1], best[0]
 
 # ---------------------------------------------------------------- clip frames
+def first_frame(path):
+    """The clip's real first frame (a single decoded frame), for the still->clip handoff check.
+    read_clip samples a time window at the render fps, so its first sample can be several frames in."""
+    raw = subprocess.run(['ffmpeg', '-v', 'error', '-i', path, '-frames:v', '1', '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-'],
+                         capture_output=True).stdout
+    w, h = map(int, subprocess.run(['ffprobe', '-v', 'error', '-select_streams', 'v:0', '-show_entries', 'stream=width,height',
+                                    '-of', 'csv=p=0', path], capture_output=True, text=True).stdout.strip().split(','))
+    return Image.frombytes('RGB', (w, h), raw)
+
+
 def read_clip(path, t_in, t_out, fps):
     w, h = map(int, subprocess.run(['ffprobe', '-v', 'error', '-select_streams', 'v:0', '-show_entries',
                                     'stream=width,height', '-of', 'csv=p=0', path],
@@ -1738,7 +1767,7 @@ def register_cached(img_path, clip_path, img, fps):
     st = lambda p: f'{os.path.getsize(p)}:{int(os.path.getmtime(p))}'
     key = f'{img_path}|{st(img_path)}|{clip_path}|{st(clip_path)}'
     if key not in _REG_CACHE:
-        reg, score = register(img, read_clip(clip_path, 0.0, 0.05, fps)[0])
+        reg, score = register(img, first_frame(clip_path))
         _REG_CACHE[key] = [list(reg), score]
         os.makedirs(os.path.dirname(_REG_CACHE_PATH), exist_ok=True)
         json.dump(_REG_CACHE, open(_REG_CACHE_PATH, 'w'))

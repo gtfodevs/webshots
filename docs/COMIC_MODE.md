@@ -315,5 +315,11 @@ Every comic video should level up beyond Kingdom Come: real story, real hits. Ex
   crop need not keep). `place_lettering` in the builder picks each caption anchor (tl/tr/bl/br, with captions on screen
   at the same time in different rows) and each SFX spot (3x3 grid) by measuring the renderer's own fitted boxes against
   the face boxes mapped through the real crop, in 16:9 and the Short.
-- **Clip timing at slow tempos:** at 86 BPM one beat is 0.70 s, above the 0.6 s hold limit; clips need an explicit
-  `clip.at` (half-beat) or a QA exception before the final render with clips.
+- **Clip timing at slow tempos (rule, 2026-10-14):** the one-beat anticipation hold is the first beat after the
+  panel lands (panels land on beats, so "at or after" would give a 0 s hold) (`clip_start`). QA's max delay is tempo-aware: `max(0.6 s, one beat + 60 ms beat-grid tolerance)` from the timeline's tempo (else the
+  median beat spacing), so a slow song (Concrete Jungle Cold is 86.1 BPM, 0.70 s/beat) passes without an explicit
+  `clip.at`. The 0.25 s minimum (keep the anticipation beat) is unchanged.
+- **Clip match is the first frame only.** `check_page` registers the clip's real first frame (`first_frame`, one decoded
+  frame) on the panel; that is what makes the still->clip handoff seamless. Sampling a window at the render fps can miss
+  the real first frame (f10 scored 0.79 at 4 fps, 0.90 on frame 0). Drift is reported separately and never fails the
+  check: per-second NCC of each sampled frame against the clip's first frame (`driftPerSecond` in the QA report).
