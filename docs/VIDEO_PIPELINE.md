@@ -171,13 +171,15 @@ entrance) gets a transition, and two consecutive changes never share a type. Thi
 - **Spooky intro:** `intro.style: "drip"` hangs ink drips off the glyphs. `intro.lightning: true` replaces the sparkles with a lightning double-flicker and a forked bolt. Presets are in `C.INTRO_DRIP`.
 
 ## Seamless looping themed backgrounds (required step, 2026-10-13)
-- **Pick a background theme per song in the plan.** `scripts/make_loop_bg.py --theme <blinking_eyes|starfield|neon_rain|embers> --orient landscape|vertical --out <assets>/bg/<theme>-<orient>.mp4` (default 9.6 s).
+- **Pick a background theme per song in the plan.** `scripts/make_loop_bg.py --theme <blinking_eyes|starfield|neon_rain|embers|deco_gold> --orient landscape|vertical --out <assets>/bg/<theme>-<orient>.mp4` (default 9.6 s).
 - **Generate both orientations.** Every motion is periodic in the loop, and a seam check (last->first frame diff vs the median frame diff) fails with exit 1 on a jump.
 - **Theme guide:**
   - horror: `blinking_eyes`
   - space: `starfield`
   - cyber / dojo: `neon_rain`
   - fantasy: `embers` (embers + smoke)
+  - 1920s / crime / luxury: `deco_gold` (black, art-deco gold sunburst fan + arcs + chevrons, a diagonal shimmer
+    sweeping once per loop, per-ray glints, gold dust rising one screen per loop; CONCRETE JUNGLE COLD)
 - **Spec:** `"bg_video": {"landscape": "bg/x-landscape.mp4", "vertical": "bg/x-vertical.mp4"}, "loop": true`. It plays full-frame behind every page on the song clock (seamless across page turns), and panels simply cover it, so no placement logic is needed. Media stays out of git.
 - **QA's empty-slot check measures inside the panel clip path only**, so a black gutter is not flagged as empty art.
 

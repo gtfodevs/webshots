@@ -118,6 +118,8 @@ two-pass loudnorm to `song.loudness` (-14 LUFS, TP -1.5).
    | 3 | `mixed-three` | big panel + two small with a slanted gutter (mixed sizes) |
    | 3 | `inset-three` | two tiers + a tilted inset straddling the gutter |
    | 3 | `tilt-three` | big tilted panel + two angled panels overlapping it |
+   | 2 | `side-two` | two near-square columns (two full-width tiers in vertical); fits wide focus spreads |
+   | 4 | `four-grid` | slanted 2x2 (four full-width tiers in vertical via `vslots`) |
    | splash | `full` / `tilt` / `breakout` | full frame / slightly rotated with paper corners / an impact burst breaking out over the border |
 
    Slot primitives: `rect`, `poly` (slanted, with a lettering-safe inner rect), `rot` (angle, z-order,
@@ -288,3 +290,21 @@ Every comic video should level up beyond Kingdom Come: real story, real hits. Ex
 - **Bursts are never hollow.** The breakout impact burst (the star that breaks out over a splash border behind "BAM!"-style SFX) used to be a cutout of the panel art. Video showed through a black-outlined star, which looked strange. `paint_burst` now fills it solid: an opaque radial white-yellow-orange gradient with halftone dots that grow toward the rim, an ink outline, and the SFX lettering on top.
 - **QA (`burst_see_through`)** paints every burst over a black base and over a magenta base and compares the interior (eroded 6 px). If any interior pixel changes, the check fails. It runs for landscape and vertical on every page whose splash uses `breakout`.
 - **One lyric per page:** the Deadstars builder letters each lyric line only once per page. Early-landing panels had overlapping lyric windows, so the same line was showing on two panels at once.
+
+### Concrete Jungle Cold lessons (2026-10-14)
+- **Stills before clips: `stillMotion`.** When Grok Imagine clips are not ready, give each clip-less panel
+  `"stillMotion": {"type": "push_in"|"pull_out"|"pan_left"|"pan_right"|"drift_up", "amount": 0.05, "dur": 6}`.
+  The renderer (`still_motion_frame`) eases the finished still inside its cell, starting on the beat a clip would
+  (one-beat hold), zoomed about the required focus regions. The builder (`shots/concrete-jungle-cold-comic/make_spec.py`)
+  switches a panel to `clip` automatically once `clips/fNN.mp4` exists (`clipPending` records the expected path).
+- **4-panel pages and 2-col pages:** `four-grid` (layouts may carry explicit vertical geometry in `vslots`) and
+  `side-two` were added for focus spreads that a 3.8:1 strip (`two-up`) cannot hold.
+- **Slow tempos and zoom splashes:** at 86 BPM a one-beat zoom is 0.7 s. Land the splash one beat after a line that
+  would otherwise be cut, so the line starts on the zoom target and is carried onto the splash; the zoom target's
+  lettering now counts as visible until the splash lands (`text_items`), matching the renderer.
+- **Caption hand-off:** each lyric caption stays up until the first beat after its sung end (`until`), alternating
+  tl/bl anchors, so beat-snapped starts never cut a line short or stack two captions in one spot.
+- **Gold deco title / end card:** `intro.lines` forces the stacked lines, `intro.sunburst` / `endCard.sunburst`
+  draw a gold deco sunburst behind the logo / end card, `endCard.fills` sets the box colours.
+- **Layout pass weighting:** score vertical misses only for panels visible inside the Short window (others ×0.3),
+  so a panel after the Short does not force a worse 16:9 layout.

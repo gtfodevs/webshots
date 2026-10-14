@@ -2,7 +2,8 @@
 """Themed seamless-looping background video for comic mode (played full-frame behind every page; panels cover it).
 
   python3 scripts/make_loop_bg.py --theme blinking_eyes --orient landscape --out /workspace/<song>/bg/eyes-landscape.mp4
-  themes: blinking_eyes (horror), starfield (space), neon_rain (cyber / dojo), embers (fantasy: embers + smoke)
+  themes: blinking_eyes (horror), starfield (space), neon_rain (cyber / dojo), embers (fantasy: embers + smoke),
+          deco_gold (1920s / crime / luxury: gold art-deco sunburst + shimmer + gold dust on black)
 
 Every motion is periodic in the loop length (blink schedules, twinkles and pulses repeat a whole number of times; drifting
 things travel a whole number of screen sizes), so frame N wraps onto frame 0. The seam check measures the last->first frame
@@ -130,7 +131,73 @@ def embers(W, H, N, rnd, ph):
     return frame
 
 
-THEMES = {'blinking_eyes': eyes, 'starfield': starfield, 'neon_rain': neon_rain, 'embers': embers}
+def deco_gold(W, H, N, rnd, ph):
+    """Art-deco gold on black (crime / 1920s): a sunburst fan of thin gold rays rising from the bottom centre, stepped
+    deco arcs around its hub, chevron bands top and bottom and a double keyline frame. A soft diagonal shimmer band
+    sweeps across exactly once per loop (wrapping), each ray glints on its own whole-number period, and fine gold dust
+    drifts up exactly one screen height per loop with periodic twinkle - so frame N wraps onto frame 0."""
+    S = 2   # line art drawn at 2x, then downsampled (anti-aliased hairlines)
+    art = Image.new('L', (W * S, H * S), 0); d = ImageDraw.Draw(art)
+    cx, cy = W * S / 2, H * S * (1.04 if W > H else 0.86)
+    R = math.hypot(W * S, H * S)
+    n_rays = 44
+    rays = []
+    for k in range(n_rays + 1):
+        a = math.pi + math.pi * k / n_rays
+        rays.append(a)
+        wdt = 3 * S if k % 4 == 0 else (2 * S if k % 2 == 0 else 1 * S)
+        d.line([(cx + 0.16 * R * math.cos(a), cy + 0.16 * R * math.sin(a)), (cx + R * math.cos(a), cy + R * math.sin(a))],
+               fill=200 if k % 2 == 0 else 120, width=wdt)
+    for j, rr in enumerate((0.10, 0.13, 0.16, 0.30, 0.31, 0.47)):   # stepped deco arcs around the hub
+        r_ = rr * R
+        d.arc([cx - r_, cy - r_, cx + r_, cy + r_], 180, 360, fill=230 if j in (2, 5) else 150, width=(3 if j in (2, 5) else 2) * S)
+    for row, y0 in ((0, 0.0), (1, 1.0)):                           # chevron bands
+        yy = y0 * H * S
+        step = 0.055 * min(W, H) * S
+        for m in range(3):
+            off = (m + 1) * 0.022 * min(W, H) * S * (1 if row == 0 else -1)
+            pts = []
+            x = 0.0; up = True
+            while x <= W * S + step:
+                pts.append((x, yy + off + (0 if up else step * 0.45 * (1 if row == 0 else -1)))); x += step / 2; up = not up
+            d.line(pts, fill=150 - 30 * m, width=S * 2 if m == 0 else S)
+    m_ = 0.018 * min(W, H) * S                                     # double keyline frame
+    for k, w_ in ((1, 2), (2.2, 1)):
+        d.rectangle([m_ * k, m_ * k, W * S - m_ * k, H * S - m_ * k], outline=170, width=int(w_ * S))
+    art = art.resize((W, H), Image.LANCZOS)
+    A = np.asarray(art, np.float32) / 255.0
+    # per-pixel ray index -> a glint phase per ray (whole-number periods per loop)
+    yy, xx = np.mgrid[0:H, 0:W].astype(np.float32)
+    ang = np.arctan2(yy - cy / S, xx - cx / S)
+    ang = np.where(ang > 0, ang - 2 * np.pi, ang)                   # upper half: -pi..0
+    ray_i = np.clip(np.round((ang + np.pi) / np.pi * n_rays), 0, n_rays).astype(np.int32)
+    gk = rnd.integers(1, 4, n_rays + 1); gp = rnd.uniform(0, TAU, n_rays + 1)
+    u = (xx / W + yy / H) / 2.0                                     # diagonal coordinate 0..1
+    gold = np.array([255, 196, 92], np.float32); deep = np.array([150, 96, 22], np.float32)
+    vign = np.clip(1.15 - 0.55 * np.hypot((xx - W / 2) / W, (yy - H / 2) / H) * 2, 0.45, 1.0)
+    cnt = int(W * H / 9000)
+    dx, dy = rnd.uniform(0, W, cnt), rnd.uniform(0, H, cnt)
+    dk = rnd.integers(1, 4, cnt); dp = rnd.uniform(0, TAU, cnt); dr = rnd.uniform(0.8, 2.2, cnt); dsw = rnd.uniform(4, 18, cnt)
+    def frame(n):
+        f = n / N
+        dist = np.abs(((u - f + 0.5) % 1.0) - 0.5)                  # wrapped distance to the sweeping band
+        band = np.exp(-(dist / 0.07) ** 2)
+        glint = 0.75 + 0.25 * np.sin(TAU * gk * f + gp)[ray_i]
+        lum = A * (0.62 + 0.9 * band) * glint * vign
+        col = deep[None, None] * (1 - band[..., None]) + gold[None, None] * band[..., None]
+        img = np.clip(lum[..., None] * col + 6, 0, 255)
+        out = Image.fromarray(img.astype(np.uint8))
+        dd = ImageDraw.Draw(out)
+        for x0, y0, k, p, r_, sw in zip(dx, dy, dk, dp, dr, dsw):
+            y = (y0 - f * H) % H
+            x = x0 + sw * math.sin(TAU * f * k + p)
+            a = 0.35 + 0.65 * (0.5 + 0.5 * math.sin(TAU * k * f * 2 + p))
+            dd.ellipse([x - r_, y - r_, x + r_, y + r_], fill=(int(255 * a), int(205 * a), int(110 * a)))
+        return Image.blend(out, out.filter(ImageFilter.GaussianBlur(2.5)), 0.35).point(lambda v: min(255, int(v * 1.12)))
+    return frame
+
+
+THEMES = {'blinking_eyes': eyes, 'starfield': starfield, 'neon_rain': neon_rain, 'embers': embers, 'deco_gold': deco_gold}
 
 
 def seam_check(frames_fn, N):

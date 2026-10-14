@@ -143,6 +143,8 @@ LAYOUTS = {
     'tilt-two': {'n': 2, 'vert': 'T', 'slots': {
         'a': ('rot', 0.34, 0.45, 0.67, 0.88, 2, {'inner': (0.03, 0.06, 0.36, 0.78)}),
         'b': ('rot', 0.69, 0.56, 0.60, 0.84, -3, {'z': 1, 'keyline': True})}},
+    'side-two': {'n': 2, 'vert': 'T', 'slots': {   # two near-square columns (two full-width tiers in vertical)
+        'a': ('rect', 0, 0, 0.5 - GX / 2, 1), 'b': ('rect', 0.5 + GX / 2, 0, 0.5 - GX / 2, 1)}},
     # ---- three panels
     'three': {'n': 3, 'vert': 'stack', 'slots': {
         'a': ('rect', 0, 0, 0.4935, 0.509), 'b': ('rect', 0.5065, 0, 0.4935, 0.509), 'c': ('rect', 0, 0.533, 1, 0.467)}},
@@ -163,6 +165,14 @@ LAYOUTS = {
         'a': ('rect', 0, 0, 0.6, 1), 'b': ('rect', 0.6 + GX, 0, 0.4 - GX, 0.5 - GY / 2), 'c': ('rect', 0.6 + GX, 0.5 + GY / 2, 0.4 - GX, 0.5 - GY / 2)}},
     'wide-three': {'n': 3, 'vert': 'same', 'slots': {
         'a': ('rect', 0, 0, 1, 0.5 - GY / 2), 'b': ('rect', 0, 0.5 + GY / 2, 0.5 - GX / 2, 0.5 - GY / 2), 'c': ('rect', 0.5 + GX / 2, 0.5 + GY / 2, 0.5 - GX / 2, 0.5 - GY / 2)}},
+    # ---- four panels: slanted 2x2 in landscape; four full-width tiers in vertical (explicit 'vslots')
+    'four-grid': {'n': 4, 'vert': 'own', 'slots': {
+        'a': ('poly', [(0, 0), (0.56, 0), (0.50, 0.49), (0, 0.49)], (0, 0, 0.50, 0.49)),
+        'b': ('poly', [(0.56 + GX, 0), (1, 0), (1, 0.49), (0.50 + GX, 0.49)], (0.56 + GX, 0, 0.44 - GX, 0.49)),
+        'c': ('poly', [(0, 0.49 + GY), (0.46, 0.49 + GY), (0.40, 1), (0, 1)], (0, 0.49 + GY, 0.40, 0.51 - GY)),
+        'd': ('poly', [(0.46 + GX, 0.49 + GY), (1, 0.49 + GY), (1, 1), (0.40 + GX, 1)], (0.46 + GX, 0.49 + GY, 0.54 - GX, 0.51 - GY))},
+        'vslots': {'a': ('rect', 0, 0, 1, 0.235), 'b': ('rect', 0, 0.255, 1, 0.235),
+                   'c': ('rect', 0, 0.51, 1, 0.235), 'd': ('rect', 0, 0.765, 1, 0.235)}},
     'tilt-three': {'n': 3, 'vert': 'T', 'slots': {
         'a': ('rot', 0.40, 0.50, 0.78, 0.94, 1.5, {'inner': (0.04, 0.06, 0.55, 0.88)}),
         'b': ('rot', 0.81, 0.27, 0.36, 0.48, -4, {'z': 1, 'keyline': True}),
@@ -240,6 +250,9 @@ def layout_geo(orient, kind='three', splash='full'):
         h = round(w * 9 / 16); g = 28; top = (1920 - (3 * h + 2 * g)) // 2
         for i, n in enumerate(sorted(L['slots'])):
             out[n] = _geo(('rect', 0, 0, 1, 1), (x, top + i * (h + g), w, h))
+    elif orient == 'vertical' and 'vslots' in L:
+        for n, prim in L['vslots'].items():
+            out[n] = _geo(prim, CONTENT[orient])
     else:
         for n, prim in L['slots'].items():
             out[n] = _geo(prim, CONTENT[orient], transpose=(orient == 'vertical' and L['vert'] == 'T'))
@@ -595,9 +608,11 @@ def text_items(spec, orient):
     splash_t0 = T(spec, tr['at']) if tr else end
     for p in spec['panels']:
         slot = L[p['slot']]; geo = G[p['slot']]
+        # the zoom target keeps its lettering through the zoom (Scene._frame letters_only=target) until the splash lands
+        p_end = splash_t0 if tr and p['id'] == tr.get('panel') else page_end
         for c in p.get('captions', []):
             items.append({'who': f"{p['id']} caption '{c['text']}'", 'rect': caption_box(c, slot, geo, S)[0], 'geo': geo, 'unit': p['id'],
-                          'from': T(spec, c.get('at', p['at'])), 'to': min(page_end, T(spec, c['until'])) if 'until' in c else page_end, 'slot': slot, 'kind': 'caption', 'obj': c})
+                          'from': T(spec, c.get('at', p['at'])), 'to': min(p_end, T(spec, c['until'])) if 'until' in c else p_end, 'slot': slot, 'kind': 'caption', 'obj': c})
         for s in p.get('sfx', []):
             items.append({'who': f"{p['id']} sfx '{s['text']}'", 'rect': sfx_rect(s, slot, SFX_PEAK, geo, S, unit_caption_rects(p, slot, geo, S))[0], 'geo': geo, 'unit': p['id'],
                           'from': T(spec, s['at']), 'to': page_end, 'slot': slot, 'kind': 'sfx', 'obj': s})
@@ -703,6 +718,7 @@ class Scene:
         u['focusRegions'] = focus_regions(self.spec, u, img)
         crop, u['focusMiss'] = fit_crop(img.width, img.height, u['geo'], u['focusRegions'], within, tuple(focus))
         u['crop'] = crop
+        u['_imgsize'] = img.size
         u['static'] = comic_finish(upscale(img, crop, (w, h), sharpen=False))
         if u.get('eyeShift') and not u.get('clip'):
             u['static_alt'] = comic_finish(upscale(eye_shift_image(img, u['eyeShift']), crop, (w, h), sharpen=False))
@@ -724,6 +740,8 @@ class Scene:
                 if k <= 0:
                     return u['static']
                 return u['static_alt'] if k >= 1 else Image.blend(u['static'], u['static_alt'], ease_io(k))
+            if u.get('stillMotion'):
+                return still_motion_frame(self.spec, u, t)
             return u['static']
         t0 = T(self.spec, clip_start(self.spec, u))
         if t < t0:
@@ -929,7 +947,7 @@ def endcard_layout(ec, orient):
     W, H = SIZES[orient]
     sx0, sy0, sx1, sy1 = SAFE[orient]
     maxw = (sx1 - sx0) * 0.9
-    fills = [CAPTION_FILL, (255, 70, 90)]
+    fills = [tuple(c) for c in ec['fills']] if ec.get('fills') else [CAPTION_FILL, (255, 70, 90)]
     out, boxes = [], []
     for i, text in enumerate(ec['lines']):
         # prefer one line (shrinking to a floor), then a balanced two-line wrap; text is measured with getbbox
@@ -980,6 +998,8 @@ def endcard_frame(base, orient, ec):
     arr = np.asarray(img, np.float32)
     arr = arr * (1 - 0.25 * (dots < 0.22)[..., None])
     img = Image.fromarray(np.clip(arr, 0, 255).astype(np.uint8))
+    if ec.get('sunburst'):
+        draw_sunburst(img, W / 2, H / 2, ec['sunburst'].get('color', [230, 180, 70]), ec['sunburst'].get('alpha', 0.8))
     for it in endcard_layout(ec, orient):
         x, y, w, h = it['rect']
         tile = Image.new('RGBA', (w + 20, h + 20), (0, 0, 0, 0))
@@ -1063,12 +1083,74 @@ def intro_slam(spec, t0=None):
     return round(beats[0] - s0, 3) if beats else 0.4
 
 
+STILL_MOTIONS = ('push_in', 'pull_out', 'pan_left', 'pan_right', 'drift_up')
+
+
+def still_motion_frame(spec, u, t):
+    """Motion preset for a still panel (no Grok clip yet): a slow eased push-in / pull-out / pan of the finished
+    static art inside its cell, starting on the same beat a clip would (one-beat anticipation hold). The zoom is
+    centred on the required focus regions so they stay in the cell; `amount` (default 0.06) caps the scale change.
+    Spec: panels[i].stillMotion = {"type": push_in|pull_out|pan_left|pan_right|drift_up, "amount": 0.06, "dur": 6}.
+    Drop it (or add a "clip") to swap in an animated clip later."""
+    sm = u['stillMotion']; img = u['static']
+    beats = [b for b in song_beats(spec) if b > u['at'] + 0.05]
+    hold = spec.get('defaults', {}).get('holdBeats', DEFAULT_HOLD_BEATS)
+    t0 = T(spec, beats[hold - 1] if len(beats) >= hold else u['at'] + 0.45)
+    p = ease_io(min(1.0, max(0.0, (t - t0) / sm.get('dur', 6.0))))
+    a = sm.get('amount', 0.06); typ = sm.get('type', 'push_in')
+    W, H = img.size
+    # anchor: centre of the required focus regions mapped into the static (crop) space
+    cx, cy = 0.5, 0.5
+    req = [r for r in u.get('focusRegions') or [] if r.get('required', True)]
+    if req and u.get('crop') and u.get('_imgsize'):
+        iw, ih = u['_imgsize']; X, Y, CW, CH = u['crop']
+        xs = [((r['box'][0] + r['box'][2]) / 2 * iw - X) / CW for r in req]; ys = [((r['box'][1] + r['box'][3]) / 2 * ih - Y) / CH for r in req]
+        cx, cy = min(max(sum(xs) / len(xs), 0.3), 0.7), min(max(sum(ys) / len(ys), 0.3), 0.7)
+    if typ == 'push_in':
+        z = 1 - a * p
+    elif typ == 'pull_out':
+        z = 1 - a * (1 - p)
+    else:
+        z = 1 - a
+    zw, zh = W * z, H * z
+    x0 = cx * W - zw * cx; y0 = cy * H - zh * cy
+    if typ in ('pan_left', 'pan_right'):
+        x0 = (W - zw) * (p if typ == 'pan_left' else 1 - p)
+    elif typ == 'drift_up':
+        y0 = (H - zh) * (1 - p)
+    x0 = min(max(x0, 0), W - zw); y0 = min(max(y0, 0), H - zh)
+    if z >= 0.9995:
+        return img
+    return img.resize((W, H), Image.BICUBIC, box=(x0, y0, x0 + zw, y0 + zh))
+
+
+def draw_sunburst(img, cx, cy, color, alpha=1.0, rays=32, r0=0.0):
+    """Art-deco sunburst: alternating translucent gold wedges + thin rays from (cx, cy), under the logo / end card."""
+    if alpha <= 0:
+        return img
+    W, H = img.size
+    R = math.hypot(W, H)
+    lay = Image.new('L', (W, H), 0); d = ImageDraw.Draw(lay)
+    for k in range(rays):
+        a0 = 2 * math.pi * k / rays; a1 = 2 * math.pi * (k + 0.5) / rays
+        d.polygon([(cx + r0 * math.cos(a0), cy + r0 * math.sin(a0)), (cx + R * math.cos(a0), cy + R * math.sin(a0)),
+                   (cx + R * math.cos(a1), cy + R * math.sin(a1)), (cx + r0 * math.cos(a1), cy + r0 * math.sin(a1))], fill=70)
+        d.line([(cx, cy), (cx + R * math.cos(a0), cy + R * math.sin(a0))], fill=170, width=3)
+    for rr in (0.12, 0.125, 0.2):
+        r_ = rr * R; d.ellipse([cx - r_, cy - r_, cx + r_, cy + r_], outline=150, width=3)
+    lay = lay.point(lambda v: int(v * alpha))
+    img.paste(Image.new('RGB', (W, H), tuple(color)), (0, 0), lay)
+    return img
+
+
 def _intro_fonts(ic, orient):
     W, H = SIZES[orient]
     maxw = W * ic.get('width', 0.78) / INTRO_PEAK
     words = ic['title'].split()
     k = min(range(1, max(2, len(words))), key=lambda k: abs(len(' '.join(words[:k])) - len(' '.join(words[k:]))))
     lines = [ic['title']] if orient == 'landscape' or len(words) < 2 else [' '.join(words[:k]), ' '.join(words[k:])]
+    if ic.get('lines'):   # explicit stacked lines, e.g. ["CONCRETE", "JUNGLE", "COLD"] (both orientations)
+        lines = [l.upper() for l in ic['lines']]
     px = int(H * (0.26 if orient == 'landscape' else 0.15))
     while px > 40 and max(font(px).getlength(l) for l in lines) + 2 * max(6, px // 9) > maxw:
         px -= 4
@@ -1242,6 +1324,8 @@ def intro_frame(base, orient, ic, t, ts, fps=30):
         img = Image.blend(img, Image.new('RGB', (W, H), (8, 6, 16)), ic['dim'] * a)
     tile = _intro_tile_cached(ic, orient)
     r = intro_rect(ic, orient, sc)
+    if ic.get('sunburst'):
+        draw_sunburst(img, r[0] + r[2] / 2, r[1] + r[3] / 2, ic['sunburst'].get('color', [230, 180, 70]), a * ic['sunburst'].get('alpha', 0.8))
     tl = tile if (int(r[2]), int(r[3])) == tile.size else tile.resize((max(1, int(r[2])), max(1, int(r[3]))), Image.BICUBIC)
     if a < 1:
         al = tl.getchannel('A').point(lambda v: int(v * a)); tl = tl.copy(); tl.putalpha(al)

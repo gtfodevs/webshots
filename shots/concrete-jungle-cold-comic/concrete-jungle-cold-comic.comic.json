@@ -1,0 +1,2672 @@
+{
+ "title": "Concrete Jungle Cold - comic mode (Progressive Slop)",
+ "outName": "concrete-jungle-cold",
+ "assetsDir": "/workspace/crime-comic",
+ "fps": 30,
+ "defaults": {
+  "holdBeats": 1
+ },
+ "mood": "action",
+ "bgTheme": "deco_gold",
+ "loop": true,
+ "bg_video": {
+  "landscape": "bg/deco_gold-landscape.mp4",
+  "vertical": "bg/deco_gold-vertical.mp4"
+ },
+ "song": {
+  "suno": "007325bb-143d-467d-90bc-cc25083181d6",
+  "audio": "audio.mp3",
+  "audioNote": "relative to assetsDir; not committed",
+  "timeline": "shots/concrete-jungle-cold-comic/timeline.json",
+  "start": 0.0,
+  "end": 198.016,
+  "loudness": -14
+ },
+ "short": {
+  "start": 128.3,
+  "end": 177.95,
+  "note": "word gap after \"we still fight\" -> warehouse doors BOOM, showdown, final chorus, newspaper, penthouse triumph; ends after the last \"heart made of gold\" (49.65 s)"
+ },
+ "intro": {
+  "enabled": true,
+  "title": "CONCRETE JUNGLE COLD",
+  "lines": [
+   "CONCRETE",
+   "JUNGLE COLD"
+  ],
+  "subtitle": "PROGRESSIVE SLOP PRESENTS",
+  "seconds": 2.6,
+  "glow": [
+   255,
+   196,
+   70
+  ],
+  "glow2": [
+   200,
+   20,
+   50
+  ],
+  "chrome": [
+   [
+    255,
+    250,
+    215
+   ],
+   [
+    255,
+    215,
+    110
+   ],
+   [
+    196,
+    140,
+    40
+   ],
+   [
+    90,
+    52,
+    8
+   ],
+   [
+    210,
+    160,
+    60
+   ],
+   [
+    255,
+    236,
+    170
+   ]
+  ],
+  "subColor": [
+   255,
+   226,
+   150
+  ],
+  "rot": -3,
+  "dim": 0.5,
+  "sunburst": {
+   "color": [
+    230,
+    180,
+    70
+   ],
+   "alpha": 0.3
+  }
+ },
+ "tbc": {
+  "enabled": true,
+  "text": "TO BE CONTINUED...",
+  "seconds": 2.5
+ },
+ "endCard": {
+  "enabled": true,
+  "seconds": 3.0,
+  "sunburst": {
+   "color": [
+    230,
+    180,
+    70
+   ],
+   "alpha": 0.6
+  },
+  "fills": [
+   [
+    255,
+    214,
+    110
+   ],
+   [
+    255,
+    70,
+    90
+   ]
+  ],
+  "lines": [
+   "BROUGHT TO YOU BY PROGRESSIVE SLOP",
+   "LIKE AND SUBSCRIBE FOR MORE!"
+  ]
+ },
+ "pages": [
+  {
+   "id": "p01",
+   "start": 0.0,
+   "end": 33.6,
+   "layout": "three",
+   "mood": "action",
+   "panels": [
+    {
+     "id": "f01",
+     "image": "panels/f01.jpg",
+     "at": 0.163,
+     "moment": "Extreme high angle down onto rainy deco Chromopolis at night, with searchlights criss-crossing. Lightning: KRAKOOM",
+     "cast": "fx (city)",
+     "focusNote": "skyline spire",
+     "storyTransition": "Page 1 fades in from black under the logo",
+     "captions": [],
+     "entrance": {
+      "type": "fade",
+      "dur": 0.3
+     },
+     "slot": "a",
+     "stillMotion": {
+      "type": "push_in",
+      "amount": 0.05,
+      "dur": 6.0
+     },
+     "clipPending": "clips/f01.mp4",
+     "focusRegions": [
+      {
+       "label": "skyline spire",
+       "box": [
+        0.45,
+        0.1,
+        0.57,
+        0.55
+       ],
+       "required": true
+      },
+      {
+       "label": "lightning",
+       "box": [
+        0.48,
+        0.0,
+        0.75,
+        0.3
+       ],
+       "required": false
+      }
+     ],
+     "shotKind": "fx",
+     "sfx": [
+      {
+       "text": "KRAKOOM!",
+       "at": 1.579,
+       "pos": [
+        0.72,
+        0.3
+       ],
+       "rot": -8,
+       "size": 0.15,
+       "color": [
+        255,
+        200,
+        60
+       ],
+       "impact": true
+      }
+     ]
+    },
+    {
+     "id": "f02",
+     "image": "panels/f02.jpg",
+     "at": 9.427,
+     "moment": "Low worm's-eye shot: Uno and Aura step out of a rain-soaked alley as nobodies, Uno's overcoat whipping in the wind, puddle SPLASH",
+     "cast": "Uno, Aura",
+     "focusNote": "both faces, red eyes",
+     "storyTransition": "Slide in from left on the beat",
+     "captions": [
+      {
+       "text": "CONCRETE JUNGLE, COLD, STORIES UNTOLD",
+       "anchor": "bl",
+       "lyric": true,
+       "fill": [
+        255,
+        226,
+        150
+       ],
+       "at": 9.427,
+       "until": 15.116
+      }
+     ],
+     "entrance": {
+      "type": "slide_left",
+      "dur": 0.3
+     },
+     "slot": "b",
+     "stillMotion": {
+      "type": "drift_up",
+      "amount": 0.05,
+      "dur": 6.0
+     },
+     "clipPending": "clips/f02.mp4",
+     "focusRegions": [
+      {
+       "label": "Uno face",
+       "box": [
+        0.27,
+        0.02,
+        0.4,
+        0.24
+       ],
+       "required": true
+      },
+      {
+       "label": "Aura face",
+       "box": [
+        0.58,
+        0.02,
+        0.71,
+        0.24
+       ],
+       "required": true
+      }
+     ],
+     "shotKind": "character",
+     "refs": [
+      "/workspace/progressive-slop-refs/uno-locked.jpg",
+      "/workspace/progressive-slop-refs/aura-locked.jpg"
+     ],
+     "sfx": [
+      {
+       "text": "SPLASH!",
+       "at": 10.867,
+       "pos": [
+        0.72,
+        0.7
+       ],
+       "rot": 6,
+       "size": 0.15,
+       "color": [
+        230,
+        40,
+        60
+       ],
+       "impact": false
+      }
+     ]
+    },
+    {
+     "id": "f03",
+     "image": "panels/f03.jpg",
+     "at": 15.836,
+     "moment": "Through a jeweller's window: Don Ferro's goons haul diamond crates past them. Aura's eyes narrow in the glass reflection. CLINK",
+     "cast": "Aura, Don Ferro",
+     "focusNote": "Aura's reflection",
+     "storyTransition": "Iris wipe",
+     "captions": [
+      {
+       "text": "DIAMONDS IN THE ROUGH, SOULS BOUGHT AND SOLD",
+       "anchor": "tl",
+       "lyric": true,
+       "fill": [
+        240,
+        232,
+        214
+       ],
+       "at": 15.836,
+       "until": 21.502
+      },
+      {
+       "text": "CONCRETE JUNGLE, COLD, WATCHIN' IT UNFOLD",
+       "anchor": "bl",
+       "lyric": true,
+       "fill": [
+        255,
+        190,
+        190
+       ],
+       "at": 21.502,
+       "until": 26.448
+      },
+      {
+       "text": "SURVIVAL OF THE FITTEST,",
+       "anchor": "tl",
+       "lyric": true,
+       "fill": [
+        214,
+        200,
+        255
+       ],
+       "at": 26.448,
+       "until": 30.0
+      },
+      {
+       "text": "HEART MADE OF GOLD",
+       "anchor": "bl",
+       "lyric": true,
+       "fill": [
+        255,
+        226,
+        150
+       ],
+       "at": 30.0
+      }
+     ],
+     "entrance": {
+      "type": "iris",
+      "dur": 0.3
+     },
+     "slot": "c",
+     "stillMotion": {
+      "type": "pan_right",
+      "amount": 0.05,
+      "dur": 6.0
+     },
+     "clipPending": "clips/f03.mp4",
+     "focusRegions": [
+      {
+       "label": "Aura's reflection",
+       "box": [
+        0.05,
+        0.3,
+        0.34,
+        0.68
+       ],
+       "required": true
+      },
+      {
+       "label": "Ferro face",
+       "box": [
+        0.5,
+        0.1,
+        0.66,
+        0.38
+       ],
+       "required": false
+      }
+     ],
+     "shotKind": "character",
+     "refs": [
+      "/workspace/progressive-slop-refs/uno-locked.jpg",
+      "/workspace/progressive-slop-refs/aura-locked.jpg"
+     ],
+     "sfx": [
+      {
+       "text": "CLINK!",
+       "at": 17.229,
+       "pos": [
+        0.72,
+        0.3
+       ],
+       "rot": -8,
+       "size": 0.15,
+       "color": [
+        190,
+        120,
+        255
+       ],
+       "impact": false
+      }
+     ]
+    }
+   ],
+   "transition": {
+    "type": "zoom",
+    "panel": "f03",
+    "at": 30.72,
+    "dur": 0.72
+   },
+   "splash": {
+    "id": "f04",
+    "image": "panels/f04.jpg",
+    "moment": "Close-up: Uno flips his gold \"1\" chain in his fist like a vow, gold flare. SHING",
+    "cast": "Uno",
+    "focusNote": "chain + grill",
+    "storyTransition": "Punch-in zoom",
+    "captions": [
+     {
+      "text": "HEART MADE OF GOLD",
+      "anchor": "tl",
+      "lyric": true,
+      "fill": [
+       255,
+       226,
+       150
+      ],
+      "at": 30.72
+     }
+    ],
+    "stillMotion": {
+     "type": "push_in",
+     "amount": 0.05,
+     "dur": 6.0
+    },
+    "clipPending": "clips/f04.mp4",
+    "focusRegions": [
+     {
+      "label": "grill + face",
+      "box": [
+       0.32,
+       0.22,
+       0.58,
+       0.75
+      ],
+      "required": true
+     },
+     {
+      "label": "gold 1 chain",
+      "box": [
+       0.74,
+       0.12,
+       0.92,
+       0.9
+      ],
+      "required": true
+     }
+    ],
+    "shotKind": "character",
+    "refs": [
+     "/workspace/progressive-slop-refs/uno-locked.jpg",
+     "/workspace/progressive-slop-refs/aura-locked.jpg"
+    ],
+    "sfx": [
+     {
+      "text": "SHING!",
+      "at": 32.113,
+      "pos": [
+       0.28,
+       0.7
+      ],
+      "rot": -6,
+      "size": 0.15,
+      "color": [
+       255,
+       245,
+       230
+      ],
+      "impact": true
+     }
+    ]
+   },
+   "splashStyle": "full"
+  },
+  {
+   "id": "p02",
+   "start": 33.6,
+   "end": 49.45,
+   "layout": "wide-three",
+   "mood": "action",
+   "panels": [
+    {
+     "id": "f05",
+     "image": "panels/f05.jpg",
+     "at": 34.226,
+     "moment": "Speakeasy door slot SNAPS open. Dutch angle as Uno rap-talks the password, and Aura already slips past the bouncer bot",
+     "cast": "Uno, Aura",
+     "focusNote": "Uno lips / slot eyes",
+     "storyTransition": "Page turn (word gap 31.55)",
+     "captions": [
+      {
+       "text": "PEEP THE SCRIPT, AIN'T NO ACTOR",
+       "anchor": "tl",
+       "lyric": true,
+       "fill": [
+        240,
+        232,
+        214
+       ],
+       "at": 34.226,
+       "until": 36.362
+      },
+      {
+       "text": "WORDSMITH TRUTH, NO CAP NO FACTOR",
+       "anchor": "bl",
+       "lyric": true,
+       "fill": [
+        255,
+        190,
+        190
+       ],
+       "at": 36.362,
+       "until": 39.195
+      }
+     ],
+     "entrance": {
+      "type": "slide_down",
+      "dur": 0.3
+     },
+     "slot": "b",
+     "stillMotion": {
+      "type": "push_in",
+      "amount": 0.05,
+      "dur": 6.0
+     },
+     "clipPending": "clips/f05.mp4",
+     "focusRegions": [
+      {
+       "label": "slot eyes",
+       "box": [
+        0.13,
+        0.12,
+        0.28,
+        0.3
+       ],
+       "required": true
+      },
+      {
+       "label": "Uno lips",
+       "box": [
+        0.32,
+        0.12,
+        0.55,
+        0.48
+       ],
+       "required": true
+      },
+      {
+       "label": "bouncer + Aura",
+       "box": [
+        0.66,
+        0.05,
+        0.95,
+        0.45
+       ],
+       "required": false
+      }
+     ],
+     "shotKind": "character",
+     "refs": [
+      "/workspace/progressive-slop-refs/uno-locked.jpg",
+      "/workspace/progressive-slop-refs/aura-locked.jpg"
+     ],
+     "sfx": [
+      {
+       "text": "SNAP!",
+       "at": 35.666,
+       "pos": [
+        0.72,
+        0.3
+       ],
+       "rot": -8,
+       "size": 0.15,
+       "color": [
+        255,
+        150,
+        40
+       ],
+       "impact": false
+      }
+     ]
+    },
+    {
+     "id": "f06",
+     "image": "panels/f06.jpg",
+     "at": 38.499,
+     "moment": "Smoky jazz club splash: Aura sings on stage mid-twirl, beads flying. Don Ferro in the booth tips his monocle. Jazz notes, WAH-WAH",
+     "cast": "Aura, Don Ferro",
+     "focusNote": "Aura face, Ferro monocle",
+     "storyTransition": "Smoke dissolve",
+     "captions": [
+      {
+       "text": "CITY LIGHTS FLICKER, SOULS GET SICKER",
+       "anchor": "tl",
+       "lyric": true,
+       "fill": [
+        214,
+        200,
+        255
+       ],
+       "at": 38.499,
+       "until": 42.028
+      }
+     ],
+     "entrance": {
+      "type": "fade",
+      "dur": 0.3
+     },
+     "slot": "a",
+     "stillMotion": {
+      "type": "pan_left",
+      "amount": 0.05,
+      "dur": 6.0
+     },
+     "clipPending": "clips/f06.mp4",
+     "focusRegions": [
+      {
+       "label": "Aura face",
+       "box": [
+        0.31,
+        0.02,
+        0.42,
+        0.22
+       ],
+       "required": true
+      },
+      {
+       "label": "Ferro monocle",
+       "box": [
+        0.76,
+        0.12,
+        0.92,
+        0.4
+       ],
+       "required": true
+      }
+     ],
+     "shotKind": "character",
+     "refs": [
+      "/workspace/progressive-slop-refs/uno-locked.jpg",
+      "/workspace/progressive-slop-refs/aura-locked.jpg"
+     ],
+     "sfx": [
+      {
+       "text": "WAH-WAH",
+       "at": 39.892,
+       "pos": [
+        0.72,
+        0.7
+       ],
+       "rot": 6,
+       "size": 0.15,
+       "color": [
+        255,
+        200,
+        60
+       ],
+       "impact": false
+      }
+     ]
+    },
+    {
+     "id": "f07",
+     "image": "panels/f07.jpg",
+     "at": 42.028,
+     "moment": "Overhead shot: Uno slaps the cards down and wins Ferro's bet, gold coins EXPLODE upward. CHA-CHING",
+     "cast": "Uno, Don Ferro",
+     "focusNote": "coin burst",
+     "storyTransition": "Whip pan",
+     "captions": [
+      {
+       "text": "HUSTLE EVERY MINUTE, MAKE IT QUICKER",
+       "anchor": "tl",
+       "lyric": true,
+       "fill": [
+        255,
+        226,
+        150
+       ],
+       "at": 42.028
+      }
+     ],
+     "entrance": {
+      "type": "whip",
+      "dur": 0.3
+     },
+     "slot": "c",
+     "stillMotion": {
+      "type": "push_in",
+      "amount": 0.05,
+      "dur": 6.0
+     },
+     "clipPending": "clips/f07.mp4",
+     "focusRegions": [
+      {
+       "label": "coin burst",
+       "box": [
+        0.48,
+        0.48,
+        0.74,
+        0.92
+       ],
+       "required": true
+      },
+      {
+       "label": "Uno face",
+       "box": [
+        0.07,
+        0.02,
+        0.28,
+        0.38
+       ],
+       "required": false
+      },
+      {
+       "label": "Ferro face",
+       "box": [
+        0.69,
+        0.02,
+        0.81,
+        0.3
+       ],
+       "required": false
+      }
+     ],
+     "shotKind": "character",
+     "refs": [
+      "/workspace/progressive-slop-refs/uno-locked.jpg",
+      "/workspace/progressive-slop-refs/aura-locked.jpg"
+     ],
+     "sfx": [
+      {
+       "text": "CHA-CHING!",
+       "at": 43.445,
+       "pos": [
+        0.72,
+        0.3
+       ],
+       "rot": -8,
+       "size": 0.15,
+       "color": [
+        230,
+        40,
+        60
+       ],
+       "impact": true
+      }
+     ]
+    }
+   ],
+   "pageTransition": {
+    "type": "wipe_diag",
+    "dur": 0.5
+   },
+   "transition": {
+    "type": "zoom",
+    "panel": "f07",
+    "at": 44.141,
+    "dur": 0.696
+   },
+   "splash": {
+    "id": "f08",
+    "image": "panels/f08.jpg",
+    "moment": "Ferro grabs Uno's shoulder from a towering low angle, cigar exhaust puffing, and recruits them. Slick Nickel smirks behind. HMPH",
+    "cast": "Uno, Ferro, Slick Nickel",
+    "focusNote": "Ferro grin",
+    "storyTransition": "Page turn",
+    "captions": [
+     {
+      "text": "HUSTLE EVERY MINUTE, MAKE IT QUICKER",
+      "anchor": "tl",
+      "lyric": true,
+      "fill": [
+       255,
+       226,
+       150
+      ],
+      "at": 44.141
+     },
+     {
+      "text": "CONCRETE JUNGLE, COLD, STORIES UNTOLD",
+      "anchor": "bl",
+      "lyric": true,
+      "fill": [
+       240,
+       232,
+       214
+      ],
+      "at": 44.141,
+      "until": 49.087
+     }
+    ],
+    "stillMotion": {
+     "type": "push_in",
+     "amount": 0.05,
+     "dur": 6.0
+    },
+    "clipPending": "clips/f08.mp4",
+    "focusRegions": [
+     {
+      "label": "Ferro grin",
+      "box": [
+       0.19,
+       0.02,
+       0.33,
+       0.3
+      ],
+      "required": true
+     },
+     {
+      "label": "Uno face",
+      "box": [
+       0.47,
+       0.1,
+       0.62,
+       0.35
+      ],
+      "required": false
+     },
+     {
+      "label": "Slick Nickel",
+      "box": [
+       0.72,
+       0.2,
+       0.83,
+       0.4
+      ],
+      "required": false
+     }
+    ],
+    "shotKind": "character",
+    "refs": [
+     "/workspace/progressive-slop-refs/uno-locked.jpg",
+     "/workspace/progressive-slop-refs/aura-locked.jpg"
+    ],
+    "sfx": [
+     {
+      "text": "HMPH!",
+      "at": 45.558,
+      "pos": [
+       0.72,
+       0.3
+      ],
+      "rot": -8,
+      "size": 0.15,
+      "color": [
+       190,
+       120,
+       255
+      ],
+      "impact": false
+     }
+    ]
+   },
+   "splashStyle": "breakout"
+  },
+  {
+   "id": "p03",
+   "start": 49.45,
+   "end": 66.5,
+   "layout": "side-two",
+   "mood": "action",
+   "panels": [
+    {
+     "id": "f09",
+     "image": "panels/f09.jpg",
+     "at": 49.83,
+     "moment": "Montage strip: Uno and Aura on runs, crates swinging off cranes at the docks, deco tower climbing. THUNK",
+     "cast": "Uno, Aura",
+     "focusNote": "crate swing",
+     "storyTransition": "Slide up",
+     "captions": [
+      {
+       "text": "DIAMONDS IN THE ROUGH, SOULS BOUGHT AND SOLD",
+       "anchor": "tl",
+       "lyric": true,
+       "fill": [
+        255,
+        190,
+        190
+       ],
+       "at": 49.83,
+       "until": 55.472
+      },
+      {
+       "text": "CONCRETE JUNGLE, COLD, WATCHIN' IT UNFOLD",
+       "anchor": "bl",
+       "lyric": true,
+       "fill": [
+        214,
+        200,
+        255
+       ],
+       "at": 55.472,
+       "until": 61.138
+      }
+     ],
+     "entrance": {
+      "type": "slide_up",
+      "dur": 0.3
+     },
+     "slot": "a",
+     "stillMotion": {
+      "type": "push_in",
+      "amount": 0.05,
+      "dur": 6.0
+     },
+     "clipPending": "clips/f09.mp4",
+     "focusRegions": [
+      {
+       "label": "Uno + crate swing",
+       "box": [
+        0.13,
+        0.08,
+        0.48,
+        0.82
+       ],
+       "required": true
+      },
+      {
+       "label": "Aura face",
+       "box": [
+        0.76,
+        0.02,
+        0.86,
+        0.2
+       ],
+       "required": false
+      }
+     ],
+     "shotKind": "character",
+     "refs": [
+      "/workspace/progressive-slop-refs/uno-locked.jpg",
+      "/workspace/progressive-slop-refs/aura-locked.jpg"
+     ],
+     "sfx": [
+      {
+       "text": "THUNK!",
+       "at": 51.223,
+       "pos": [
+        0.72,
+        0.3
+       ],
+       "rot": -8,
+       "size": 0.15,
+       "color": [
+        255,
+        245,
+        230
+       ],
+       "impact": false
+      }
+     ]
+    },
+    {
+     "id": "f10",
+     "image": "panels/f10.jpg",
+     "at": 61.138,
+     "moment": "Vintage chrome getaway car drifting a rainy corner, tyres spraying sparks, gold bags in the rumble seat. SKREEEE",
+     "cast": "vehicle",
+     "focusNote": "car grille",
+     "storyTransition": "Speed-line wipe",
+     "captions": [
+      {
+       "text": "SURVIVAL OF THE FITTEST, HEART MADE OF GOLD",
+       "anchor": "tl",
+       "lyric": true,
+       "fill": [
+        255,
+        226,
+        150
+       ],
+       "at": 61.138
+      }
+     ],
+     "entrance": {
+      "type": "whip",
+      "dur": 0.3
+     },
+     "slot": "b",
+     "stillMotion": {
+      "type": "pan_right",
+      "amount": 0.05,
+      "dur": 6.0
+     },
+     "clipPending": "clips/f10.mp4",
+     "focusRegions": [
+      {
+       "label": "car grille",
+       "box": [
+        0.56,
+        0.28,
+        0.76,
+        0.7
+       ],
+       "required": true
+      }
+     ],
+     "shotKind": "vehicle",
+     "sfx": [
+      {
+       "text": "SKREEEE!",
+       "at": 62.531,
+       "pos": [
+        0.28,
+        0.3
+       ],
+       "rot": 7,
+       "size": 0.15,
+       "color": [
+        255,
+        150,
+        40
+       ],
+       "impact": true
+      }
+     ]
+    }
+   ],
+   "pageTransition": {
+    "type": "slide_up",
+    "dur": 0.5
+   }
+  },
+  {
+   "id": "p04",
+   "start": 66.5,
+   "end": 88.95,
+   "layout": "four-grid",
+   "mood": "action",
+   "panels": [
+    {
+     "id": "f11",
+     "image": "panels/f11.jpg",
+     "at": 66.781,
+     "moment": "The heist plan: Uno slams a blueprint of the FIRST CHROME BANK vault onto the table, extreme close on his gold grill grin. WHAM",
+     "cast": "Uno, Aura",
+     "focusNote": "blueprint + grin",
+     "storyTransition": "Page turn",
+     "captions": [
+      {
+       "text": "BLOCK TO THE BOOTH, UNDENIABLE PROOF",
+       "anchor": "tl",
+       "lyric": true,
+       "fill": [
+        240,
+        232,
+        214
+       ],
+       "at": 66.781,
+       "until": 70.31
+      },
+      {
+       "text": "STRUGGLE AND THE YOUTH, PAIN IN THE PROOF",
+       "anchor": "bl",
+       "lyric": true,
+       "fill": [
+        255,
+        190,
+        190
+       ],
+       "at": 69.613,
+       "until": 72.446
+      }
+     ],
+     "entrance": {
+      "type": "zoom_pop",
+      "dur": 0.3
+     },
+     "slot": "b",
+     "stillMotion": {
+      "type": "push_in",
+      "amount": 0.05,
+      "dur": 6.0
+     },
+     "clipPending": "clips/f11.mp4",
+     "focusRegions": [
+      {
+       "label": "Uno grin",
+       "box": [
+        0.27,
+        0.05,
+        0.42,
+        0.38
+       ],
+       "required": true
+      },
+      {
+       "label": "blueprint",
+       "box": [
+        0.3,
+        0.7,
+        0.7,
+        0.9
+       ],
+       "required": true
+      },
+      {
+       "label": "Aura face",
+       "box": [
+        0.6,
+        0.08,
+        0.73,
+        0.35
+       ],
+       "required": false
+      }
+     ],
+     "shotKind": "character",
+     "refs": [
+      "/workspace/progressive-slop-refs/uno-locked.jpg",
+      "/workspace/progressive-slop-refs/aura-locked.jpg"
+     ],
+     "sfx": [
+      {
+       "text": "WHAM!",
+       "at": 68.197,
+       "pos": [
+        0.72,
+        0.3
+       ],
+       "rot": -8,
+       "size": 0.15,
+       "color": [
+        255,
+        200,
+        60
+       ],
+       "impact": true
+      }
+     ]
+    },
+    {
+     "id": "f12",
+     "image": "panels/f12.jpg",
+     "at": 72.446,
+     "moment": "Aura, in her crimson coat, cartwheels through a red laser grid in the bank's marble corridor, mid-flip. ZZT-ZZT",
+     "cast": "Aura",
+     "focusNote": "Aura face in lasers",
+     "storyTransition": "Diagonal slash",
+     "captions": [
+      {
+       "text": "LOST IN THE MAZE, CAUGHT IN A DAZE",
+       "anchor": "tl",
+       "lyric": true,
+       "fill": [
+        214,
+        200,
+        255
+       ],
+       "at": 72.446,
+       "until": 75.952
+      }
+     ],
+     "entrance": {
+      "type": "wipe",
+      "dur": 0.3
+     },
+     "slot": "a",
+     "stillMotion": {
+      "type": "pan_left",
+      "amount": 0.05,
+      "dur": 6.0
+     },
+     "clipPending": "clips/f12.mp4",
+     "focusRegions": [
+      {
+       "label": "Aura face in lasers",
+       "box": [
+        0.28,
+        0.15,
+        0.45,
+        0.42
+       ],
+       "required": true
+      }
+     ],
+     "shotKind": "character",
+     "refs": [
+      "/workspace/progressive-slop-refs/uno-locked.jpg",
+      "/workspace/progressive-slop-refs/aura-locked.jpg"
+     ],
+     "sfx": [
+      {
+       "text": "ZZT-ZZT!",
+       "at": 73.839,
+       "pos": [
+        0.72,
+        0.3
+       ],
+       "rot": -8,
+       "size": 0.15,
+       "color": [
+        230,
+        40,
+        60
+       ],
+       "impact": false
+      }
+     ]
+    },
+    {
+     "id": "f13",
+     "image": "panels/f13.jpg",
+     "at": 75.952,
+     "moment": "Vault door cracked: Uno spins the giant brass dial, his headphones listening to the tumblers, gold light blasting out. KA-CHUNK",
+     "cast": "Uno",
+     "focusNote": "dial + ear",
+     "storyTransition": "Vault-door iris",
+     "captions": [
+      {
+       "text": "PAPER DREAMS, URBAN HAZE",
+       "anchor": "tl",
+       "lyric": true,
+       "fill": [
+        255,
+        226,
+        150
+       ],
+       "at": 75.952,
+       "until": 78.785
+      }
+     ],
+     "entrance": {
+      "type": "iris",
+      "dur": 0.3
+     },
+     "slot": "c",
+     "stillMotion": {
+      "type": "push_in",
+      "amount": 0.05,
+      "dur": 6.0
+     },
+     "clipPending": "clips/f13.mp4",
+     "focusRegions": [
+      {
+       "label": "Uno ear + face",
+       "box": [
+        0.12,
+        0.05,
+        0.42,
+        0.55
+       ],
+       "required": true
+      },
+      {
+       "label": "vault dial",
+       "box": [
+        0.62,
+        0.22,
+        0.84,
+        0.7
+       ],
+       "required": true
+      }
+     ],
+     "shotKind": "character",
+     "refs": [
+      "/workspace/progressive-slop-refs/uno-locked.jpg",
+      "/workspace/progressive-slop-refs/aura-locked.jpg"
+     ],
+     "sfx": [
+      {
+       "text": "KA-CHUNK!",
+       "at": 77.369,
+       "pos": [
+        0.28,
+        0.7
+       ],
+       "rot": -6,
+       "size": 0.15,
+       "color": [
+        190,
+        120,
+        255
+       ],
+       "impact": false
+      }
+     ]
+    },
+    {
+     "id": "f14",
+     "image": "panels/f14.jpg",
+     "at": 78.089,
+     "moment": "Interior splash: the vault, mountains of gold bars and bonds. Aura tosses a stack and paper flutters. FWOOSH",
+     "cast": "Uno, Aura",
+     "focusNote": "both, gold glow",
+     "storyTransition": "Zoom splash",
+     "captions": [
+      {
+       "text": "CONCRETE JUNGLE, COLD, WATCHIN' IT UNFOLD",
+       "anchor": "tl",
+       "lyric": true,
+       "fill": [
+        240,
+        232,
+        214
+       ],
+       "at": 78.089,
+       "until": 83.011
+      },
+      {
+       "text": "HEART MADE OF GOLD, IN THE COLD",
+       "anchor": "bl",
+       "lyric": true,
+       "fill": [
+        255,
+        190,
+        190
+       ],
+       "at": 83.011
+      }
+     ],
+     "entrance": {
+      "type": "slide_right",
+      "dur": 0.3
+     },
+     "slot": "d",
+     "stillMotion": {
+      "type": "pull_out",
+      "amount": 0.05,
+      "dur": 6.0
+     },
+     "clipPending": "clips/f14.mp4",
+     "focusRegions": [
+      {
+       "label": "Aura face",
+       "box": [
+        0.32,
+        0.12,
+        0.45,
+        0.35
+       ],
+       "required": true
+      },
+      {
+       "label": "Uno face",
+       "box": [
+        0.62,
+        0.02,
+        0.78,
+        0.3
+       ],
+       "required": true
+      }
+     ],
+     "shotKind": "character",
+     "refs": [
+      "/workspace/progressive-slop-refs/uno-locked.jpg",
+      "/workspace/progressive-slop-refs/aura-locked.jpg"
+     ],
+     "sfx": [
+      {
+       "text": "FWOOSH!",
+       "at": 79.482,
+       "pos": [
+        0.72,
+        0.7
+       ],
+       "rot": 6,
+       "size": 0.15,
+       "color": [
+        255,
+        245,
+        230
+       ],
+       "impact": false
+      }
+     ]
+    }
+   ],
+   "pageTransition": {
+    "type": "whip",
+    "dur": 0.5
+   },
+   "transition": {
+    "type": "zoom",
+    "panel": "f14",
+    "at": 83.731,
+    "dur": 0.72
+   },
+   "splash": {
+    "id": "f15",
+    "image": "panels/f15.jpg",
+    "moment": "BETRAYAL: the vault door SLAMS behind them, and through the bars Slick Nickel tips his bowler and pockets the key. KLANG",
+    "cast": "Slick Nickel (Uno, Aura bg)",
+    "focusNote": "Nickel smirk",
+    "storyTransition": "Hard flash (beat)",
+    "captions": [
+     {
+      "text": "HEART MADE OF GOLD, IN THE COLD",
+      "anchor": "tl",
+      "lyric": true,
+      "fill": [
+       255,
+       190,
+       190
+      ],
+      "at": 83.731
+     }
+    ],
+    "stillMotion": {
+     "type": "push_in",
+     "amount": 0.05,
+     "dur": 6.0
+    },
+    "clipPending": "clips/f15.mp4",
+    "focusRegions": [
+     {
+      "label": "Nickel smirk",
+      "box": [
+       0.18,
+       0.02,
+       0.36,
+       0.35
+      ],
+      "required": true
+     },
+     {
+      "label": "eyes behind the bars",
+      "box": [
+       0.58,
+       0.35,
+       0.85,
+       0.55
+      ],
+      "required": false
+     }
+    ],
+    "shotKind": "character",
+    "refs": [
+     "/workspace/progressive-slop-refs/uno-locked.jpg",
+     "/workspace/progressive-slop-refs/aura-locked.jpg"
+    ],
+    "sfx": [
+     {
+      "text": "KLANG!",
+      "at": 85.124,
+      "pos": [
+       0.72,
+       0.3
+      ],
+      "rot": -8,
+      "size": 0.15,
+      "color": [
+       255,
+       150,
+       40
+      ],
+      "impact": true
+     }
+    ]
+   },
+   "splashStyle": "tilt"
+  },
+  {
+   "id": "p05",
+   "start": 88.95,
+   "end": 100.63,
+   "layout": "side-two",
+   "mood": "eerie",
+   "panels": [
+    {
+     "id": "f16",
+     "image": "panels/f16.jpg",
+     "at": 89.35,
+     "moment": "Aura's glowing red wire hair snakes into the lock and picks it. Extreme macro, sparks. TIK-TIK-CLAK",
+     "cast": "Aura",
+     "focusNote": "hair strands in lock",
+     "storyTransition": "Page turn",
+     "captions": [
+      {
+       "text": "WISDOM IN THE STREETS, DEEPER THAN THE BEATS",
+       "anchor": "tl",
+       "lyric": true,
+       "fill": [
+        214,
+        200,
+        255
+       ],
+       "at": 89.35,
+       "until": 92.88
+      },
+      {
+       "text": "SCAR IS A MAP, NO DEFEATS",
+       "anchor": "bl",
+       "lyric": true,
+       "fill": [
+        255,
+        226,
+        150
+       ],
+       "at": 92.183,
+       "until": 94.993
+      }
+     ],
+     "entrance": {
+      "type": "fade",
+      "dur": 0.3
+     },
+     "slot": "a",
+     "stillMotion": {
+      "type": "push_in",
+      "amount": 0.05,
+      "dur": 6.0
+     },
+     "clipPending": "clips/f16.mp4",
+     "focusRegions": [
+      {
+       "label": "hair strands in lock",
+       "box": [
+        0.12,
+        0.22,
+        0.55,
+        0.75
+       ],
+       "required": true
+      },
+      {
+       "label": "Aura eye",
+       "box": [
+        0.72,
+        0.22,
+        0.95,
+        0.5
+       ],
+       "required": false
+      }
+     ],
+     "shotKind": "character",
+     "refs": [
+      "/workspace/progressive-slop-refs/uno-locked.jpg",
+      "/workspace/progressive-slop-refs/aura-locked.jpg"
+     ],
+     "sfx": [
+      {
+       "text": "TIK-TIK-CLAK!",
+       "at": 90.744,
+       "pos": [
+        0.72,
+        0.3
+       ],
+       "rot": -8,
+       "size": 0.15,
+       "color": [
+        255,
+        200,
+        60
+       ],
+       "impact": false
+      }
+     ]
+    },
+    {
+     "id": "f17",
+     "image": "panels/f17.jpg",
+     "at": 94.993,
+     "moment": "Uno at a payphone, coat flaring, calling the whole city's crews, with phone lines lighting up across the deco map. RRRING",
+     "cast": "Uno",
+     "focusNote": "Uno face",
+     "storyTransition": "Line-trace wipe",
+     "captions": [
+      {
+       "text": "PEN IS A WEAPON, WORDS CONNECTIN'",
+       "anchor": "tl",
+       "lyric": true,
+       "fill": [
+        240,
+        232,
+        214
+       ],
+       "at": 94.993,
+       "until": 98.499
+      },
+      {
+       "text": "SOUL RESURRECTION, NO DEFLECTION",
+       "anchor": "bl",
+       "lyric": true,
+       "fill": [
+        255,
+        190,
+        190
+       ],
+       "at": 97.802
+      }
+     ],
+     "entrance": {
+      "type": "wipe",
+      "dur": 0.3
+     },
+     "slot": "b",
+     "stillMotion": {
+      "type": "pan_right",
+      "amount": 0.05,
+      "dur": 6.0
+     },
+     "clipPending": "clips/f17.mp4",
+     "focusRegions": [
+      {
+       "label": "Uno face",
+       "box": [
+        0.28,
+        0.08,
+        0.5,
+        0.4
+       ],
+       "required": true
+      },
+      {
+       "label": "lit-up map",
+       "box": [
+        0.52,
+        0.0,
+        0.95,
+        0.55
+       ],
+       "required": false
+      }
+     ],
+     "shotKind": "character",
+     "refs": [
+      "/workspace/progressive-slop-refs/uno-locked.jpg",
+      "/workspace/progressive-slop-refs/aura-locked.jpg"
+     ],
+     "sfx": [
+      {
+       "text": "RRRING!",
+       "at": 96.409,
+       "pos": [
+        0.72,
+        0.3
+       ],
+       "rot": -8,
+       "size": 0.15,
+       "color": [
+        230,
+        40,
+        60
+       ],
+       "impact": false
+      }
+     ]
+    }
+   ],
+   "pageTransition": {
+    "type": "iris",
+    "dur": 0.5
+   }
+  },
+  {
+   "id": "p06",
+   "start": 100.63,
+   "end": 122.9,
+   "layout": "two-up",
+   "mood": "action",
+   "panels": [
+    {
+     "id": "f18",
+     "image": "panels/f18.jpg",
+     "at": 100.635,
+     "moment": "Police-bot sirens swarm the bank. Uno and Aura burst out of the vault roof on a chrome cable, mid-air. WHOOOM",
+     "cast": "Uno, Aura",
+     "focusNote": "silhouettes vs searchlight",
+     "storyTransition": "Page turn",
+     "captions": [
+      {
+       "text": "CONCRETE JUNGLE, COLD, STORIES UNTOLD",
+       "anchor": "bl",
+       "lyric": true,
+       "fill": [
+        214,
+        200,
+        255
+       ],
+       "at": 100.635,
+       "until": 105.558
+      },
+      {
+       "text": "DIAMONDS IN THE ROUGH, SOULS BOUGHT AND SOLD",
+       "anchor": "tl",
+       "lyric": true,
+       "fill": [
+        255,
+        226,
+        150
+       ],
+       "at": 106.278,
+       "until": 111.851
+      }
+     ],
+     "entrance": {
+      "type": "zoom_pop",
+      "dur": 0.3
+     },
+     "slot": "a",
+     "stillMotion": {
+      "type": "drift_up",
+      "amount": 0.05,
+      "dur": 6.0
+     },
+     "clipPending": "clips/f18.mp4",
+     "focusRegions": [
+      {
+       "label": "Uno face",
+       "box": [
+        0.3,
+        0.04,
+        0.43,
+        0.26
+       ],
+       "required": true
+      },
+      {
+       "label": "Aura face",
+       "box": [
+        0.6,
+        0.04,
+        0.72,
+        0.26
+       ],
+       "required": true
+      },
+      {
+       "label": "searchlight",
+       "box": [
+        0.45,
+        0.3,
+        0.65,
+        0.9
+       ],
+       "required": false
+      }
+     ],
+     "shotKind": "character",
+     "refs": [
+      "/workspace/progressive-slop-refs/uno-locked.jpg",
+      "/workspace/progressive-slop-refs/aura-locked.jpg"
+     ],
+     "sfx": [
+      {
+       "text": "WHOOOM!",
+       "at": 102.028,
+       "pos": [
+        0.72,
+        0.7
+       ],
+       "rot": 6,
+       "size": 0.15,
+       "color": [
+        190,
+        120,
+        255
+       ],
+       "impact": true
+      }
+     ]
+    },
+    {
+     "id": "f19",
+     "image": "panels/f19.jpg",
+     "at": 111.851,
+     "moment": "Rooftop chase in the rain: the getaway car leaps a gap between deco towers, and the moon cuts off the wheels. VROOOM",
+     "cast": "vehicle",
+     "focusNote": "car mid-leap",
+     "storyTransition": "Slow push, rain smear",
+     "captions": [
+      {
+       "text": "CONCRETE JUNGLE, COLD, WATCHIN' IT UNFOLD",
+       "anchor": "tl",
+       "lyric": true,
+       "fill": [
+        240,
+        232,
+        214
+       ],
+       "at": 111.851,
+       "until": 117.516
+      },
+      {
+       "text": "SURVIVAL OF THE FITTEST, HEART MADE OF GOLD",
+       "anchor": "bl",
+       "lyric": true,
+       "fill": [
+        255,
+        190,
+        190
+       ],
+       "at": 117.516,
+       "until": 122.416
+      }
+     ],
+     "entrance": {
+      "type": "slide_left",
+      "dur": 0.3
+     },
+     "slot": "b",
+     "stillMotion": {
+      "type": "pan_left",
+      "amount": 0.05,
+      "dur": 6.0
+     },
+     "clipPending": "clips/f19.mp4",
+     "focusRegions": [
+      {
+       "label": "car mid-leap",
+       "box": [
+        0.29,
+        0.25,
+        0.72,
+        0.62
+       ],
+       "required": true
+      },
+      {
+       "label": "moon",
+       "box": [
+        0.3,
+        0.05,
+        0.55,
+        0.35
+       ],
+       "required": false
+      }
+     ],
+     "shotKind": "vehicle",
+     "sfx": [
+      {
+       "text": "VROOOM!",
+       "at": 113.267,
+       "pos": [
+        0.28,
+        0.7
+       ],
+       "rot": -6,
+       "size": 0.15,
+       "color": [
+        255,
+        245,
+        230
+       ],
+       "impact": false
+      }
+     ]
+    }
+   ],
+   "pageTransition": {
+    "type": "wipe_linear",
+    "dur": 0.5
+   }
+  },
+  {
+   "id": "p07",
+   "start": 122.9,
+   "end": 134.27,
+   "layout": "side-two",
+   "mood": "scare",
+   "panels": [
+    {
+     "id": "f20",
+     "image": "panels/f20.jpg",
+     "at": 123.135,
+     "moment": "DOUBLE-CROSS: at Ferro's warehouse Nickel hands Ferro the stolen gold, then swaps the crates. They are filled with Uno's purple confetti. Ferro roars. POOF!",
+     "cast": "Don Ferro, Slick Nickel",
+     "focusNote": "Ferro's furious face",
+     "storyTransition": "Page turn",
+     "captions": [
+      {
+       "text": "THEY DIM THE LIGHT, FLAME BURNS BRIGHT",
+       "anchor": "tl",
+       "lyric": true,
+       "fill": [
+        214,
+        200,
+        255
+       ],
+       "at": 123.135,
+       "until": 125.945
+      },
+      {
+       "text": "DARKEST NIGHT, WE STILL FIGHT",
+       "anchor": "bl",
+       "lyric": true,
+       "fill": [
+        255,
+        226,
+        150
+       ],
+       "at": 125.945,
+       "until": 128.755
+      }
+     ],
+     "entrance": {
+      "type": "glitch",
+      "dur": 0.3
+     },
+     "slot": "a",
+     "stillMotion": {
+      "type": "push_in",
+      "amount": 0.05,
+      "dur": 6.0
+     },
+     "clipPending": "clips/f20.mp4",
+     "focusRegions": [
+      {
+       "label": "Ferro's furious face",
+       "box": [
+        0.28,
+        0.12,
+        0.46,
+        0.42
+       ],
+       "required": true
+      },
+      {
+       "label": "Nickel face",
+       "box": [
+        0.78,
+        0.2,
+        0.92,
+        0.42
+       ],
+       "required": false
+      }
+     ],
+     "shotKind": "character",
+     "refs": [
+      "/workspace/progressive-slop-refs/uno-locked.jpg",
+      "/workspace/progressive-slop-refs/aura-locked.jpg"
+     ],
+     "sfx": [
+      {
+       "text": "POOF!",
+       "at": 124.505,
+       "pos": [
+        0.72,
+        0.3
+       ],
+       "rot": -8,
+       "size": 0.15,
+       "color": [
+        255,
+        150,
+        40
+       ],
+       "impact": true
+      }
+     ]
+    },
+    {
+     "id": "f21",
+     "image": "panels/f21.jpg",
+     "at": 128.035,
+     "moment": "Uno kicks the warehouse doors in, Aura at his side, prop tommy-gun case slung and closed. Dramatic backlight. BOOM",
+     "cast": "Uno, Aura",
+     "focusNote": "both faces",
+     "storyTransition": "Shockwave wipe",
+     "captions": [
+      {
+       "text": "NO SURRENDER, BREAK THE FETTER",
+       "anchor": "bl",
+       "lyric": true,
+       "fill": [
+        240,
+        232,
+        214
+       ],
+       "at": 128.035,
+       "until": 131.564
+      },
+      {
+       "text": "SOUL'S TRUE LETTER, WE GET BETTER",
+       "anchor": "tl",
+       "lyric": true,
+       "fill": [
+        255,
+        190,
+        190
+       ],
+       "at": 130.868
+      }
+     ],
+     "entrance": {
+      "type": "whip",
+      "dur": 0.3
+     },
+     "slot": "b",
+     "stillMotion": {
+      "type": "pull_out",
+      "amount": 0.05,
+      "dur": 6.0
+     },
+     "clipPending": "clips/f21.mp4",
+     "focusRegions": [
+      {
+       "label": "Uno face",
+       "box": [
+        0.28,
+        0.0,
+        0.42,
+        0.18
+       ],
+       "required": true
+      },
+      {
+       "label": "Aura face",
+       "box": [
+        0.58,
+        0.0,
+        0.72,
+        0.18
+       ],
+       "required": true
+      }
+     ],
+     "shotKind": "character",
+     "refs": [
+      "/workspace/progressive-slop-refs/uno-locked.jpg",
+      "/workspace/progressive-slop-refs/aura-locked.jpg"
+     ],
+     "sfx": [
+      {
+       "text": "BOOM!",
+       "at": 129.451,
+       "pos": [
+        0.72,
+        0.3
+       ],
+       "rot": -8,
+       "size": 0.15,
+       "color": [
+        255,
+        200,
+        60
+       ],
+       "impact": true
+      }
+     ]
+    }
+   ],
+   "pageTransition": {
+    "type": "flash",
+    "dur": 0.5
+   }
+  },
+  {
+   "id": "p08",
+   "start": 134.27,
+   "end": 156.56,
+   "layout": "three",
+   "mood": "action",
+   "panels": [
+    {
+     "id": "f22",
+     "image": "panels/f22.jpg",
+     "at": 134.374,
+     "moment": "Showdown: Uno and Ferro grapple chest to chest, coats flaring, and Uno flips Ferro onto the confetti pile. KRAK!",
+     "cast": "Uno, Don Ferro",
+     "focusNote": "locked eyes",
+     "storyTransition": "Beat-cut",
+     "captions": [
+      {
+       "text": "CONCRETE JUNGLE, COLD, STORIES UNTOLD",
+       "anchor": "tl",
+       "lyric": true,
+       "fill": [
+        214,
+        200,
+        255
+       ],
+       "at": 134.374,
+       "until": 139.993
+      },
+      {
+       "text": "DIAMONDS IN THE ROUGH, SOULS BOUGHT AND SOLD",
+       "anchor": "bl",
+       "lyric": true,
+       "fill": [
+        255,
+        226,
+        150
+       ],
+       "at": 139.993,
+       "until": 145.612
+      }
+     ],
+     "entrance": {
+      "type": "zoom_pop",
+      "dur": 0.3
+     },
+     "slot": "a",
+     "stillMotion": {
+      "type": "push_in",
+      "amount": 0.05,
+      "dur": 6.0
+     },
+     "clipPending": "clips/f22.mp4",
+     "focusRegions": [
+      {
+       "label": "Uno eyes",
+       "box": [
+        0.17,
+        0.02,
+        0.4,
+        0.4
+       ],
+       "required": true
+      },
+      {
+       "label": "Ferro eyes",
+       "box": [
+        0.74,
+        0.22,
+        0.97,
+        0.58
+       ],
+       "required": true
+      }
+     ],
+     "shotKind": "character",
+     "refs": [
+      "/workspace/progressive-slop-refs/uno-locked.jpg",
+      "/workspace/progressive-slop-refs/aura-locked.jpg"
+     ],
+     "sfx": [
+      {
+       "text": "KRAK!",
+       "at": 135.767,
+       "pos": [
+        0.72,
+        0.7
+       ],
+       "rot": 6,
+       "size": 0.15,
+       "color": [
+        230,
+        40,
+        60
+       ],
+       "impact": true
+      }
+     ]
+    },
+    {
+     "id": "f23",
+     "image": "panels/f23.jpg",
+     "at": 145.612,
+     "moment": "Aura lassos Slick Nickel's bowler hat with her glowing wire hair and yanks him off his feet as he runs. YOINK",
+     "cast": "Aura, Slick Nickel",
+     "focusNote": "Aura's smile",
+     "storyTransition": "Whip pan",
+     "captions": [
+      {
+       "text": "CONCRETE JUNGLE, COLD, WATCHIN' IT UNFOLD",
+       "anchor": "tl",
+       "lyric": true,
+       "fill": [
+        240,
+        232,
+        214
+       ],
+       "at": 145.612,
+       "until": 151.232
+      }
+     ],
+     "entrance": {
+      "type": "slide_right",
+      "dur": 0.3
+     },
+     "slot": "b",
+     "stillMotion": {
+      "type": "pan_left",
+      "amount": 0.05,
+      "dur": 6.0
+     },
+     "clipPending": "clips/f23.mp4",
+     "focusRegions": [
+      {
+       "label": "Aura's smile",
+       "box": [
+        0.12,
+        0.05,
+        0.3,
+        0.35
+       ],
+       "required": true
+      },
+      {
+       "label": "Nickel + hat",
+       "box": [
+        0.5,
+        0.1,
+        0.85,
+        0.5
+       ],
+       "required": false
+      }
+     ],
+     "shotKind": "character",
+     "refs": [
+      "/workspace/progressive-slop-refs/uno-locked.jpg",
+      "/workspace/progressive-slop-refs/aura-locked.jpg"
+     ],
+     "sfx": [
+      {
+       "text": "YOINK!",
+       "at": 147.006,
+       "pos": [
+        0.72,
+        0.3
+       ],
+       "rot": -8,
+       "size": 0.15,
+       "color": [
+        190,
+        120,
+        255
+       ],
+       "impact": false
+      }
+     ]
+    },
+    {
+     "id": "f24",
+     "image": "panels/f24.jpg",
+     "at": 151.232,
+     "moment": "Newsboy-bot newspaper spinning in, extreme dutch: \"UNO & AURA RULE CHROMOPOLIS!\" Gold flare. SPIN-SPIN",
+     "cast": "fx (newspaper)",
+     "focusNote": "headline",
+     "storyTransition": "Spinning newspaper",
+     "captions": [
+      {
+       "text": "SURVIVAL OF THE FITTEST, HEART MADE OF GOLD",
+       "anchor": "tl",
+       "lyric": true,
+       "fill": [
+        255,
+        190,
+        190
+       ],
+       "at": 151.232
+      }
+     ],
+     "entrance": {
+      "type": "iris",
+      "dur": 0.3
+     },
+     "slot": "c",
+     "stillMotion": {
+      "type": "push_in",
+      "amount": 0.05,
+      "dur": 6.0
+     },
+     "clipPending": "clips/f24.mp4",
+     "focusRegions": [
+      {
+       "label": "headline",
+       "box": [
+        0.22,
+        0.12,
+        0.9,
+        0.45
+       ],
+       "required": true
+      }
+     ],
+     "shotKind": "fx",
+     "sfx": [
+      {
+       "text": "SPIN-SPIN!",
+       "at": 152.602,
+       "pos": [
+        0.72,
+        0.7
+       ],
+       "rot": 6,
+       "size": 0.15,
+       "color": [
+        255,
+        245,
+        230
+       ],
+       "impact": false
+      }
+     ]
+    }
+   ],
+   "pageTransition": {
+    "type": "slide_left",
+    "dur": 0.5
+   }
+  },
+  {
+   "id": "p09",
+   "start": 156.56,
+   "end": 184.4,
+   "layout": "side-two",
+   "mood": "action",
+   "panels": [
+    {
+     "id": "f25",
+     "image": "panels/f25.jpg",
+     "at": 156.828,
+     "moment": "TRIUMPH PENTHOUSE splash: Uno and Aura on a deco penthouse balcony, gold dust raining, the city lit below. Uno raises his \"1\" chain and Aura's beads glitter. FLASH",
+     "cast": "Uno, Aura",
+     "focusNote": "both faces, chain",
+     "storyTransition": "Zoom splash, page turn",
+     "captions": [
+      {
+       "text": "CONCRETE JUNGLE, COLD, STORIES UNTOLD",
+       "anchor": "bl",
+       "lyric": true,
+       "fill": [
+        214,
+        200,
+        255
+       ],
+       "at": 156.828,
+       "until": 162.447
+      },
+      {
+       "text": "DIAMONDS IN THE ROUGH, SOULS BOUGHT AND SOLD",
+       "anchor": "tl",
+       "lyric": true,
+       "fill": [
+        255,
+        226,
+        150
+       ],
+       "at": 162.447,
+       "until": 168.02
+      },
+      {
+       "text": "CONCRETE JUNGLE, COLD, WATCHIN' IT UNFOLD",
+       "anchor": "bl",
+       "lyric": true,
+       "fill": [
+        240,
+        232,
+        214
+       ],
+       "at": 168.02,
+       "until": 172.965
+      },
+      {
+       "text": "SURVIVAL OF THE FITTEST, HEART MADE OF GOLD",
+       "anchor": "tl",
+       "lyric": true,
+       "fill": [
+        255,
+        190,
+        190
+       ],
+       "at": 172.246,
+       "until": 178.538
+      }
+     ],
+     "entrance": {
+      "type": "glitch",
+      "dur": 0.3
+     },
+     "slot": "a",
+     "stillMotion": {
+      "type": "push_in",
+      "amount": 0.05,
+      "dur": 6.0
+     },
+     "clipPending": "clips/f25.mp4",
+     "focusRegions": [
+      {
+       "label": "Uno face",
+       "box": [
+        0.31,
+        0.05,
+        0.48,
+        0.32
+       ],
+       "required": true
+      },
+      {
+       "label": "Aura face",
+       "box": [
+        0.58,
+        0.05,
+        0.75,
+        0.35
+       ],
+       "required": true
+      },
+      {
+       "label": "gold 1 chain",
+       "box": [
+        0.15,
+        0.0,
+        0.3,
+        0.45
+       ],
+       "required": false
+      }
+     ],
+     "shotKind": "character",
+     "refs": [
+      "/workspace/progressive-slop-refs/uno-locked.jpg",
+      "/workspace/progressive-slop-refs/aura-locked.jpg"
+     ],
+     "sfx": [
+      {
+       "text": "FLASH!",
+       "at": 158.221,
+       "pos": [
+        0.72,
+        0.7
+       ],
+       "rot": 6,
+       "size": 0.15,
+       "color": [
+        255,
+        150,
+        40
+       ],
+       "impact": true
+      }
+     ]
+    },
+    {
+     "id": "f26",
+     "image": "panels/f26.jpg",
+     "at": 179.955,
+     "moment": "Quiet beat: Aura sets the gold crown-shaped hat on Uno, and the clinking oil-soda glasses spark. TING",
+     "cast": "Uno, Aura",
+     "focusNote": "hands + glasses",
+     "storyTransition": "Smoke dissolve",
+     "captions": [
+      {
+       "text": "CONCRETE COLD, SPIRIT BOLD",
+       "anchor": "tl",
+       "lyric": true,
+       "fill": [
+        214,
+        200,
+        255
+       ],
+       "at": 179.955,
+       "until": 183.438
+      }
+     ],
+     "entrance": {
+      "type": "fade",
+      "dur": 0.3
+     },
+     "slot": "b",
+     "stillMotion": {
+      "type": "pull_out",
+      "amount": 0.05,
+      "dur": 6.0
+     },
+     "clipPending": "clips/f26.mp4",
+     "focusRegions": [
+      {
+       "label": "hand on hat",
+       "box": [
+        0.47,
+        0.06,
+        0.6,
+        0.28
+       ],
+       "required": true
+      },
+      {
+       "label": "glass",
+       "box": [
+        0.74,
+        0.48,
+        0.88,
+        0.8
+       ],
+       "required": true
+      },
+      {
+       "label": "Uno face",
+       "box": [
+        0.54,
+        0.18,
+        0.74,
+        0.52
+       ],
+       "required": false
+      }
+     ],
+     "shotKind": "character",
+     "refs": [
+      "/workspace/progressive-slop-refs/uno-locked.jpg",
+      "/workspace/progressive-slop-refs/aura-locked.jpg"
+     ],
+     "sfx": [
+      {
+       "text": "TING!",
+       "at": 181.348,
+       "pos": [
+        0.28,
+        0.3
+       ],
+       "rot": 7,
+       "size": 0.15,
+       "color": [
+        255,
+        200,
+        60
+       ],
+       "impact": false
+      }
+     ]
+    }
+   ],
+   "pageTransition": {
+    "type": "crossfade",
+    "dur": 0.5
+   }
+  },
+  {
+   "id": "p10",
+   "start": 184.4,
+   "end": 198.016,
+   "layout": "tilt-two",
+   "mood": "eerie",
+   "panels": [
+    {
+     "id": "f27",
+     "image": "panels/f27.jpg",
+     "at": 184.831,
+     "moment": "TWIST: an envelope slides under the penthouse door with a black wax seal shaped like a monocle. Aura picks it up and her eyes flare",
+     "cast": "Aura",
+     "focusNote": "envelope seal",
+     "storyTransition": "Slow push",
+     "captions": [
+      {
+       "text": "HEART MADE OF GOLD, IN THE COLD",
+       "anchor": "tl",
+       "lyric": true,
+       "fill": [
+        255,
+        226,
+        150
+       ],
+       "at": 184.831,
+       "until": 188.314
+      }
+     ],
+     "entrance": {
+      "type": "wipe",
+      "dur": 0.3
+     },
+     "slot": "b",
+     "stillMotion": {
+      "type": "push_in",
+      "amount": 0.05,
+      "dur": 6.0
+     },
+     "clipPending": "clips/f27.mp4",
+     "focusRegions": [
+      {
+       "label": "envelope seal",
+       "box": [
+        0.1,
+        0.25,
+        0.45,
+        0.7
+       ],
+       "required": true
+      },
+      {
+       "label": "Aura eyes",
+       "box": [
+        0.42,
+        0.15,
+        0.66,
+        0.42
+       ],
+       "required": true
+      }
+     ],
+     "shotKind": "character",
+     "refs": [
+      "/workspace/progressive-slop-refs/uno-locked.jpg",
+      "/workspace/progressive-slop-refs/aura-locked.jpg"
+     ],
+     "sfx": [
+      {
+       "text": "KSSHH...",
+       "at": 186.224,
+       "pos": [
+        0.72,
+        0.7
+       ],
+       "rot": 6,
+       "size": 0.15,
+       "color": [
+        230,
+        40,
+        60
+       ],
+       "impact": false
+      }
+     ]
+    },
+    {
+     "id": "f28",
+     "image": "panels/f28.jpg",
+     "at": 189.73,
+     "moment": "CLIFFHANGER: far below in the rain, Don Ferro stands outside a jail-bot truck with the cell door open and empty. He tips his hat up at the penthouse and his monocle glints. \"TO BE CONTINUED…\"",
+     "cast": "Don Ferro",
+     "focusNote": "monocle glint",
+     "storyTransition": "Iris close to black",
+     "captions": [
+      {
+       "text": "CONCRETE COLD, BUT THE SPIRIT BOLD",
+       "anchor": "tl",
+       "lyric": true,
+       "fill": [
+        240,
+        232,
+        214
+       ],
+       "at": 189.73,
+       "until": 194.653
+      }
+     ],
+     "entrance": {
+      "type": "iris",
+      "dur": 0.3
+     },
+     "slot": "a",
+     "stillMotion": {
+      "type": "push_in",
+      "amount": 0.05,
+      "dur": 6.0
+     },
+     "clipPending": "clips/f28.mp4",
+     "focusRegions": [
+      {
+       "label": "monocle glint",
+       "box": [
+        0.22,
+        0.05,
+        0.38,
+        0.35
+       ],
+       "required": true
+      },
+      {
+       "label": "empty jail truck",
+       "box": [
+        0.56,
+        0.3,
+        1.0,
+        0.9
+       ],
+       "required": false
+      }
+     ],
+     "shotKind": "character",
+     "refs": [
+      "/workspace/progressive-slop-refs/uno-locked.jpg",
+      "/workspace/progressive-slop-refs/aura-locked.jpg"
+     ]
+    }
+   ],
+   "pageTransition": {
+    "type": "fade_black",
+    "dur": 0.5
+   }
+  }
+ ]
+}
