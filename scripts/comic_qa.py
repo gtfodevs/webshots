@@ -360,6 +360,13 @@ def check_page(sub, draft):
                 fail(f"{pid} {orient}: {uid} lettering has {n_out} px outside its panel clip path near ({int(xs.mean())},{int(ys.mean())})")
             if n_safe:
                 fail(f"{pid} {orient}: {uid} lettering has {n_safe} px outside the safe area")
+        # impact bursts (breakout splashes) must be solid: nothing underneath may show through the interior
+        for u in all_units(sub):
+            geo = C.layout_geo(orient, sub.get('layout', 'three'), sub.get('splashStyle', 'full')).get(u.get('slot', 'splash'))
+            if geo and geo.get('burst'):
+                n_see, n_in = C.burst_see_through(geo, W, H)
+                if n_see:
+                    fail(f"{pid} {orient}: {u['id']} impact burst is see-through ({n_see}/{n_in} interior px show what is underneath) - fill it solid")
         # glyph overhang: every SFX tile must hold all its ink vs an oversized-canvas reference
         # (a tight pre-rotation canvas sliced the top-right of slanted Bangers glyphs)
         for it in items:

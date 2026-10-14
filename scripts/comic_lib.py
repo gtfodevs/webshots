@@ -606,6 +606,55 @@ def text_items(spec, orient):
     return items
 
 
+_BURST_CACHE = {}
+def burst_fill(geo):
+    """Opaque RGBA tile (geo bbox size) for a breakout impact burst: radial white -> yellow -> orange gradient
+    with halftone dots, alpha 255 everywhere inside the star outline (Jason: a hollow star cutout let the video
+    show through and looked strange)."""
+    k = tuple(map(tuple, geo['burst'])) + tuple(geo['bbox'])
+    if k in _BURST_CACHE:
+        return _BURST_CACHE[k]
+    x0, y0, w, h = geo['bbox']
+    pts = geo['burst']
+    cx = sum(x for x, _ in pts) / len(pts) - x0; cy = sum(y for _, y in pts) / len(pts) - y0
+    R = max(math.hypot(x - x0 - cx, y - y0 - cy) for x, y in pts) or 1
+    yy, xx = np.mgrid[0:h, 0:w].astype(np.float32)
+    r = np.clip(np.hypot(xx - cx, yy - cy) / R, 0, 1)[..., None]
+    c0, c1, c2 = np.array([255, 255, 240.]), np.array([255, 226, 40.]), np.array([255, 140, 20.])
+    rgb = np.where(r < 0.5, c0 + (c1 - c0) * (r / 0.5), c1 + (c2 - c1) * ((r - 0.5) / 0.5))
+    # halftone: dots grow toward the rim
+    per = 9.0
+    gx, gy = (xx % per) - per / 2, (yy % per) - per / 2
+    dot = (np.hypot(gx, gy) < (r[..., 0] * per * 0.42))[..., None]
+    rgb = np.where(dot, rgb * 0.82, rgb)
+    m = Image.new('L', (w, h), 0)
+    ImageDraw.Draw(m).polygon([(x - x0, y - y0) for x, y in pts], fill=255)
+    tile = Image.fromarray(np.dstack([np.clip(rgb, 0, 255).astype(np.uint8), np.asarray(m)]), 'RGBA')
+    _BURST_CACHE[k] = tile
+    return tile
+
+
+def paint_burst(img, geo, w=7):
+    """Solid burst fill + ink outline (used by Scene._paint and by the QA opacity check)."""
+    tile = burst_fill(geo)
+    img.paste(tile, tuple(geo['bbox'][:2]), tile)
+    d = ImageDraw.Draw(img)
+    pts = [(round(x), round(y)) for x, y in geo['burst']] + [(round(geo['burst'][0][0]), round(geo['burst'][0][1]))]
+    d.line(pts, fill=INK, width=w, joint='curve')
+
+
+def burst_see_through(geo, W, H, inset=6):
+    """QA: count burst-interior pixels that change with what is underneath (should be 0 = fully opaque)."""
+    m = Image.new('L', (W, H), 0)
+    ImageDraw.Draw(m).polygon([tuple(p) for p in geo['burst']], fill=255)
+    from PIL import ImageFilter
+    inner = np.asarray(m.filter(ImageFilter.MinFilter(2 * inset + 1))) > 0
+    a = Image.new('RGB', (W, H), (0, 0, 0)); b = Image.new('RGB', (W, H), (255, 0, 255))
+    paint_burst(a, geo); paint_burst(b, geo)
+    diff = np.abs(np.asarray(a, np.int16) - np.asarray(b, np.int16)).sum(2) > 0
+    return int((diff & inner).sum()), int(inner.sum())
+
+
 class Scene:
     """Builds frames for one orientation."""
     def __init__(self, spec, orient, fps=None):
@@ -629,8 +678,6 @@ class Scene:
         img = Image.open(resolve(self.spec, u['image'])).convert('RGB')
         x, y, w, h = u['geo']['bbox']
         u['mask'] = slot_mask(u['geo'])
-        if u['geo']['burst']:
-            g = dict(u['geo'], polys=[]); u['burstMask'] = slot_mask(g)
         within = None
         if u.get('clip'):
             c = u['clip']
@@ -698,9 +745,8 @@ class Scene:
         img.paste(art, (x0, y0), u['mask'])
         for p in geo['polys']:
             self._outline(img, p, w, keyline=geo['keyline'])
-        if geo['burst']:     # the action breaks out over the border
-            img.paste(art, (x0, y0), u['burstMask'])
-            self._outline(img, geo['burst'], w)
+        if geo['burst']:     # impact burst breaking out over the border: SOLID fill, never a see-through cutout
+            paint_burst(img, geo, w)
 
     def _letter(self, img, u, t):
         slot = u['slotrect']

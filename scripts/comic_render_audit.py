@@ -1,11 +1,17 @@
-# Render audit: crop every caption/SFX from the actual rendered mp4s (mapped through zoom + shake) into contact sheets for a visual sliced-lettering check. Paths are for the Neon Dojo v4 renders; edit vids/OUT for other projects.
-import sys,subprocess,numpy as np
-sys.path.insert(0,'scripts')
+# Render audit: crop every caption/SFX from the actual rendered mp4s (mapped through zoom + shake) into contact sheets for a visual
+# sliced-lettering check.  usage: python3 scripts/comic_render_audit.py SPEC LANDSCAPE.mp4 SHORT.mp4 --out DIR
+import os,sys,subprocess,numpy as np
+sys.path.insert(0,os.path.dirname(os.path.abspath(__file__)))
 import comic_lib as C
 from PIL import Image,ImageDraw
-spec=C.load_spec('shots/neon-dojo-comic/neon-dojo-comic-v3.comic.json')
-OUT='/workspace/neon-dojo-comic/out/'
-vids={'landscape':(OUT+'neon-dojo-comic-1080p-v5.mp4',0.0,999),'vertical':(OUT+'neon-dojo-comic-short-v5.mp4',112.25,155.81)}
+import argparse
+ap=argparse.ArgumentParser(description='crop every caption/SFX from the rendered mp4s into contact sheets; exits 1 if any item is sliced by the frame edge')
+ap.add_argument('spec'); ap.add_argument('landscape'); ap.add_argument('vertical'); ap.add_argument('--out', required=True)
+A=ap.parse_args()
+spec=C.load_spec(A.spec)
+OUT=A.out.rstrip('/')+'/'
+sh=spec.get('short') or {'start':spec['song']['start'],'end':spec['song']['end']}
+vids={'landscape':(A.landscape,spec['song']['start'],999),'vertical':(A.vertical,sh['start'],sh['end'])}
 def frame(p,t,W,H):
     b=subprocess.run(['ffmpeg','-v','error','-ss',f'{t:.3f}','-i',p,'-frames:v','1','-f','rawvideo','-pix_fmt','rgb24','-'],capture_output=True).stdout
     return Image.frombytes('RGB',(W,H),b)
@@ -31,6 +37,8 @@ for sub in C.subspecs(spec):
         c=f.crop((max(0,int(r[0]-m)),max(0,int(r[1]-m)),min(W,int(r[0]+r[2]+m)),min(H,int(r[1]+r[3]+m))))
         crops[orient].append((f"{sub.get('page')} {it['who']} {g:.2f}s",c))
 print('edge',edge)
+if edge: print('RENDER AUDIT: FAIL'); 
+
 for orient,L in crops.items():
   print(orient,len(L))
   for k in range(0,len(L),12):
@@ -43,4 +51,7 @@ for orient,L in crops.items():
       for j,(lbl,c) in enumerate(rows[i:i+2]):
         sheet.paste(c,(j*(tw+10),y+20));d.text((j*(tw+10)+2,y+4),lbl[:70],fill='yellow');hh=max(hh,c.height)
       y+=hh+22
-    sheet.save(f'{OUT}v5-audit/{orient}-{k//12:02d}.png')
+    os.makedirs(OUT,exist_ok=True); sheet.save(f'{OUT}{orient}-{k//12:02d}.png')
+
+print('RENDER AUDIT:', 'FAIL' if edge else 'PASS', sum(len(v) for v in crops.values()), 'crops ->', OUT)
+sys.exit(1 if edge else 0)
