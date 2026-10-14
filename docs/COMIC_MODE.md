@@ -369,3 +369,24 @@ The story comes from the order of the panels, not from any single clip.
 - Each sub-panel is its own simple panel image (GenerateImage from the locked refs, then the panel check) with a
   short clip prompt that follows *Clip prompt design* (VIDEO_PIPELINE.md). Close-ups of hands/feet/props carry
   no face; faces stay medium-sized.
+
+### Lyric captions on the floating overlay, deco styling (rule 2026-10-14)
+
+- Comic videos letter lyrics on the shared floating overlay (docs/VIDEO_PIPELINE.md, "Floating lyric overlay").
+  Spec: `"lyricOverlay": {"enabled": true, "style": "deco_gold"}`. When it is enabled, `make_spec.py`
+  (`LYRIC_OVERLAY = True`) attaches no lyric captions to panels. The older rules in this file are legacy and apply
+  only when the overlay is off: one caption per panel, `until` hand-offs, tl/bl alternation, carrying a caption
+  across a turn, and turning the page a beat later for a caption.
+- **Style `deco_gold`.** A ribbon-shaped caption tile:
+  - navy fill (16, 18, 40) at 93% opacity;
+  - a gold outer rule (226, 180, 72) and a dark-gold inner rule;
+  - chevron end tabs, like an Art Deco plaque;
+  - cream Bangers lettering with a drop shadow.
+  The tile sits in the lower band by default. When a face moves into it, it glides to the upper band or across the
+  gutters, and in 16:9 it may span several panels.
+- It fades in over 0.16 s with a slight slide-up and fades out the same way.
+- SFX stay inside their panels, placed by `place_lettering`. They ride the live cell on living-panel pages.
+- **Living panels on a comic page:** set `"layout": "reflow-two" | "reflow-three" | "reflow-four"` (or `reflow-grid-*`)
+  per page and keep the slots a, b, c, d in reading order. Each newcomer lands full frame on its beat and settles into
+  the reflowed grid one beat later. Clips keep playing through the move. `check_reflow` gates faces-in-cell through
+  every state and move.

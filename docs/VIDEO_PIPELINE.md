@@ -299,3 +299,78 @@ Move selection (per cut, from its faces, its cell, and the transitions on either
 - **Start from a panel that already shows the end pose**: the clip only adds motion and atmosphere.
 - **Too hard? Simplify the panel** and redraw it to what the generator can do, or split the beat into a
   comic sequence strip of simple sub-panels (COMIC_MODE.md, *Sequence strips*).
+
+## Floating lyric overlay (shared: comic, music videos, explainers; rule 2026-10-14)
+
+Lyric captions are **not** part of any page or panel. They sit on one floating layer
+(`scripts/lyric_overlay.py`) drawn above the pages, the page transitions and the camera moves, and below the title intro.
+- **Timing comes from the lyrics only.** A cue runs from the first sung word of a line until 0.30 s after it ends,
+  or until just before the next line starts (`cues_from_lines`, from `timeline.json` `lyrics`). A line keeps
+  playing across panel changes and page turns.
+- **Pages never wait on a caption.** Page and panel timing is purely visual. There are no `until` holds, no carrying
+  captions onto the next page and no anchor alternation. Builders attach no lyric captions to panels
+  (`spec.lyricOverlay.enabled`). SFX are not lyrics: they stay attached to their panels and follow them, including
+  living-panel moves.
+- **Faces are avoided at every video frame.** `faces_fn(song_t)` returns the frame-pixel box of every tracked face
+  and focus region on screen. It runs each panel's per-cut camera window through the cell's live geometry,
+  including zooms, splashes and both pages during a turn. In comic mode this is `comic_lib.song_faces_fn`. Placement uses
+  dynamic programming over a fine grid in the safe band, sampled on the 1/30 s video-frame grid. The cost combines:
+  - face overlap with a 14 px clearance;
+  - a preference for the lower band first, then the upper band, then across the gutters;
+  - the distance travelled.
+  The box glides at no more than 1400 px/s. If no gliding path stays clear, it does a fade-hop instead: a 0.1 s fade
+  out and back in somewhere else. If no clear spot exists anywhere for a frame, the caption is hidden for that frame
+  rather than drawn over a face.
+- **Safe bands.** In 16:9 the box stays within 4% of the left and right edges and 5% of the top and bottom. In the
+  Short it stays clear of platform UI: 10% top, 22% bottom, 12% right, 4% left.
+- **QA (comic: `check_lyric_overlay`).** It replans the overlay exactly as the renderer does, for the full 16:9 video
+  and for the Short window. It fails on:
+  - any visible caption overlapping a tracked face at any frame (tolerance 0);
+  - any caption outside its band;
+  - two captions overlapping each other;
+  - any lyric caption still attached to a panel, or one with an `until`;
+  - captions hidden for more than 2% of sung frames.
+  The old per-panel lyric-timing and carry-across-turn checks are off whenever the overlay is on.
+- Usage: `ov = Overlay(orient, (W, H), faces_fn, font_path, style); ov.plan(cues); frame = ov.draw(frame, song_t)`.
+  QA uses `ov.problems(t0, t1, fps)` on the same geometry.
+
+## Living panels: reflow as panels arrive (shared layout feature, rule 2026-10-14)
+
+When a new panel enters, the panels already on the page move to new positions and sizes. Their clips keep playing.
+Implemented in `scripts/reflow.py`, with layouts `reflow-two|three|four` and `reflow-grid-two|three|four`.
+- **Arrival.** The newcomer arrives full frame, on top, for one beat (`reflowArrive`). Then every panel eases
+  (smoothstep) into the next layout state over one beat (`reflowMove`). That move is clamped to 0.5–0.9 s, so it
+  stays beat-synced.
+- **State families.** Moves are collision-free by construction: panels only shrink along one axis or share a moving
+  edge.
+  - `wide`, the 16:9 default for 16:9 footage: full, then top/bottom rows, then the top row over two halves, then
+    2x2.
+  - `rows`, the Short: 1 to 4 stacked rows. Three rows give roughly 16:9 cells.
+  - `grid`, 16:9 for taller art: left|right, then two over one wide, then 2x2.
+- **Camera follows the cell.** `comic_lib.cell_window` re-aspects each panel's per-cut camera window to the
+  cell's current shape every frame. It keeps the centre and area, grows until every tracked face fits with a 6%
+  margin, and is clamped to the footage. Gutters, ink borders and the page background are redrawn every frame from
+  the live geometry.
+- **QA (`check_reflow`).** It fails on any collision between settled or settling cells, and on any required face more
+  than 5% outside its cell. Faces are sampled at 15 fps through every layout state and every move, in 16:9 and the
+  Short. Outside the Short, vertical misses only warn. The static focus check skips reflow pages.
+- **Wide shots in a tall frame.** When a panel's faces cannot share one window of the arrival box's shape (a wide
+  two-shot arriving in the 9:16 Short), `comic_lib.arrival_box` makes the arrival a full-WIDTH band at the footage's
+  own aspect, centred, instead of the whole box. When a settled cell still cannot hold every face, `cell_window`
+  keeps the faces the camera plan promises (lead face) and `check_reflow` gates those, reporting the count.
+- Reflow is opt-in per page (`"layout": "reflow-three"`, optional page keys `"reflowArrive"` / `"reflowMove"` in
+  beats). The automatic layout picker never chooses it. Choose the family for the footage, and let QA decide.
+
+## Full frame <-> panel (shared layout feature, rule 2026-10-14)
+
+Any panel on any layout (static or living) can take over the whole screen and live in its cell:
+`panel.fullFrame` (`comic_lib.fullframe_k`).
+- `{"mode": "open", "hold": 1, "dur": 1}`: the panel lands FULL SCREEN (quick 0.12 s fade-in), holds `hold` beats,
+  then shrinks into its cell over `dur` beats (clamped 0.35-1.2 s, smoothstep).
+- `{"mode": "grow", "at": <song s>, "dur": 1, "back": 2}`: the panel grows from its cell to full screen at `at`
+  (default: land + `hold` beats); with `back` it shrinks back into its cell after `back` beats, else stays full.
+- While it is (partly) full screen it draws on top of every other panel with no keyline / burst, the camera window is
+  re-aspected per frame (`cell_window`), its SFX wait until it is back in its cell, and the lyric overlay steers
+  round its faces (`scene_faces` uses the same geometry). Wide shots in the Short use the full-width band
+  (`arrival_box`). QA: `check_reflow` gates its faces through the whole move.
+- Test render: `python3 scripts/living_test.py` (mid-lyric page turn + both features, 16:9 + Short, contact sheets).

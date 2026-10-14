@@ -415,7 +415,7 @@ def check_page(sub, draft):
                     fail(f"{pid} {orient}: {it['who']} is sliced by the frame edge at {t + sub['song']['start']:.2f}s "
                          f"({'zoom' if vb != (0, 0, W, H) else ''}{' shake' if shb else ''}) -> {[int(v) for v in r]}")
                     break
-        if orient == 'landscape':
+        if orient == 'landscape' and not C.overlay_on(sub):   # overlay specs: check_lyric_overlay instead
             check_lyric_timing(sub, items, pid)
 
     if not have_media:
@@ -591,6 +591,8 @@ def check_focus(spec, subs):
     for sub in subs:
         for orient in ('landscape', 'vertical'):
             where = '16:9' if orient == 'landscape' else ('Short' if short and sub['song']['end'] > short['start'] and sub['song']['start'] < short['end'] else 'vertical (not in Short)')
+            if C.is_reflow(sub):
+                continue        # living panels: check_reflow tests every state and move instead of one static layout
             probs = C.page_focus_problems(spec, sub, orient)
             if orient == 'landscape':
                 for u in sub['panels']:
@@ -651,7 +653,7 @@ def check_transitions(spec, subs, draft, deep=True):
             fail(f"{tr['into']}: transition {tr['dur']}s outside {C.TRANS_MIN}-{C.TRANS_MAX}s")
         b, h = tr['at'], tr['dur'] / 2
         # a line sung across the boundary must be carried onto the incoming page (lettering swaps at the boundary)
-        for l in lines:
+        for l in ([] if C.overlay_on(spec) else lines):   # the floating overlay carries every line by design
             if l['t'] < b - 0.1 and sung_end(l) > b + 0.1:
                 want = norm(l['text'])
                 carried = any(c.get('lyric') and norm(c['text']) == want and c.get('at', u['at']) <= b + 0.05
@@ -701,6 +703,95 @@ def check_transitions(spec, subs, draft, deep=True):
             ok(f"'{tb['text']}' card ({tb['seconds']}s, hard cut to black, before the end card): no ink lost, title-safe")
 
 
+def check_lyric_overlay(spec, subs):
+    """Floating lyric overlay: no caption over a tracked face at ANY video frame, none clipped by the safe band
+    (16:9: 4 % / 5 % margins; Short: clear of platform UI), no two captions overlapping, no lyric caption left inside
+    a panel, and no page whose timing depends on a caption."""
+    if not C.overlay_on(spec):
+        return
+    n0 = len(problems)
+    for sub in subs:
+        for u in all_units(sub):
+            for c in u.get('captions', []):
+                if c.get('lyric'):
+                    fail(f"{sub['page']}/{u['id']}: lyric caption '{c['text'][:30]}' is attached to a panel - lyrics live on the overlay")
+                if 'until' in c and c.get('lyric'):
+                    fail(f"{sub['page']}/{u['id']}: lyric caption has 'until' - page timing must not wait on captions")
+    sh = spec.get('short') or {}
+    for orient, t0, t1 in (('landscape', spec['song']['start'], spec['song']['end']),
+                           ('vertical', sh.get('start', spec['song']['start']), sh.get('end', spec['song']['end']))):
+        ov = C.lyric_overlay(spec, orient, t0, t1)
+        pr = ov.problems(t0, t1, fps=spec.get('fps', 30), face_tol=0.0)
+        bad = {}
+        for t, text, kind, v in pr:
+            bad.setdefault((text, kind), []).append((t, v))
+        for (text, kind), xs in bad.items():
+            fail(f"lyric overlay {orient}: '{text[:34]}' {kind} at {len(xs)} frame(s) {xs[0][0]:.2f}-{xs[-1][0]:.2f}s (max {max(v for _, v in xs):.3f})")
+        hops = sum(len(p.get('hops', [])) for p in ov.paths)
+        blk = sum(len(p.get('blocked', [])) for p in ov.paths)
+        if blk > 0.02 * sum(len(p['ts']) for p in ov.paths):
+            fail(f"lyric overlay {orient}: captions hidden for {blk} frame(s) (no face-free spot) - over 2 % of sung frames")
+        elif blk:
+            warn(f"lyric overlay {orient}: captions hidden for {blk} frame(s) where no face-free spot exists")
+        if not bad:
+            ok(f"lyric overlay {orient}: {len(ov.paths)} lines, clear of every tracked face at every frame, inside the safe band"
+               + (f" ({hops} fade-hop(s))" if hops else ''))
+    return len(problems) == n0
+
+
+def check_reflow(spec, subs):
+    """Living panels: no collisions between settled / settling cells, and every promised face inside its cell at
+    every layout state AND through every move (sampled at 15 fps), 16:9 and Short."""
+    import reflow as RF
+    for sub in subs:
+        ff = any(u.get('fullFrame') for u in sub['panels'])
+        if not C.is_reflow(sub) and not ff:
+            continue
+        order = sorted(sub['panels'], key=lambda p: p['at'])
+        if not C.is_reflow(sub):      # full frame <-> panel on a static layout: gate only the panels that move
+            order = [u for u in order if u.get('fullFrame')]
+        lands = [C.T(sub, p['at']) for p in order]
+        beat = C.beat_period(sub)
+        for orient in ('landscape', 'vertical'):
+            col = RF.collisions(lands, beat, sub.get('reflowArrive', 1.0), sub.get('reflowMove', 1.0),
+                               family=C.LAYOUTS[sub['layout']]['family'][orient]) if C.is_reflow(sub) else []
+            if col:
+                fail(f"{sub['page']} {orient}: living panels collide {col[:3]}")
+            G = C.layout_geo(orient, sub['layout'], sub.get('splashStyle', 'full'))
+            worst = (0, None, None); lead = {}
+            dur = sub['song']['end'] - sub['song']['start']
+            for u in order:
+                size, crop, regions, _, within = C.unit_fit(sub, u, G[u['slot']], sub.get('fps', 30))
+                plan = C.unit_plan(sub, u, G[u['slot']], sub.get('fps', 30), regions, size, within)
+                for t in np.arange(C.T(sub, u['at']), dur, 1 / 15):
+                    geo, _ = C.reflow_geo(sub, orient, u, t, G)
+                    if geo is None:
+                        continue
+                    win = C.cell_window(plan, t, geo, size, within)
+                    fs = plan.faces_at(t)
+                    iw, ih = size
+                    wb = within or (0, 0, iw, ih)
+                    # every required region; when the cell shape cannot hold them all (C.cell_fits_faces), the
+                    # faces the camera plan promises (a wide two-shot in a tall full-frame arrival shows its lead)
+                    keep = range(len(fs))
+                    if fs and not C.cell_fits_faces(list(fs), geo['bbox'][2] / max(geo['bbox'][3], 1), wb):
+                        keep = plan.expected(t) or [0]
+                        lead[orient] = lead.get(orient, 0) + 1
+                    for k in keep:
+                        f = fs[k]; a = max((f[2] - f[0]) * (f[3] - f[1]), 1)
+                        ix = max(0, min(f[2], win[0] + win[2]) - max(f[0], win[0])); iy = max(0, min(f[3], win[1] + win[3]) - max(f[1], win[1]))
+                        miss = 1 - ix * iy / a
+                        if miss > worst[0]:
+                            worst = (miss, u['id'], t + sub['song']['start'])
+            short = spec.get('short') or {}
+            in_short = sub['song']['end'] > short.get('start', 0) and sub['song']['start'] < short.get('end', 0)
+            if worst[0] > 0.05:
+                (fail if orient == 'landscape' or in_short else warn)(f"{sub['page']} {orient}: living panels - {worst[1]} face {worst[0]:.0%} out of its cell at {worst[2]:.2f}s")
+            else:
+                ok(f"{sub['page']} {orient}: living panels - no collisions, faces in frame through every state and move (worst {worst[0]:.0%})"
+                   + (f"; {lead[orient]} sample(s) lead-face only (cell shape cannot hold every face)" if lead.get(orient) else ''))
+
+
 def check_no_still_cards(spec):
     """Nothing on screen is a still (Jason, 2026-10-14): the end card / TO BE CONTINUED must sit over the live
     last page (the renderer default), never over a frozen frame or a still image."""
@@ -744,6 +835,8 @@ def main(path):
     check_focus(spec, subs)
     check_refs(spec, subs)
     check_transitions(spec, subs, draft, deep='--deep' in sys.argv)
+    check_lyric_overlay(spec, subs)
+    check_reflow(spec, subs)
     out = os.path.join(C.ROOT, 'out', os.path.basename(os.path.dirname(spec['_path'])), 'qa')
     os.makedirs(out, exist_ok=True)
     with open(os.path.join(out, 'comic-qa.json'), 'w') as f:

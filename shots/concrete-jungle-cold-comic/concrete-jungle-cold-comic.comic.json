@@ -22,6 +22,10 @@
   "end": 198.016,
   "loudness": -14
  },
+ "lyricOverlay": {
+  "enabled": true,
+  "style": "deco_gold"
+ },
  "short": {
   "start": 128.3,
   "end": 177.95,
@@ -256,20 +260,7 @@
      "cast": "Uno, Aura",
      "focusNote": "both faces, red eyes",
      "storyTransition": "Slide in from left on the beat",
-     "captions": [
-      {
-       "text": "CONCRETE JUNGLE, COLD, STORIES UNTOLD",
-       "anchor": "bl",
-       "lyric": true,
-       "fill": [
-        255,
-        226,
-        150
-       ],
-       "at": 9.427,
-       "until": 15.116
-      }
-     ],
+     "captions": [],
      "entrance": {
       "type": "slide_left",
       "dur": 0.3
@@ -339,55 +330,7 @@
      "cast": "Aura, Don Ferro",
      "focusNote": "Aura's reflection",
      "storyTransition": "Iris wipe",
-     "captions": [
-      {
-       "text": "DIAMONDS IN THE ROUGH, SOULS BOUGHT AND SOLD",
-       "anchor": "bl",
-       "lyric": true,
-       "fill": [
-        240,
-        232,
-        214
-       ],
-       "at": 15.836,
-       "until": 21.502
-      },
-      {
-       "text": "CONCRETE JUNGLE, COLD, WATCHIN' IT UNFOLD",
-       "anchor": "bl",
-       "lyric": true,
-       "fill": [
-        255,
-        190,
-        190
-       ],
-       "at": 21.502,
-       "until": 26.448
-      },
-      {
-       "text": "SURVIVAL OF THE FITTEST,",
-       "anchor": "bl",
-       "lyric": true,
-       "fill": [
-        214,
-        200,
-        255
-       ],
-       "at": 26.448,
-       "until": 30.0
-      },
-      {
-       "text": "HEART MADE OF GOLD",
-       "anchor": "bl",
-       "lyric": true,
-       "fill": [
-        255,
-        226,
-        150
-       ],
-       "at": 30.0
-      }
-     ],
+     "captions": [],
      "entrance": {
       "type": "iris",
       "dur": 0.3
@@ -462,19 +405,7 @@
     "cast": "Uno",
     "focusNote": "chain + grill",
     "storyTransition": "Punch-in zoom",
-    "captions": [
-     {
-      "text": "HEART MADE OF GOLD",
-      "anchor": "bl",
-      "lyric": true,
-      "fill": [
-       255,
-       226,
-       150
-      ],
-      "at": 30.72
-     }
-    ],
+    "captions": [],
     "clip": {
      "src": "clips/f04.mp4",
      "in": 0.0,
@@ -548,32 +479,7 @@
      "cast": "Uno, Aura",
      "focusNote": "Uno lips / slot eyes",
      "storyTransition": "Page turn (word gap 31.55)",
-     "captions": [
-      {
-       "text": "PEEP THE SCRIPT, AIN'T NO ACTOR",
-       "anchor": "bl",
-       "lyric": true,
-       "fill": [
-        240,
-        232,
-        214
-       ],
-       "at": 34.226,
-       "until": 36.362
-      },
-      {
-       "text": "WORDSMITH TRUTH, NO CAP NO FACTOR",
-       "anchor": "bl",
-       "lyric": true,
-       "fill": [
-        255,
-        190,
-        190
-       ],
-       "at": 36.362,
-       "until": 39.195
-      }
-     ],
+     "captions": [],
      "entrance": {
       "type": "slide_down",
       "dur": 0.3
@@ -654,20 +560,7 @@
      "cast": "Aura, Don Ferro",
      "focusNote": "Aura face, Ferro monocle",
      "storyTransition": "Smoke dissolve",
-     "captions": [
-      {
-       "text": "CITY LIGHTS FLICKER, SOULS GET SICKER",
-       "anchor": "bl",
-       "lyric": true,
-       "fill": [
-        214,
-        200,
-        255
-       ],
-       "at": 38.499,
-       "until": 42.028
-      }
-     ],
+     "captions": [],
      "entrance": {
       "type": "fade",
       "dur": 0.3
@@ -727,19 +620,7 @@
      "cast": "Uno, Don Ferro",
      "focusNote": "coin burst",
      "storyTransition": "Whip pan",
-     "captions": [
-      {
-       "text": "HUSTLE EVERY MINUTE, MAKE IT QUICKER",
-       "anchor": "bl",
-       "lyric": true,
-       "fill": [
-        255,
-        226,
-        150
-       ],
-       "at": 42.028
-      }
-     ],
+     "captions": [],
      "entrance": {
       "type": "whip",
       "dur": 0.3
@@ -840,31 +721,7 @@
     "cast": "Uno, Ferro, Slick Nickel",
     "focusNote": "Ferro grin",
     "storyTransition": "Page turn",
-    "captions": [
-     {
-      "text": "HUSTLE EVERY MINUTE, MAKE IT QUICKER",
-      "anchor": "bl",
-      "lyric": true,
-      "fill": [
-       255,
-       226,
-       150
-      ],
-      "at": 44.141
-     },
-     {
-      "text": "CONCRETE JUNGLE, COLD, STORIES UNTOLD",
-      "anchor": "tr",
-      "lyric": true,
-      "fill": [
-       240,
-       232,
-       214
-      ],
-      "at": 44.141,
-      "until": 49.087
-     }
-    ],
+    "captions": [],
     "clip": {
      "src": "clips/f08.mp4",
      "in": 0.0,
@@ -950,32 +807,7 @@
      "cast": "Uno, Aura",
      "focusNote": "crate swing",
      "storyTransition": "Slide up",
-     "captions": [
-      {
-       "text": "DIAMONDS IN THE ROUGH, SOULS BOUGHT AND SOLD",
-       "anchor": "tl",
-       "lyric": true,
-       "fill": [
-        255,
-        190,
-        190
-       ],
-       "at": 49.83,
-       "until": 55.472
-      },
-      {
-       "text": "CONCRETE JUNGLE, COLD, WATCHIN' IT UNFOLD",
-       "anchor": "bl",
-       "lyric": true,
-       "fill": [
-        214,
-        200,
-        255
-       ],
-       "at": 55.472,
-       "until": 61.138
-      }
-     ],
+     "captions": [],
      "entrance": {
       "type": "slide_up",
       "dur": 0.3
@@ -1055,19 +887,7 @@
      "cast": "vehicle",
      "focusNote": "car grille",
      "storyTransition": "Speed-line wipe",
-     "captions": [
-      {
-       "text": "SURVIVAL OF THE FITTEST, HEART MADE OF GOLD",
-       "anchor": "tl",
-       "lyric": true,
-       "fill": [
-        255,
-        226,
-        150
-       ],
-       "at": 61.138
-      }
-     ],
+     "captions": [],
      "entrance": {
       "type": "whip",
       "dur": 0.3
@@ -1133,32 +953,7 @@
      "cast": "Uno, Aura",
      "focusNote": "blueprint + grin",
      "storyTransition": "Page turn",
-     "captions": [
-      {
-       "text": "BLOCK TO THE BOOTH, UNDENIABLE PROOF",
-       "anchor": "bl",
-       "lyric": true,
-       "fill": [
-        240,
-        232,
-        214
-       ],
-       "at": 66.781,
-       "until": 70.31
-      },
-      {
-       "text": "STRUGGLE AND THE YOUTH, PAIN IN THE PROOF",
-       "anchor": "tl",
-       "lyric": true,
-       "fill": [
-        255,
-        190,
-        190
-       ],
-       "at": 69.613,
-       "until": 72.446
-      }
-     ],
+     "captions": [],
      "entrance": {
       "type": "zoom_pop",
       "dur": 0.3
@@ -1238,20 +1033,7 @@
      "cast": "Aura",
      "focusNote": "Aura face in lasers",
      "storyTransition": "Diagonal slash",
-     "captions": [
-      {
-       "text": "LOST IN THE MAZE, CAUGHT IN A DAZE",
-       "anchor": "tl",
-       "lyric": true,
-       "fill": [
-        214,
-        200,
-        255
-       ],
-       "at": 72.446,
-       "until": 75.952
-      }
-     ],
+     "captions": [],
      "entrance": {
       "type": "wipe",
       "dur": 0.3
@@ -1310,20 +1092,7 @@
      "cast": "Uno",
      "focusNote": "dial + ear",
      "storyTransition": "Vault-door iris",
-     "captions": [
-      {
-       "text": "PAPER DREAMS, URBAN HAZE",
-       "anchor": "tr",
-       "lyric": true,
-       "fill": [
-        255,
-        226,
-        150
-       ],
-       "at": 75.952,
-       "until": 78.785
-      }
-     ],
+     "captions": [],
      "entrance": {
       "type": "iris",
       "dur": 0.3
@@ -1393,31 +1162,7 @@
      "cast": "Uno, Aura",
      "focusNote": "both, gold glow",
      "storyTransition": "Zoom splash",
-     "captions": [
-      {
-       "text": "CONCRETE JUNGLE, COLD, WATCHIN' IT UNFOLD",
-       "anchor": "bl",
-       "lyric": true,
-       "fill": [
-        240,
-        232,
-        214
-       ],
-       "at": 78.089,
-       "until": 83.011
-      },
-      {
-       "text": "HEART MADE OF GOLD, IN THE COLD",
-       "anchor": "bl",
-       "lyric": true,
-       "fill": [
-        255,
-        190,
-        190
-       ],
-       "at": 83.011
-      }
-     ],
+     "captions": [],
      "entrance": {
       "type": "slide_right",
       "dur": 0.3
@@ -1499,19 +1244,7 @@
     "cast": "Slick Nickel (Uno, Aura bg)",
     "focusNote": "Nickel smirk",
     "storyTransition": "Hard flash (beat)",
-    "captions": [
-     {
-      "text": "HEART MADE OF GOLD, IN THE COLD",
-      "anchor": "bl",
-      "lyric": true,
-      "fill": [
-       255,
-       190,
-       190
-      ],
-      "at": 83.731
-     }
-    ],
+    "captions": [],
     "clip": {
      "src": "clips/f15.mp4",
      "in": 0.0,
@@ -1585,32 +1318,7 @@
      "cast": "Aura",
      "focusNote": "hair strands in lock",
      "storyTransition": "Page turn",
-     "captions": [
-      {
-       "text": "WISDOM IN THE STREETS, DEEPER THAN THE BEATS",
-       "anchor": "tl",
-       "lyric": true,
-       "fill": [
-        214,
-        200,
-        255
-       ],
-       "at": 89.35,
-       "until": 92.88
-      },
-      {
-       "text": "SCAR IS A MAP, NO DEFEATS",
-       "anchor": "bl",
-       "lyric": true,
-       "fill": [
-        255,
-        226,
-        150
-       ],
-       "at": 92.183,
-       "until": 94.993
-      }
-     ],
+     "captions": [],
      "entrance": {
       "type": "fade",
       "dur": 0.3
@@ -1668,31 +1376,7 @@
      "cast": "Uno",
      "focusNote": "Uno face",
      "storyTransition": "Line-trace wipe",
-     "captions": [
-      {
-       "text": "PEN IS A WEAPON, WORDS CONNECTIN'",
-       "anchor": "bl",
-       "lyric": true,
-       "fill": [
-        240,
-        232,
-        214
-       ],
-       "at": 94.993,
-       "until": 98.499
-      },
-      {
-       "text": "SOUL RESURRECTION, NO DEFLECTION",
-       "anchor": "tr",
-       "lyric": true,
-       "fill": [
-        255,
-        190,
-        190
-       ],
-       "at": 97.802
-      }
-     ],
+     "captions": [],
      "entrance": {
       "type": "wipe",
       "dur": 0.3
@@ -1773,32 +1457,7 @@
      "cast": "Uno, Aura",
      "focusNote": "silhouettes vs searchlight",
      "storyTransition": "Page turn",
-     "captions": [
-      {
-       "text": "CONCRETE JUNGLE, COLD, STORIES UNTOLD",
-       "anchor": "bl",
-       "lyric": true,
-       "fill": [
-        214,
-        200,
-        255
-       ],
-       "at": 100.635,
-       "until": 105.558
-      },
-      {
-       "text": "DIAMONDS IN THE ROUGH, SOULS BOUGHT AND SOLD",
-       "anchor": "bl",
-       "lyric": true,
-       "fill": [
-        255,
-        226,
-        150
-       ],
-       "at": 106.278,
-       "until": 111.851
-      }
-     ],
+     "captions": [],
      "entrance": {
       "type": "zoom_pop",
       "dur": 0.3
@@ -1876,32 +1535,7 @@
      "cast": "vehicle",
      "focusNote": "car mid-leap",
      "storyTransition": "Slow push, rain smear",
-     "captions": [
-      {
-       "text": "CONCRETE JUNGLE, COLD, WATCHIN' IT UNFOLD",
-       "anchor": "tl",
-       "lyric": true,
-       "fill": [
-        240,
-        232,
-        214
-       ],
-       "at": 111.851,
-       "until": 117.516
-      },
-      {
-       "text": "SURVIVAL OF THE FITTEST, HEART MADE OF GOLD",
-       "anchor": "bl",
-       "lyric": true,
-       "fill": [
-        255,
-        190,
-        190
-       ],
-       "at": 117.516,
-       "until": 122.416
-      }
-     ],
+     "captions": [],
      "entrance": {
       "type": "slide_left",
       "dur": 0.3
@@ -1976,32 +1610,7 @@
      "cast": "Don Ferro, Slick Nickel",
      "focusNote": "Ferro's furious face",
      "storyTransition": "Page turn",
-     "captions": [
-      {
-       "text": "THEY DIM THE LIGHT, FLAME BURNS BRIGHT",
-       "anchor": "bl",
-       "lyric": true,
-       "fill": [
-        214,
-        200,
-        255
-       ],
-       "at": 123.135,
-       "until": 125.945
-      },
-      {
-       "text": "DARKEST NIGHT, WE STILL FIGHT",
-       "anchor": "bl",
-       "lyric": true,
-       "fill": [
-        255,
-        226,
-        150
-       ],
-       "at": 125.945,
-       "until": 128.755
-      }
-     ],
+     "captions": [],
      "entrance": {
       "type": "glitch",
       "dur": 0.3
@@ -2071,31 +1680,7 @@
      "cast": "Uno, Aura",
      "focusNote": "both faces",
      "storyTransition": "Shockwave wipe",
-     "captions": [
-      {
-       "text": "NO SURRENDER, BREAK THE FETTER",
-       "anchor": "bl",
-       "lyric": true,
-       "fill": [
-        240,
-        232,
-        214
-       ],
-       "at": 128.035,
-       "until": 131.564
-      },
-      {
-       "text": "SOUL'S TRUE LETTER, WE GET BETTER",
-       "anchor": "tl",
-       "lyric": true,
-       "fill": [
-        255,
-        190,
-        190
-       ],
-       "at": 130.868
-      }
-     ],
+     "captions": [],
      "entrance": {
       "type": "whip",
       "dur": 0.3
@@ -2167,32 +1752,7 @@
      "cast": "Uno, Don Ferro",
      "focusNote": "locked eyes",
      "storyTransition": "Beat-cut",
-     "captions": [
-      {
-       "text": "CONCRETE JUNGLE, COLD, STORIES UNTOLD",
-       "anchor": "bl",
-       "lyric": true,
-       "fill": [
-        214,
-        200,
-        255
-       ],
-       "at": 134.374,
-       "until": 139.993
-      },
-      {
-       "text": "DIAMONDS IN THE ROUGH, SOULS BOUGHT AND SOLD",
-       "anchor": "bl",
-       "lyric": true,
-       "fill": [
-        255,
-        226,
-        150
-       ],
-       "at": 139.993,
-       "until": 145.612
-      }
-     ],
+     "captions": [],
      "entrance": {
       "type": "zoom_pop",
       "dur": 0.3
@@ -2262,20 +1822,7 @@
      "cast": "Aura, Slick Nickel",
      "focusNote": "Aura's smile",
      "storyTransition": "Whip pan",
-     "captions": [
-      {
-       "text": "CONCRETE JUNGLE, COLD, WATCHIN' IT UNFOLD",
-       "anchor": "tl",
-       "lyric": true,
-       "fill": [
-        240,
-        232,
-        214
-       ],
-       "at": 145.612,
-       "until": 151.232
-      }
-     ],
+     "captions": [],
      "entrance": {
       "type": "slide_right",
       "dur": 0.3
@@ -2344,19 +1891,7 @@
      "cast": "fx (newspaper)",
      "focusNote": "headline",
      "storyTransition": "Spinning newspaper",
-     "captions": [
-      {
-       "text": "SURVIVAL OF THE FITTEST, HEART MADE OF GOLD",
-       "anchor": "tl",
-       "lyric": true,
-       "fill": [
-        255,
-        190,
-        190
-       ],
-       "at": 151.232
-      }
-     ],
+     "captions": [],
      "entrance": {
       "type": "iris",
       "dur": 0.3
@@ -2422,56 +1957,7 @@
      "cast": "Uno, Aura",
      "focusNote": "both faces, chain",
      "storyTransition": "Zoom splash, page turn",
-     "captions": [
-      {
-       "text": "CONCRETE JUNGLE, COLD, STORIES UNTOLD",
-       "anchor": "bl",
-       "lyric": true,
-       "fill": [
-        214,
-        200,
-        255
-       ],
-       "at": 156.828,
-       "until": 162.447
-      },
-      {
-       "text": "DIAMONDS IN THE ROUGH, SOULS BOUGHT AND SOLD",
-       "anchor": "bl",
-       "lyric": true,
-       "fill": [
-        255,
-        226,
-        150
-       ],
-       "at": 162.447,
-       "until": 168.02
-      },
-      {
-       "text": "CONCRETE JUNGLE, COLD, WATCHIN' IT UNFOLD",
-       "anchor": "bl",
-       "lyric": true,
-       "fill": [
-        240,
-        232,
-        214
-       ],
-       "at": 168.02,
-       "until": 172.965
-      },
-      {
-       "text": "SURVIVAL OF THE FITTEST, HEART MADE OF GOLD",
-       "anchor": "tl",
-       "lyric": true,
-       "fill": [
-        255,
-        190,
-        190
-       ],
-       "at": 172.246,
-       "until": 178.538
-      }
-     ],
+     "captions": [],
      "entrance": {
       "type": "glitch",
       "dur": 0.3
@@ -2551,20 +2037,7 @@
      "cast": "Uno, Aura",
      "focusNote": "hands + glasses",
      "storyTransition": "Smoke dissolve",
-     "captions": [
-      {
-       "text": "CONCRETE COLD, SPIRIT BOLD",
-       "anchor": "bl",
-       "lyric": true,
-       "fill": [
-        214,
-        200,
-        255
-       ],
-       "at": 179.955,
-       "until": 183.438
-      }
-     ],
+     "captions": [],
      "entrance": {
       "type": "fade",
       "dur": 0.3
@@ -2659,20 +2132,7 @@
      "cast": "Aura",
      "focusNote": "envelope seal",
      "storyTransition": "Slow push",
-     "captions": [
-      {
-       "text": "HEART MADE OF GOLD, IN THE COLD",
-       "anchor": "bl",
-       "lyric": true,
-       "fill": [
-        255,
-        226,
-        150
-       ],
-       "at": 184.831,
-       "until": 188.314
-      }
-     ],
+     "captions": [],
      "entrance": {
       "type": "wipe",
       "dur": 0.3
@@ -2741,20 +2201,7 @@
      "cast": "Don Ferro",
      "focusNote": "monocle glint",
      "storyTransition": "Iris close to black",
-     "captions": [
-      {
-       "text": "CONCRETE COLD, BUT THE SPIRIT BOLD",
-       "anchor": "bl",
-       "lyric": true,
-       "fill": [
-        240,
-        232,
-        214
-       ],
-       "at": 189.73,
-       "until": 194.653
-      }
-     ],
+     "captions": [],
      "entrance": {
       "type": "iris",
       "dur": 0.3

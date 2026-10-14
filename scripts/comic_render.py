@@ -91,6 +91,7 @@ def render(spec, orient, out_path, wav, sheet_path=None, t0=None, t1=None):
     keep = {int(round(k * fps)): v for k, v in keep.items()}
     end_frame = int(round((t_song1 - t_song0) * fps))
     starts = [x['song']['start'] for x in subs]
+    ov = C.lyric_overlay(spec, orient, t_song0, t_song1)   # floating lyric layer: song clock only, above pages + turns
     f = None
     while written < end_frame:
         s = t_song0 + written / fps
@@ -102,6 +103,8 @@ def render(spec, orient, out_path, wav, sheet_path=None, t0=None, t1=None):
             f = C.transition_frame(scA, s - subs[j - 1]['song']['start'], scB, s - subs[j]['song']['start'], tr, s)
         else:
             f = scene(i).frame(max(s - subs[i]['song']['start'], 0.0))
+        if ov:
+            f = ov.draw(f, s)
         if ic:
             f = C.intro_frame(f, orient, ic, written / fps, ts_intro, fps)
             if written == int(round((ts_intro + 0.5) * fps)):

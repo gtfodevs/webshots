@@ -14,6 +14,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.abspath(os.path.join(HERE, '../..'))
 sys.path.insert(0, os.path.join(REPO, 'scripts'))
 ASSETS = '/workspace/crime-comic'
+LYRIC_OVERLAY = True
 SRC_TL = json.load(open(os.path.join(ASSETS, 'timeline.json')))
 B, END = SRC_TL['beats'], round(SRC_TL['duration'], 3)
 def snap(t): return round(min(B, key=lambda b: abs(b - t)), 3)
@@ -270,10 +271,13 @@ def build():
             out['transition'] = {'type': 'zoom', 'panel': frm, 'at': sp_at, 'dur': round(sp_at - B[bisect.bisect_left(B, sp_at - 0.03) - 1], 3)}   # zoom starts on the previous beat
             out['splash'] = su
             out['splashStyle'] = style
-        # lyric captions: on the latest panel landed by the line's first word, or on the splash after its zoom;
+        # lyric captions live on the floating lyric overlay (scripts/lyric_overlay.py, spec.lyricOverlay), timed by
+        # the song alone: nothing is attached to panels and no page waits on a caption. Legacy per-panel lyric
+        # captions (below) only when LYRIC_OVERLAY is off.
+        # lyric captions (legacy): on the latest panel landed by the line's first word, or on the splash after its zoom;
         # a line still being sung when the zoom lands is carried onto the splash
         caps = []
-        for s, e, x in LINES:
+        for s, e, x in ([] if LYRIC_OVERLAY else LINES):
             if not (start - 0.3 <= s < end - 0.2):
                 continue
             c = {'text': up(x), 'anchor': 'tl', 'lyric': True, 'fill': CAPTION_FILLS[n % len(CAPTION_FILLS)]}
@@ -327,6 +331,7 @@ def build():
             'song': {'suno': '007325bb-143d-467d-90bc-cc25083181d6', 'audio': 'audio.mp3',
                      'audioNote': 'relative to assetsDir; not committed', 'timeline': 'shots/concrete-jungle-cold-comic/timeline.json',
                      'start': 0.0, 'end': END, 'loudness': -14},
+            'lyricOverlay': {'enabled': LYRIC_OVERLAY, 'style': 'deco_gold'},   # floating lyric layer (docs/VIDEO_PIPELINE.md)
             'short': SHORT,
             'intro': {'enabled': True, 'title': 'CONCRETE JUNGLE COLD', 'lines': ['CONCRETE', 'JUNGLE COLD'],
                       'subtitle': 'PROGRESSIVE SLOP PRESENTS', 'seconds': round(4 * BEAT, 3),   # 4 beats: build-in + short hold
@@ -384,7 +389,7 @@ def fix_layouts(spec):
     import itertools
     opts = []
     for pg in pages:
-        sc = {name: score(pg, name) for name, L in C.LAYOUTS.items() if L['n'] == len(pg['panels'])}
+        sc = {name: score(pg, name) for name, L in C.LAYOUTS.items() if L['n'] == len(pg['panels']) and not L.get('reflow')}   # living panels: opt-in per page only
         hmin = min(h for h, _ in sc.values())
         opts.append({k: v for k, v in sc.items() if v[0] <= hmin + 1e-6})
     best = None

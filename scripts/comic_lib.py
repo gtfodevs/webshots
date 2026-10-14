@@ -76,6 +76,9 @@ def subspecs(spec):
         sub.update(panels=pg['panels'], transition=pg.get('transition'), splash=pg.get('splash'), page=pg['id'],
                    layout=pg.get('layout', 'three'), splashStyle=pg.get('splashStyle', 'full'),
                    song=dict(spec['song'], start=pg['start'], end=pg['end']))
+        for k in ('reflowArrive', 'reflowMove'):      # living-panel timing (beats), per page
+            if k in pg:
+                sub[k] = pg[k]
         out.append(sub)
     trs = {round(tr['at'], 3): tr['type'] for tr in page_transitions(spec)}
     for sub in out:
@@ -153,6 +156,14 @@ SIZES = {'landscape': (1920, 1080), 'vertical': (1080, 1920)}
 # or 'T' (transpose u<->v, so left/right splits become top/bottom splits).
 GX, GY = 0.013, 0.024   # gutters in normalised units (~24 px)
 
+# ---- living panels (scripts/reflow.py): static slots are the FINAL state; Scene animates the earlier states
+def _reflow(n, land='wide', vert='rows'):
+    import reflow as RF
+    sl = {chr(97 + i): ('rect',) + tuple(r) for i, r in enumerate(RF.states(n, land)[-1])}
+    vs = {chr(97 + i): ('rect',) + tuple(r) for i, r in enumerate(RF.states(n, vert)[-1])}
+    return {'n': n, 'vert': 'own', 'reflow': True, 'family': {'landscape': land, 'vertical': vert}, 'slots': sl, 'vslots': vs}
+
+
 # ---- sequence strips (lead-up / sub-action panels, COMIC_MODE.md "Sequence strips"): a run of small keylined
 # insets along the top that land on consecutive beats (story told by their order), over a big payoff panel.
 def _seq(n):
@@ -218,6 +229,8 @@ LAYOUTS = {
         'b': ('rot', 0.81, 0.27, 0.36, 0.48, -4, {'z': 1, 'keyline': True}),
         'c': ('rot', 0.80, 0.74, 0.37, 0.47, 3, {'z': 2, 'keyline': True})}},
     'seq-four': _seq(4), 'seq-five': _seq(5), 'seq-six': _seq(6),
+    'reflow-two': _reflow(2), 'reflow-three': _reflow(3), 'reflow-four': _reflow(4),
+    'reflow-grid-two': _reflow(2, 'grid'), 'reflow-grid-three': _reflow(3, 'grid'), 'reflow-grid-four': _reflow(4, 'grid'),
 }
 # legacy slot names (single-page specs written before the library)
 ALIASES = {'top-left': 'a', 'top-right': 'b', 'bottom': 'c', 'top': 'a'}
@@ -841,6 +854,7 @@ class Scene:
         u['_imgsize'] = img.size
         u['static'] = comic_finish(upscale(img, crop, (w, h), sharpen=False))
         u['src_img'] = img
+        u['_within'] = within
         u['plan'] = unit_plan(self.spec, u, u['geo'], self.fps, u['focusRegions'], img.size, within)
         if u.get('eyeShift') and not u.get('clip'):
             u['static_alt'] = comic_finish(upscale(eye_shift_image(img, u['eyeShift']), crop, (w, h), sharpen=False))
@@ -854,14 +868,27 @@ class Scene:
             u['size'] = (w, h)
             u['_cache'] = (None, None)
 
-    def art(self, u, t):
+    def live_geo(self, u, t):
+        """(geo, mask) of u at t: the static slot, or the living-panel cell (masks cached per size)."""
+        if not is_reflow(self.spec) and fullframe_k(self.spec, u, t) <= 1e-4:
+            return u['geo'], u['mask']
+        geo, _ = reflow_geo(self.spec, self.orient, u, t)
+        if geo is None:
+            return None, None
+        geo = dict(geo, bbox=[int(round(v)) for v in geo['bbox']])
+        x, y, w, h = geo['bbox']
+        geo['polys'] = [[(x, y), (x + w, y), (x + w, y + h), (x, y + h)]]
+        return geo, Image.new('L', (w, h), 255)
+
+    def art(self, u, t, geo=None):
         """Panel art at scene time t. The per-cut camera move (unit_plan) moves a crop window over the art the whole
         time the panel is on screen: over the still before its clip starts, then over every clip frame (same
         window, so the hand-off never jumps). After the clip ends its tail ping-pongs in slow motion, so a panel
         never freezes."""
         plan = u.get('plan')
-        win = plan.window(t) if plan else u['crop']
-        size = u['geo']['bbox'][2:]
+        geo = geo or u['geo']
+        win = cell_window(plan, t, geo, u['_imgsize'], u.get('_within')) if plan else u['crop']
+        size = tuple(geo['bbox'][2:])
         if not u.get('clip'):
             return comic_finish(upscale(u['src_img'], win, tuple(size), sharpen=False))
         t0 = T(self.spec, clip_start(self.spec, u))
@@ -870,7 +897,7 @@ class Scene:
         if t < t0:
             return comic_finish(upscale(u['src_img'], win, tuple(size), sharpen=False))
         i = min(int(clip_time(u['clip'], t - t0, self.fps) * self.fps), len(u['raw']) - 1)
-        fr = comic_finish(upscale(u['raw'][i], cbox, u['size']))
+        fr = comic_finish(upscale(u['raw'][i], cbox, size))
         xf = 3 / self.fps
         if t - t0 < xf:
             st = comic_finish(upscale(u['src_img'], win, tuple(size), sharpen=False))
@@ -890,8 +917,10 @@ class Scene:
 
     def _paint(self, img, u, t, w=7):
         """Panel art masked to its slot shape, then ink (white keyline for insets laid over other panels)."""
-        geo = u['geo']
-        art = self.art(u, t)
+        geo, mask = self.live_geo(u, t) if u is not self.splash else (u['geo'], u['mask'])
+        if geo is None:
+            return
+        art = self.art(u, t, geo)
         x0, y0 = geo['bbox'][:2]
         if geo['keyline']:   # keyline first so it sits under the art edge and over the panel below
             for p in geo['polys']:
@@ -899,7 +928,7 @@ class Scene:
         fl = self._flash(u, t)
         if fl > 0:   # impact flash: the panel art blows out to white on the hit, then decays
             art = Image.blend(art, Image.new('RGB', art.size, (255, 252, 235)), fl)
-        img.paste(art, (x0, y0), u['mask'])
+        img.paste(art, (x0, y0), mask)
         for p in geo['polys']:
             self._outline(img, p, w, keyline=geo['keyline'])
         if geo['burst']:     # impact burst breaking out over the border: SOLID fill, never a see-through cutout
@@ -907,8 +936,18 @@ class Scene:
 
     def _letter(self, img, u, t):
         slot = u['slotrect']
+        if u is not self.splash and fullframe_k(self.spec, u, t) > 1e-4:
+            return      # SFX come in once the panel sits in its cell (lyrics float on the overlay regardless)
+        if is_reflow(self.spec) and u is not self.splash:
+            geo, _ = self.live_geo(u, t)
+            if geo is None:
+                return
+            # SFX ride the live cell (quantised to 4 px so the lettering cache stays small)
+            bb = tuple(int(4 * round(v / 4)) for v in geo['bbox'])
+            slot = bb; u = dict(u, geo=dict(u['geo'], bbox=bb, polys=[[(bb[0], bb[1]), (bb[0] + bb[2], bb[1]), (bb[0] + bb[2], bb[1] + bb[3]), (bb[0], bb[1] + bb[3])]], inner=bb))
         S = TEXT_SAFE[self.orient]
-        for c in u.get('captions', []):
+        for c in ([] if self.spec.get('lyricOverlay', {}).get('enabled') else u.get('captions', [])) + \
+                 ([c for c in u.get('captions', []) if not c.get('lyric')] if self.spec.get('lyricOverlay', {}).get('enabled') else []):
             if t >= max(T(self.spec, c.get('at', u['at'])), T(self.spec, u['at']) + entrance_of(u)['dur']) and ('until' not in c or t < T(self.spec, c['until'])):
                 draw_caption(img, c, slot, u['geo'], S)
         for s in u.get('sfx', []):
@@ -928,12 +967,29 @@ class Scene:
 
     def page(self, t, letters_only=None, letters=True):
         img = self.background(t)
-        for u in sorted(self.units, key=lambda u: u['geo']['z']):
+        if is_reflow(self.spec):
+            live = [(u, reflow_geo(self.spec, self.orient, u, t)[1]) for u in self.units if t >= T(self.spec, u['at'])]
+            for u, _ in sorted(live, key=lambda x: (x[1], x[0]['at'])):
+                ta = T(self.spec, u['at'])
+                if t - ta < 0.12:      # quick fade-in at full frame, then it settles into the reflowed grid
+                    fr = img.copy(); self._paint(fr, u, t)
+                    img = Image.blend(img, fr, max(0.0, (t - ta) / 0.12))
+                else:
+                    self._paint(img, u, t)
+            for u in (self.units if letters else []):
+                if t >= T(self.spec, u['at']) and (letters_only is None or u['id'] == letters_only):
+                    self._letter(img, u, t)
+            return img
+        zk = lambda u: FULLFRAME_Z if fullframe_k(self.spec, u, t) > 1e-4 else u['geo']['z']
+        for u in sorted(self.units, key=zk):
             ta = T(self.spec, u['at'])
             if t < ta:
                 continue
             en = entrance_of(u)
-            if t - ta < en['dur']:
+            if u.get('fullFrame') and fullframe_k(self.spec, u, t) > 1e-4:
+                fr = img.copy(); self._paint(fr, u, t)
+                img = Image.blend(img, fr, min(1.0, (t - ta) / 0.12)) if t - ta < 0.12 else fr
+            elif t - ta < en['dur']:
                 fr = img.copy(); self._paint(fr, u, t)
                 img = panel_entrance(img, fr, u['geo']['bbox'], en['type'], (t - ta) / en['dur'], seed=int(ta * 10))
             else:
@@ -2092,6 +2148,285 @@ def region_to_frame(box, img_size, crop, geo):
     f = lambda X, Y: (x + (X * iw - cx) / cw * w, y + (Y * ih - cy) / ch * h)
     (a, b), (c, d) = f(box[0], box[1]), f(box[2], box[3])
     return [a, b, c, d]
+
+
+def is_reflow(spec):
+    return bool(LAYOUTS.get(spec.get('layout', ''), {}).get('reflow'))
+
+
+FULLFRAME_Z = 5
+
+
+def fullframe_k(spec, u, t):
+    """Full frame <-> panel (panel.fullFrame): 0 = in its cell, 1 = full screen, eased in between.
+      {"mode": "open", "hold": 1, "dur": 1}  lands FULL SCREEN, holds `hold` beats, shrinks into its cell over `dur` beats
+      {"mode": "grow", "at": 31.2, "dur": 1} grows from its cell to full screen at song time `at` (default: land +
+                                              hold beats) and stays full screen ("back": beats -> shrinks back after).
+    Beats are the song's beat period; dur is clamped to 0.35-1.2 s so the move always reads and never stalls."""
+    ff = u.get('fullFrame')
+    if not ff:
+        return 0.0
+    import reflow as RF
+    b = beat_period(spec)
+    dur = min(1.2, max(0.35, ff.get('dur', 1.0) * b))
+    ta = T(spec, u['at'])
+    if ff.get('mode', 'open') == 'open':
+        s0 = ta + ff.get('hold', 1.0) * b
+        return 1.0 if t < s0 else 1.0 - RF.ease_io((t - s0) / dur)
+    s0 = T(spec, ff['at']) if 'at' in ff else ta + ff.get('hold', 1.0) * b
+    k = RF.ease_io((t - s0) / dur)
+    if 'back' in ff:
+        s1 = s0 + dur + ff['back'] * b
+        k = min(k, 1.0 - RF.ease_io((t - s1) / dur))
+    return k
+
+
+_ARRIVAL = {}
+def arrival_box(spec, orient, u, box):
+    """Where a panel sits when it is 'full frame' inside box (x, y, w, h): the whole box, unless its faces cannot
+    share a window of the box's shape (a wide two-shot in the 9:16 Short): then a full-WIDTH band at the footage's
+    own aspect, centred, so the shot still fills the screen edge to edge and every face stays in."""
+    key = (spec.get('page'), u['id'], orient, tuple(box))
+    if key not in _ARRIVAL:
+        bx, by, bw, bh = box
+        G = layout_geo(orient, spec.get('layout', 'three'), spec.get('splashStyle', 'full'))
+        base = G.get(u.get('slot')) or G['splash']
+        size, _, regions, _, within = unit_fit(spec, u, base, spec.get('fps', 30))
+        plan = unit_plan(spec, u, base, spec.get('fps', 30), regions, size, within)
+        wb = within or (0, 0) + tuple(size)
+        ok_ = all(not fs or cell_fits_faces(list(fs), bw / bh, wb)
+                  for fs in (plan.faces_at(plan.t0 + (plan.t1 - plan.t0) * i / 8) for i in range(9)))
+        if ok_:
+            _ARRIVAL[key] = tuple(box)
+        else:
+            h = min(bh, bw * wb[3] / wb[2])
+            _ARRIVAL[key] = (bx, by + (bh - h) / 2, bw, h)
+    return _ARRIVAL[key]
+
+
+def _fullframe(spec, orient, u, t, geo, z):
+    k = fullframe_k(spec, u, t)
+    if k <= 1e-4:
+        return geo, z
+    W, H = SIZES[orient]
+    x, y, w, h = geo['bbox']
+    fx, fy, fw, fh = arrival_box(spec, orient, u, (0, 0, W, H))
+    r = (x + (fx - x) * k, y + (fy - y) * k, w + (fw - w) * k, h + (fh - h) * k)
+    poly = [(r[0], r[1]), (r[0] + r[2], r[1]), (r[0] + r[2], r[1] + r[3]), (r[0], r[1] + r[3])]
+    return dict(geo, bbox=list(r), polys=[poly], inner=r, keyline=False, burst=None, _ff=k), FULLFRAME_Z
+
+
+def reflow_geo(spec, orient, u, t, G=None):
+    """(geo, z) of unit u at scene time t on a living-panel page (None before it lands); static pages: (G[slot], z).
+    Either can be overridden by the unit's fullFrame move (full screen <-> its cell)."""
+    if G is None:
+        G = layout_geo(orient, spec.get('layout', 'three'), spec.get('splashStyle', 'full'))
+    if not is_reflow(spec):
+        return _fullframe(spec, orient, u, t, G[u['slot']], G[u['slot']]['z'])
+    import reflow as RF
+    order = sorted(spec['panels'], key=lambda p: p['at'])
+    lands = [T(spec, p['at']) for p in order]
+    i = next(k for k, p in enumerate(order) if p['id'] == u['id'])
+    fam = LAYOUTS[spec['layout']]['family'][orient]
+    cx, cy, cw, ch = CONTENT[orient]
+    ax, ay, aw, ah = arrival_box(spec, orient, u, CONTENT[orient])
+    arr = ((ax - cx) / cw, (ay - cy) / ch, aw / cw, ah / ch)
+    r, z = RF.rect_at(i, t, lands, beat_period(spec), spec.get('reflowArrive', 1.0), spec.get('reflowMove', 1.0), family=fam,
+                      arrival=arr)
+    if r is None:
+        return None, 0
+    return _fullframe(spec, orient, u, t, _geo(('rect',) + tuple(r), CONTENT[orient]), z)
+
+
+CELL_SWEEP = 5.0
+
+
+def cell_fits_faces(faces, aspect, within):
+    """Can one window of this aspect, inside the footage, hold every face (6 % margin)?"""
+    bx, by, bw, bh = within
+    ux0, uy0 = min(f[0] for f in faces), min(f[1] for f in faces); ux1, uy1 = max(f[2] for f in faces), max(f[3] for f in faces)
+    w = min(bw, bh * aspect); h = w / aspect
+    return (ux1 - ux0) <= 0.88 * w + 1e-6 and (uy1 - uy0) <= 0.88 * h + 1e-6
+
+
+def cell_window(plan, t, geo, img_size, within):
+    """The plan's window at t, re-shaped to the CURRENT cell aspect (living panels change cell shape mid-move):
+    same centre and area, then shifted so the faces the plan promises stay inside, clamped to the footage."""
+    X, Y, W_, H_ = plan.window(t)
+    cw, ch = geo['bbox'][2], geo['bbox'][3]
+    a = cw / max(ch, 1)
+    if abs(a - W_ / H_) < 1e-3 and all(f[0] >= X - 1 and f[1] >= Y - 1 and f[2] <= X + W_ + 1 and f[3] <= Y + H_ + 1
+                                       for f in plan.faces_at(t)):
+        return (X, Y, W_, H_)
+    iw, ih = img_size
+    bx, by, bw, bh = within or (0, 0, iw, ih)
+    area = W_ * H_
+    w2 = math.sqrt(area * a); h2 = w2 / a
+    if w2 > bw: w2, h2 = bw, bw / a
+    if h2 > bh: h2, w2 = bh, bh * a
+    cx, cy = X + W_ / 2, Y + H_ / 2
+    fs = plan.faces_at(t); ex = list(fs)
+    if ex and not cell_fits_faces(ex, a, (bx, by, bw, bh)):
+        # every face cannot share a window of this cell's shape (e.g. a wide two-shot arriving full frame in the
+        # Short): keep the faces the camera plan promises in frame instead of centring on nobody
+        ex = [fs[i] for i in plan.expected(t)] or ex[:1]
+    if ex:
+        ux0, uy0 = min(f[0] for f in ex), min(f[1] for f in ex); ux1, uy1 = max(f[2] for f in ex), max(f[3] for f in ex)
+        # grow (same aspect) until the faces fit with a 6 % margin, never past the footage
+        need = max((ux1 - ux0) / 0.88 / w2, (uy1 - uy0) / 0.88 / h2, 1.0)
+        need = min(need, bw / w2, bh / h2)
+        w2, h2 = w2 * need, h2 * need
+    # never pin the window to the whole footage (a pinned window cannot move = a static frame): keep 8 % room and
+    # a slow breathing zoom so the camera keeps moving while the cell changes shape (e.g. a full-frame arrival)
+    # the breath runs between kmax (8 % room in the footage) and kmin (10 % tighter, never tighter than the faces need
+    # with a 2 % margin), on a cosine, so it only touches either end for an instant
+    kmax = min(1.0, 0.92 * bw / w2, 0.92 * bh / h2)
+    kmin = max(kmax * 0.90, min(1.0, max((ux1 - ux0) / 0.96 / w2, (uy1 - uy0) / 0.96 / h2)) if ex else 0.0)
+    kmax = max(kmax, kmin)
+    k = kmax - (kmax - kmin) * (0.5 - 0.5 * math.cos(2 * math.pi * t / 3.0))
+    w2, h2 = w2 * k, h2 * k
+    if ex:
+        mx, my = min(0.06 * w2, (w2 - (ux1 - ux0)) / 2), min(0.06 * h2, (h2 - (uy1 - uy0)) / 2)
+        cx = min(max(cx, ux1 - w2 / 2 + mx), ux0 + w2 / 2 - mx) if ux1 - ux0 < w2 else (ux0 + ux1) / 2
+        cy = min(max(cy, uy1 - h2 / 2 + my), uy0 + h2 / 2 - my) if uy1 - uy0 < h2 else (uy0 + uy1) / 2
+    x2 = min(max(cx - w2 / 2, bx), bx + bw - w2); y2 = min(max(cy - h2 / 2, by), by + bh - h2)
+    # never pinned: when faces + footage edges leave the breathing zoom no room (k clamped), drift the window across
+    # whatever slack keeps every face inside (2 % margin) - a slow sweep, period CELL_SWEEP s, so a re-shaped cell
+    # (a full-frame arrival / hold) always moves
+    lo_x, hi_x, lo_y, hi_y = bx, bx + bw - w2, by, by + bh - h2
+    if ex:
+        lo_x, hi_x = max(lo_x, ux1 + 0.01 * w2 - w2), min(hi_x, ux0 - 0.01 * w2)
+        lo_y, hi_y = max(lo_y, uy1 + 0.01 * h2 - h2), min(hi_y, uy0 - 0.01 * h2)
+    ph = 0.5 - 0.5 * math.cos(2 * math.pi * t / CELL_SWEEP)
+    if hi_x - lo_x > 2:
+        x2 = x2 + (lo_x + (hi_x - lo_x) * ph - x2) * 0.6
+    if hi_y - lo_y > 2:
+        y2 = y2 + (lo_y + (hi_y - lo_y) * (1 - ph) - y2) * 0.6
+    x2 = min(max(x2, bx), bx + bw - w2); y2 = min(max(y2, by), by + bh - h2)
+    return (x2, y2, w2, h2)
+
+
+def _zoom_box(spec, orient, t, G):
+    tr = spec.get('transition')
+    W, H = SIZES[orient]
+    if not tr:
+        return None
+    t_land = T(spec, tr['at']); dur = tr.get('dur', 0.4)
+    if t >= t_land or t < t_land - dur:
+        return None
+    tu = next((u for u in spec['panels'] if u['id'] == tr['panel']), None)
+    if tu is None:
+        return None
+    tx, ty, tw, th = G[tu['slot']]['bbox']; a = W / H
+    if tw / th > a:
+        th2 = tw / a; ty -= (th2 - th) / 2; th = th2
+    else:
+        tw2 = th * a; tx -= (tw2 - tw) / 2; tw = tw2
+    tx = min(max(tx, 0), W - tw); ty = min(max(ty, 0), H - th)
+    k = ease_io((t - (t_land - dur)) / dur)
+    return (tx * k, ty * k, W + (tw - W) * k, H + (th - H) * k)
+
+
+_FACE_GEO = {}
+def scene_faces(spec, orient, t):
+    """Frame-px boxes of every visible face / focus region at scene time t (tracked faces through the camera
+    window, the cell's live geometry, splash and zoom). Shared by the lyric overlay (avoid faces) and its QA."""
+    G = layout_geo(orient, spec.get('layout', 'three'), spec.get('splashStyle', 'full'))
+    tr = spec.get('transition')
+    W, H = SIZES[orient]
+    units = []
+    if tr and spec.get('splash') and t >= T(spec, tr['at']):
+        units = [(splash_unit(spec), G['splash'])]
+    else:
+        for u in spec['panels']:
+            if t < T(spec, u['at']):
+                continue
+            geo, _ = reflow_geo(spec, orient, u, t, G)
+            if geo is not None:
+                units.append((u, geo))
+    out = []
+    zb = _zoom_box(spec, orient, t, G)
+    for u, geo in units:
+        key = (spec.get('page'), u['id'], orient)
+        if key not in _FACE_GEO:
+            base = G['splash'] if u.get('id') == (spec.get('splash') or {}).get('id', 'splash') and not any(p['id'] == u['id'] for p in spec['panels']) else G.get(u.get('slot'), G['splash'])
+            size, crop, regions, _, within = unit_fit(spec, u, base, spec.get('fps', 30))
+            plan = unit_plan(spec, u, base, spec.get('fps', 30), regions, size, within)
+            extra = [r for r in regions if r.get('face') and not r.get('required', True)]
+            _FACE_GEO[key] = (size, within, plan, extra)
+        size, within, plan, extra = _FACE_GEO[key]
+        iw, ih = size
+        win = cell_window(plan, t, geo, size, within)
+        bx, by, bw, bh = geo['bbox']
+        boxes = list(plan.faces_at(t)) + [[r['box'][0] * iw, r['box'][1] * ih, r['box'][2] * iw, r['box'][3] * ih] for r in extra]
+        for b in boxes:
+            fx0 = bx + (b[0] - win[0]) / win[2] * bw; fx1 = bx + (b[2] - win[0]) / win[2] * bw
+            fy0 = by + (b[1] - win[1]) / win[3] * bh; fy1 = by + (b[3] - win[1]) / win[3] * bh
+            fx0, fx1 = max(fx0, bx), min(fx1, bx + bw); fy0, fy1 = max(fy0, by), min(fy1, by + bh)
+            if fx1 - fx0 < 4 or fy1 - fy0 < 4:
+                continue
+            if zb:
+                zx, zy, zw, zh = zb
+                fx0, fx1 = (fx0 - zx) * W / zw, (fx1 - zx) * W / zw; fy0, fy1 = (fy0 - zy) * H / zh, (fy1 - zy) * H / zh
+            out.append([fx0, fy0, fx1, fy1])
+    return out
+
+
+def overlay_on(spec):
+    return bool((spec.get('lyricOverlay') or {}).get('enabled'))
+
+
+def song_faces_fn(spec, orient):
+    """faces_fn(song_t) for the lyric overlay: every visible face box of the page(s) on screen (both pages during
+    a page turn, so a caption never lands on the incoming page's faces either)."""
+    subs = subspecs(spec)
+    trs = [tr for tr in page_transitions(spec) if tr['dur'] > 0]
+    def fn(s):
+        out = []
+        on = [x for x in subs if x['song']['start'] - 1e-6 <= s < x['song']['end']]
+        for tr in trs:
+            if abs(s - tr['at']) < tr['dur'] / 2:
+                on += [x for x in subs if abs(x['song']['start'] - tr['at']) < 1e-6 or abs(x['song']['end'] - tr['at']) < 1e-6]
+        seen = set()
+        for x in on:
+            if x['page'] in seen:
+                continue
+            seen.add(x['page'])
+            out += scene_faces(x, orient, max(0.0, s - x['song']['start']))
+        return out
+    return fn
+
+
+def song_sfx_fn(spec, orient):
+    """obstacles_fn(song_t) for the lyric overlay: SFX boxes on screen (soft cost: the caption steers clear of
+    lettering when it can; faces are the hard rule)."""
+    subs = subspecs(spec)
+    items = []
+    for x in subs:
+        try:
+            for it in text_items(x, orient):
+                if it['kind'] == 'sfx':
+                    r = it['rect']; s0 = x['song']['start']
+                    items.append((s0 + it['from'], s0 + it['to'], [r[0], r[1], r[0] + r[2], r[1] + r[3]]))
+        except Exception:
+            continue
+    return lambda s: [b for a, z, b in items if a <= s < z]
+
+
+def lyric_overlay(spec, orient, t0=None, t1=None):
+    """The planned floating lyric overlay for a render window (None when spec.lyricOverlay is off)."""
+    if not overlay_on(spec):
+        return None
+    import lyric_overlay as LO
+    tl = spec['song'].get('timeline')
+    path = tl if os.path.isabs(tl) else os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', tl)
+    lines = json.load(open(path))['lyrics']
+    t0 = spec['song']['start'] if t0 is None else t0
+    t1 = spec['song']['end'] if t1 is None else t1
+    ov = LO.Overlay(orient, SIZES[orient], song_faces_fn(spec, orient), font_path(),
+                    spec['lyricOverlay'].get('style', 'deco_gold'), obstacles_fn=song_sfx_fn(spec, orient))
+    ov.plan(LO.cues_from_lines(lines, t0, t1))
+    return ov
 
 
 def _plan_misses(plan, req, size, geo, n=10):
