@@ -16,6 +16,9 @@ mode doc for the video you are making. Mode docs only add rules; they never rela
 2. **Lock references** for every recurring character and setting (see *Reference-first generation*).
 3. **Generate stills from references**, run the **panel/frame QA prompt** on each, regenerate failures.
 4. **Animate** (GSAP stage, rigged actors, or Grok Imagine clips from references) and run the **drift check** on clips.
+   **Comic videos: every panel must have a QA-passed animated clip, with no still-only panels. This is a hard gate
+   (`comic_qa.py` fails it); see [COMIC_MODE.md, HARD GATE: every panel animated](COMIC_MODE.md#hard-gate-every-panel-animated-jason-2026-10-14).
+   Each video must beat the last one.**
 5. **Lay out** with **focus regions** so faces and key moments survive both 16:9 and the 9:16 Short.
 6. **Assemble** with a **title intro**, **varied transitions**, a **seamless looping themed background** where
    the frame shows one, and an **end card**.

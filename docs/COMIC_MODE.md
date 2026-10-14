@@ -159,9 +159,25 @@ two-pass loudnorm to `song.loudness` (-14 LUFS, TP -1.5).
 - Clips: lanczos upscale + light unsharp (r 1.6, 55%), then halftone (45°, 7 px cell, dots grow in
   shadows, 22% strength) + paper grain. Ink borders are drawn after, lettering last.
 
+### HARD GATE: every panel animated (Jason, 2026-10-14)
+
+v2 of Concrete Jungle Cold was rejected because 16 panels were still-only ("boring", "dipped below Fright
+Night"). **Every panel and splash in a comic video must have a QA-passed animated clip. No still-only
+panels, ever.** Each new video must also beat the last one (more motion, better clips, better layouts).
+
+- `comic_qa.py` (`check_all_clips`, part of `npm run check`) **fails** when any panel or splash has no
+  `clip`. The only exception is an explicit preview spec (`"allowStills": true`, `"draft": true` or
+  `--allow-stills`), which shows a `PREVIEW ONLY, not deliverable` warning instead. Never deliver a preview.
+- Builders (for example `make_spec.py`) exit with an error under `CJC_CLIPS=1` (the delivery build) if a
+  panel lacks a clip. `CJC_ALLOW_STILLS=1` writes a preview spec only. Builds without `CJC_CLIPS=1` are
+  always previews.
+- A dropped or rejected take does not make a still acceptable. Regenerate the clip (a new prompt from the
+  locked refs, then the drift check) until it passes; then apply the clip-start still rule.
+
 ### Comic corrections checklist (Jason's feedback, check every comic video)
 
 - Clip starts on the first beat after the panel lands (tempo-aware; hold ≤ max(0.6 s, one beat + 60 ms)).
+- **Every panel has a QA-passed clip (hard gate; QA fails still-only panels).** Each video beats the last.
 - Clip-start stills when first-frame NCC < 0.75; re-derive focusRegions; drop off-model takes.
 - Every panel a different scene (location, camera, moment); playful, kid-friendly humour beats.
 - Let clips play 3.5–4.5 s (full ~6 s when clean); cut only at real breakage, with a trimNote. Regenerate

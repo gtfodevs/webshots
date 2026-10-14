@@ -693,6 +693,19 @@ def check_transitions(spec, subs, draft, deep=True):
             ok(f"'{tb['text']}' card ({tb['seconds']}s, hard cut to black, before the end card): no ink lost, title-safe")
 
 
+def check_all_clips(spec, subs):
+    """HARD GATE (Jason, 2026-10-14): every panel (and splash) in a comic video has a QA-passed animated clip.
+    No still-only panels. Fails unless the spec is an explicit preview (`allowStills: true` or `draft`)."""
+    missing = [u['id'] for sub in subs for u in all_units(sub) if not u.get('clip')]
+    if not missing:
+        ok(f'clips: every panel animated ({sum(len(all_units(s)) for s in subs)} panels)'); return
+    msg = f"{len(missing)} panel(s) without a clip (still-only is not allowed): {', '.join(dict.fromkeys(missing))}"
+    if spec.get('allowStills') or spec.get('draft') or '--allow-stills' in sys.argv:
+        warn('PREVIEW ONLY, not deliverable: ' + msg)
+    else:
+        fail(msg)
+
+
 def main(path):
     spec = C.load_spec(path)
     draft = bool(spec.get('draft'))
@@ -703,6 +716,7 @@ def main(path):
         check_page(sub, draft)
         if len(problems) == n0:
             ok(f"{sub.get('page', 'page')}: {len(all_units(sub))} panels - clips, hold {C.MIN_HOLD}-{C.MAX_HOLD}s, beats, text")
+    check_all_clips(spec, subs)
     check_layouts(spec, subs)
     check_unique(spec, subs)
     check_audio(spec)

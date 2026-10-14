@@ -311,6 +311,15 @@ def build():
         if 'cover 0.0' not in line:
             print('lettering:', line)
     spec.pop('_dir')
+    # HARD GATE: every panel animated. Without CJC_CLIPS=1 this is a preview spec (QA warns, not deliverable).
+    still = [u['id'] for p in pages for u in p['panels'] + ([p['splash']] if p.get('splash') else []) if not u.get('clip')]
+    if os.environ.get('CJC_CLIPS') != '1':
+        spec['allowStills'] = True
+    elif still:
+        msg = f"{len(still)} panel(s) without a clip: {', '.join(dict.fromkeys(still))}"
+        if os.environ.get('CJC_ALLOW_STILLS') != '1':
+            sys.exit('FAIL every panel must have a QA-passed clip (still-only is not deliverable): ' + msg)
+        print('WARN preview only (CJC_ALLOW_STILLS=1):', msg); spec['allowStills'] = True
     path = os.path.join(HERE, 'concrete-jungle-cold-comic.comic.json')
     json.dump(spec, open(path, 'w'), indent=1, ensure_ascii=False)
     print(os.path.relpath(path, REPO), sum(len(p['panels']) + bool(p.get('splash')) for p in pages), 'panels', len(pages), 'pages')
