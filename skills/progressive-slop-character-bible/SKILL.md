@@ -100,3 +100,5 @@ The originals are `uno-ORIGINAL-sheet.jpg` and `aura-ORIGINAL-sheet.jpg`. Reject
 - Uno build: always broad, powerful shoulders filling the coat. A skinny frame reads as "Joker". If a frame looks narrow, widen it with a Precise Edit painted on the shoulder band (Oct 15 2026).
 - Hard shots: if Grok Imagine drifts or zooms, split the shot into 2-3 short clips from the same still, each with one simple action (blink, smoke, breath), and cut them together. Strict tripod wording helps; Quick Animate ignores prompts and moves the camera, so avoid it (Oct 15 2026).
 - Keep the pass tight: only redo shots Jason named. Never widen into walking, cards, cheers, or other working scenes. One fix at a time with Precise Edit; split hard animations into short clips rather than regenerating whole masters (Oct 15 2026).
+- Keep the pass tight: only redo shots Jason named; never widen into working scenes. One Precise Edit at a time (Oct 15 2026).
+- Be efficient: script every deterministic step (frame grabs, contact sheets, stabilization, renders, QA gates, chunked Mac transfers with md5) instead of doing it by hand; reserve manual/agent judgment for creative calls (Oct 15 2026).
