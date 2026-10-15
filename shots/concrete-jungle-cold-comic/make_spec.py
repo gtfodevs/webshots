@@ -58,21 +58,21 @@ PAGES = [
       ('f07', 'c', 41.82, 'CHA-CHING!', True, 'whip', 'push_in')],
      ('f08', 44.26, 'HMPH!', False, 'breakout', 'f07')),
     ('p03', 49.45, 66.50, 'tilt-two', 'slide_up', 'action',
-     [('f09', 'a', 49.84, 'THUNK!', False, 'slide_up', 'push_in'), ('f10', 'b', 60.90, 'SKREEEE!', True, 'whip', 'pan_right')],
+     [('f09', 'a', 49.84, 'THUNK!', False, 'slide_up', 'push_in'), ('f10', 'b', 53.33, 'SKREEEE!', True, 'whip', 'pan_right')],
      None),
     ('p04', 66.50, 82.68, 'four-grid', 'whip', 'action',
-     [('f11', 'a', 66.76, 'WHAM!', True, 'zoom_pop', 'push_in'), ('f12', 'b', 72.42, 'ZZT-ZZT!', False, 'wipe', 'pan_left'),
-      ('f13', 'c', 75.86, 'KA-CHUNK!', False, 'iris', 'push_in'), ('f14', 'd', 78.36, 'FWOOSH!', False, 'slide_right', 'pull_out')],
+     [('f11', 'a', 66.76, 'WHAM!', True, 'zoom_pop', 'push_in'), ('f12', 'b', 67.46, 'ZZT-ZZT!', False, 'wipe', 'pan_left'),
+      ('f13', 'c', 68.15, 'KA-CHUNK!', False, 'iris', 'push_in'), ('f15a', 'd', 68.85, None, False, 'slide_right', 'pan_right')],
      None),
     # v5: the betrayal gets its own page: Nickel at the vault door (new clip), then the bars slam (payoff)
-    ('p04b', 82.68, 88.95, 'tilt-two', 'flash', 'scare',
+    ('p04b', 82.68, 88.95, 'tilt-two', 'crossfade', 'scare',
      [('f15c', 'a', 82.68, None, False, 'glitch', 'push_in'), ('f15', 'b', 84.78, 'KLANG!', True, 'zoom_pop', 'push_in')],
      None),
     ('p05', 88.95, 100.63, 'inset-two', 'iris', 'eerie',
      [('f16', 'a', 89.32, 'TIK-TIK-CLAK!', False, 'fade', 'push_in'), ('f17', 'b', 94.66, 'RRRING!', False, 'wipe', 'pan_right')],
      None),
     ('p06', 100.63, 122.90, 'slant-two', 'wipe_linear', 'action',
-     [('f18', 'a', 100.66, 'WHOOOM!', True, 'zoom_pop', 'drift_up'), ('f19', 'b', 111.70, 'VROOOM!', False, 'slide_left', 'pan_left')],
+     [('f18', 'a', 100.66, 'WHOOOM!', True, 'zoom_pop', 'drift_up'), ('f19', 'b', 105.53, 'VROOOM!', False, 'slide_left', 'pan_left')],
      None),
     ('p07', 122.90, 134.27, 'tilt-two', 'flash', 'scare',
      [('f20', 'a', 123.00, 'POOF!', True, 'glitch', 'push_in'), ('f21', 'b', 128.32, 'BOOM!', True, 'whip', 'pull_out')],
@@ -157,7 +157,7 @@ CLIP_LEN = 6.0
 CLIP_SRC = {'f23': 'clips/v5/f23_new.mp4', 'f23x': 'clips/v5/f23.mp4'}
 UNIT_IMAGE = {'f23': 'panels/f23_new.jpg', 'f23x': 'panels/f23.jpg'}
 # sequence lead-up sub-panels with no clip: gentle pan/zoom of the still (allowed only as sequence insets)
-NO_CLIP = {'f22a', 'f22d', 'f23a', 'f23c', 'f23d'}
+NO_CLIP = {'f15a', 'f22a', 'f22d', 'f23a', 'f23c', 'f23d'}
 def clip_rel(fid):
     if fid in NO_CLIP:
         return None
@@ -556,12 +556,13 @@ def place_lettering(spec):
 # beat) to a NEW clip from clips/v6 (prompts_batch6.md); any leftover under the last clip is covered by forward-only
 # slow motion (clip.speed >= 0.6), never a loop or a replay.
 CHAINS = {'f01': ['n01', 'n02', 'n03', 'n04'], 'f02': ['n05', 'n06'], 'f03': ['n07'], 'f05': ['n08'], 'f06': ['n30'],
-          'f09': ['n09', 'n10'], 'f11': ['n11', 'n12'], 'f12': ['n13'], 'f13': ['n31'], 'f16': ['n14'], 'f17': ['n32'],
+          'f09': ['n09', 'n10'], 'f10': ['n29'], 'f15a': ['f14'], 'f11': ['n11', 'n12'], 'f12': ['n13'], 'f13': ['n31'], 'f16': ['n14'], 'f17': ['n32'],
           'f18': ['n15', 'n16', 'n17'], 'f19': ['n18'], 'f20': ['n19'], 'f21': ['n20'], 'f23b': ['n21'],
-          'f25': ['n22', 'n23', 'n24', 'n25'], 'f27': ['n26', 'n27', 'n29'], 'f28': ['n28']}
+          'f25': ['n22', 'n23', 'n24', 'n25'], 'f27': ['n26', 'n27'], 'f28': ['n28']}
+CHAIN_AT = {'f14': 72.42}   # chain shots after a still base land at a fixed time
 V6_FILE = {'n05': 'n05_street', 'n10': 'n10_take3', 'n17': 'n17_take2'}   # never *_take1*, *nopants*, *nocoat*, n10, n10_take2, n05(_take2/3)
 CHAIN_ENTRANCES = ['fade', 'wipe', 'iris', 'slide_left', 'slide_up']
-MIN_SPEED = 0.6
+MIN_SPEED = 0.55
 CHAIN_FOCUS = {   # read off a 10% grid sheet of the v6 panels (character shots); the rest are no-people shots
  'n06': [R('Aura face', 0.45, 0.05, 0.58, 0.30)],
  'n10': [R('Uno face', 0.25, 0.0, 0.42, 0.30), R('Aura face', 0.66, 0.30, 0.78, 0.48)],
@@ -581,19 +582,22 @@ def add_chains(spec):
         base = [(u, spat if sp else pg['end']) for u in pg['panels']] + ([(sp, pg['end'])] if sp else [])
         new = []
         for u, cell_exit in base:
-            if not u.get('clip'):
+            if not u.get('clip') and u['id'] not in CHAINS:
                 continue
             land0 = u.get('at', spat)
             cur, cur_land = u, land0
             for nid in CHAINS.get(u['id'], []):
-                c = cur['clip']
-                end_ = C.MIN_HOLD + cur_land + (c['out'] - c['in']) / c.get('speed', 1.0)
-                land = round(max([b for b in B if b <= end_ + 0.02 and b > cur_land + 1.0], default=end_), 3)
+                if nid in CHAIN_AT:
+                    land = CHAIN_AT[nid]
+                else:
+                    c = cur['clip']
+                    end_ = C.MIN_HOLD + cur_land + (c['out'] - c['in']) / c.get('speed', 1.0)
+                    land = round(max([b for b in B if b <= end_ + 0.02 and b > cur_land + 1.0], default=end_), 3)
                 if land > cell_exit - 0.9:
                     print('chain: no room for', nid, 'after', cur['id']); break
-                rel = f"clips/v6/{V6_FILE.get(nid, nid)}.mp4"
+                rel = f"clips/v5/{nid}.mp4" if nid.startswith('f') else f"clips/v6/{V6_FILE.get(nid, nid)}.mp4"
                 img = f'panels/{nid}.jpg'
-                regs = CHAIN_FOCUS.get(nid)
+                regs = CHAIN_FOCUS.get(nid, V5_FOCUS.get(nid))
                 if regs is None:
                   regs = []
                   try:
@@ -612,16 +616,33 @@ def add_chains(spec):
                     print('chain: splash', u['id'], 'skipped', nid); break
                 new.append(nu); used.append(nid)
                 cur, cur_land = nu, land
-            # leftover under the last shot of the cell: forward-only slow motion
+            # leftover under the last shot of the cell: forward-only slow motion, spread over every chained clip of the
+            # cell that is free to move (a chain cut then lands later on its beat)
+            shots = [x for x in [u] + [n for n in new if n.get('chainOf') == u['id']] if x.get('clip')]
             c = cur['clip']
             L = c['out'] - c['in']
             once = (cur_land if cur is not u else land0) + C.MIN_HOLD + L / c.get('speed', 1.0)
             left = cell_exit - once
             if left > 0.1:
-                sp_ = L / (L + left)
-                c['speed'] = round(max(sp_, MIN_SPEED) - 0.005, 4)
-                if sp_ < MIN_SPEED:
-                    print(f"chain: {cur['id']} still {left - L / MIN_SPEED + L:.2f}s short at speed {MIN_SPEED}")
+                free = [x for x in shots if x is cur or (x is not u and x['id'] not in CHAIN_AT)]
+                tot = sum(x['clip']['out'] - x['clip']['in'] for x in free)
+                sp_ = max(MIN_SPEED, tot / (tot + left)) - 0.005
+                t_ = None
+                for x in shots:
+                    if x in free:
+                        if t_ is not None and x['id'] not in CHAIN_AT and x is not u:
+                            x['at'] = round(t_, 3)
+                        x['clip']['speed'] = round(sp_, 4)
+                    t_ = (x['at'] if x is not u else land0) + C.MIN_HOLD + (x['clip']['out'] - x['clip']['in']) / x['clip'].get('speed', 1.0)
+                # re-link until + cap the last clip to the cell
+                for a_, b_ in zip(shots, shots[1:]):
+                    a_['until'] = b_['at']
+                last = shots[-1]; lc = last['clip']
+                rem = cell_exit - ((last['at'] if last is not u else land0) + C.MIN_HOLD)
+                lc['out'] = round(min(lc['out'], rem * lc['speed']), 2)
+                endt = (last['at'] if last is not u else land0) + C.MIN_HOLD + (lc['out'] - lc['in']) / lc['speed']
+                if cell_exit - endt > 0.12:
+                    print(f"chain: {last['id']} cell still {cell_exit - endt:.2f}s short")
         pg['panels'] += new
     print('chains: used', len(used), 'new clips:', ' '.join(used))
 

@@ -251,7 +251,7 @@
        "impact": true
       }
      ],
-     "until": 5.851
+     "until": 6.413
     },
     {
      "id": "f02",
@@ -320,7 +320,7 @@
        "impact": false
       }
      ],
-     "until": 15.116
+     "until": 15.677
     },
     {
      "id": "f03",
@@ -390,12 +390,12 @@
        "impact": false
       }
      ],
-     "until": 21.502
+     "until": 22.086
     },
     {
      "id": "n01",
      "image": "panels/n01.jpg",
-     "at": 5.851,
+     "at": 6.413,
      "slot": "a",
      "captions": [],
      "entrance": {
@@ -405,17 +405,18 @@
      "clip": {
       "src": "clips/v6/n01.mp4",
       "in": 0.0,
-      "out": 6.0
+      "out": 6.0,
+      "speed": 0.9343
      },
      "focusRegions": [],
      "chainOf": "f01",
      "shotKind": "fx",
-     "until": 11.564
+     "until": 13.085
     },
     {
      "id": "n02",
      "image": "panels/n02.jpg",
-     "at": 11.564,
+     "at": 13.085,
      "slot": "a",
      "captions": [],
      "entrance": {
@@ -425,17 +426,18 @@
      "clip": {
       "src": "clips/v6/n02.mp4",
       "in": 0.0,
-      "out": 6.0
+      "out": 6.0,
+      "speed": 0.9343
      },
      "focusRegions": [],
      "chainOf": "f01",
      "shotKind": "fx",
-     "until": 17.229
+     "until": 19.757
     },
     {
      "id": "n03",
      "image": "panels/n03.jpg",
-     "at": 17.229,
+     "at": 19.757,
      "slot": "a",
      "captions": [],
      "entrance": {
@@ -445,17 +447,18 @@
      "clip": {
       "src": "clips/v6/n03.mp4",
       "in": 0.0,
-      "out": 6.0
+      "out": 6.0,
+      "speed": 0.9343
      },
      "focusRegions": [],
      "chainOf": "f01",
      "shotKind": "fx",
-     "until": 22.918
+     "until": 26.429
     },
     {
      "id": "n04",
      "image": "panels/n04.jpg",
-     "at": 22.918,
+     "at": 26.429,
      "slot": "a",
      "captions": [],
      "entrance": {
@@ -465,8 +468,8 @@
      "clip": {
       "src": "clips/v6/n04.mp4",
       "in": 0.0,
-      "out": 6.0,
-      "speed": 0.7895
+      "out": 3.78,
+      "speed": 0.9343
      },
      "focusRegions": [],
      "chainOf": "f01",
@@ -475,7 +478,7 @@
     {
      "id": "n05",
      "image": "panels/n05.jpg",
-     "at": 15.116,
+     "at": 15.677,
      "slot": "b",
      "captions": [],
      "entrance": {
@@ -485,17 +488,18 @@
      "clip": {
       "src": "clips/v6/n05_street.mp4",
       "in": 0.0,
-      "out": 6.0
+      "out": 6.0,
+      "speed": 0.7599
      },
      "focusRegions": [],
      "chainOf": "f02",
      "shotKind": "fx",
-     "until": 20.782
+     "until": 23.823
     },
     {
      "id": "n06",
      "image": "panels/n06.jpg",
-     "at": 20.782,
+     "at": 23.823,
      "slot": "b",
      "captions": [],
      "entrance": {
@@ -505,8 +509,8 @@
      "clip": {
       "src": "clips/v6/n06.mp4",
       "in": 0.0,
-      "out": 6.0,
-      "speed": 0.6143
+      "out": 5.05,
+      "speed": 0.7599
      },
      "focusRegions": [
       {
@@ -527,7 +531,7 @@
     {
      "id": "n07",
      "image": "panels/n07.jpg",
-     "at": 21.502,
+     "at": 22.086,
      "slot": "c",
      "captions": [],
      "entrance": {
@@ -537,7 +541,7 @@
      "clip": {
       "src": "clips/v6/n07.mp4",
       "in": 0.0,
-      "out": 6.0,
+      "out": 5.57,
       "speed": 0.664
      },
      "focusRegions": [],
@@ -562,7 +566,7 @@
     "clip": {
      "src": "clips/v5/f04.mp4",
      "in": 0.0,
-     "out": 2.08,
+     "out": 2.07,
      "firstFrameNcc": 0.917,
      "trimNote": "page turns at 33.60s, clip capped to 2.08s",
      "speed": 0.7859
@@ -790,7 +794,7 @@
      "clip": {
       "src": "clips/v5/f07.mp4",
       "in": 0.0,
-      "out": 4.85,
+      "out": 4.82,
       "firstFrameNcc": 0.958,
       "trimNote": "splash zooms in at 44.14s, clip capped to 4.85s",
       "speed": 0.8945
@@ -913,7 +917,7 @@
     "clip": {
      "src": "clips/v5/f08.mp4",
      "in": 0.0,
-     "out": 4.49,
+     "out": 4.46,
      "firstFrameNcc": 0.957,
      "trimNote": "page turns at 49.45s, clip capped to 4.49s",
      "speed": 0.8825
@@ -1058,7 +1062,7 @@
     {
      "id": "f10",
      "image": "panels/f10.jpg",
-     "at": 59.002,
+     "at": 53.336,
      "moment": "Vintage chrome getaway car drifting a rainy corner, tyres spraying sparks, gold bags in the rumble seat. SKREEEE",
      "cast": "vehicle",
      "focusNote": "car grille",
@@ -1073,8 +1077,7 @@
       "src": "clips/f10.mp4",
       "in": 0.0,
       "out": 6.0,
-      "firstFrameNcc": 0.898,
-      "speed": 0.8228
+      "firstFrameNcc": 0.898
      },
      "focusRegions": [
       {
@@ -1092,7 +1095,7 @@
      "sfx": [
       {
        "text": "SKREEEE!",
-       "at": 62.531,
+       "at": 54.753,
        "pos": [
         0.22,
         0.25
@@ -1107,7 +1110,7 @@
        "impact": true
       }
      ],
-     "landNote": "landed 2.14s early (from 61.138) so the clip plays out before the page turn"
+     "until": 59.586
     },
     {
      "id": "n09",
@@ -1170,6 +1173,26 @@
      ],
      "chainOf": "f09",
      "shotKind": "character"
+    },
+    {
+     "id": "n29",
+     "image": "panels/n29.jpg",
+     "at": 59.586,
+     "slot": "b",
+     "captions": [],
+     "entrance": {
+      "type": "wipe",
+      "dur": 0.3
+     },
+     "clip": {
+      "src": "clips/v6/n29.mp4",
+      "in": 0.0,
+      "out": 5.48,
+      "speed": 0.8228
+     },
+     "focusRegions": [],
+     "chainOf": "f10",
+     "shotKind": "fx"
     }
    ],
    "pageTransition": {
@@ -1255,7 +1278,7 @@
     {
      "id": "f12",
      "image": "panels/f12.jpg",
-     "at": 72.446,
+     "at": 67.477,
      "moment": "Aura, in her crimson coat, cartwheels through a red laser grid in the bank's marble corridor, mid-flip. ZZT-ZZT",
      "cast": "Aura",
      "focusNote": "Aura face in lasers",
@@ -1293,7 +1316,7 @@
      "sfx": [
       {
        "text": "ZZT-ZZT!",
-       "at": 73.839,
+       "at": 68.917,
        "pos": [
         0.78,
         0.25
@@ -1308,12 +1331,12 @@
        "impact": false
       }
      ],
-     "until": 78.089
+     "until": 73.727
     },
     {
      "id": "f13",
      "image": "panels/f13.jpg",
-     "at": 75.256,
+     "at": 68.197,
      "moment": "Vault door cracked: Uno spins the giant brass dial, his headphones listening to the tumblers, gold light blasting out. KA-CHUNK",
      "cast": "Uno",
      "focusNote": "dial + ear",
@@ -1361,7 +1384,7 @@
      "sfx": [
       {
        "text": "KA-CHUNK!",
-       "at": 77.369,
+       "at": 69.613,
        "pos": [
         0.22,
         0.75
@@ -1376,30 +1399,137 @@
        "impact": false
       }
      ],
-     "landNote": "landed 0.70s early (from 75.952) so the clip plays out before the page turn",
-     "until": 80.898
+     "until": 74.447
     },
     {
-     "id": "f14",
-     "image": "panels/f14.jpg",
-     "at": 76.649,
-     "moment": "Interior splash: the vault, mountains of gold bars and bonds. Aura tosses a stack and paper flutters. FWOOSH",
-     "cast": "Uno, Aura",
-     "focusNote": "both, gold glow",
-     "storyTransition": "Zoom splash",
+     "id": "f15a",
+     "image": "panels/f15a.jpg",
+     "at": 68.917,
      "captions": [],
      "entrance": {
       "type": "slide_right",
       "dur": 0.3
      },
      "slot": "d",
+     "stillMotion": {
+      "type": "pan_right",
+      "amount": 0.12,
+      "dur": 5.0
+     },
+     "stillOk": "sequence lead-up inset (no clip by design): gentle pan/zoom of the still",
+     "focusRegions": [
+      {
+       "label": "vault bars",
+       "box": [
+        0.2,
+        0.1,
+        0.8,
+        0.9
+       ],
+       "required": true
+      }
+     ],
+     "shotKind": "character",
+     "refs": [
+      "/workspace/progressive-slop-refs/uno-locked.jpg",
+      "/workspace/progressive-slop-refs/aura-locked.jpg"
+     ],
+     "until": 72.42
+    },
+    {
+     "id": "n11",
+     "image": "panels/n11.jpg",
+     "at": 72.446,
+     "slot": "a",
+     "captions": [],
+     "entrance": {
+      "type": "iris",
+      "dur": 0.3
+     },
+     "clip": {
+      "src": "clips/v6/n11.mp4",
+      "in": 0.0,
+      "out": 6.0
+     },
+     "focusRegions": [],
+     "chainOf": "f11",
+     "shotKind": "fx",
+     "until": 78.089
+    },
+    {
+     "id": "n12",
+     "image": "panels/n12.jpg",
+     "at": 78.089,
+     "slot": "a",
+     "captions": [],
+     "entrance": {
+      "type": "slide_left",
+      "dur": 0.3
+     },
+     "clip": {
+      "src": "clips/v6/n12.mp4",
+      "in": 0.0,
+      "out": 4.34
+     },
+     "focusRegions": [],
+     "chainOf": "f11",
+     "shotKind": "fx"
+    },
+    {
+     "id": "n13",
+     "image": "panels/n13.jpg",
+     "at": 73.727,
+     "slot": "b",
+     "captions": [],
+     "entrance": {
+      "type": "slide_up",
+      "dur": 0.3
+     },
+     "clip": {
+      "src": "clips/v6/n13.mp4",
+      "in": 0.0,
+      "out": 5.58,
+      "speed": 0.6411
+     },
+     "focusRegions": [],
+     "chainOf": "f12",
+     "shotKind": "fx"
+    },
+    {
+     "id": "n31",
+     "image": "panels/n31.jpg",
+     "at": 74.447,
+     "slot": "c",
+     "captions": [],
+     "entrance": {
+      "type": "fade",
+      "dur": 0.3
+     },
+     "clip": {
+      "src": "clips/v6/n31.mp4",
+      "in": 0.0,
+      "out": 5.54,
+      "speed": 0.6934
+     },
+     "focusRegions": [],
+     "chainOf": "f13",
+     "shotKind": "fx"
+    },
+    {
+     "id": "f14",
+     "image": "panels/f14.jpg",
+     "at": 72.42,
+     "slot": "d",
+     "captions": [],
+     "entrance": {
+      "type": "wipe",
+      "dur": 0.3
+     },
      "clip": {
       "src": "clips/v5/f14.mp4",
       "in": 0.0,
-      "out": 5.21,
-      "firstFrameNcc": 0.949,
-      "trimNote": "page turns at 82.68s, clip capped to 5.21s",
-      "speed": 0.8962
+      "out": 5.95,
+      "speed": 0.5944
      },
      "focusRegions": [
       {
@@ -1425,107 +1555,8 @@
        "face": true
       }
      ],
-     "shotKind": "character",
-     "refs": [
-      "/workspace/progressive-slop-refs/uno-locked.jpg",
-      "/workspace/progressive-slop-refs/aura-locked.jpg"
-     ],
-     "sfx": [
-      {
-       "text": "FWOOSH!",
-       "at": 79.482,
-       "pos": [
-        0.78,
-        0.75
-       ],
-       "rot": -8,
-       "size": 0.15,
-       "color": [
-        255,
-        245,
-        230
-       ],
-       "impact": false
-      }
-     ],
-     "landNote": "landed 1.44s early (from 78.089) so the clip plays out before the page turn"
-    },
-    {
-     "id": "n11",
-     "image": "panels/n11.jpg",
-     "at": 72.446,
-     "slot": "a",
-     "captions": [],
-     "entrance": {
-      "type": "wipe",
-      "dur": 0.3
-     },
-     "clip": {
-      "src": "clips/v6/n11.mp4",
-      "in": 0.0,
-      "out": 6.0
-     },
-     "focusRegions": [],
-     "chainOf": "f11",
-     "shotKind": "fx",
-     "until": 78.089
-    },
-    {
-     "id": "n12",
-     "image": "panels/n12.jpg",
-     "at": 78.089,
-     "slot": "a",
-     "captions": [],
-     "entrance": {
-      "type": "iris",
-      "dur": 0.3
-     },
-     "clip": {
-      "src": "clips/v6/n12.mp4",
-      "in": 0.0,
-      "out": 4.34
-     },
-     "focusRegions": [],
-     "chainOf": "f11",
-     "shotKind": "fx"
-    },
-    {
-     "id": "n13",
-     "image": "panels/n13.jpg",
-     "at": 78.089,
-     "slot": "b",
-     "captions": [],
-     "entrance": {
-      "type": "slide_left",
-      "dur": 0.3
-     },
-     "clip": {
-      "src": "clips/v6/n13.mp4",
-      "in": 0.0,
-      "out": 4.34
-     },
-     "focusRegions": [],
-     "chainOf": "f12",
-     "shotKind": "fx"
-    },
-    {
-     "id": "n31",
-     "image": "panels/n31.jpg",
-     "at": 80.898,
-     "slot": "c",
-     "captions": [],
-     "entrance": {
-      "type": "slide_up",
-      "dur": 0.3
-     },
-     "clip": {
-      "src": "clips/v6/n31.mp4",
-      "in": 0.0,
-      "out": 1.53
-     },
-     "focusRegions": [],
-     "chainOf": "f13",
-     "shotKind": "fx"
+     "chainOf": "f15a",
+     "shotKind": "character"
     }
    ],
    "pageTransition": {
@@ -1553,7 +1584,7 @@
      "clip": {
       "src": "clips/v5/f15c.mp4",
       "in": 0.0,
-      "out": 5.12,
+      "out": 5.09,
       "firstFrameNcc": 0.963,
       "trimNote": "page turns at 88.95s, clip capped to 5.12s",
       "speed": 0.895
@@ -1605,7 +1636,7 @@
      "clip": {
       "src": "clips/f15.mp4",
       "in": 0.0,
-      "out": 3.73,
+      "out": 3.71,
       "firstFrameNcc": 0.278,
       "trimNote": "page turns at 88.95s, clip capped to 3.73s",
       "speed": 0.8681
@@ -1662,7 +1693,7 @@
     }
    ],
    "pageTransition": {
-    "type": "flash",
+    "type": "crossfade",
     "dur": 0.5
    }
   },
@@ -1807,7 +1838,7 @@
      "slot": "a",
      "captions": [],
      "entrance": {
-      "type": "fade",
+      "type": "iris",
       "dur": 0.3
      },
      "clip": {
@@ -1826,7 +1857,7 @@
      "slot": "b",
      "captions": [],
      "entrance": {
-      "type": "wipe",
+      "type": "slide_left",
       "dur": 0.3
      },
      "clip": {
@@ -1923,7 +1954,7 @@
     {
      "id": "f19",
      "image": "panels/f19.jpg",
-     "at": 111.851,
+     "at": 105.558,
      "moment": "Rooftop chase in the rain: the getaway car leaps a gap between deco towers, and the moon cuts off the wheels. VROOOM",
      "cast": "vehicle",
      "focusNote": "car mid-leap",
@@ -1966,7 +1997,7 @@
      "sfx": [
       {
        "text": "VROOOM!",
-       "at": 113.267,
+       "at": 106.974,
        "pos": [
         0.22,
         0.75
@@ -1981,7 +2012,7 @@
        "impact": false
       }
      ],
-     "until": 117.516
+     "until": 111.808
     },
     {
      "id": "n15",
@@ -1990,7 +2021,7 @@
      "slot": "a",
      "captions": [],
      "entrance": {
-      "type": "iris",
+      "type": "slide_up",
       "dur": 0.3
      },
      "clip": {
@@ -2010,7 +2041,7 @@
      "slot": "a",
      "captions": [],
      "entrance": {
-      "type": "slide_left",
+      "type": "fade",
       "dur": 0.3
      },
      "clip": {
@@ -2030,7 +2061,7 @@
      "slot": "a",
      "captions": [],
      "entrance": {
-      "type": "slide_up",
+      "type": "wipe",
       "dur": 0.3
      },
      "clip": {
@@ -2068,17 +2099,18 @@
     {
      "id": "n18",
      "image": "panels/n18.jpg",
-     "at": 117.516,
+     "at": 111.808,
      "slot": "b",
      "captions": [],
      "entrance": {
-      "type": "fade",
+      "type": "iris",
       "dur": 0.3
      },
      "clip": {
       "src": "clips/v6/n18.mp4",
       "in": 0.0,
-      "out": 5.13
+      "out": 5.91,
+      "speed": 0.545
      },
      "focusRegions": [],
      "chainOf": "f19",
@@ -2252,7 +2284,7 @@
      "slot": "a",
      "captions": [],
      "entrance": {
-      "type": "wipe",
+      "type": "slide_left",
       "dur": 0.3
      },
      "clip": {
@@ -2271,7 +2303,7 @@
      "slot": "b",
      "captions": [],
      "entrance": {
-      "type": "iris",
+      "type": "slide_up",
       "dur": 0.3
      },
      "clip": {
@@ -2343,7 +2375,7 @@
      "clip": {
       "src": "clips/v5/f22b.mp4",
       "in": 0.0,
-      "out": 1.29,
+      "out": 1.28,
       "firstFrameNcc": 0.964,
       "trimNote": "splash zooms in at 136.49s, clip capped to 1.29s",
       "speed": 0.7977
@@ -2469,7 +2501,7 @@
     "clip": {
      "src": "clips/v5/f22.mp4",
      "in": 0.0,
-     "out": 5.02,
+     "out": 4.99,
      "firstFrameNcc": 0.908,
      "trimNote": "page turns at 142.30s, clip capped to 5.02s",
      "speed": 0.8974
@@ -2706,7 +2738,7 @@
      "clip": {
       "src": "clips/v5/f23_new.mp4",
       "in": 0.0,
-      "out": 6.0,
+      "out": 5.96,
       "firstFrameNcc": 0.95,
       "speed": 0.8212
      },
@@ -2775,7 +2807,7 @@
      "slot": "b",
      "captions": [],
      "entrance": {
-      "type": "slide_left",
+      "type": "fade",
       "dur": 0.3
      },
      "clip": {
@@ -2821,7 +2853,7 @@
     "clip": {
      "src": "clips/f24.mp4",
      "in": 0.0,
-     "out": 4.56,
+     "out": 4.53,
      "firstFrameNcc": 0.936,
      "trimNote": "page turns at 156.56s, clip capped to 4.56s",
      "speed": 0.893
@@ -2974,7 +3006,7 @@
      "clip": {
       "src": "clips/v5/f26.mp4",
       "in": 0.0,
-      "out": 5.06,
+      "out": 5.03,
       "firstFrameNcc": 0.888,
       "trimNote": "page turns at 184.40s, clip capped to 5.06s",
       "speed": 0.8966
@@ -3045,7 +3077,7 @@
      "slot": "a",
      "captions": [],
      "entrance": {
-      "type": "slide_up",
+      "type": "wipe",
       "dur": 0.3
      },
      "clip": {
@@ -3065,7 +3097,7 @@
      "slot": "a",
      "captions": [],
      "entrance": {
-      "type": "fade",
+      "type": "iris",
       "dur": 0.3
      },
      "clip": {
@@ -3107,7 +3139,7 @@
      "slot": "a",
      "captions": [],
      "entrance": {
-      "type": "wipe",
+      "type": "slide_left",
       "dur": 0.3
      },
      "clip": {
@@ -3139,7 +3171,7 @@
      "slot": "a",
      "captions": [],
      "entrance": {
-      "type": "iris",
+      "type": "slide_up",
       "dur": 0.3
      },
      "clip": {
@@ -3290,7 +3322,7 @@
      "slot": "a",
      "captions": [],
      "entrance": {
-      "type": "slide_left",
+      "type": "fade",
       "dur": 0.3
      },
      "clip": {
@@ -3310,7 +3342,7 @@
      "slot": "a",
      "captions": [],
      "entrance": {
-      "type": "slide_up",
+      "type": "wipe",
       "dur": 0.3
      },
      "clip": {
@@ -3329,7 +3361,7 @@
      "slot": "b",
      "captions": [],
      "entrance": {
-      "type": "fade",
+      "type": "iris",
       "dur": 0.3
      },
      "clip": {
