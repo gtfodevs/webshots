@@ -152,7 +152,7 @@ SHORT = {'start': 128.30, 'end': 177.95,
          # teaser/trailer (Jason 2026-10-14): glimpses from every act over the final-chorus audio, no betrayal payoff
          # (f15 slam, f20 swap, f22/f23 takedowns, f24 headline) and no ending (f28); cuts on the window's beats
          # native 9:16 glimpses: [song_t, beats, cells top->bottom] built from source clips (vshot.py)
-         'trailer': [[2.0, 8, [{"id": "f01", "fx": 0.51}, {"id": "n01", "fx": 0.5}]], [11.0, 4, [{"id": "f02", "fx": 0.5}, {"id": "n05", "fx": 0.5}]], [31.2, 3, [{"id": "f04", "fx": 0.5}, {"id": "n02", "fx": 0.5}]], [45.5, 5, [{"id": "f08", "fx": 0.5}, {"id": "f07", "fx": 0.62}]], [54.5, 4, [{"id": "f09", "fx": 0.47}, {"id": "n29", "fx": 0.5}]], [70.0, 8, [{"id": "f11", "fx": 0.53}, {"id": "f12", "fx": 0.45}]], [76.0, 4, [{"id": "f14", "fx": 0.51}, {"id": "n11", "fx": 0.5}]], [83.0, 2, [{"id": "f15c", "fx": 0.4}, {"id": "f13", "fx": 0.45}]], [96.5, 4, [{"id": "f17", "fx": 0.44}, {"id": "f16", "fx": 0.4}]], [107.0, 6, [{"id": "f18", "fx": 0.57}, {"id": "f19", "fx": 0.5}]], [134.3, 2, [{"id": "f22b", "fx": 0.4}, {"id": "f22c", "fx": 0.48}]], [158.0, 8, [{"id": "f25", "fx": 0.5}, {"id": "n22", "fx": 0.5}]], [168.5, 4, [{"id": "n23", "fx": 0.39}, {"id": "n24", "fx": 0.46}]], [180.5, 4, [{"id": "f26", "fx": 0.47}, {"id": "n25", "fx": 0.5}]], [185.6, 0, [{"id": "f27", "fx": 0.64}, {"id": "n26", "fx": 0.55}]]],
+         'trailer': [[2.0, 8, [{"id": "f01", "fx": 0.51}, {"id": "n01", "fx": 0.5}]], [11.0, 4, [{"id": "f02", "fx": 0.5, "zoom": 0.6, "fy": 0.0}, {"id": "n05", "fx": 0.5}]], [31.2, 3, [{"id": "f04", "fx": 0.5}, {"id": "n02", "fx": 0.5}]], [45.5, 5, [{"id": "f08", "fx": 0.5}, {"id": "n08", "fx": 0.5}]], [54.5, 4, [{"id": "f09", "fx": 0.47}, {"id": "n29", "fx": 0.5}]], [70.0, 8, [{"id": "f11", "fx": 0.53}, {"id": "f12", "fx": 0.45}]], [76.0, 4, [{"id": "f14", "fx": 0.51}, {"id": "n11", "fx": 0.5}]], [83.0, 2, [{"id": "f15c", "fx": 0.4}, {"id": "f13", "fx": 0.45}]], [96.5, 4, [{"id": "f17", "fx": 0.44}, {"id": "f16", "fx": 0.4}]], [107.0, 6, [{"id": "f18", "fx": 0.57}, {"id": "f19", "fx": 0.5}]], [134.3, 2, [{"id": "f22b", "fx": 0.4}, {"id": "f22c", "fx": 0.48}]], [158.0, 8, [{"id": "f25", "fx": 0.5}, {"id": "n22", "fx": 0.5}]], [168.5, 4, [{"id": "n23", "fx": 0.39}, {"id": "n24", "fx": 0.46}]], [180.5, 4, [{"id": "f26", "fx": 0.72, "zoom": 0.85}, {"id": "n25", "fx": 0.5}]], [185.6, 0, [{"id": "f27", "fx": 0.64}, {"id": "n26", "fx": 0.55}]]],
          'note': 'word gap after "we still fight" -> warehouse doors BOOM, showdown, final chorus, newspaper, penthouse triumph; ends after the last "heart made of gold" (49.65 s)'}
 CAPTION_FILLS = [[255, 226, 150], [240, 232, 214], [255, 190, 190], [214, 200, 255]]   # deco gold, ivory, crimson blush, lilac
 SFX_COLORS = [[255, 200, 60], [230, 40, 60], [190, 120, 255], [255, 245, 230], [255, 150, 40]]
@@ -241,7 +241,7 @@ V5_FOCUS = {
  'f23c': [R('bowler hat', 0.15, 0.40, 0.45, 0.75), R('streetlamp', 0.50, 0.10, 0.70, 0.40, req=False)],
  'f23d': [R('alley lights', 0.40, 0.30, 0.60, 0.80)],
 }
-FORCE_LAYOUT = {'p09': 'inset-two', 'p10': 'tilt-two', 'p04b': 'inset-two'}   # p04b: a 3.8:1 strip cuts Nickel's head   # f28's full figure needs the wide inset (slant-two cuts it)
+FORCE_LAYOUT = {'p09': 'inset-two', 'p10': 'tilt-two', 'p04b': 'inset-two', 'p01': 'big-three'}   # p04b: a 3.8:1 strip cuts Nickel's head   # f28's full figure needs the wide inset (slant-two cuts it)
 MATCH_MIN = 0.75
 BEAT = 60 / 86.1
 
@@ -290,6 +290,14 @@ def next_beat(t, k=1):
 
 
 # Motivated SFX only (Jason 2026-10-14): a burst needs an on-screen action at that moment; everything else is cut.
+IMPACT_SFX = 'f22'   # Uno flips Ferro onto the floor: the only impact flash/shake
+# per-page entrance family (not one style everywhere) and SFX lettering style
+PAGE_ENTRANCE = {'p01': ['fade', 'ink'], 'p02': ['slide_left', 'slide_down', 'slide_right'], 'p03': ['wipe', 'iris'],
+                 'p04': ['zoom_pop', 'zoom_pop', 'wipe', 'zoom_pop'], 'p04b': ['ink', 'fade'], 'p05': ['ink', 'wipe'],
+                 'p06': ['whip', 'slide_up'], 'p07': ['wipe', 'slide_left'], 'p08': ['zoom_pop', 'slide_down'],
+                 'p08b': ['slide_up', 'slide_right'], 'p09': ['ink', 'fade'], 'p10': ['iris', 'ink']}
+SFX_STYLE = {'f01': 'hollow', 'f02': 'ink', 'f05': 'ink', 'f07': 'pop', 'f09': 'ink', 'f10': 'speed', 'f11': 'pop',
+             'f13': 'hollow', 'f15': 'pop', 'f16': 'ink', 'f18': 'speed', 'f20': 'hollow', 'f21': 'pop', 'f22': 'pop', 'f26': 'ink'}
 MOTIVATED_SFX = {
     'f01': 'lightning strikes the spire', 'f02': 'boot lands in the puddle', 'f05': 'door slot snaps open',
     'f07': 'cards slapped down, coins explode up', 'f09': 'crate drops off the crane', 'f10': 'tyres drift and spark',
@@ -302,6 +310,7 @@ MOTIVATED_SFX = {
 def unit(fid, land, sfx, impact, ent, motion, k, slot=None):
     if fid not in MOTIVATED_SFX:
         sfx, impact = None, False
+    impact = (fid == IMPACT_SFX)   # at most ONE impact (flash + shake) per video: the real hit
     u = {'id': fid, 'image': UNIT_IMAGE.get(fid, f'panels/{fid}.jpg'), 'at': land, **MOMENTS.get(fid, {}), 'captions': [],
          'entrance': {'type': ent, 'dur': 0.3}}
     if slot:
@@ -334,8 +343,8 @@ def unit(fid, land, sfx, impact, ent, motion, k, slot=None):
         u['refs'] = ['/workspace/progressive-slop-refs/uno-locked.jpg', '/workspace/progressive-slop-refs/aura-locked.jpg']
     if sfx:
         pos, rot = sfx_pos(fid)
-        u['sfx'] = [{'text': sfx, 'at': next_beat(land, 2), 'pos': pos, 'rot': rot, 'size': 0.15,
-                     'color': SFX_COLORS[k % len(SFX_COLORS)], 'impact': impact}]
+        u['sfx'] = [{'text': sfx, 'at': next_beat(land, 2), 'pos': pos, 'rot': rot, 'size': 0.15 if impact else 0.11,
+                     'color': SFX_COLORS[k % len(SFX_COLORS)], 'impact': impact, 'style': SFX_STYLE.get(fid, 'pop')}]
     return u
 
 
@@ -456,6 +465,12 @@ def build():
             sys.exit('FAIL every panel must have a QA-passed clip (still-only is not deliverable): ' + msg)
         print('WARN preview only (CJC_ALLOW_STILLS=1):', msg); spec['allowStills'] = True
     path = os.path.join(HERE, 'concrete-jungle-cold-comic.comic.json')
+    for pg in spec['pages']:   # one entrance family per page, varied across pages
+        fam = PAGE_ENTRANCE.get(pg['id'])
+        if fam:
+            for j, u in enumerate(sorted(pg['panels'], key=lambda u: u['at'])):
+                if 'entrance' in u:
+                    u['entrance']['type'] = fam[j % len(fam)]
     json.dump(spec, open(path, 'w'), indent=1, ensure_ascii=False)
     print(os.path.relpath(path, REPO), sum(len(p['panels']) + bool(p.get('splash')) for p in pages), 'panels', len(pages), 'pages')
 

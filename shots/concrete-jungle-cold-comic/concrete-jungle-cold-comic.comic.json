@@ -50,7 +50,9 @@
     [
      {
       "id": "f02",
-      "fx": 0.5
+      "fx": 0.5,
+      "zoom": 0.6,
+      "fy": 0.0
      },
      {
       "id": "n05",
@@ -81,8 +83,8 @@
       "fx": 0.5
      },
      {
-      "id": "f07",
-      "fx": 0.62
+      "id": "n08",
+      "fx": 0.5
      }
     ]
    ],
@@ -218,7 +220,8 @@
     [
      {
       "id": "f26",
-      "fx": 0.47
+      "fx": 0.72,
+      "zoom": 0.85
      },
      {
       "id": "n25",
@@ -457,13 +460,14 @@
         0.25
        ],
        "rot": -8,
-       "size": 0.15,
+       "size": 0.11,
        "color": [
         255,
         200,
         60
        ],
-       "impact": true
+       "impact": false,
+       "style": "hollow"
       }
      ],
      "until": 6.413
@@ -478,7 +482,7 @@
      "storyTransition": "Slide in from left on the beat",
      "captions": [],
      "entrance": {
-      "type": "slide_left",
+      "type": "fade",
       "dur": 0.3
      },
      "slot": "b",
@@ -526,13 +530,14 @@
         0.75
        ],
        "rot": -8,
-       "size": 0.15,
+       "size": 0.11,
        "color": [
         230,
         40,
         60
        ],
-       "impact": false
+       "impact": false,
+       "style": "ink"
       }
      ],
      "until": 15.677
@@ -547,7 +552,7 @@
      "storyTransition": "Iris wipe",
      "captions": [],
      "entrance": {
-      "type": "iris",
+      "type": "ink",
       "dur": 0.3
      },
      "slot": "c",
@@ -596,7 +601,7 @@
      "slot": "a",
      "captions": [],
      "entrance": {
-      "type": "fade",
+      "type": "ink",
       "dur": 0.3
      },
      "clip": {
@@ -617,7 +622,7 @@
      "slot": "a",
      "captions": [],
      "entrance": {
-      "type": "wipe",
+      "type": "ink",
       "dur": 0.3
      },
      "clip": {
@@ -638,7 +643,7 @@
      "slot": "a",
      "captions": [],
      "entrance": {
-      "type": "iris",
+      "type": "fade",
       "dur": 0.3
      },
      "clip": {
@@ -659,7 +664,7 @@
      "slot": "a",
      "captions": [],
      "entrance": {
-      "type": "slide_left",
+      "type": "ink",
       "dur": 0.3
      },
      "clip": {
@@ -679,7 +684,7 @@
      "slot": "b",
      "captions": [],
      "entrance": {
-      "type": "slide_up",
+      "type": "fade",
       "dur": 0.3
      },
      "clip": {
@@ -732,7 +737,7 @@
      "slot": "c",
      "captions": [],
      "entrance": {
-      "type": "wipe",
+      "type": "ink",
       "dur": 0.3
      },
      "clip": {
@@ -816,7 +821,7 @@
      "storyTransition": "Page turn (word gap 31.55)",
      "captions": [],
      "entrance": {
-      "type": "slide_down",
+      "type": "slide_left",
       "dur": 0.3
      },
      "slot": "a",
@@ -875,13 +880,14 @@
         0.5
        ],
        "rot": -8,
-       "size": 0.15,
+       "size": 0.11,
        "color": [
         255,
         150,
         40
        ],
-       "impact": false
+       "impact": false,
+       "style": "ink"
       }
      ],
      "until": 39.892
@@ -896,7 +902,7 @@
      "storyTransition": "Smoke dissolve",
      "captions": [],
      "entrance": {
-      "type": "fade",
+      "type": "slide_down",
       "dur": 0.3
      },
      "slot": "b",
@@ -948,7 +954,7 @@
      "storyTransition": "Whip pan",
      "captions": [],
      "entrance": {
-      "type": "whip",
+      "type": "slide_right",
       "dur": 0.3
      },
      "slot": "c",
@@ -1003,17 +1009,18 @@
        "text": "CHA-CHING!",
        "at": 43.445,
        "pos": [
-        0.22,
-        0.25
+        0.78,
+        0.5
        ],
-       "rot": 7,
-       "size": 0.15,
+       "rot": -8,
+       "size": 0.11,
        "color": [
         230,
         40,
         60
        ],
-       "impact": true
+       "impact": false,
+       "style": "pop"
       }
      ],
      "landNote": "landed 3.53s early (from 42.028) so the clip plays out before the page turn"
@@ -1025,7 +1032,7 @@
      "slot": "a",
      "captions": [],
      "entrance": {
-      "type": "iris",
+      "type": "slide_left",
       "dur": 0.3
      },
      "clip": {
@@ -1044,7 +1051,7 @@
      "slot": "b",
      "captions": [],
      "entrance": {
-      "type": "slide_left",
+      "type": "slide_down",
       "dur": 0.3
      },
      "clip": {
@@ -1143,7 +1150,7 @@
      "storyTransition": "Slide up",
      "captions": [],
      "entrance": {
-      "type": "slide_up",
+      "type": "wipe",
       "dur": 0.3
      },
      "slot": "a",
@@ -1187,17 +1194,18 @@
        "text": "THUNK!",
        "at": 51.223,
        "pos": [
-        0.22,
-        0.75
+        0.78,
+        0.5
        ],
-       "rot": 7,
-       "size": 0.15,
+       "rot": -8,
+       "size": 0.11,
        "color": [
         255,
         245,
         230
        ],
-       "impact": false
+       "impact": false,
+       "style": "ink"
       }
      ],
      "until": 55.472
@@ -1212,7 +1220,7 @@
      "storyTransition": "Speed-line wipe",
      "captions": [],
      "entrance": {
-      "type": "whip",
+      "type": "iris",
       "dur": 0.3
      },
      "slot": "b",
@@ -1244,13 +1252,14 @@
         0.25
        ],
        "rot": 7,
-       "size": 0.15,
+       "size": 0.11,
        "color": [
         255,
         150,
         40
        ],
-       "impact": true
+       "impact": false,
+       "style": "speed"
       }
      ],
      "until": 59.586
@@ -1262,7 +1271,7 @@
      "slot": "a",
      "captions": [],
      "entrance": {
-      "type": "slide_up",
+      "type": "wipe",
       "dur": 0.3
      },
      "clip": {
@@ -1282,7 +1291,7 @@
      "slot": "a",
      "captions": [],
      "entrance": {
-      "type": "fade",
+      "type": "wipe",
       "dur": 0.3
      },
      "clip": {
@@ -1324,7 +1333,7 @@
      "slot": "b",
      "captions": [],
      "entrance": {
-      "type": "wipe",
+      "type": "iris",
       "dur": 0.3
      },
      "clip": {
@@ -1407,13 +1416,14 @@
         0.5
        ],
        "rot": -8,
-       "size": 0.15,
+       "size": 0.11,
        "color": [
         255,
         200,
         60
        ],
-       "impact": true
+       "impact": false,
+       "style": "pop"
       }
      ],
      "until": 72.446
@@ -1428,7 +1438,7 @@
      "storyTransition": "Diagonal slash",
      "captions": [],
      "entrance": {
-      "type": "wipe",
+      "type": "zoom_pop",
       "dur": 0.3
      },
      "slot": "b",
@@ -1468,7 +1478,7 @@
      "storyTransition": "Vault-door iris",
      "captions": [],
      "entrance": {
-      "type": "iris",
+      "type": "wipe",
       "dur": 0.3
      },
      "slot": "c",
@@ -1515,13 +1525,14 @@
         0.75
        ],
        "rot": 7,
-       "size": 0.15,
+       "size": 0.11,
        "color": [
         190,
         120,
         255
        ],
-       "impact": false
+       "impact": false,
+       "style": "hollow"
       }
      ],
      "until": 74.447
@@ -1532,7 +1543,7 @@
      "at": 68.917,
      "captions": [],
      "entrance": {
-      "type": "slide_right",
+      "type": "zoom_pop",
       "dur": 0.3
      },
      "slot": "d",
@@ -1568,7 +1579,7 @@
      "slot": "a",
      "captions": [],
      "entrance": {
-      "type": "iris",
+      "type": "zoom_pop",
       "dur": 0.3
      },
      "clip": {
@@ -1588,7 +1599,7 @@
      "slot": "a",
      "captions": [],
      "entrance": {
-      "type": "slide_left",
+      "type": "zoom_pop",
       "dur": 0.3
      },
      "clip": {
@@ -1607,7 +1618,7 @@
      "slot": "b",
      "captions": [],
      "entrance": {
-      "type": "slide_up",
+      "type": "wipe",
       "dur": 0.3
      },
      "clip": {
@@ -1627,7 +1638,7 @@
      "slot": "c",
      "captions": [],
      "entrance": {
-      "type": "fade",
+      "type": "zoom_pop",
       "dur": 0.3
      },
      "clip": {
@@ -1647,7 +1658,7 @@
      "slot": "d",
      "captions": [],
      "entrance": {
-      "type": "wipe",
+      "type": "zoom_pop",
       "dur": 0.3
      },
      "clip": {
@@ -1702,7 +1713,7 @@
      "at": 83.011,
      "captions": [],
      "entrance": {
-      "type": "glitch",
+      "type": "ink",
       "dur": 0.3
      },
      "slot": "a",
@@ -1754,7 +1765,7 @@
      "storyTransition": "Hard flash (beat)",
      "captions": [],
      "entrance": {
-      "type": "zoom_pop",
+      "type": "fade",
       "dur": 0.3
      },
      "slot": "b",
@@ -1805,13 +1816,14 @@
         0.5
        ],
        "rot": -8,
-       "size": 0.15,
+       "size": 0.11,
        "color": [
         255,
         200,
         60
        ],
-       "impact": true
+       "impact": false,
+       "style": "pop"
       }
      ],
      "landNote": "landed 0.70s early (from 85.124) so the clip plays out before the page turn"
@@ -1839,7 +1851,7 @@
      "storyTransition": "Page turn",
      "captions": [],
      "entrance": {
-      "type": "fade",
+      "type": "ink",
       "dur": 0.3
      },
      "slot": "a",
@@ -1886,13 +1898,14 @@
         0.75
        ],
        "rot": -8,
-       "size": 0.15,
+       "size": 0.11,
        "color": [
         230,
         40,
         60
        ],
-       "impact": false
+       "impact": false,
+       "style": "ink"
       }
      ],
      "until": 94.993
@@ -1945,7 +1958,7 @@
      "slot": "a",
      "captions": [],
      "entrance": {
-      "type": "iris",
+      "type": "ink",
       "dur": 0.3
      },
      "clip": {
@@ -1964,7 +1977,7 @@
      "slot": "b",
      "captions": [],
      "entrance": {
-      "type": "slide_left",
+      "type": "wipe",
       "dur": 0.3
      },
      "clip": {
@@ -1999,7 +2012,7 @@
      "storyTransition": "Page turn",
      "captions": [],
      "entrance": {
-      "type": "zoom_pop",
+      "type": "whip",
       "dur": 0.3
      },
      "slot": "a",
@@ -2047,13 +2060,14 @@
         0.75
        ],
        "rot": -8,
-       "size": 0.15,
+       "size": 0.11,
        "color": [
         255,
         245,
         230
        ],
-       "impact": true
+       "impact": false,
+       "style": "speed"
       }
      ],
      "until": 106.278
@@ -2068,7 +2082,7 @@
      "storyTransition": "Slow push, rain smear",
      "captions": [],
      "entrance": {
-      "type": "slide_left",
+      "type": "slide_up",
       "dur": 0.3
      },
      "slot": "b",
@@ -2110,7 +2124,7 @@
      "slot": "a",
      "captions": [],
      "entrance": {
-      "type": "slide_up",
+      "type": "whip",
       "dur": 0.3
      },
      "clip": {
@@ -2130,7 +2144,7 @@
      "slot": "a",
      "captions": [],
      "entrance": {
-      "type": "fade",
+      "type": "whip",
       "dur": 0.3
      },
      "clip": {
@@ -2150,7 +2164,7 @@
      "slot": "a",
      "captions": [],
      "entrance": {
-      "type": "wipe",
+      "type": "slide_up",
       "dur": 0.3
      },
      "clip": {
@@ -2192,7 +2206,7 @@
      "slot": "b",
      "captions": [],
      "entrance": {
-      "type": "iris",
+      "type": "slide_up",
       "dur": 0.3
      },
      "clip": {
@@ -2228,7 +2242,7 @@
      "storyTransition": "Page turn",
      "captions": [],
      "entrance": {
-      "type": "glitch",
+      "type": "wipe",
       "dur": 0.3
      },
      "slot": "a",
@@ -2275,13 +2289,14 @@
         0.5
        ],
        "rot": -8,
-       "size": 0.15,
+       "size": 0.11,
        "color": [
         255,
         200,
         60
        ],
-       "impact": true
+       "impact": false,
+       "style": "hollow"
       }
      ],
      "until": 128.755
@@ -2296,7 +2311,7 @@
      "storyTransition": "Shockwave wipe",
      "captions": [],
      "entrance": {
-      "type": "whip",
+      "type": "slide_left",
       "dur": 0.3
      },
      "slot": "b",
@@ -2355,13 +2370,14 @@
         0.5
        ],
        "rot": -8,
-       "size": 0.15,
+       "size": 0.11,
        "color": [
         230,
         40,
         60
        ],
-       "impact": true
+       "impact": false,
+       "style": "pop"
       }
      ],
      "until": 130.148
@@ -2373,7 +2389,7 @@
      "slot": "a",
      "captions": [],
      "entrance": {
-      "type": "slide_left",
+      "type": "wipe",
       "dur": 0.3
      },
      "clip": {
@@ -2392,7 +2408,7 @@
      "slot": "b",
      "captions": [],
      "entrance": {
-      "type": "slide_up",
+      "type": "slide_left",
       "dur": 0.3
      },
      "clip": {
@@ -2423,7 +2439,7 @@
      "at": 134.374,
      "captions": [],
      "entrance": {
-      "type": "slide_down",
+      "type": "zoom_pop",
       "dur": 0.3
      },
      "slot": "a",
@@ -2457,7 +2473,7 @@
      "at": 134.63,
      "captions": [],
      "entrance": {
-      "type": "slide_left",
+      "type": "slide_down",
       "dur": 0.3
      },
      "slot": "b",
@@ -2494,7 +2510,7 @@
      "at": 134.98,
      "captions": [],
      "entrance": {
-      "type": "slide_right",
+      "type": "zoom_pop",
       "dur": 0.3
      },
      "slot": "c",
@@ -2530,7 +2546,7 @@
      "at": 135.33,
      "captions": [],
      "entrance": {
-      "type": "zoom_pop",
+      "type": "slide_down",
       "dur": 0.3
      },
      "slot": "d",
@@ -2649,7 +2665,8 @@
        40,
        60
       ],
-      "impact": true
+      "impact": true,
+      "style": "pop"
      }
     ]
    },
@@ -2668,7 +2685,7 @@
      "at": 142.803,
      "captions": [],
      "entrance": {
-      "type": "slide_up",
+      "type": "slide_right",
       "dur": 0.3
      },
      "slot": "a",
@@ -2702,7 +2719,7 @@
      "at": 142.68,
      "captions": [],
      "entrance": {
-      "type": "iris",
+      "type": "slide_up",
       "dur": 0.3
      },
      "slot": "b",
@@ -2782,7 +2799,7 @@
      "at": 143.38,
      "captions": [],
      "entrance": {
-      "type": "wipe",
+      "type": "slide_right",
       "dur": 0.3
      },
      "slot": "d",
@@ -2820,7 +2837,7 @@
      "storyTransition": "Whip pan",
      "captions": [],
      "entrance": {
-      "type": "zoom_pop",
+      "type": "slide_up",
       "dur": 0.3
      },
      "slot": "e",
@@ -2878,7 +2895,7 @@
      "slot": "b",
      "captions": [],
      "entrance": {
-      "type": "fade",
+      "type": "slide_right",
       "dur": 0.3
      },
      "clip": {
@@ -2973,7 +2990,7 @@
      "storyTransition": "Zoom splash, page turn",
      "captions": [],
      "entrance": {
-      "type": "glitch",
+      "type": "ink",
       "dur": 0.3
      },
      "slot": "a",
@@ -3034,7 +3051,7 @@
      "storyTransition": "Smoke dissolve",
      "captions": [],
      "entrance": {
-      "type": "fade",
+      "type": "ink",
       "dur": 0.3
      },
      "slot": "b",
@@ -3094,13 +3111,14 @@
         0.5
        ],
        "rot": 7,
-       "size": 0.15,
+       "size": 0.11,
        "color": [
         255,
         150,
         40
        ],
-       "impact": false
+       "impact": false,
+       "style": "ink"
       }
      ],
      "landNote": "landed 1.42s early (from 179.955) so the clip plays out before the page turn"
@@ -3112,7 +3130,7 @@
      "slot": "a",
      "captions": [],
      "entrance": {
-      "type": "wipe",
+      "type": "fade",
       "dur": 0.3
      },
      "clip": {
@@ -3132,7 +3150,7 @@
      "slot": "a",
      "captions": [],
      "entrance": {
-      "type": "iris",
+      "type": "ink",
       "dur": 0.3
      },
      "clip": {
@@ -3174,7 +3192,7 @@
      "slot": "a",
      "captions": [],
      "entrance": {
-      "type": "slide_left",
+      "type": "fade",
       "dur": 0.3
      },
      "clip": {
@@ -3206,7 +3224,7 @@
      "slot": "a",
      "captions": [],
      "entrance": {
-      "type": "slide_up",
+      "type": "fade",
       "dur": 0.3
      },
      "clip": {
@@ -3241,7 +3259,7 @@
      "storyTransition": "Slow push",
      "captions": [],
      "entrance": {
-      "type": "wipe",
+      "type": "iris",
       "dur": 0.3
      },
      "slot": "a",
@@ -3291,7 +3309,7 @@
      "storyTransition": "Iris close to black",
      "captions": [],
      "entrance": {
-      "type": "iris",
+      "type": "ink",
       "dur": 0.3
      },
      "slot": "b",
@@ -3339,7 +3357,7 @@
      "slot": "a",
      "captions": [],
      "entrance": {
-      "type": "fade",
+      "type": "iris",
       "dur": 0.3
      },
      "clip": {
@@ -3359,7 +3377,7 @@
      "slot": "a",
      "captions": [],
      "entrance": {
-      "type": "wipe",
+      "type": "iris",
       "dur": 0.3
      },
      "clip": {
@@ -3378,7 +3396,7 @@
      "slot": "b",
      "captions": [],
      "entrance": {
-      "type": "iris",
+      "type": "ink",
       "dur": 0.3
      },
      "clip": {

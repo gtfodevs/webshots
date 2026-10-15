@@ -708,8 +708,20 @@ def sfx_tile(sfx, slot, pad=None):
     d = ImageDraw.Draw(tile)
     o = (P - l, P - t)
     # outer white keyline, then black ink stroke, then colour fill
-    d.text(o, sfx['text'], font=f, fill=(255, 255, 255, 255), stroke_width=2 * sw, stroke_fill=(255, 255, 255, 255))
-    d.text(o, sfx['text'], font=f, fill=tuple(sfx.get('color', [255, 214, 0])) + (255,), stroke_width=sw, stroke_fill=INK + (255,))
+    col = tuple(sfx.get('color', [255, 214, 0]))
+    st = sfx.get('style', 'pop')   # lettering styles vary per page (Jason 2026-10-14): pop | ink | hollow | speed
+    if st == 'speed':   # speed lines trailing the word (motion SFX: tyres, blasts)
+        for k in range(5):
+            yy = o[1] + t + (b - t) * (0.2 + 0.15 * k); x1 = P * 0.9
+            d.line([(x1 - P * (0.5 + 0.1 * (k % 3)), yy), (x1, yy)], fill=INK + (255,), width=max(2, sw))
+    if st == 'ink':
+        d.text(o, sfx['text'], font=f, fill=INK + (255,), stroke_width=sw, stroke_fill=(255, 255, 255, 255))
+    elif st == 'hollow':
+        d.text(o, sfx['text'], font=f, fill=INK + (255,), stroke_width=2 * sw, stroke_fill=INK + (255,))
+        d.text(o, sfx['text'], font=f, fill=(0, 0, 0, 0), stroke_width=sw, stroke_fill=col + (255,))
+    else:
+        d.text(o, sfx['text'], font=f, fill=(255, 255, 255, 255), stroke_width=2 * sw, stroke_fill=(255, 255, 255, 255))
+        d.text(o, sfx['text'], font=f, fill=col + (255,), stroke_width=sw, stroke_fill=INK + (255,))
     tile = tile.rotate(sfx.get('rot', -6), resample=Image.BICUBIC, expand=True)
     return tile.crop(tile.getbbox())
 
@@ -2050,6 +2062,13 @@ def panel_entrance(base, painted, bbox, typ, p, seed=0):
         A = (1 / sc, 0, cx - cx / sc, 0, 1 / sc, cy - cy / sc)
         layer = np.asarray(Image.fromarray(F.astype(np.uint8)).transform((W, H), Image.AFFINE, A, Image.BILINEAR), np.float32)
         alpha = np.asarray(Image.fromarray((m * 255).astype(np.uint8)).transform((W, H), Image.AFFINE, A, Image.BILINEAR), np.float32) / 255 * min(1, 0.2 + e)
+    elif typ == 'ink':   # ink-reveal: blotchy ink spreading from the centre out
+        rnd = np.random.default_rng(seed)
+        nz = np.asarray(Image.fromarray((rnd.random((9, 16)) * 255).astype(np.uint8)).resize((W, H), Image.BICUBIC), np.float32) / 255
+        yy, xx = np.mgrid[0:H, 0:W].astype(np.float32)
+        r = np.hypot((xx - (x + w / 2)) / max(w, 1), (yy - (y + h / 2)) / max(h, 1)) / 0.71
+        fld = 0.55 * r + 0.45 * nz
+        alpha = m * np.clip((e * 1.12 - fld) / 0.06, 0, 1)
     elif typ == 'glitch':
         rnd = np.random.default_rng(seed + int(p * 30))
         layer = F.copy(); sh = int(0.02 * w * (1 - p)) + 1
