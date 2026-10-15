@@ -108,3 +108,4 @@ The originals are `uno-ORIGINAL-sheet.jpg` and `aura-ORIGINAL-sheet.jpg`. Reject
 - Scope changes ("only the door") never silently drop earlier flags; ask or keep them on the list.
 - Before calling any render final: walk the fixlist, grab a frame of each item from the rendered video, and confirm it is fixed. Report the checklist with the delivery.
 - A render with an open fixlist item is a preview, not a final.
+- Clothing rule for EVERY clip prompt: start with "The robot humanoid is fully clothed at all times: full-length suit trousers, shoes, coat and sleeves always cover every limb; no bare metal legs or arms ever visible." QA: crop the legs on walking shots and step through at 4fps; any bare chrome limb fails (Oct 15 2026).
