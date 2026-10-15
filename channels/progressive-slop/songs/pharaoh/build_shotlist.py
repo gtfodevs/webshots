@@ -9,20 +9,20 @@ SN, KI = A['snares'], A['kicks']
 
 CLOTH = ("Every robot is fully clothed at all times: long sleeves to the wrists, shirts tucked in, jackets and coats on; "
          "no bare metal arms or torso ever visible. Archaeologist expedition wear only (no suits, no vintage gangster wear).")
-EYES = "Faces stay cool polished SILVER chrome with no red or copper tint; only the small eye lenses glow bright red."
-LOCK = ("Locked static tripod camera: no zoom, no push-in, no pan, no tilt, no camera movement at all; the frame never changes. "
-        "Framed from the waist up: legs never in frame.")
+EYES = "Faces stay cool polished SILVER chrome with no red or copper tint; only the eyes glow, intensely GLOWING RED with a bright luminous emissive red glow."
+LOCK = "Locked static tripod camera: no zoom, no push-in, no pan, no tilt, no camera movement at all; the frame never changes."
+WAIST = " Framed from the waist up: legs never in frame."
 PHONES = "slim built-in flush headphone ear discs set into the sides of the chrome head (never big over-ear cans)"
 UNO = ("Uno: chrome robot archaeologist with an A-list leading-man V-taper build, very broad shoulders and a narrow waist; "
        "entire head bright mirror-silver chrome with no skin, sculpted like a handsome young Black American man in his 20s, "
        "full lips, broad nose, rounded cheeks; a big confident swagger smirk-smile that shows a SHINY GOLD GRILL front and "
-       "center; small glowing red eye lenses; tan fedora over " + PHONES + "; khaki long-sleeve archaeologist field shirt "
+       "center; intensely GLOWING RED eyes (bright luminous emissive red glow); tan fedora over " + PHONES + "; khaki long-sleeve archaeologist field shirt "
        "tucked into a leather belt, khaki cargo pants; long PURPLE FUR COAT with full sleeves worn open; thick gold chain with "
        "a large gold \"1\" pendant; leather satchel across the body; chrome hands relaxed and open (never fists). His face is a "
        "handsome chrome face, never a skull and never a Joker grin")
 AURA = ("Aura: chrome robot archaeologist, a glamorous movie-star bombshell with an hourglass figure and a cinched waist; "
         "entire head mirror-silver chrome with no skin, modeled on a beautiful young Black woman in her 20s, confident "
-        "swagger smile, small glowing red eye lenses; long black hair with glowing RED streaks; tan fedora with a burgundy "
+        "swagger smile, intensely GLOWING RED eyes (bright luminous emissive red glow); long black hair with glowing RED streaks; tan fedora with a burgundy "
         "band over " + PHONES + "; fitted khaki safari jacket buttoned up to the collar, long sleeves to the wrists, belted at "
         "the waist, burgundy scarf at the neck; fully covered")
 PHAR = ("the Pharaoh: skeletal, bony, rotting crypt-horror mummy king, emaciated frame, sunken skull face with long fangs, "
@@ -127,8 +127,7 @@ def start_prompt(chars, loc, framing, action):
     pe = "The Pharaoh's eyes glow green. " if 'P' in chars else ''
     refs = ', '.join(REFS[c] for c in chars) + (', ' if chars else '') + LOC[loc][0]
     note = ' Do NOT attach the Uno or Aura sheets for the Pharaoh; he must never resemble Uno.' if 'P' in chars else ''
-    return (f"Attach master sheet(s): {refs}. {clothes}Match the reference sheets exactly.{note} {framing} shot, framed from the "
-            f"waist up (no legs in frame), locked static camera, at most 2 characters, {LOC[loc][1]}. {who}. Pose: {action}, "
+    return (f"Attach master sheet(s): {refs}. {clothes}Match the reference sheets exactly.{note} {framing} shot,{' framed from the waist up (no legs in frame),' if chars else ''} locked static camera, at most 2 characters, {LOC[loc][1]}. {who}. Pose: {action}, "
             f"captured at the first moment of the action. {eyes}{pe}"
             "Glossy cinematic comic-book rendering, high contrast, Egyptian tomb lighting, 16:9.").replace('  ', ' ')
 
@@ -141,7 +140,7 @@ def motion_prompt(chars, action):
     if 'A' in chars: smile += "Aura moves with confident movie-star swagger. "
     pe = "The Pharaoh's green eyes keep glowing; his tattered bandage strips swing with the beat. " if 'P' in chars else ''
     dance = DANCE if (set(chars) & {'P', 'M'} or any(w in action.lower() for w in ('scarab', 'bandage', 'cobra'))) else ''
-    return f"{clothes}{LOCK} One simple action only: {action}. {smile}{eyes}{pe}{dance}No new characters enter. No sound-effect lettering. {BEAT}"
+    return f"{clothes}{LOCK}{WAIST if chars else ''} One simple action only: {action}. {smile}{eyes}{pe}{dance}No new characters enter. No sound-effect lettering. {BEAT}"
 
 out = []
 for i, (bar, typ, loc, chars, action, framing, ov, text) in enumerate(SHOTS):
