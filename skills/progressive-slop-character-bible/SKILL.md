@@ -96,3 +96,5 @@ The originals are `uno-ORIGINAL-sheet.jpg` and `aura-ORIGINAL-sheet.jpg`. Reject
 - **Keep the slick glossy rendering of the original clips.** Fresh generations come out flatter and lose it.
 - **Check physical logic.** Example: a door peephole slit shows only eyes, never a head poking through.
 - **Show the fixed still before animating.**
+
+- Uno build: always broad, powerful shoulders filling the coat. A skinny frame reads as "Joker". If a frame looks narrow, widen it with a Precise Edit painted on the shoulder band (Oct 15 2026).
