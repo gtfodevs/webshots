@@ -230,10 +230,15 @@ class Mist:
         import cv2
         r = rng(seed, 'mist'); self.W, self.H, self.loop, self.mode, self.strength = W, H, loop, mode, strength
         self.mask = region_mask(W, H, region); self.color = np.asarray(color, np.float32)
-        def tile(cell):
-            g = r.uniform(0, 1, (H // cell + 2, W // cell + 2)).astype(np.float32)
-            g[:, -1] = g[:, 0]; return cv2.resize(g, (W + 2 * cell, H + 2 * cell), interpolation=cv2.INTER_CUBIC)[:H, :W]
-        self.a = cv2.GaussianBlur(tile(160), (0, 0), 30); self.b = cv2.GaussianBlur(tile(60), (0, 0), 12)
+        def tile(cell, sig):
+            # horizontally periodic noise (period exactly W) so np.roll scrolling never shows a seam
+            nx = max(2, round(W / cell)); g = r.uniform(0, 1, (H // cell + 2, nx)).astype(np.float32)
+            g = np.concatenate([g[:, -2:], g, g[:, :2]], axis=1)  # wrap-pad
+            up = cv2.resize(g, ((nx + 4) * W // nx, H + 2 * cell), interpolation=cv2.INTER_CUBIC)
+            up = up[:H, 2 * W // nx: 2 * W // nx + W]
+            pad = int(3 * sig); up = cv2.GaussianBlur(np.concatenate([up[:, -pad:], up, up[:, :pad]], 1), (0, 0), sig)
+            return np.ascontiguousarray(up[:, pad:pad + W])
+        self.a = tile(160, 30); self.b = tile(60, 12)
 
     def render(self, t):
         f = (t % self.loop) / self.loop
