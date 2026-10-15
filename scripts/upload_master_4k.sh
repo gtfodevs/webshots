@@ -6,7 +6,7 @@
 set -euo pipefail
 IN="${1:?usage: upload_master_4k.sh IN OUT}"; OUT="${2:?usage: upload_master_4k.sh IN OUT}"
 PRESET="${PRESET:-medium}"; CRF="${CRF:-16}"
-read -r W H FPS < <(ffprobe -v error -select_streams v:0 -show_entries stream=width,height,r_frame_rate -of csv=p=0:s=' ' "$IN")
+read -r W H FPS < <(ffprobe -v error -select_streams v:0 -show_entries stream=width,height,r_frame_rate -of csv=p=0 "$IN" | tr ',' ' ')
 if [ "$W" -ge "$H" ]; then TW=3840; TH=2160; else TW=2160; TH=3840; fi
 GOP=$(python3 -c "from fractions import Fraction as F; print(round(2*F('$FPS')))")
 mkdir -p "$(dirname "$OUT")"
