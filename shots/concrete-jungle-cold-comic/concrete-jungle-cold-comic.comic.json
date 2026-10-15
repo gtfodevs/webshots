@@ -471,7 +471,7 @@
     },
     {
      "id": "f02",
-     "image": "panels/f02_cropstart.jpg",
+     "image": "panels/f02_red2start.jpg",
      "at": 9.427,
      "moment": "Low worm's-eye shot: Uno and Aura step out of a rain-soaked alley as nobodies, Uno's overcoat whipping in the wind, puddle SPLASH",
      "cast": "Uno, Aura",
@@ -484,7 +484,7 @@
      },
      "slot": "b",
      "clip": {
-      "src": "clips/v6/f02_crop.mp4",
+      "src": "clips/v6/f02_red2.mp4",
       "in": 0.0,
       "out": 6.0,
       "firstFrameNcc": 0.998
@@ -493,9 +493,9 @@
       {
        "label": "Uno face",
        "box": [
-        0.24,
+        0.26,
         0.0,
-        0.37,
+        0.41,
         0.16
        ],
        "required": true,
@@ -504,9 +504,9 @@
       {
        "label": "Aura face",
        "box": [
-        0.71,
+        0.68,
         0.06,
-        0.84,
+        0.83,
         0.24
        ],
        "required": true,
@@ -824,7 +824,7 @@
      "slot": "a",
      "clip": {
       "src": "clips/v6/f05_locked.mp4",
-      "in": 0.0,
+      "in": 0.5,
       "out": 6.0,
       "firstFrameNcc": 0.998
      },

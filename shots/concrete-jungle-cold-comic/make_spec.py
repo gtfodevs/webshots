@@ -158,8 +158,8 @@ CAPTION_FILLS = [[255, 226, 150], [240, 232, 214], [255, 190, 190], [214, 200, 2
 SFX_COLORS = [[255, 200, 60], [230, 40, 60], [190, 120, 255], [255, 245, 230], [255, 150, 40]]
 CLIP_LEN = 6.0
 # v5 (2026-10-14): new clips in clips/v5 (never *_take1); unit id -> clip file when it differs from clips/v5/<id>.mp4
-CLIP_SRC = {'f02': 'clips/v6/f02_crop.mp4', 'f05': 'clips/v6/f05_locked.mp4', 'f23': 'clips/v5/f23_new.mp4', 'f23x': 'clips/v5/f23.mp4'}
-UNIT_IMAGE = {'f02': 'panels/f02_cropstart.jpg', 'f05': 'panels/f05_pendant.jpg', 'f23': 'panels/f23_new.jpg', 'f23x': 'panels/f23.jpg'}
+CLIP_SRC = {'f02': 'clips/v6/f02_red2.mp4', 'f05': 'clips/v6/f05_locked.mp4', 'f23': 'clips/v5/f23_new.mp4', 'f23x': 'clips/v5/f23.mp4'}
+UNIT_IMAGE = {'f02': 'panels/f02_red2start.jpg', 'f05': 'panels/f05_pendant.jpg', 'f23': 'panels/f23_new.jpg', 'f23x': 'panels/f23.jpg'}
 # sequence lead-up sub-panels with no clip: gentle pan/zoom of the still (allowed only as sequence insets)
 NO_CLIP = {'f15a', 'f22a', 'f22d', 'f23a', 'f23c', 'f23d'}
 def clip_rel(fid):
@@ -204,7 +204,7 @@ CLIPSTART_FOCUS.update({
 TRIMS = {'f21': (2.5, 'v5 clip pushes in on the pair; feet leave the cell from ~3 s, so it ends (and ping-pongs) before that'), 'f28': (4.0, 'v5 clip pushes in until Ferro fills the frame; keep the first 4 s so the full figure stays in')}
 # v5 focus regions, read off a 10% grid sheet of the v5 panel art (the v5 clips' start images)
 V5_FOCUS = {
- 'f02': [R('Uno face', 0.24, 0.0, 0.37, 0.16), R('Aura face', 0.71, 0.06, 0.84, 0.24)],   # f02_crop (thigh-up walk)
+ 'f02': [R('Uno face', 0.26, 0.0, 0.41, 0.16), R('Aura face', 0.68, 0.06, 0.83, 0.24)],   # f02_red2 (native waist-up walk, red eyes)
  'f04': [R('Uno face', 0.52, 0.0, 0.82, 0.60), R('gold 1 chain', 0.38, 0.25, 0.62, 0.75, req=False)],
  'f05': [R('slot eyes', 0.02, 0.10, 0.15, 0.28), R('Uno face', 0.32, 0.04, 0.52, 0.34), R('Aura face', 0.62, 0.0, 0.80, 0.28)],   # f05_locked (pendant still)
  'f06': [R('Aura face', 0.52, 0.08, 0.66, 0.35), R('Ferro face', 0.88, 0.30, 0.98, 0.50, req=False)],
@@ -465,6 +465,10 @@ def build():
             sys.exit('FAIL every panel must have a QA-passed clip (still-only is not deliverable): ' + msg)
         print('WARN preview only (CJC_ALLOW_STILLS=1):', msg); spec['allowStills'] = True
     path = os.path.join(HERE, 'concrete-jungle-cold-comic.comic.json')
+    for pg in spec['pages']:   # f05_locked opens on the near-still prompt segment: start 0.5 s in (static gate 34.6 s)
+        for u in pg['panels']:
+            if u['id'] == 'f05' and u.get('clip'):
+                u['clip']['in'] = 0.5
     for pg in spec['pages']:   # one entrance family per page, varied across pages
         fam = PAGE_ENTRANCE.get(pg['id'])
         if fam:
