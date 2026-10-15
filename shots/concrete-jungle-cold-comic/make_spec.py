@@ -91,7 +91,7 @@ PAGES = [
       ('f23', 'e', 143.72, 'YOINK!', False, 'zoom_pop', 'push_in')],
      ('f24', 150.98, 'SPIN-SPIN!', False, 'tilt', 'f23')),
     # living panels: the triumph splash f25 holds the whole frame (16:9 and Short) until the toast f26 joins it
-    ('p09', 156.56, 184.40, 'reflow-two', 'crossfade', 'action',
+    ('p09', 156.56, 184.40, 'inset-two', 'crossfade', 'action',
      [('f25', 'a', 156.68, 'FLASH!', True, 'glitch', 'push_in'), ('f26', 'b', 179.94, 'TING!', False, 'fade', 'pull_out')],
      None),
     ('p10', 184.40, END, 'inset-two', 'fade_black', 'eerie',
@@ -237,7 +237,7 @@ V5_FOCUS = {
  'f23c': [R('bowler hat', 0.15, 0.40, 0.45, 0.75), R('streetlamp', 0.50, 0.10, 0.70, 0.40, req=False)],
  'f23d': [R('alley lights', 0.40, 0.30, 0.60, 0.80)],
 }
-FORCE_LAYOUT = {'p09': 'reflow-two', 'p10': 'inset-two', 'p04b': 'inset-two'}   # p04b: a 3.8:1 strip cuts Nickel's head   # f28's full figure needs the wide inset (slant-two cuts it)
+FORCE_LAYOUT = {'p09': 'inset-two', 'p10': 'tilt-two', 'p04b': 'inset-two'}   # p04b: a 3.8:1 strip cuts Nickel's head   # f28's full figure needs the wide inset (slant-two cuts it)
 MATCH_MIN = 0.75
 BEAT = 60 / 86.1
 
@@ -428,6 +428,7 @@ def build():
         if 'cover 0.0' not in line:
             print('lettering:', line)
     spec.pop('_dir')
+    add_chains(spec)
     # HARD GATE: every panel animated. Without CJC_CLIPS=1 this is a preview spec (QA warns, not deliverable).
     still = [u['id'] for p in pages for u in p['panels'] + ([p['splash']] if p.get('splash') else []) if not u.get('clip') and not u.get('stillOk')]
     if os.environ.get('CJC_CLIPS') != '1':
@@ -549,6 +550,80 @@ def place_lettering(spec):
                 sx['rot'] = -8 if best[1][0] > 0.5 else 7
                 report.append(f"{u['id']}: sfx {sx['text']} at {best[1]} face cover {best[0][0]}")
     return report
+
+
+# v6 (2026-10-14): NO shot may repeat. When a cell's clip ends before the cell leaves the screen, the cell cuts (on a
+# beat) to a NEW clip from clips/v6 (prompts_batch6.md); any leftover under the last clip is covered by forward-only
+# slow motion (clip.speed >= 0.6), never a loop or a replay.
+CHAINS = {'f01': ['n01', 'n02', 'n03', 'n04'], 'f02': ['n05', 'n06'], 'f03': ['n07'], 'f05': ['n08'], 'f06': ['n30'],
+          'f09': ['n09', 'n10'], 'f11': ['n11', 'n12'], 'f12': ['n13'], 'f13': ['n31'], 'f16': ['n14'], 'f17': ['n32'],
+          'f18': ['n15', 'n16', 'n17'], 'f19': ['n18'], 'f20': ['n19'], 'f21': ['n20'], 'f23b': ['n21'],
+          'f25': ['n22', 'n23', 'n24', 'n25'], 'f27': ['n26', 'n27', 'n29'], 'f28': ['n28']}
+V6_FILE = {'n05': 'n05_street', 'n10': 'n10_take3', 'n17': 'n17_take2'}   # never *_take1*, *nopants*, *nocoat*, n10, n10_take2, n05(_take2/3)
+CHAIN_ENTRANCES = ['fade', 'wipe', 'iris', 'slide_left', 'slide_up']
+MIN_SPEED = 0.6
+CHAIN_FOCUS = {   # read off a 10% grid sheet of the v6 panels (character shots); the rest are no-people shots
+ 'n06': [R('Aura face', 0.45, 0.05, 0.58, 0.30)],
+ 'n10': [R('Uno face', 0.25, 0.0, 0.42, 0.30), R('Aura face', 0.66, 0.30, 0.78, 0.48)],
+ 'n17': [R('Uno face', 0.30, 0.05, 0.45, 0.30), R('Aura face', 0.56, 0.10, 0.70, 0.35)],
+ 'n21': [R('Aura face', 0.38, 0.10, 0.55, 0.40)],
+ 'n23': [R('Uno face', 0.30, 0.12, 0.48, 0.42), R('gold 1 chain', 0.12, 0.30, 0.30, 0.80, req=False)],
+ 'n24': [R('Aura face', 0.37, 0.10, 0.55, 0.42)],
+}
+
+
+def add_chains(spec):
+    import comic_lib as C
+    from PIL import Image
+    k = 0; used = []
+    for pg in spec['pages']:
+        sp = pg.get('splash'); spat = pg.get('transition', {}).get('at')
+        base = [(u, spat if sp else pg['end']) for u in pg['panels']] + ([(sp, pg['end'])] if sp else [])
+        new = []
+        for u, cell_exit in base:
+            if not u.get('clip'):
+                continue
+            land0 = u.get('at', spat)
+            cur, cur_land = u, land0
+            for nid in CHAINS.get(u['id'], []):
+                c = cur['clip']
+                end_ = C.MIN_HOLD + cur_land + (c['out'] - c['in']) / c.get('speed', 1.0)
+                land = round(max([b for b in B if b <= end_ + 0.02 and b > cur_land + 1.0], default=end_), 3)
+                if land > cell_exit - 0.9:
+                    print('chain: no room for', nid, 'after', cur['id']); break
+                rel = f"clips/v6/{V6_FILE.get(nid, nid)}.mp4"
+                img = f'panels/{nid}.jpg'
+                regs = CHAIN_FOCUS.get(nid)
+                if regs is None:
+                  regs = []
+                  try:
+                    regs = [] if nid not in ('n29',) else C.auto_focus_regions(Image.open(os.path.join(ASSETS, img)).convert('RGB'))
+                  except Exception:
+                    pass
+                out_ = round(min(CLIP_LEN, cell_exit - land - C.MIN_HOLD), 2)
+                nu = {'id': nid, 'image': img, 'at': land, 'slot': cur.get('slot', u.get('slot', 'splash')), 'captions': [],
+                      'entrance': {'type': CHAIN_ENTRANCES[k % len(CHAIN_ENTRANCES)], 'dur': 0.3},
+                      'clip': {'src': rel, 'in': 0.0, 'out': out_}, 'focusRegions': regs, 'chainOf': u['id'],
+                      'shotKind': 'character' if regs else 'fx'}
+                k += 1
+                cur['until'] = land
+                if u is sp:
+                    nu['slot'] = None   # splash chains are not supported by the renderer: skip
+                    print('chain: splash', u['id'], 'skipped', nid); break
+                new.append(nu); used.append(nid)
+                cur, cur_land = nu, land
+            # leftover under the last shot of the cell: forward-only slow motion
+            c = cur['clip']
+            L = c['out'] - c['in']
+            once = (cur_land if cur is not u else land0) + C.MIN_HOLD + L / c.get('speed', 1.0)
+            left = cell_exit - once
+            if left > 0.1:
+                sp_ = L / (L + left)
+                c['speed'] = round(max(sp_, MIN_SPEED) - 0.005, 4)
+                if sp_ < MIN_SPEED:
+                    print(f"chain: {cur['id']} still {left - L / MIN_SPEED + L:.2f}s short at speed {MIN_SPEED}")
+        pg['panels'] += new
+    print('chains: used', len(used), 'new clips:', ' '.join(used))
 
 
 if __name__ == '__main__':

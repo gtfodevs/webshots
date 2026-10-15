@@ -412,3 +412,8 @@ The story comes from the order of the panels, not from any single clip.
   exempt. `C.repeat_report` drives `check_no_repeats` (comic QA) and aborts `comic_render.py` before encoding
   (`--allow-repeats` / `allowRepeats` for previews only). Fill the time with NEW shots: when a cell's clip ends,
   cut that cell to a new clip (alternate angle, insert, reaction, establishing, fx) or turn the page.
+- **Shot chains (v6):** a cell can cut to NEW shots when its clip ends: extra units in the same slot with
+  `until` on the previous one (builder `CHAINS` in `shots/concrete-jungle-cold-comic/make_spec.py`). Chained cuts land
+  on the last beat before the previous clip ends; the replaced shot (and its SFX) stop painting; the camera move runs
+  only while the shot owns the cell. Leftover time under the last shot uses forward-only slow motion
+  (`clip.speed`, >= 0.6), never a loop. Tall cells pan once face-to-face (no fallback to one face).

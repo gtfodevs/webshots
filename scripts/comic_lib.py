@@ -390,6 +390,7 @@ def clip_loop(c, t_rel):
     in a loop whose seam is a crossfade: over [L-XF, L] the end blends into the start [0, XF].
     Returns (time A, time B, weight of B); weight 0 = A only."""
     L = c['out'] - c['in']
+    t_rel = t_rel * c.get('speed', 1.0)   # forward-only slow motion (speed < 1) stretches a clip to fill its cell
     xf = min(LOOP_XF, L * 0.3)
     if t_rel < L - xf:
         return max(t_rel, 0.0), 0.0, 0.0
@@ -430,6 +431,8 @@ def unit_plan(spec, u, geo, fps=30, regions=None, img_size=None, within=None):
     t_exit = T(spec, spec['song']['end']) + 0.6
     if sp is not None and not is_splash:
         t_exit = T(spec, sp['at']) + 0.6
+    if u.get('until') is not None:   # shot chains: the move runs only while this shot owns the cell
+        t_exit = min(t_exit, T(spec, u['until']) + 0.3)
     # outgoing transition: the next panel's entrance on this page, else the page transition
     later = sorted([p for p in spec['panels'] if p['at'] > u['at'] + 1e-3], key=lambda p: p['at'])
     out_tr = entrance_of(later[0])['type'] if later and not is_splash else (sp.get('type') if sp and not is_splash else spec.get('outTransition'))
@@ -1017,8 +1020,8 @@ class Scene:
         zk = lambda u: FULLFRAME_Z if fullframe_k(self.spec, u, t) > 1e-4 else u['geo']['z']
         for u in sorted(self.units, key=zk):
             ta = T(self.spec, u['at'])
-            if t < ta:
-                continue
+            if t < ta or (u.get('until') is not None and t >= T(self.spec, u['until']) + 0.5):
+                continue   # not landed yet / replaced by the next shot in its cell (shot chains)
             en = entrance_of(u)
             if u.get('fullFrame') and fullframe_k(self.spec, u, t) > 1e-4:
                 fr = img.copy(); self._paint(fr, u, t)
@@ -1029,6 +1032,8 @@ class Scene:
             else:
                 self._paint(img, u, t)
         for u in (self.units if letters else []):
+            if u.get('until') is not None and t >= T(self.spec, u['until']):
+                continue   # its cell cut to the next shot: the old SFX go with it
             if t >= T(self.spec, u['at']) and (letters_only is None or u['id'] == letters_only):
                 self._letter(img, u, t)
         return img
@@ -2303,7 +2308,7 @@ def cell_window(plan, t, geo, img_size, within):
     if ex and not cell_fits_faces(ex, a, (bx, by, bw, bh)):
         # every face cannot share a window of this cell's shape (e.g. a wide two-shot arriving full frame in the
         # Short): keep the faces the camera plan promises in frame instead of centring on nobody
-        ex = [fs[i] for i in plan.expected(t)] or ex[:1]
+        ex = [fs[i] for i in plan.expected(t)] or ([] if CAM.REVEAL else ex[:1])
     if ex:
         ux0, uy0 = min(f[0] for f in ex), min(f[1] for f in ex); ux1, uy1 = max(f[2] for f in ex), max(f[3] for f in ex)
         # grow (same aspect) until the faces fit with a 6 % margin, never past the footage
@@ -2543,7 +2548,7 @@ def repeat_report(spec, t0=None, t1=None):
     out, seen = [], {}
     for pg in spec['pages']:
         sp = pg.get('splash'); spat = pg.get('transition', {}).get('at')
-        units = [(u, u['at'], spat if sp else pg['end']) for u in pg['panels']] + ([(sp, spat, pg['end'])] if sp else [])
+        units = [(u, u['at'], min(spat if sp else pg['end'], u.get('until', 1e9))) for u in pg['panels']] + ([(sp, spat, pg['end'])] if sp else [])
         for u, land, exit_ in units:
             if exit_ <= t0 or land >= t1:
                 continue
@@ -2553,7 +2558,7 @@ def repeat_report(spec, t0=None, t1=None):
                 out.append((u['id'], src[0], max(land, t0), min(exit_, t1), round(min(exit_, t1) - max(land, t0), 2), f'same source as {seen[src]}'))
             seen[src] = u['id']
             if c:
-                once = clip_start(spec, dict(u, at=land)) + (c['out'] - c['in'])
+                once = clip_start(spec, dict(u, at=land)) + (c['out'] - c['in']) / c.get('speed', 1.0)
                 a, b = max(once, t0), min(exit_, t1)
                 if b - a > REPEAT_TOL:
                     out.append((u['id'], c['src'], round(a, 2), round(b, 2), round(b - a, 2), 'clip ends, cell keeps replaying it'))

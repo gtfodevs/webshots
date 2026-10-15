@@ -250,7 +250,8 @@
        ],
        "impact": true
       }
-     ]
+     ],
+     "until": 5.851
     },
     {
      "id": "f02",
@@ -318,7 +319,8 @@
        ],
        "impact": false
       }
-     ]
+     ],
+     "until": 15.116
     },
     {
      "id": "f03",
@@ -387,7 +389,160 @@
        ],
        "impact": false
       }
-     ]
+     ],
+     "until": 21.502
+    },
+    {
+     "id": "n01",
+     "image": "panels/n01.jpg",
+     "at": 5.851,
+     "slot": "a",
+     "captions": [],
+     "entrance": {
+      "type": "fade",
+      "dur": 0.3
+     },
+     "clip": {
+      "src": "clips/v6/n01.mp4",
+      "in": 0.0,
+      "out": 6.0
+     },
+     "focusRegions": [],
+     "chainOf": "f01",
+     "shotKind": "fx",
+     "until": 11.564
+    },
+    {
+     "id": "n02",
+     "image": "panels/n02.jpg",
+     "at": 11.564,
+     "slot": "a",
+     "captions": [],
+     "entrance": {
+      "type": "wipe",
+      "dur": 0.3
+     },
+     "clip": {
+      "src": "clips/v6/n02.mp4",
+      "in": 0.0,
+      "out": 6.0
+     },
+     "focusRegions": [],
+     "chainOf": "f01",
+     "shotKind": "fx",
+     "until": 17.229
+    },
+    {
+     "id": "n03",
+     "image": "panels/n03.jpg",
+     "at": 17.229,
+     "slot": "a",
+     "captions": [],
+     "entrance": {
+      "type": "iris",
+      "dur": 0.3
+     },
+     "clip": {
+      "src": "clips/v6/n03.mp4",
+      "in": 0.0,
+      "out": 6.0
+     },
+     "focusRegions": [],
+     "chainOf": "f01",
+     "shotKind": "fx",
+     "until": 22.918
+    },
+    {
+     "id": "n04",
+     "image": "panels/n04.jpg",
+     "at": 22.918,
+     "slot": "a",
+     "captions": [],
+     "entrance": {
+      "type": "slide_left",
+      "dur": 0.3
+     },
+     "clip": {
+      "src": "clips/v6/n04.mp4",
+      "in": 0.0,
+      "out": 6.0,
+      "speed": 0.7895
+     },
+     "focusRegions": [],
+     "chainOf": "f01",
+     "shotKind": "fx"
+    },
+    {
+     "id": "n05",
+     "image": "panels/n05.jpg",
+     "at": 15.116,
+     "slot": "b",
+     "captions": [],
+     "entrance": {
+      "type": "slide_up",
+      "dur": 0.3
+     },
+     "clip": {
+      "src": "clips/v6/n05_street.mp4",
+      "in": 0.0,
+      "out": 6.0
+     },
+     "focusRegions": [],
+     "chainOf": "f02",
+     "shotKind": "fx",
+     "until": 20.782
+    },
+    {
+     "id": "n06",
+     "image": "panels/n06.jpg",
+     "at": 20.782,
+     "slot": "b",
+     "captions": [],
+     "entrance": {
+      "type": "fade",
+      "dur": 0.3
+     },
+     "clip": {
+      "src": "clips/v6/n06.mp4",
+      "in": 0.0,
+      "out": 6.0,
+      "speed": 0.6143
+     },
+     "focusRegions": [
+      {
+       "label": "Aura face",
+       "box": [
+        0.45,
+        0.05,
+        0.58,
+        0.3
+       ],
+       "required": true,
+       "face": true
+      }
+     ],
+     "chainOf": "f02",
+     "shotKind": "character"
+    },
+    {
+     "id": "n07",
+     "image": "panels/n07.jpg",
+     "at": 21.502,
+     "slot": "c",
+     "captions": [],
+     "entrance": {
+      "type": "wipe",
+      "dur": 0.3
+     },
+     "clip": {
+      "src": "clips/v6/n07.mp4",
+      "in": 0.0,
+      "out": 6.0,
+      "speed": 0.664
+     },
+     "focusRegions": [],
+     "chainOf": "f03",
+     "shotKind": "fx"
     }
    ],
    "transition": {
@@ -409,7 +564,8 @@
      "in": 0.0,
      "out": 2.08,
      "firstFrameNcc": 0.917,
-     "trimNote": "page turns at 33.60s, clip capped to 2.08s"
+     "trimNote": "page turns at 33.60s, clip capped to 2.08s",
+     "speed": 0.7859
     },
     "focusRegions": [
      {
@@ -464,7 +620,7 @@
    "id": "p02",
    "start": 33.6,
    "end": 49.45,
-   "layout": "wide-three",
+   "layout": "three",
    "mood": "action",
    "panels": [
     {
@@ -533,7 +689,7 @@
        "at": 35.666,
        "pos": [
         0.78,
-        0.75
+        0.5
        ],
        "rot": -8,
        "size": 0.15,
@@ -544,7 +700,8 @@
        ],
        "impact": false
       }
-     ]
+     ],
+     "until": 39.892
     },
     {
      "id": "f06",
@@ -613,7 +770,8 @@
        "impact": false
       }
      ],
-     "landNote": "landed 1.44s early (from 38.499) so the clip plays out before the page turn"
+     "landNote": "landed 1.44s early (from 38.499) so the clip plays out before the page turn",
+     "until": 42.748
     },
     {
      "id": "f07",
@@ -634,7 +792,8 @@
       "in": 0.0,
       "out": 4.85,
       "firstFrameNcc": 0.958,
-      "trimNote": "splash zooms in at 44.14s, clip capped to 4.85s"
+      "trimNote": "splash zooms in at 44.14s, clip capped to 4.85s",
+      "speed": 0.8945
      },
      "focusRegions": [
       {
@@ -679,10 +838,10 @@
        "text": "CHA-CHING!",
        "at": 43.445,
        "pos": [
-        0.78,
-        0.5
+        0.22,
+        0.25
        ],
-       "rot": -8,
+       "rot": 7,
        "size": 0.15,
        "color": [
         230,
@@ -693,6 +852,44 @@
       }
      ],
      "landNote": "landed 3.53s early (from 42.028) so the clip plays out before the page turn"
+    },
+    {
+     "id": "n08",
+     "image": "panels/n08.jpg",
+     "at": 39.892,
+     "slot": "a",
+     "captions": [],
+     "entrance": {
+      "type": "iris",
+      "dur": 0.3
+     },
+     "clip": {
+      "src": "clips/v6/n08.mp4",
+      "in": 0.0,
+      "out": 4.0
+     },
+     "focusRegions": [],
+     "chainOf": "f05",
+     "shotKind": "fx"
+    },
+    {
+     "id": "n30",
+     "image": "panels/n30.jpg",
+     "at": 42.748,
+     "slot": "b",
+     "captions": [],
+     "entrance": {
+      "type": "slide_left",
+      "dur": 0.3
+     },
+     "clip": {
+      "src": "clips/v6/n30.mp4",
+      "in": 0.0,
+      "out": 1.14
+     },
+     "focusRegions": [],
+     "chainOf": "f06",
+     "shotKind": "fx"
     }
    ],
    "pageTransition": {
@@ -718,7 +915,8 @@
      "in": 0.0,
      "out": 4.49,
      "firstFrameNcc": 0.957,
-     "trimNote": "page turns at 49.45s, clip capped to 4.49s"
+     "trimNote": "page turns at 49.45s, clip capped to 4.49s",
+     "speed": 0.8825
     },
     "focusRegions": [
      {
@@ -785,7 +983,7 @@
    "id": "p03",
    "start": 49.45,
    "end": 66.5,
-   "layout": "inset-two",
+   "layout": "two-up",
    "mood": "action",
    "panels": [
     {
@@ -842,10 +1040,10 @@
        "text": "THUNK!",
        "at": 51.223,
        "pos": [
-        0.78,
-        0.5
+        0.22,
+        0.75
        ],
-       "rot": -8,
+       "rot": 7,
        "size": 0.15,
        "color": [
         255,
@@ -854,7 +1052,8 @@
        ],
        "impact": false
       }
-     ]
+     ],
+     "until": 55.472
     },
     {
      "id": "f10",
@@ -874,7 +1073,8 @@
       "src": "clips/f10.mp4",
       "in": 0.0,
       "out": 6.0,
-      "firstFrameNcc": 0.898
+      "firstFrameNcc": 0.898,
+      "speed": 0.8228
      },
      "focusRegions": [
       {
@@ -908,6 +1108,68 @@
       }
      ],
      "landNote": "landed 2.14s early (from 61.138) so the clip plays out before the page turn"
+    },
+    {
+     "id": "n09",
+     "image": "panels/n09.jpg",
+     "at": 55.472,
+     "slot": "a",
+     "captions": [],
+     "entrance": {
+      "type": "slide_up",
+      "dur": 0.3
+     },
+     "clip": {
+      "src": "clips/v6/n09.mp4",
+      "in": 0.0,
+      "out": 6.0
+     },
+     "focusRegions": [],
+     "chainOf": "f09",
+     "shotKind": "fx",
+     "until": 61.138
+    },
+    {
+     "id": "n10",
+     "image": "panels/n10.jpg",
+     "at": 61.138,
+     "slot": "a",
+     "captions": [],
+     "entrance": {
+      "type": "fade",
+      "dur": 0.3
+     },
+     "clip": {
+      "src": "clips/v6/n10_take3.mp4",
+      "in": 0.0,
+      "out": 5.11
+     },
+     "focusRegions": [
+      {
+       "label": "Uno face",
+       "box": [
+        0.25,
+        0.0,
+        0.42,
+        0.3
+       ],
+       "required": true,
+       "face": true
+      },
+      {
+       "label": "Aura face",
+       "box": [
+        0.66,
+        0.3,
+        0.78,
+        0.48
+       ],
+       "required": true,
+       "face": true
+      }
+     ],
+     "chainOf": "f09",
+     "shotKind": "character"
     }
    ],
    "pageTransition": {
@@ -987,7 +1249,8 @@
        ],
        "impact": true
       }
-     ]
+     ],
+     "until": 72.446
     },
     {
      "id": "f12",
@@ -1044,7 +1307,8 @@
        ],
        "impact": false
       }
-     ]
+     ],
+     "until": 78.089
     },
     {
      "id": "f13",
@@ -1112,7 +1376,8 @@
        "impact": false
       }
      ],
-     "landNote": "landed 0.70s early (from 75.952) so the clip plays out before the page turn"
+     "landNote": "landed 0.70s early (from 75.952) so the clip plays out before the page turn",
+     "until": 80.898
     },
     {
      "id": "f14",
@@ -1133,7 +1398,8 @@
       "in": 0.0,
       "out": 5.21,
       "firstFrameNcc": 0.949,
-      "trimNote": "page turns at 82.68s, clip capped to 5.21s"
+      "trimNote": "page turns at 82.68s, clip capped to 5.21s",
+      "speed": 0.8962
      },
      "focusRegions": [
       {
@@ -1183,6 +1449,83 @@
       }
      ],
      "landNote": "landed 1.44s early (from 78.089) so the clip plays out before the page turn"
+    },
+    {
+     "id": "n11",
+     "image": "panels/n11.jpg",
+     "at": 72.446,
+     "slot": "a",
+     "captions": [],
+     "entrance": {
+      "type": "wipe",
+      "dur": 0.3
+     },
+     "clip": {
+      "src": "clips/v6/n11.mp4",
+      "in": 0.0,
+      "out": 6.0
+     },
+     "focusRegions": [],
+     "chainOf": "f11",
+     "shotKind": "fx",
+     "until": 78.089
+    },
+    {
+     "id": "n12",
+     "image": "panels/n12.jpg",
+     "at": 78.089,
+     "slot": "a",
+     "captions": [],
+     "entrance": {
+      "type": "iris",
+      "dur": 0.3
+     },
+     "clip": {
+      "src": "clips/v6/n12.mp4",
+      "in": 0.0,
+      "out": 4.34
+     },
+     "focusRegions": [],
+     "chainOf": "f11",
+     "shotKind": "fx"
+    },
+    {
+     "id": "n13",
+     "image": "panels/n13.jpg",
+     "at": 78.089,
+     "slot": "b",
+     "captions": [],
+     "entrance": {
+      "type": "slide_left",
+      "dur": 0.3
+     },
+     "clip": {
+      "src": "clips/v6/n13.mp4",
+      "in": 0.0,
+      "out": 4.34
+     },
+     "focusRegions": [],
+     "chainOf": "f12",
+     "shotKind": "fx"
+    },
+    {
+     "id": "n31",
+     "image": "panels/n31.jpg",
+     "at": 80.898,
+     "slot": "c",
+     "captions": [],
+     "entrance": {
+      "type": "slide_up",
+      "dur": 0.3
+     },
+     "clip": {
+      "src": "clips/v6/n31.mp4",
+      "in": 0.0,
+      "out": 1.53
+     },
+     "focusRegions": [],
+     "chainOf": "f13",
+     "shotKind": "fx"
     }
    ],
    "pageTransition": {
@@ -1212,7 +1555,8 @@
       "in": 0.0,
       "out": 5.12,
       "firstFrameNcc": 0.963,
-      "trimNote": "page turns at 88.95s, clip capped to 5.12s"
+      "trimNote": "page turns at 88.95s, clip capped to 5.12s",
+      "speed": 0.895
      },
      "focusRegions": [
       {
@@ -1263,7 +1607,8 @@
       "in": 0.0,
       "out": 3.73,
       "firstFrameNcc": 0.278,
-      "trimNote": "page turns at 88.95s, clip capped to 3.73s"
+      "trimNote": "page turns at 88.95s, clip capped to 3.73s",
+      "speed": 0.8681
      },
      "panelOriginal": "panels/f15.jpg",
      "clipStartStill": true,
@@ -1393,7 +1738,8 @@
        ],
        "impact": false
       }
-     ]
+     ],
+     "until": 94.993
     },
     {
      "id": "f17",
@@ -1451,7 +1797,46 @@
        "impact": false
       }
      ],
-     "landNote": "landed 1.42s early (from 94.993) so the clip plays out before the page turn"
+     "landNote": "landed 1.42s early (from 94.993) so the clip plays out before the page turn",
+     "until": 99.219
+    },
+    {
+     "id": "n14",
+     "image": "panels/n14.jpg",
+     "at": 94.993,
+     "slot": "a",
+     "captions": [],
+     "entrance": {
+      "type": "fade",
+      "dur": 0.3
+     },
+     "clip": {
+      "src": "clips/v6/n14.mp4",
+      "in": 0.0,
+      "out": 5.39
+     },
+     "focusRegions": [],
+     "chainOf": "f16",
+     "shotKind": "fx"
+    },
+    {
+     "id": "n32",
+     "image": "panels/n32.jpg",
+     "at": 99.219,
+     "slot": "b",
+     "captions": [],
+     "entrance": {
+      "type": "wipe",
+      "dur": 0.3
+     },
+     "clip": {
+      "src": "clips/v6/n32.mp4",
+      "in": 0.0,
+      "out": 1.16
+     },
+     "focusRegions": [],
+     "chainOf": "f17",
+     "shotKind": "fx"
     }
    ],
    "pageTransition": {
@@ -1532,7 +1917,8 @@
        ],
        "impact": true
       }
-     ]
+     ],
+     "until": 106.278
     },
     {
      "id": "f19",
@@ -1594,7 +1980,109 @@
        ],
        "impact": false
       }
-     ]
+     ],
+     "until": 117.516
+    },
+    {
+     "id": "n15",
+     "image": "panels/n15.jpg",
+     "at": 106.278,
+     "slot": "a",
+     "captions": [],
+     "entrance": {
+      "type": "iris",
+      "dur": 0.3
+     },
+     "clip": {
+      "src": "clips/v6/n15.mp4",
+      "in": 0.0,
+      "out": 6.0
+     },
+     "focusRegions": [],
+     "chainOf": "f18",
+     "shotKind": "fx",
+     "until": 111.851
+    },
+    {
+     "id": "n16",
+     "image": "panels/n16.jpg",
+     "at": 111.851,
+     "slot": "a",
+     "captions": [],
+     "entrance": {
+      "type": "slide_left",
+      "dur": 0.3
+     },
+     "clip": {
+      "src": "clips/v6/n16.mp4",
+      "in": 0.0,
+      "out": 6.0
+     },
+     "focusRegions": [],
+     "chainOf": "f18",
+     "shotKind": "fx",
+     "until": 117.516
+    },
+    {
+     "id": "n17",
+     "image": "panels/n17.jpg",
+     "at": 117.516,
+     "slot": "a",
+     "captions": [],
+     "entrance": {
+      "type": "slide_up",
+      "dur": 0.3
+     },
+     "clip": {
+      "src": "clips/v6/n17_take2.mp4",
+      "in": 0.0,
+      "out": 5.13
+     },
+     "focusRegions": [
+      {
+       "label": "Uno face",
+       "box": [
+        0.3,
+        0.05,
+        0.45,
+        0.3
+       ],
+       "required": true,
+       "face": true
+      },
+      {
+       "label": "Aura face",
+       "box": [
+        0.56,
+        0.1,
+        0.7,
+        0.35
+       ],
+       "required": true,
+       "face": true
+      }
+     ],
+     "chainOf": "f18",
+     "shotKind": "character"
+    },
+    {
+     "id": "n18",
+     "image": "panels/n18.jpg",
+     "at": 117.516,
+     "slot": "b",
+     "captions": [],
+     "entrance": {
+      "type": "fade",
+      "dur": 0.3
+     },
+     "clip": {
+      "src": "clips/v6/n18.mp4",
+      "in": 0.0,
+      "out": 5.13
+     },
+     "focusRegions": [],
+     "chainOf": "f19",
+     "shotKind": "fx"
     }
    ],
    "pageTransition": {
@@ -1674,7 +2162,8 @@
        ],
        "impact": true
       }
-     ]
+     ],
+     "until": 128.755
     },
     {
      "id": "f21",
@@ -1753,7 +2242,46 @@
        ],
        "impact": true
       }
-     ]
+     ],
+     "until": 130.148
+    },
+    {
+     "id": "n19",
+     "image": "panels/n19.jpg",
+     "at": 128.755,
+     "slot": "a",
+     "captions": [],
+     "entrance": {
+      "type": "wipe",
+      "dur": 0.3
+     },
+     "clip": {
+      "src": "clips/v6/n19.mp4",
+      "in": 0.0,
+      "out": 5.27
+     },
+     "focusRegions": [],
+     "chainOf": "f20",
+     "shotKind": "fx"
+    },
+    {
+     "id": "n20",
+     "image": "panels/n20.jpg",
+     "at": 130.148,
+     "slot": "b",
+     "captions": [],
+     "entrance": {
+      "type": "iris",
+      "dur": 0.3
+     },
+     "clip": {
+      "src": "clips/v6/n20.mp4",
+      "in": 0.0,
+      "out": 3.87
+     },
+     "focusRegions": [],
+     "chainOf": "f21",
+     "shotKind": "fx"
     }
    ],
    "pageTransition": {
@@ -1817,7 +2345,8 @@
       "in": 0.0,
       "out": 1.29,
       "firstFrameNcc": 0.964,
-      "trimNote": "splash zooms in at 136.49s, clip capped to 1.29s"
+      "trimNote": "splash zooms in at 136.49s, clip capped to 1.29s",
+      "speed": 0.7977
      },
      "focusRegions": [
       {
@@ -1942,7 +2471,8 @@
      "in": 0.0,
      "out": 5.02,
      "firstFrameNcc": 0.908,
-     "trimNote": "page turns at 142.30s, clip capped to 5.02s"
+     "trimNote": "page turns at 142.30s, clip capped to 5.02s",
+     "speed": 0.8974
     },
     "focusRegions": [
      {
@@ -2078,7 +2608,8 @@
      "refs": [
       "/workspace/progressive-slop-refs/uno-locked.jpg",
       "/workspace/progressive-slop-refs/aura-locked.jpg"
-     ]
+     ],
+     "until": 148.399
     },
     {
      "id": "f23c",
@@ -2176,7 +2707,8 @@
       "src": "clips/v5/f23_new.mp4",
       "in": 0.0,
       "out": 6.0,
-      "firstFrameNcc": 0.95
+      "firstFrameNcc": 0.95,
+      "speed": 0.8212
      },
      "focusRegions": [
       {
@@ -2235,6 +2767,37 @@
        "impact": false
       }
      ]
+    },
+    {
+     "id": "n21",
+     "image": "panels/n21.jpg",
+     "at": 148.399,
+     "slot": "b",
+     "captions": [],
+     "entrance": {
+      "type": "slide_left",
+      "dur": 0.3
+     },
+     "clip": {
+      "src": "clips/v6/n21.mp4",
+      "in": 0.0,
+      "out": 2.58
+     },
+     "focusRegions": [
+      {
+       "label": "Aura face",
+       "box": [
+        0.38,
+        0.1,
+        0.55,
+        0.4
+       ],
+       "required": true,
+       "face": true
+      }
+     ],
+     "chainOf": "f23b",
+     "shotKind": "character"
     }
    ],
    "pageTransition": {
@@ -2260,7 +2823,8 @@
      "in": 0.0,
      "out": 4.56,
      "firstFrameNcc": 0.936,
-     "trimNote": "page turns at 156.56s, clip capped to 4.56s"
+     "trimNote": "page turns at 156.56s, clip capped to 4.56s",
+     "speed": 0.893
     },
     "focusRegions": [
      {
@@ -2311,7 +2875,7 @@
    "id": "p09",
    "start": 156.56,
    "end": 184.4,
-   "layout": "reflow-two",
+   "layout": "inset-two",
    "mood": "action",
    "panels": [
     {
@@ -2378,10 +2942,10 @@
        "text": "FLASH!",
        "at": 158.221,
        "pos": [
-        0.22,
+        0.78,
         0.75
        ],
-       "rot": 7,
+       "rot": -8,
        "size": 0.15,
        "color": [
         255,
@@ -2390,7 +2954,8 @@
        ],
        "impact": true
       }
-     ]
+     ],
+     "until": 162.447
     },
     {
      "id": "f26",
@@ -2411,7 +2976,8 @@
       "in": 0.0,
       "out": 5.06,
       "firstFrameNcc": 0.888,
-      "trimNote": "page turns at 184.40s, clip capped to 5.06s"
+      "trimNote": "page turns at 184.40s, clip capped to 5.06s",
+      "speed": 0.8966
      },
      "focusRegions": [
       {
@@ -2457,8 +3023,8 @@
        "text": "TING!",
        "at": 181.348,
        "pos": [
-        0.5,
-        0.25
+        0.22,
+        0.5
        ],
        "rot": 7,
        "size": 0.15,
@@ -2471,6 +3037,119 @@
       }
      ],
      "landNote": "landed 1.42s early (from 179.955) so the clip plays out before the page turn"
+    },
+    {
+     "id": "n22",
+     "image": "panels/n22.jpg",
+     "at": 162.447,
+     "slot": "a",
+     "captions": [],
+     "entrance": {
+      "type": "slide_up",
+      "dur": 0.3
+     },
+     "clip": {
+      "src": "clips/v6/n22.mp4",
+      "in": 0.0,
+      "out": 6.0
+     },
+     "focusRegions": [],
+     "chainOf": "f25",
+     "shotKind": "fx",
+     "until": 168.716
+    },
+    {
+     "id": "n23",
+     "image": "panels/n23.jpg",
+     "at": 168.716,
+     "slot": "a",
+     "captions": [],
+     "entrance": {
+      "type": "fade",
+      "dur": 0.3
+     },
+     "clip": {
+      "src": "clips/v6/n23.mp4",
+      "in": 0.0,
+      "out": 6.0
+     },
+     "focusRegions": [
+      {
+       "label": "Uno face",
+       "box": [
+        0.3,
+        0.12,
+        0.48,
+        0.42
+       ],
+       "required": true,
+       "face": true
+      },
+      {
+       "label": "gold 1 chain",
+       "box": [
+        0.12,
+        0.3,
+        0.3,
+        0.8
+       ],
+       "required": false
+      }
+     ],
+     "chainOf": "f25",
+     "shotKind": "character",
+     "until": 174.382
+    },
+    {
+     "id": "n24",
+     "image": "panels/n24.jpg",
+     "at": 174.382,
+     "slot": "a",
+     "captions": [],
+     "entrance": {
+      "type": "wipe",
+      "dur": 0.3
+     },
+     "clip": {
+      "src": "clips/v6/n24.mp4",
+      "in": 0.0,
+      "out": 6.0
+     },
+     "focusRegions": [
+      {
+       "label": "Aura face",
+       "box": [
+        0.37,
+        0.1,
+        0.55,
+        0.42
+       ],
+       "required": true,
+       "face": true
+      }
+     ],
+     "chainOf": "f25",
+     "shotKind": "character",
+     "until": 180.651
+    },
+    {
+     "id": "n25",
+     "image": "panels/n25.jpg",
+     "at": 180.651,
+     "slot": "a",
+     "captions": [],
+     "entrance": {
+      "type": "iris",
+      "dur": 0.3
+     },
+     "clip": {
+      "src": "clips/v6/n25.mp4",
+      "in": 0.0,
+      "out": 3.5
+     },
+     "focusRegions": [],
+     "chainOf": "f25",
+     "shotKind": "fx"
     }
    ],
    "pageTransition": {
@@ -2482,7 +3161,7 @@
    "id": "p10",
    "start": 184.4,
    "end": 198.016,
-   "layout": "inset-two",
+   "layout": "tilt-two",
    "mood": "eerie",
    "panels": [
     {
@@ -2538,10 +3217,10 @@
        "text": "KSSHH...",
        "at": 186.224,
        "pos": [
-        0.78,
+        0.22,
         0.75
        ],
-       "rot": -8,
+       "rot": 7,
        "size": 0.15,
        "color": [
         255,
@@ -2550,7 +3229,8 @@
        ],
        "impact": false
       }
-     ]
+     ],
+     "until": 190.427
     },
     {
      "id": "f28",
@@ -2600,7 +3280,66 @@
      "refs": [
       "/workspace/progressive-slop-refs/uno-locked.jpg",
       "/workspace/progressive-slop-refs/aura-locked.jpg"
-     ]
+     ],
+     "until": 193.98
+    },
+    {
+     "id": "n26",
+     "image": "panels/n26.jpg",
+     "at": 190.427,
+     "slot": "a",
+     "captions": [],
+     "entrance": {
+      "type": "slide_left",
+      "dur": 0.3
+     },
+     "clip": {
+      "src": "clips/v6/n26.mp4",
+      "in": 0.0,
+      "out": 6.0
+     },
+     "focusRegions": [],
+     "chainOf": "f27",
+     "shotKind": "fx",
+     "until": 196.046
+    },
+    {
+     "id": "n27",
+     "image": "panels/n27.jpg",
+     "at": 196.046,
+     "slot": "a",
+     "captions": [],
+     "entrance": {
+      "type": "slide_up",
+      "dur": 0.3
+     },
+     "clip": {
+      "src": "clips/v6/n27.mp4",
+      "in": 0.0,
+      "out": 1.72
+     },
+     "focusRegions": [],
+     "chainOf": "f27",
+     "shotKind": "fx"
+    },
+    {
+     "id": "n28",
+     "image": "panels/n28.jpg",
+     "at": 193.98,
+     "slot": "b",
+     "captions": [],
+     "entrance": {
+      "type": "fade",
+      "dur": 0.3
+     },
+     "clip": {
+      "src": "clips/v6/n28.mp4",
+      "in": 0.0,
+      "out": 3.79
+     },
+     "focusRegions": [],
+     "chainOf": "f28",
+     "shotKind": "fx"
     }
    ],
    "pageTransition": {
