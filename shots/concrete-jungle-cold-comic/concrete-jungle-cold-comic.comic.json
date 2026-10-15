@@ -29,69 +29,219 @@
  "short": {
   "start": 128.3,
   "end": 177.95,
-  "note": "word gap after \"we still fight\" -> warehouse doors BOOM, showdown, final chorus, newspaper, penthouse triumph; ends after the last \"heart made of gold\" (49.65 s)",
   "trailer": [
    [
     2.0,
-    8
+    8,
+    [
+     {
+      "id": "f01",
+      "fx": 0.51
+     },
+     {
+      "id": "n01",
+      "fx": 0.5
+     }
+    ]
    ],
    [
     11.0,
-    4
+    4,
+    [
+     {
+      "id": "f02",
+      "fx": 0.5
+     },
+     {
+      "id": "n05",
+      "fx": 0.5
+     }
+    ]
    ],
    [
     31.2,
-    3
+    3,
+    [
+     {
+      "id": "f04",
+      "fx": 0.5
+     },
+     {
+      "id": "n02",
+      "fx": 0.5
+     }
+    ]
    ],
    [
     45.5,
-    5
+    5,
+    [
+     {
+      "id": "f08",
+      "fx": 0.5
+     },
+     {
+      "id": "f07",
+      "fx": 0.62
+     }
+    ]
    ],
    [
     54.5,
-    4
+    4,
+    [
+     {
+      "id": "f09",
+      "fx": 0.47
+     },
+     {
+      "id": "n29",
+      "fx": 0.5
+     }
+    ]
    ],
    [
     70.0,
-    8
+    8,
+    [
+     {
+      "id": "f11",
+      "fx": 0.53
+     },
+     {
+      "id": "f12",
+      "fx": 0.45
+     }
+    ]
    ],
    [
     76.0,
-    4
+    4,
+    [
+     {
+      "id": "f14",
+      "fx": 0.51
+     },
+     {
+      "id": "n11",
+      "fx": 0.5
+     }
+    ]
    ],
    [
     83.0,
-    2
+    2,
+    [
+     {
+      "id": "f15c",
+      "fx": 0.4
+     },
+     {
+      "id": "f13",
+      "fx": 0.45
+     }
+    ]
    ],
    [
     96.5,
-    4
+    4,
+    [
+     {
+      "id": "f17",
+      "fx": 0.44
+     },
+     {
+      "id": "f16",
+      "fx": 0.4
+     }
+    ]
    ],
    [
     107.0,
-    6
+    6,
+    [
+     {
+      "id": "f18",
+      "fx": 0.57
+     },
+     {
+      "id": "f19",
+      "fx": 0.5
+     }
+    ]
    ],
    [
     134.3,
-    2
+    2,
+    [
+     {
+      "id": "f22b",
+      "fx": 0.4
+     },
+     {
+      "id": "f22c",
+      "fx": 0.48
+     }
+    ]
    ],
    [
     158.0,
-    8
+    8,
+    [
+     {
+      "id": "f25",
+      "fx": 0.5
+     },
+     {
+      "id": "n22",
+      "fx": 0.5
+     }
+    ]
    ],
    [
     168.5,
-    4
+    4,
+    [
+     {
+      "id": "n23",
+      "fx": 0.39
+     },
+     {
+      "id": "n24",
+      "fx": 0.46
+     }
+    ]
    ],
    [
     180.5,
-    4
+    4,
+    [
+     {
+      "id": "f26",
+      "fx": 0.47
+     },
+     {
+      "id": "n25",
+      "fx": 0.5
+     }
+    ]
    ],
    [
     185.6,
-    0
+    0,
+    [
+     {
+      "id": "f27",
+      "fx": 0.64
+     },
+     {
+      "id": "n26",
+      "fx": 0.55
+     }
+    ]
    ]
-  ]
+  ],
+  "note": "word gap after \"we still fight\" -> warehouse doors BOOM, showdown, final chorus, newspaper, penthouse triumph; ends after the last \"heart made of gold\" (49.65 s)"
  },
  "intro": {
   "enabled": true,
@@ -437,24 +587,6 @@
       "/workspace/progressive-slop-refs/uno-locked.jpg",
       "/workspace/progressive-slop-refs/aura-locked.jpg"
      ],
-     "sfx": [
-      {
-       "text": "CLINK!",
-       "at": 17.229,
-       "pos": [
-        0.78,
-        0.75
-       ],
-       "rot": -8,
-       "size": 0.15,
-       "color": [
-        190,
-        120,
-        255
-       ],
-       "impact": false
-      }
-     ],
      "until": 22.086
     },
     {
@@ -663,24 +795,6 @@
     "refs": [
      "/workspace/progressive-slop-refs/uno-locked.jpg",
      "/workspace/progressive-slop-refs/aura-locked.jpg"
-    ],
-    "sfx": [
-     {
-      "text": "SHING!",
-      "at": 32.113,
-      "pos": [
-       0.22,
-       0.75
-      ],
-      "rot": 7,
-      "size": 0.15,
-      "color": [
-       255,
-       245,
-       230
-      ],
-      "impact": true
-     }
     ]
    },
    "splashStyle": "full"
@@ -820,24 +934,6 @@
      "refs": [
       "/workspace/progressive-slop-refs/uno-locked.jpg",
       "/workspace/progressive-slop-refs/aura-locked.jpg"
-     ],
-     "sfx": [
-      {
-       "text": "WAH-WAH",
-       "at": 39.892,
-       "pos": [
-        0.78,
-        0.75
-       ],
-       "rot": -8,
-       "size": 0.15,
-       "color": [
-        255,
-        200,
-        60
-       ],
-       "impact": false
-      }
      ],
      "landNote": "landed 1.44s early (from 38.499) so the clip plays out before the page turn",
      "until": 42.748
@@ -1026,24 +1122,6 @@
     "refs": [
      "/workspace/progressive-slop-refs/uno-locked.jpg",
      "/workspace/progressive-slop-refs/aura-locked.jpg"
-    ],
-    "sfx": [
-     {
-      "text": "HMPH!",
-      "at": 45.558,
-      "pos": [
-       0.78,
-       0.5
-      ],
-      "rot": -8,
-      "size": 0.15,
-      "color": [
-       190,
-       120,
-       255
-      ],
-      "impact": false
-     }
     ]
    },
    "splashStyle": "breakout"
@@ -1377,24 +1455,6 @@
      "refs": [
       "/workspace/progressive-slop-refs/uno-locked.jpg",
       "/workspace/progressive-slop-refs/aura-locked.jpg"
-     ],
-     "sfx": [
-      {
-       "text": "ZZT-ZZT!",
-       "at": 68.917,
-       "pos": [
-        0.78,
-        0.25
-       ],
-       "rot": -8,
-       "size": 0.15,
-       "color": [
-        230,
-        40,
-        60
-       ],
-       "impact": false
-      }
      ],
      "until": 73.727
     },
@@ -1875,24 +1935,6 @@
       "/workspace/progressive-slop-refs/uno-locked.jpg",
       "/workspace/progressive-slop-refs/aura-locked.jpg"
      ],
-     "sfx": [
-      {
-       "text": "RRRING!",
-       "at": 96.409,
-       "pos": [
-        0.78,
-        0.5
-       ],
-       "rot": -8,
-       "size": 0.15,
-       "color": [
-        190,
-        120,
-        255
-       ],
-       "impact": false
-      }
-     ],
      "landNote": "landed 1.42s early (from 94.993) so the clip plays out before the page turn",
      "until": 99.219
     },
@@ -2059,24 +2101,6 @@
       }
      ],
      "shotKind": "vehicle",
-     "sfx": [
-      {
-       "text": "VROOOM!",
-       "at": 106.974,
-       "pos": [
-        0.22,
-        0.75
-       ],
-       "rot": 7,
-       "size": 0.15,
-       "color": [
-        255,
-        150,
-        40
-       ],
-       "impact": false
-      }
-     ],
      "until": 111.808
     },
     {
@@ -2845,24 +2869,6 @@
      "refs": [
       "/workspace/progressive-slop-refs/uno-locked.jpg",
       "/workspace/progressive-slop-refs/aura-locked.jpg"
-     ],
-     "sfx": [
-      {
-       "text": "YOINK!",
-       "at": 144.893,
-       "pos": [
-        0.22,
-        0.5
-       ],
-       "rot": 7,
-       "size": 0.15,
-       "color": [
-        230,
-        40,
-        60
-       ],
-       "impact": false
-      }
      ]
     },
     {
@@ -2946,25 +2952,7 @@
       "face": true
      }
     ],
-    "shotKind": "fx",
-    "sfx": [
-     {
-      "text": "SPIN-SPIN!",
-      "at": 152.602,
-      "pos": [
-       0.22,
-       0.75
-      ],
-      "rot": 7,
-      "size": 0.15,
-      "color": [
-       190,
-       120,
-       255
-      ],
-      "impact": false
-     }
-    ]
+    "shotKind": "fx"
    },
    "splashStyle": "tilt"
   },
@@ -3033,24 +3021,6 @@
      "refs": [
       "/workspace/progressive-slop-refs/uno-locked.jpg",
       "/workspace/progressive-slop-refs/aura-locked.jpg"
-     ],
-     "sfx": [
-      {
-       "text": "FLASH!",
-       "at": 158.221,
-       "pos": [
-        0.78,
-        0.75
-       ],
-       "rot": -8,
-       "size": 0.15,
-       "color": [
-        255,
-        245,
-        230
-       ],
-       "impact": true
-      }
      ],
      "until": 162.447
     },
@@ -3308,24 +3278,6 @@
      "refs": [
       "/workspace/progressive-slop-refs/uno-locked.jpg",
       "/workspace/progressive-slop-refs/aura-locked.jpg"
-     ],
-     "sfx": [
-      {
-       "text": "KSSHH...",
-       "at": 186.224,
-       "pos": [
-        0.22,
-        0.75
-       ],
-       "rot": 7,
-       "size": 0.15,
-       "color": [
-        255,
-        200,
-        60
-       ],
-       "impact": false
-      }
      ],
      "until": 190.427
     },

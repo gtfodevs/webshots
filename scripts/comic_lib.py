@@ -297,6 +297,7 @@ def _geo(prim, box, transpose=False):
     x0, y0 = int(math.floor(min(xs))), int(math.floor(min(ys)))
     bbox = (x0, y0, int(math.ceil(max(xs))) - x0, int(math.ceil(max(ys))) - y0)
     inner = tuple(int(round(v)) for v in inner)
+    burst = burst if DECOR_BURSTS else None   # Jason 2026-10-14: no unmotivated yellow bursts (one sat on Uno's face)
     return {'polys': polys, 'burst': burst, 'bbox': bbox, 'inner': inner, 'z': opts.get('z', 0),
             'keyline': opts.get('keyline', False)}
 
@@ -752,6 +753,34 @@ def sfx_rect(sfx, slot, scale=1.0, geo=None, safe=None, avoid=()):
 
 # ---------------------------------------------------------------- scene model
 _SFX_CACHE = {}
+DECOR_BURSTS = False
+SFX_LIFE = 1.4         # s an SFX stays up after its stamp (timed to the action, then gone), last 0.25 s fades   # layout breakout starbursts are decoration: off (SFX must be motivated, never over a face)
+_FACE_CACHE = {}
+
+def _hit(a, b, m=0):
+    return a[0] < b[2] + m and b[0] < a[0] + a[2] + m and a[1] < b[3] + m and b[1] < a[1] + a[3] + m
+
+def sfx_faces(spec, orient, s):
+    """Frame-px face boxes on screen when SFX s stamps in (scene time), from the shared face tracker."""
+    key = (id(spec), orient, s['text'], s['at'])
+    if key not in _FACE_CACHE:
+        try:
+            t0_ = T(spec, s['at'])
+            fb = [b for k in range(7) for b in scene_faces(spec, orient, t0_ + SFX_LIFE * k / 6)]   # whole time it is up
+        except Exception:
+            fb = []
+        _FACE_CACHE[key] = [tuple(int(v) for v in b) for b in fb]
+    return _FACE_CACHE[key]
+
+def sfx_place(spec, orient, s, u, slot, geo, S, scale=SFX_PEAK):
+    """SFX rect + tile clear of captions AND faces (moved into open space); None = no open space, the SFX is dropped."""
+    faces = sfx_faces(spec, orient, s)
+    avoid = list(unit_caption_rects(u, slot, geo, S)) + [(f[0], f[1], f[2] - f[0], f[3] - f[1]) for f in faces]
+    rect, tile = sfx_rect(s, slot, scale, geo, S, avoid)
+    peak, _ = sfx_rect(s, slot, SFX_PEAK, geo, S, avoid)
+    if any(_hit(peak, f) for f in faces):
+        return None, None
+    return rect, tile
 
 def unit_caption_rects(u, slot, geo, safe):
     return [caption_box(c, slot, geo, safe)[0] for c in u.get('captions', [])]
@@ -989,12 +1018,17 @@ class Scene:
                 draw_caption(img, c, slot, u['geo'], S)
         for s in u.get('sfx', []):
             ts = max(T(self.spec, s['at']), T(self.spec, u['at']) + entrance_of(u)['dur'])
-            if t >= ts:
+            if ts <= t < ts + SFX_LIFE:
                 k = min((t - ts) * self.fps / 3, 1.0)
                 scale = 1.25 - 0.25 * ease(k)          # quick 3-frame stamp, then still
-                rect, tile = sfx_rect(s, slot, scale, u['geo'], S, unit_caption_rects(u, slot, u['geo'], S))
+                rect, tile = sfx_place(self.spec, self.orient, s, u, slot, u['geo'], S, scale)
+                if rect is None:
+                    continue   # no open space clear of the faces: drop it
                 if (rect[2], rect[3]) != tile.size:
                     tile = tile.resize((rect[2], rect[3]), Image.BICUBIC)
+                fo = min(1.0, (ts + SFX_LIFE - t) / 0.25)
+                if fo < 1.0:
+                    tile = tile.copy(); tile.putalpha(tile.getchannel('A').point(lambda v, fo=fo: int(v * fo)))
                 img.paste(tile, rect[:2], tile)
 
     def background(self, t):
@@ -2562,4 +2596,25 @@ def repeat_report(spec, t0=None, t1=None):
                 a, b = max(once, t0), min(exit_, t1)
                 if b - a > REPEAT_TOL:
                     out.append((u['id'], c['src'], round(a, 2), round(b, 2), round(b - a, 2), 'clip ends, cell keeps replaying it'))
+    return out
+
+
+def sfx_face_report(spec, orient):
+    """[(unit, sfx, problem)] for every SFX whose drawn rect meets a face while it is up (gate), using the shared
+    face tracker. Dropped SFX (no open space) are reported as 'dropped' (not a failure)."""
+    out = []
+    for sub in subspecs(spec):
+        L = layout(orient, sub.get('layout', 'three'), sub.get('splashStyle', 'full'))
+        G = layout_geo(orient, sub.get('layout', 'three'), sub.get('splashStyle', 'full'))
+        S = TEXT_SAFE[orient]
+        units = [dict(p) for p in sub['panels']] + ([dict(splash_unit(sub), slot='splash')] if splash_unit(sub) else [])
+        for u in units:
+            if u.get('slot') not in L:
+                continue
+            for s_ in u.get('sfx', []):
+                rect, _ = sfx_place(sub, orient, s_, u, L[u['slot']], G[u['slot']], S)
+                if rect is None:
+                    out.append((u['id'], s_['text'], 'dropped (no open space clear of faces)')); continue
+                if any(_hit(rect, f) for f in sfx_faces(sub, orient, s_)):
+                    out.append((u['id'], s_['text'], 'OVER A FACE'))
     return out

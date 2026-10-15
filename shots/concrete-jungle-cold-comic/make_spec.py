@@ -151,8 +151,8 @@ FOCUS_REGIONS = {
 SHORT = {'start': 128.30, 'end': 177.95,
          # teaser/trailer (Jason 2026-10-14): glimpses from every act over the final-chorus audio, no betrayal payoff
          # (f15 slam, f20 swap, f22/f23 takedowns, f24 headline) and no ending (f28); cuts on the window's beats
-         'trailer': [[2.0, 8], [11.0, 4], [31.2, 3], [45.5, 5], [54.5, 4], [70.0, 8], [76.0, 4], [83.0, 2], [96.5, 4],
-                     [107.0, 6], [134.3, 2], [158.0, 8], [168.5, 4], [180.5, 4], [185.6, 0]],
+         # native 9:16 glimpses: [song_t, beats, cells top->bottom] built from source clips (vshot.py)
+         'trailer': [[2.0, 8, [{"id": "f01", "fx": 0.51}, {"id": "n01", "fx": 0.5}]], [11.0, 4, [{"id": "f02", "fx": 0.5}, {"id": "n05", "fx": 0.5}]], [31.2, 3, [{"id": "f04", "fx": 0.5}, {"id": "n02", "fx": 0.5}]], [45.5, 5, [{"id": "f08", "fx": 0.5}, {"id": "f07", "fx": 0.62}]], [54.5, 4, [{"id": "f09", "fx": 0.47}, {"id": "n29", "fx": 0.5}]], [70.0, 8, [{"id": "f11", "fx": 0.53}, {"id": "f12", "fx": 0.45}]], [76.0, 4, [{"id": "f14", "fx": 0.51}, {"id": "n11", "fx": 0.5}]], [83.0, 2, [{"id": "f15c", "fx": 0.4}, {"id": "f13", "fx": 0.45}]], [96.5, 4, [{"id": "f17", "fx": 0.44}, {"id": "f16", "fx": 0.4}]], [107.0, 6, [{"id": "f18", "fx": 0.57}, {"id": "f19", "fx": 0.5}]], [134.3, 2, [{"id": "f22b", "fx": 0.4}, {"id": "f22c", "fx": 0.48}]], [158.0, 8, [{"id": "f25", "fx": 0.5}, {"id": "n22", "fx": 0.5}]], [168.5, 4, [{"id": "n23", "fx": 0.39}, {"id": "n24", "fx": 0.46}]], [180.5, 4, [{"id": "f26", "fx": 0.47}, {"id": "n25", "fx": 0.5}]], [185.6, 0, [{"id": "f27", "fx": 0.64}, {"id": "n26", "fx": 0.55}]]],
          'note': 'word gap after "we still fight" -> warehouse doors BOOM, showdown, final chorus, newspaper, penthouse triumph; ends after the last "heart made of gold" (49.65 s)'}
 CAPTION_FILLS = [[255, 226, 150], [240, 232, 214], [255, 190, 190], [214, 200, 255]]   # deco gold, ivory, crimson blush, lilac
 SFX_COLORS = [[255, 200, 60], [230, 40, 60], [190, 120, 255], [255, 245, 230], [255, 150, 40]]
@@ -289,7 +289,19 @@ def next_beat(t, k=1):
     return round(B[min(len(B) - 1, i + k - 1)], 3)
 
 
+# Motivated SFX only (Jason 2026-10-14): a burst needs an on-screen action at that moment; everything else is cut.
+MOTIVATED_SFX = {
+    'f01': 'lightning strikes the spire', 'f02': 'boot lands in the puddle', 'f05': 'door slot snaps open',
+    'f07': 'cards slapped down, coins explode up', 'f09': 'crate drops off the crane', 'f10': 'tyres drift and spark',
+    'f11': 'blueprint slammed on the table', 'f13': 'vault dial tumblers crack', 'f15': 'vault door slams shut',
+    'f16': 'wire hair picks the lock', 'f18': 'they blast out of the vault roof', 'f20': 'crate bursts open into confetti',
+    'f21': 'warehouse doors kicked in', 'f22': 'Uno flips Ferro onto the floor', 'f26': 'glasses clink',
+}
+
+
 def unit(fid, land, sfx, impact, ent, motion, k, slot=None):
+    if fid not in MOTIVATED_SFX:
+        sfx, impact = None, False
     u = {'id': fid, 'image': UNIT_IMAGE.get(fid, f'panels/{fid}.jpg'), 'at': land, **MOMENTS.get(fid, {}), 'captions': [],
          'entrance': {'type': ent, 'dur': 0.3}}
     if slot:

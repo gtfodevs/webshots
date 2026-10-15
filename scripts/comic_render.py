@@ -58,6 +58,12 @@ def render(spec, orient, out_path, wav, sheet_path=None, t0=None, t1=None):
         for r in reps:
             print(f'  REPEAT {r[0]} {r[1]} {r[2]:.2f}-{r[3]:.2f}s ({r[4]}s): {r[5]}')
         raise SystemExit(f'NO-REPEAT GATE FAIL ({orient}): {len(reps)} repeated segment(s), {sum(r[4] for r in reps):.1f}s - add NEW shots (no shot may replay)')
+    if not (orient == 'vertical' and (spec.get('short') or {}).get('trailer') and t0 is not None):
+        sf = C.sfx_face_report(spec, orient)
+        for r in sf:
+            print(f'  sfx {r[0]} {r[1]}: {r[2]}')
+        if any(r[2] == 'OVER A FACE' for r in sf):
+            raise SystemExit(f'SFX-FACE GATE FAIL ({orient}): lettering over a face')
     W, H = C.SIZES[orient]
     fps = spec.get('fps', 30)
     enc = subprocess.Popen(['ffmpeg', '-v', 'error', '-y', '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-s', f'{W}x{H}',
@@ -79,13 +85,14 @@ def render(spec, orient, out_path, wav, sheet_path=None, t0=None, t1=None):
     if trailer:
         bts = [b - t_song0 for b in C.song_beats(spec) if t_song0 - 1e-3 <= b <= t_song1 + 1e-3]
         bi = 0; prev_end = -1
-        for k_, (src, nb) in enumerate(trailer):
+        for k_, ent in enumerate(trailer):
+            src, nb = ent[0], ent[1]
             a_ = 0.0 if k_ == 0 else bts[bi]
             bi = min(bi + nb, len(bts) - 1)
             b_ = (t_song1 - t_song0) if k_ == len(trailer) - 1 else bts[bi]
             if src < prev_end - 1e-3:
                 raise SystemExit(f'NO-REPEAT GATE FAIL (trailer): segment {k_} at {src}s overlaps the previous glimpse')
-            segs.append((a_, b_, src)); prev_end = src + (b_ - a_)
+            segs.append((a_, b_, src, ent[2] if len(ent) > 2 else None)); prev_end = src + (b_ - a_)
         print('trailer:', ', '.join(f'{x[2]:.1f}s x{x[1] - x[0]:.1f}' for x in segs))
     trs = [tr for tr in C.page_transitions(spec)
            if tr['dur'] > 0 and (trailer or t_song0 + tr['dur'] / 2 < tr['at'] < t_song1 - tr['dur'] / 2)]
@@ -111,7 +118,24 @@ def render(spec, orient, out_path, wav, sheet_path=None, t0=None, t1=None):
     keep = {int(round(k * fps)): v for k, v in keep.items()}
     end_frame = int(round((t_song1 - t_song0) * fps))
     starts = [x['song']['start'] for x in subs]
-    ov = C.lyric_overlay(spec, orient, t_song0, t_song1)   # floating lyric layer: song clock only, above pages + turns
+    ov = C.lyric_overlay(spec, orient, t_song0, t_song1)
+    # native 9:16 glimpses (trailer entries with a cell list): full-bleed frames straight from the source clips
+    vsh = {}
+    if segs and any(x[3] for x in segs):
+        import vshot as VS
+        for k_, x in enumerate(segs):
+            if x[3]:
+                tail_ = ((C.endcard(spec) or {}).get('seconds', 0.0) + 0.5) if k_ == len(segs) - 1 else 0.0   # last glimpse keeps moving under the end card
+                vsh[k_] = VS.VShot(VS.resolve_cells(spec, C.resolve, x[3]), (W, H), x[1] - x[0] + tail_, fps)
+        if ov:   # re-plan the lyrics around the faces actually on screen in the vertical shots
+            def vfaces(s_, segs=segs, vsh=vsh):
+                tau_ = s_ - t_song0
+                k2 = max(k for k, x in enumerate(segs) if x[0] <= tau_ + 1e-9)
+                return vsh[k2].faces(tau_ - segs[k2][0]) if k2 in vsh else []
+            import lyric_overlay as LO
+            ov.faces_fn, ov.obstacles_fn, ov.paths = vfaces, (lambda s_: []), []
+            tl = spec['song'].get('timeline'); tl = tl if os.path.isabs(tl) else os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', tl)
+            ov.plan(LO.cues_from_lines(json.load(open(tl))['lyrics'], t_song0, t_song1))   # floating lyric layer: song clock only, above pages + turns
     f = None
     TXF = 0.2
     seg_k, prev_last, last_f = -1, None, None
@@ -126,7 +150,11 @@ def render(spec, orient, out_path, wav, sheet_path=None, t0=None, t1=None):
             s = segs[k_][2] + (tau - segs[k_][0])
         i = max(0, sum(1 for st in starts if st <= s + 1e-9) - 1)
         tr = next((x for x in trs if abs(s - x['at']) < x['dur'] / 2), None)
-        if tr:
+        if segs and seg_k in vsh:
+            for k3 in [k for k in vsh if k < seg_k]:
+                vsh[k3].free()
+            f = vsh[seg_k].frame(written / fps - segs[seg_k][0])
+        elif tr:
             j = next(k for k, x in enumerate(subs) if abs(x['song']['start'] - tr['at']) < 1e-6)
             scA, scB = scene(j - 1), scene(j)
             f = C.transition_frame(scA, s - subs[j - 1]['song']['start'], scB, s - subs[j]['song']['start'], tr, s)
@@ -154,6 +182,8 @@ def render(spec, orient, out_path, wav, sheet_path=None, t0=None, t1=None):
         li -= 1
     t_live = s_end - subs[li]['song']['start']
     def live(k):
+        if segs and (len(segs) - 1) in vsh:
+            return vsh[len(segs) - 1].frame(segs[-1][1] - segs[-1][0] + k / fps)
         return scene(li).frame(t_live + k / fps)
     k_live = 0
     tb = None if segs else C.tbc(spec)   # trailer: cut straight from the cliffhanger glimpse to the end card
