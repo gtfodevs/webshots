@@ -29,7 +29,69 @@
  "short": {
   "start": 128.3,
   "end": 177.95,
-  "note": "word gap after \"we still fight\" -> warehouse doors BOOM, showdown, final chorus, newspaper, penthouse triumph; ends after the last \"heart made of gold\" (49.65 s)"
+  "note": "word gap after \"we still fight\" -> warehouse doors BOOM, showdown, final chorus, newspaper, penthouse triumph; ends after the last \"heart made of gold\" (49.65 s)",
+  "trailer": [
+   [
+    2.0,
+    8
+   ],
+   [
+    11.0,
+    4
+   ],
+   [
+    31.2,
+    3
+   ],
+   [
+    45.5,
+    5
+   ],
+   [
+    54.5,
+    4
+   ],
+   [
+    70.0,
+    8
+   ],
+   [
+    76.0,
+    4
+   ],
+   [
+    83.0,
+    2
+   ],
+   [
+    96.5,
+    4
+   ],
+   [
+    107.0,
+    6
+   ],
+   [
+    134.3,
+    2
+   ],
+   [
+    158.0,
+    8
+   ],
+   [
+    168.5,
+    4
+   ],
+   [
+    180.5,
+    4
+   ],
+   [
+    185.6,
+    0
+   ]
+  ]
  },
  "intro": {
   "enabled": true,
@@ -180,6 +242,9 @@
   "lines": [
    "BROUGHT TO YOU BY PROGRESSIVE SLOP",
    "LIKE AND SUBSCRIBE FOR MORE!"
+  ],
+  "shortLines": [
+   "See the whole story @progressiveslop"
   ]
  },
  "pages": [

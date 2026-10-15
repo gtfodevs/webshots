@@ -149,6 +149,10 @@ FOCUS_REGIONS = {
  'f28': [R('monocle glint', 0.22, 0.05, 0.38, 0.35), R('empty jail truck', 0.56, 0.30, 1.0, 0.90, req=False)],
 }
 SHORT = {'start': 128.30, 'end': 177.95,
+         # teaser/trailer (Jason 2026-10-14): glimpses from every act over the final-chorus audio, no betrayal payoff
+         # (f15 slam, f20 swap, f22/f23 takedowns, f24 headline) and no ending (f28); cuts on the window's beats
+         'trailer': [[2.0, 8], [11.0, 4], [31.2, 3], [45.5, 5], [54.5, 4], [70.0, 8], [76.0, 4], [83.0, 2], [96.5, 4],
+                     [107.0, 6], [134.3, 2], [158.0, 8], [168.5, 4], [180.5, 4], [185.6, 0]],
          'note': 'word gap after "we still fight" -> warehouse doors BOOM, showdown, final chorus, newspaper, penthouse triumph; ends after the last "heart made of gold" (49.65 s)'}
 CAPTION_FILLS = [[255, 226, 150], [240, 232, 214], [255, 190, 190], [214, 200, 255]]   # deco gold, ivory, crimson blush, lilac
 SFX_COLORS = [[255, 200, 60], [230, 40, 60], [190, 120, 255], [255, 245, 230], [255, 150, 40]]
@@ -419,7 +423,8 @@ def build():
                               'chrome': [[255, 250, 215], [255, 215, 110], [196, 140, 40], [90, 52, 8], [210, 160, 60], [255, 236, 170]]}},
             'endCard': {'enabled': True, 'seconds': 3.0, 'sunburst': {'color': [230, 180, 70], 'alpha': 0.6},
                         'fills': [[255, 214, 110], [255, 70, 90]],
-                        'lines': ['BROUGHT TO YOU BY PROGRESSIVE SLOP', 'LIKE AND SUBSCRIBE FOR MORE!']},
+                        'lines': ['BROUGHT TO YOU BY PROGRESSIVE SLOP', 'LIKE AND SUBSCRIBE FOR MORE!'],
+                        'shortLines': ['See the whole story @progressiveslop']},
             'pages': pages}
     spec['_dir'] = HERE
     for line in fix_layouts(spec):

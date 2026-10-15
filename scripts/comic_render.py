@@ -24,7 +24,7 @@ def master_audio(spec, wav, t0=None, t1=None):
     dur = s['end'] - s['start']
     lufs = s.get('loudness', -14)
     ec = C.endcard(spec)
-    tb = C.tbc(spec)
+    tb = None if ((spec.get('short') or {}).get('trailer') and t0 is not None) else C.tbc(spec)   # trailer Short: no TBC card
     card = (ec['seconds'] if ec else 0.0) + (tb['seconds'] if tb else 0.0)
     # no hard cut at the end: let the song ring on under the end card when there is more of it,
     # and fade the tail naturally (C.TAIL_FADE s, longer when the song continues), then pad silence
@@ -53,7 +53,7 @@ STATIC_FAIL = []
 
 def render(spec, orient, out_path, wav, sheet_path=None, t0=None, t1=None):
     """Renders every page of the spec back to back into one MP4 (single-page specs are one page)."""
-    reps = C.repeat_report(spec, t0, t1)
+    reps = [] if ((spec.get('short') or {}).get('trailer') and orient == 'vertical' and t0 is not None) else C.repeat_report(spec, t0, t1)   # trailer glimpses: overlap-checked below
     if reps and not spec.get('allowRepeats') and '--allow-repeats' not in sys.argv:
         for r in reps:
             print(f'  REPEAT {r[0]} {r[1]} {r[2]:.2f}-{r[3]:.2f}s ({r[4]}s): {r[5]}')
@@ -72,8 +72,23 @@ def render(spec, orient, out_path, wav, sheet_path=None, t0=None, t1=None):
     ts_intro = C.intro_slam(spec, t_song0) if ic else None
     subs = C.subspecs(spec)
     # page transitions replace the hard cuts; in a Short only boundaries fully inside the window get one
+    # Trailer Short (spec.short.trailer = [[song_start, beats], ...]): the audio is the contiguous window, the picture is
+    # a montage of glimpses from the whole story, cut on the window's beats with a quick crossfade (Jason 2026-10-14)
+    trailer = (spec.get('short') or {}).get('trailer') if (orient == 'vertical' and t0 is not None) else None
+    segs = []
+    if trailer:
+        bts = [b - t_song0 for b in C.song_beats(spec) if t_song0 - 1e-3 <= b <= t_song1 + 1e-3]
+        bi = 0; prev_end = -1
+        for k_, (src, nb) in enumerate(trailer):
+            a_ = 0.0 if k_ == 0 else bts[bi]
+            bi = min(bi + nb, len(bts) - 1)
+            b_ = (t_song1 - t_song0) if k_ == len(trailer) - 1 else bts[bi]
+            if src < prev_end - 1e-3:
+                raise SystemExit(f'NO-REPEAT GATE FAIL (trailer): segment {k_} at {src}s overlaps the previous glimpse')
+            segs.append((a_, b_, src)); prev_end = src + (b_ - a_)
+        print('trailer:', ', '.join(f'{x[2]:.1f}s x{x[1] - x[0]:.1f}' for x in segs))
     trs = [tr for tr in C.page_transitions(spec)
-           if tr['dur'] > 0 and t_song0 + tr['dur'] / 2 < tr['at'] < t_song1 - tr['dur'] / 2]
+           if tr['dur'] > 0 and (trailer or t_song0 + tr['dur'] / 2 < tr['at'] < t_song1 - tr['dur'] / 2)]
     cache = {}
     def scene(i):
         if i not in cache:
@@ -98,8 +113,17 @@ def render(spec, orient, out_path, wav, sheet_path=None, t0=None, t1=None):
     starts = [x['song']['start'] for x in subs]
     ov = C.lyric_overlay(spec, orient, t_song0, t_song1)   # floating lyric layer: song clock only, above pages + turns
     f = None
+    TXF = 0.2
+    seg_k, prev_last, last_f = -1, None, None
     while written < end_frame:
         s = t_song0 + written / fps
+        s_audio = s
+        if segs:
+            tau = written / fps
+            k_ = max(k for k, x in enumerate(segs) if x[0] <= tau + 1e-9)
+            if k_ != seg_k:
+                prev_last, seg_k = last_f, k_
+            s = segs[k_][2] + (tau - segs[k_][0])
         i = max(0, sum(1 for st in starts if st <= s + 1e-9) - 1)
         tr = next((x for x in trs if abs(s - x['at']) < x['dur'] / 2), None)
         if tr:
@@ -108,8 +132,11 @@ def render(spec, orient, out_path, wav, sheet_path=None, t0=None, t1=None):
             f = C.transition_frame(scA, s - subs[j - 1]['song']['start'], scB, s - subs[j]['song']['start'], tr, s)
         else:
             f = scene(i).frame(max(s - subs[i]['song']['start'], 0.0))
+        last_f = f
+        if segs and prev_last is not None and s - segs[seg_k][2] < TXF:
+            f = Image.blend(prev_last, f, (s - segs[seg_k][2]) / TXF)
         if ov:
-            f = ov.draw(f, s)
+            f = ov.draw(f, s_audio)
         if ic:
             f = C.intro_frame(f, orient, ic, written / fps, ts_intro, fps)
             if written == int(round((ts_intro + 0.5) * fps)):
@@ -121,14 +148,15 @@ def render(spec, orient, out_path, wav, sheet_path=None, t0=None, t1=None):
     last = f
     # Nothing is ever a still (Jason): the TO BE CONTINUED card and the end card sit over the LIVE last page,
     # whose clips keep ping-ponging and whose camera keeps moving, instead of a frozen last frame.
+    s_end = (segs[-1][2] + segs[-1][1] - segs[-1][0]) if segs else t_song1
     li = len(subs) - 1
-    while li > 0 and subs[li]['song']['start'] >= t_song1 - 1e-3:
+    while li > 0 and subs[li]['song']['start'] >= s_end - 1e-3:
         li -= 1
-    t_live = t_song1 - subs[li]['song']['start']
+    t_live = s_end - subs[li]['song']['start']
     def live(k):
         return scene(li).frame(t_live + k / fps)
     k_live = 0
-    tb = C.tbc(spec)
+    tb = None if segs else C.tbc(spec)   # trailer: cut straight from the cliffhanger glimpse to the end card
     if tb and written:   # cut to the dimmed live page, TO BE CONTINUED...
         n = int(round(tb['seconds'] * fps))
         for k in range(n):
@@ -138,6 +166,8 @@ def render(spec, orient, out_path, wav, sheet_path=None, t0=None, t1=None):
                 shots.append((written / fps, 'to be continued', card))
             written += 1
     ec = C.endcard(spec)
+    if ec and orient == 'vertical' and ec.get('shortLines'):   # Short-only end card text
+        ec = dict(ec, lines=ec['shortLines'])
     if ec and written:
         n = int(round(ec['seconds'] * fps))
         for k in range(n):
