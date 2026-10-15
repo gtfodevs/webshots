@@ -102,3 +102,9 @@ The originals are `uno-ORIGINAL-sheet.jpg` and `aura-ORIGINAL-sheet.jpg`. Reject
 - Keep the pass tight: only redo shots Jason named. Never widen into walking, cards, cheers, or other working scenes. One fix at a time with Precise Edit; split hard animations into short clips rather than regenerating whole masters (Oct 15 2026).
 - Keep the pass tight: only redo shots Jason named; never widen into working scenes. One Precise Edit at a time (Oct 15 2026).
 - Be efficient: script every deterministic step (frame grabs, contact sheets, stabilization, renders, QA gates, chunked Mac transfers with md5) instead of doing it by hand; reserve manual/agent judgment for creative calls (Oct 15 2026).
+
+## Fix list gate (Oct 15 2026)
+- Every shot Jason flags goes into `fixlist.md` in the project folder immediately (shot id, issue, his words, status).
+- Scope changes ("only the door") never silently drop earlier flags; ask or keep them on the list.
+- Before calling any render final: walk the fixlist, grab a frame of each item from the rendered video, and confirm it is fixed. Report the checklist with the delivery.
+- A render with an open fixlist item is a preview, not a final.
