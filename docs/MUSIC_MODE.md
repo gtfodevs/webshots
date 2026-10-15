@@ -433,6 +433,73 @@ First used by `shots/neon-dojo-fighter`. The game logic is a pure script, `stage
 
 **Background figures rule (all stages, default).** Every animated background figure (crowd robots, monks, spectators, anything that bobs or moves) is cut out *individually* and the stage is rebuilt on an *inpainted clean plate*. `build_assets.build_stage(key, src, cfg)` does this for every stage: `figure_boxes` (where figures stand), `static` (statues that must stay), `occluders` (railings drawn over the figures from the original art), `figure_layer`/`figure_speed`. It finds the figures, splits merged blobs, makes exclusive masks, inpaints the plate under them, and writes `stage-<key>-fig<i>.png` with `figures: [[x, y, w, h, phase]]` and `plate: true` in `stage-<key>.json`. The page draws each figure 1 px up on its beat (alternate figures alternate beats). Never bob a whole band. `fighter_qa.mjs` checks every stage json on every run: no band bobs, `plate: true`, a figures list, real masks (not rectangles), the plate under each figure no longer showing it, and no two masks overlapping. Channel setting: `style.json` → `stage_rules.figure_cutouts: "individual"`.
 
+## FX engine (scripts/music_fx.py): beat snap, parallax, overlays, typography
+
+Deterministic, scripted, preset-driven. Every random source is seeded from `(seed, layer name)`; every time comes
+from the analysis timeline. First used for The Pharaoh's Waking Up (engine demo: 12 s, hook -> drop at 40.6 s).
+
+### Analysis additions (scripts/analyze_music.py)
+The timeline now also carries `kicks:[s]` (<150 Hz band onset peaks), `snares:[s]` (1.5-6 kHz onset peaks that
+are broadband, on a beat +-70 ms and above the median hat peak, so hats are rejected) and `drops:[{t,jump}]` (bar
+lines where 2-bar mean energy jumps >= 0.25, or the beat slams back in after a low bar; >= 8 s apart). Whisper runs
+with `temperature=0, beam_size=5` so lyric alignment no longer changes between runs (tiny float jitter remains).
+
+### a) Beat-synced editing: `snap_time()`, `snap_shots()`, presets `SNAP_PRESETS`
+| preset | targets (priority) | window | notes |
+|---|---|---|---|
+| `hard` (default) | drops > snares > kicks | 0.30 s | every cut and punch lands on a transient |
+| `beats` | drops > downbeats > beats | 0.40 s | `snap_shots_to_beats`: shot boundaries go on the beat grid |
+| `drops_only` | drops | 1.2 s | only big moments move |
+| `loose` | drops, kicks, snares, beats | 0.15 s | nudge only |
+A higher-priority target wins if it is no more than `prio_bonus * rank` further away. Boundaries are frame-quantised.
+Shot `hits:[{t, amount}]` are punch-ins snapped the same way (frame scale up to `amount`, 0.35 s settle; whole frame,
+never a push on a face). Each new shot after the first *expands* from a 7 % bordered inset to full frame in 0.2 s,
+starting exactly on its snapped cut. CLI check: `python3 scripts/music_fx.py snap timeline.json --cuts 33,40.5 --preset hard`.
+
+### b) Parallax depth: `make_layers()`, `Parallax`, presets `PARALLAX_PRESETS`
+`python3 scripts/music_fx.py layers panel.png -o layers/` -> `fg.png` (rembg `isnet-general-use`, alpha made solid by
+`solid_mask`: threshold, close, fill holes, drop stray blobs; stringy subjects like bandages are otherwise see-through),
+`bg.png` (subject hole dilated 25 px, Telea-inpainted at half res, blurred fill) and `mask.png`. Cached by mtime.
+Three layers: far (generated/plate background), mid (inpainted panel bg, oval-feathered), fg (subject).
+Presets: `locked_subtle` (far 7 px / mid 3.5 px / fg 1.2 px opposite, 9 s period), `locked_drift` (12/6/2 px, 7 s), `still`.
+Locked camera: translation only, no scale, so there is never a push-in on a face.
+
+### c) Localized looping overlays: `build_overlays()`, presets `OVERLAY_PRESETS`
+Layer types: `sand` (fast low streaks), `dust` (slow bokeh motes), `embers` (rising, flickering, glow), `mist` (two
+octaves of seeded noise scrolled, default green), `torch` (flickering light pools, 3 looping sines). Every layer takes
+`region` (`full`, `floor`, `top`, `{"ellipse":[cx,cy,rx,ry]}`, `{"rect":[x0,y0,x1,y1]}` in frame fractions), `mode`
+(`screen`, `add`, `multiply`, `softlight`, `normal`), `strength`/`density`, `color`, `loop`. Particle velocities are
+rounded to whole wraps per loop, so every layer loops seamlessly. Presets: `crypt` (green torches at 12 %/88 %, floor
+mist, dust, torch embers, floor sand), `desert_night`, `tomb_embers`.
+
+### d) Typography: `TypeLayer`, presets `TYPE_PRESETS`
+Cues `{kind: caption|lyric|sfx, t, end, text, preset?, prefer?, snap?, cue?}`.
+- `comic_caption`: cream narrative box, black border + drop shadow, Comic Relief Bold, upper case. Default slots top-left/top-right/bottom-left.
+- `lyric_gold`: Cinzel Decorative gold lettering, dark stroke, green glow, word-by-word reveal over the first 40 % of the cue.
+  Use it for instrumental lulls (lyric_timing sections labelled instrumental), not over sung lines.
+- `sfx`: Bangers on a red starburst, ease-out-back pop. **Requires `cue`** (the motivating event); the renderer refuses
+  an SFX without one, and refuses a second `BAM`. `snap:true` snaps the cue start (use it to land BAM on the drop).
+Placement: first preferred slot with zero overlap against faces and the subject mask, slot fixed for the cue's life.
+Faces: OpenCV Haar when the build has it (OpenCV 5 dropped it), otherwise the head box from the subject mask (top 16 %
+of the silhouette, widened) - this is what works for skulls, masks and robots anyway.
+
+### Render spec (`python3 scripts/music_fx.py render spec.json`)
+```json
+{"timeline":"audio/analysis.json","audio":"audio/song.mp3","t0":32.868,"t1":44.9,"size":[1280,720],"fps":30,"seed":7,
+ "out":"out/demo.mp4","contact":"out/demo_contact.jpg","panel":"panels/hero.png","layers_dir":"panels/layers",
+ "background":"crypt","snap":"hard","parallax":"locked_subtle","overlays":"crypt",
+ "shots":[{"t":32.868,"end":36.1,"frame":{"x":0.5,"y":0.98,"h":0.92},"hits":[{"t":33.95,"amount":0.02}]},
+          {"t":36.1,"end":40.5,"frame":{"x":0.6,"y":1.75,"h":1.75}},
+          {"t":40.5,"end":44.9,"frame":{"x":0.66,"y":0.98,"h":0.92}}],
+ "type":[{"kind":"caption","t":33.1,"end":35.9,"text":"Giza. Halloween night."},
+         {"kind":"sfx","t":40.6,"end":41.4,"text":"BAM!","cue":"drop at 40.635 s","snap":true},
+         {"kind":"lyric","t":41.5,"end":44.7,"text":"The pharaoh's wakin' up","snap":true}]}
+```
+`frame` places the subject: `x` centre, `y` feet line, `h` height (fractions of the frame; `h` > 1 = waist-up, still
+locked). `background` is `crypt` (generated dark crypt: stone courses, arch, glyph marks, green sconces, vignette) or an
+image path. Writes the mp4 (audio cut from the song with 0.15 s/0.4 s fades), a 12-frame contact sheet and
+`<out>.plan.json` (snapped shots with `cut_on`, snapped hits, face boxes per second) for QA.
+
 ## Comic mode and general rules
 
 - **General rules for every video** (reference-first, panel QA, clip consistency, focus regions, varied transitions,

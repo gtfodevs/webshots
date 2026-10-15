@@ -24,3 +24,7 @@ music video: timeline, beats, sections, lyrics) → **`docs/COMIC_MODE.md`** (co
 7. **QA + render:** `npm run check -- <name>` (comic QA must PASS) → `npm run comic -- <name>` → contact sheet →
    `python3 scripts/comic_render_audit.py SPEC LANDSCAPE.mp4 SHORT.mp4 --out DIR`.
 8. Commit spec and code only, never media. Upload as "Not made for kids".
+
+
+## Music-mode FX engine
+Beat-snapped cuts/punch-ins (`SNAP_PRESETS`), still-panel parallax (`PARALLAX_PRESETS`), looping sand/mist/dust/torch/embers overlays (`OVERLAY_PRESETS`) and caption / lyric / SFX typography (`TYPE_PRESETS`) live in `scripts/music_fx.py`; read `docs/MUSIC_MODE.md` "FX engine" before using them. SFX need an explicit cue; BAM at most once per video.

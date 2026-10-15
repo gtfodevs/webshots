@@ -10,6 +10,10 @@ Writes a timeline JSON:
 Beats/tempo: librosa beat tracker. Downbeats: the beat phase (0..3) whose beats carry the most
 onset strength + low-frequency energy. Sections: agglomerative segmentation of beat-synced
 chroma+MFCC, snapped to bar lines, labelled by energy (intro/verse/chorus/break/outro heuristics).
+Transients: kicks = peaks of the <150 Hz band onset envelope, snares = peaks of the 1.5-6 kHz
+band onset envelope that are also broadband (rejects hats), each refined to the waveform attack.
+Drops: bar lines where 2-bar mean energy jumps >= 0.25 over the previous 2 bars (or after a
+low/breakdown bar), i.e. where the beat slams back in. Written as kicks:[s], snares:[s], drops:[{t,jump}].
 Words: faster-whisper word timestamps. Lyrics: each lyric line is aligned to the word stream.
 """
 import argparse, json, re, subprocess, sys
@@ -82,11 +86,49 @@ def analyze(y, sr, n_sections=None):
             'downbeats': [round(float(d), 3) for d in downbeats], 'bars': bars, 'sections': secs, 'energy': energy}
 
 
+def transients(y, sr, beats, bars, energy):
+    import librosa
+    hop = 256
+    S = np.abs(librosa.stft(y, hop_length=hop, n_fft=2048))
+    f = librosa.fft_frequencies(sr=sr, n_fft=2048)
+    def band_onset(lo, hi):
+        b = np.log1p(S[(f >= lo) & (f < hi)] * 10).sum(axis=0)
+        d = np.maximum(0, np.diff(b, prepend=b[0]))
+        return d / (d.max() + 1e-9)
+    kick_env = band_onset(20, 150)
+    snare_env = band_onset(1500, 6000)
+    broad = band_onset(150, 1500)
+    min_gap = int(0.18 * sr / hop)
+    def peaks(env, thr):
+        pk = librosa.util.peak_pick(env, pre_max=3, post_max=3, pre_avg=12, post_avg=12, delta=thr, wait=min_gap)
+        return pk
+    kp = peaks(kick_env, 0.08)
+    kmed = float(np.median(kick_env[kp])) if len(kp) else 0
+    kicks = [float(t) for t in librosa.frames_to_time([p for p in kp if kick_env[p] >= 0.6 * kmed], sr=sr, hop_length=hop)]
+    bt = np.asarray(beats)
+    sp = [p for p in peaks(snare_env, 0.07) if broad[max(0, p - 2):p + 3].max() > 0.12]
+    st = librosa.frames_to_time(sp, sr=sr, hop_length=hop)
+    # backbeat gate: snares sit on a beat (+-70 ms) and are louder than the median hat peak
+    med = float(np.median(snare_env[sp])) if sp else 0
+    sp = [p for p, t in zip(sp, st) if len(bt) and np.abs(bt - t).min() < 0.07 and snare_env[p] >= med]
+    snares = [float(t) for t in librosa.frames_to_time(sp, sr=sr, hop_length=hop)]
+    # drops: bar-level energy jumps
+    ev = np.array([e['v'] for e in energy]); et = np.array([e['t'] for e in energy])
+    bar_e = [float(ev[(et >= b['t']) & (et < b['end'])].mean()) if ((et >= b['t']) & (et < b['end'])).any() else 0 for b in bars]
+    drops, last = [], -99
+    for i in range(2, len(bars) - 1):
+        prev = np.mean(bar_e[i - 2:i]); nxt = np.mean(bar_e[i:i + 2])
+        if (nxt - prev >= 0.25 or (min(bar_e[i - 2:i]) < 0.25 and nxt > 0.6)) and bars[i]['t'] - last > 8:
+            drops.append({'t': round(bars[i]['t'], 3), 'jump': round(float(nxt - prev), 3)}); last = bars[i]['t']
+    r = lambda xs: [round(x, 3) for x in xs]
+    return {'kicks': r(kicks), 'snares': r(snares), 'drops': drops}
+
+
 def whisper_words(path, prompt=None, model='small.en'):
     from faster_whisper import WhisperModel
     m = WhisperModel(model, device='cpu', compute_type='int8')
     a = load_audio(path, 16000)
-    segs, _ = m.transcribe(a, language='en', word_timestamps=True, vad_filter=False, initial_prompt=prompt, condition_on_previous_text=False)
+    segs, _ = m.transcribe(a, language='en', word_timestamps=True, vad_filter=False, initial_prompt=prompt, condition_on_previous_text=False, temperature=0.0, beam_size=5)
     out = []
     for s in segs:
         for w in s.words:
@@ -202,6 +244,7 @@ def main():
     sr = 22050
     y = load_audio(a.audio, sr)
     tl = analyze(y, sr, a.sections)
+    tl.update(transients(y, sr, tl['beats'], tl['bars'], tl['energy']))
     lines = parse_lyrics(open(a.lyrics).read()) if a.lyrics else []
     if not a.no_words:
         prompt = '. '.join(t.rstrip('.,') for _, t in lines[:3]) + '.' if lines else None
@@ -217,7 +260,7 @@ def main():
                 tl['sections'] = ls
     json.dump(tl, open(a.out, 'w'), indent=1)
     print(f"timeline: {tl['duration']}s, {tl['tempo']} BPM, {len(tl['beats'])} beats, {len(tl['bars'])} bars, "
-          f"{len(tl['sections'])} sections, {len(tl.get('words', []))} words, {len(tl.get('lyrics', []))} lyric lines -> {a.out}")
+          f"{len(tl['sections'])} sections, {len(tl['kicks'])} kicks, {len(tl['snares'])} snares, {len(tl['drops'])} drops, {len(tl.get('words', []))} words, {len(tl.get('lyrics', []))} lyric lines -> {a.out}")
 
 
 if __name__ == '__main__':
