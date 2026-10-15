@@ -118,3 +118,4 @@ The originals are `uno-ORIGINAL-sheet.jpg` and `aura-ORIGINAL-sheet.jpg`. Reject
 - Build a side-by-side (start frame | master sheet) and check: headphone size (slim), mouth (closed-lip, no teeth), coat + gold "1", hat, build (broad), clothing covers all limbs.
 - Fix any mismatch with Precise Edit on the start frame, never by hoping the prompt overrides it.
 - Start frames are GENERATED/EDITED IN GROK IMAGINE WITH THE MASTER SHEETS ATTACHED as reference images (multi-image attach: frame first, then uno/aura masters), prompting "match the reference sheet exactly". The side-by-side check is only the final confirmation, not the method (Jason, Oct 15 2026).
+- Eyes: always bright GLOWING red; start-frame prompts must say "bright glowing red eyes" (sheet-referenced edits dimmed them, Oct 15 2026).
