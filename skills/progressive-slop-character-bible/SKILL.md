@@ -117,3 +117,4 @@ The originals are `uno-ORIGINAL-sheet.jpg` and `aura-ORIGINAL-sheet.jpg`. Reject
 - The video model only sees the start frame + prompt, never the character sheets. So every start frame must match the master sheets BEFORE animating.
 - Build a side-by-side (start frame | master sheet) and check: headphone size (slim), mouth (closed-lip, no teeth), coat + gold "1", hat, build (broad), clothing covers all limbs.
 - Fix any mismatch with Precise Edit on the start frame, never by hoping the prompt overrides it.
+- Start frames are GENERATED/EDITED IN GROK IMAGINE WITH THE MASTER SHEETS ATTACHED as reference images (multi-image attach: frame first, then uno/aura masters), prompting "match the reference sheet exactly". The side-by-side check is only the final confirmation, not the method (Jason, Oct 15 2026).
