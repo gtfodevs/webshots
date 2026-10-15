@@ -89,3 +89,10 @@ The originals are `uno-ORIGINAL-sheet.jpg` and `aura-ORIGINAL-sheet.jpg`. Reject
 - Smiles are closed-lip.
 - SFX and lettering never cover a face, and every SFX is motivated by on-screen action. Use the yellow BAM at most once per video.
 - Any failure gets regenerated before it's shown to Jason.
+
+## Fix workflow (lessons from Jason, Oct 15 2026)
+- **Only fix what Jason names.** The audit list is a suggestion; confirm with him which shots to redo. Never redo scenes that already work.
+- **Never redraw a whole shot to fix a detail.** Use Grok Imagine's selective edit: mask only the broken region on the ORIGINAL frame. If that's impossible, do a minimal edit of the original frame and never a fresh generation.
+- **Keep the slick glossy rendering of the original clips.** Fresh generations come out flatter and lose it.
+- **Check physical logic.** Example: a door peephole slit shows only eyes, never a head poking through.
+- **Show the fixed still before animating.**
