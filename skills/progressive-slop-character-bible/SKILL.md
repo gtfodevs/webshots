@@ -120,3 +120,19 @@ The originals are `uno-ORIGINAL-sheet.jpg` and `aura-ORIGINAL-sheet.jpg`. Reject
 - Start frames are GENERATED/EDITED IN GROK IMAGINE WITH THE MASTER SHEETS ATTACHED as reference images (multi-image attach: frame first, then uno/aura masters), prompting "match the reference sheet exactly". The side-by-side check is only the final confirmation, not the method (Jason, Oct 15 2026).
 - Eyes: always bright GLOWING red; start-frame prompts must say "bright glowing red eyes" (sheet-referenced edits dimmed them, Oct 15 2026).
 - Eye prompt wording: say "faces stay cool polished SILVER chrome with no red or copper tint; only the small eye lenses glow bright red". Plain "bright glowing red eyes" tints the whole face copper (Oct 15 2026).
+
+## The Pharaoh (horror boss, "The Pharaoh's Waking Up", locked Oct 15 2026)
+- Master: `/workspace/pharaoh/refs/pharaoh-MASTER-v1.jpg` (also in crime-comic/refs). Jason chose option A.
+- Nightmare undead robot mummy king, intentionally scary (Jason: maximal horror, kid-safe not required for him): emaciated skinny bony frame, torn rotting chrome skull face with long fangs, burning toxic GREEN eyes leaking green mist (green = altered weirdos in this universe), cracked gold-and-lapis nemes headdress with gold cobra, spiked shoulders, shredded blackened bandages with tarnished gold bands, long clawed fingers.
+- Never attach Uno's master when generating him (it bled Uno's face into early drafts).
+
+## Production-value engine rules (from external review, Oct 15 2026)
+- Depth: parallax layer separation (character vs background) and localized looping overlays (sand, mist, smoke, rain, torch flicker) instead of extra AI generation.
+- Beat sync: hard-sync cuts and panel punch-ins to detected kick/snare transients and drops.
+- Typography: narrative caption boxes and lyric snippets bridge instrumental lulls; SFX only when motivated.
+
+## Theme wardrobe gate (Jason, Oct 15 2026) - run FIRST on every new song
+- Before any start frame, ask: does each recurring character's current master fit THIS song's theme/era/setting? (e.g. 1920s gangster suits do NOT fit an Egyptian tomb; there Uno and Aura are archaeologists.)
+- If not, make a themed sheet per character from their master: same face, head, build, hair; new outfit for the theme; keep signature items (Uno: purple fur coat + gold "1" chain; Aura: red-strand cable hair, crimson accent). Get Jason's OK, then make that themed sheet the reference for all of the song's shots.
+- Name themed sheets `<char>-<theme>-vN.jpg` in the project refs/ and list them here per song.
+- Pharaoh's Waking Up: Uno and Aura are archaeologists (`/workspace/pharaoh/refs/uno-archaeologist-*.jpg`, `aura-archaeologist-*.jpg`).
