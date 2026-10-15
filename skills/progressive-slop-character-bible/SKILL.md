@@ -112,3 +112,8 @@ The originals are `uno-ORIGINAL-sheet.jpg` and `aura-ORIGINAL-sheet.jpg`. Reject
 - Walking shots: Grok keeps drawing chrome knees even with explicit clothing prompts. Check knees with a 2fps bottom-half crop at full size, never tiny strips. Fastest fix: reframe thigh-up (crop) so legs are out of frame; plan new walking shots as waist-up from the start (Oct 15 2026).
 - Walking shots: Grok keeps drawing chrome knees even with explicit clothing prompts. Check knees with a 2fps bottom-half crop at full size, never tiny strips. Fix: reframe thigh-up so knees stay out of frame (Jason: "keep the knee out"); plan new walking shots waist-up from the start (Oct 15 2026).
 - Headphones: slim, close-fitting, small silver headphones (about half the size models default to). Never massive cans (Jason, Oct 15 2026).
+
+## Start-frame gate (Oct 15 2026)
+- The video model only sees the start frame + prompt, never the character sheets. So every start frame must match the master sheets BEFORE animating.
+- Build a side-by-side (start frame | master sheet) and check: headphone size (slim), mouth (closed-lip, no teeth), coat + gold "1", hat, build (broad), clothing covers all limbs.
+- Fix any mismatch with Precise Edit on the start frame, never by hoping the prompt overrides it.
