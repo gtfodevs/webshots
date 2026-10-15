@@ -152,14 +152,14 @@ SHORT = {'start': 128.30, 'end': 177.95,
          # teaser/trailer (Jason 2026-10-14): glimpses from every act over the final-chorus audio, no betrayal payoff
          # (f15 slam, f20 swap, f22/f23 takedowns, f24 headline) and no ending (f28); cuts on the window's beats
          # native 9:16 glimpses: [song_t, beats, cells top->bottom] built from source clips (vshot.py)
-         'trailer': [[2.0, 8, [{"id": "f01", "fx": 0.51}, {"id": "n01", "fx": 0.5}]], [11.0, 4, [{"id": "f02", "fx": 0.5, "zoom": 0.6, "fy": 0.0}, {"id": "n05", "fx": 0.5}]], [31.2, 3, [{"id": "f04", "fx": 0.5}, {"id": "n02", "fx": 0.5}]], [45.5, 5, [{"id": "f08", "fx": 0.5}, {"id": "n08", "fx": 0.5}]], [54.5, 4, [{"id": "f09", "fx": 0.47}, {"id": "n29", "fx": 0.5}]], [70.0, 8, [{"id": "f11", "fx": 0.53}, {"id": "f12", "fx": 0.45}]], [76.0, 4, [{"id": "f14", "fx": 0.51}, {"id": "n11", "fx": 0.5}]], [83.0, 2, [{"id": "f15c", "fx": 0.4}, {"id": "f13", "fx": 0.45}]], [96.5, 4, [{"id": "f17", "fx": 0.44}, {"id": "f16", "fx": 0.4}]], [107.0, 6, [{"id": "f18", "fx": 0.57}, {"id": "f19", "fx": 0.5}]], [134.3, 2, [{"id": "f22b", "fx": 0.4}, {"id": "f22c", "fx": 0.48}]], [158.0, 8, [{"id": "f25", "fx": 0.5}, {"id": "n22", "fx": 0.5}]], [168.5, 4, [{"id": "n23", "fx": 0.39}, {"id": "n24", "fx": 0.46}]], [180.5, 4, [{"id": "f26", "fx": 0.72, "zoom": 0.85}, {"id": "n25", "fx": 0.5}]], [185.6, 0, [{"id": "f27", "fx": 0.64}, {"id": "n26", "fx": 0.55}]]],
+         'trailer': [[2.0, 8, [{"id": "f01", "fx": 0.51}, {"id": "n01", "fx": 0.5}]], [11.0, 4, [{"id": "f02", "fx": 0.5}, {"id": "n05", "fx": 0.5}]], [31.2, 3, [{"id": "f04", "fx": 0.5}, {"id": "n02", "fx": 0.5}]], [45.5, 5, [{"id": "f08", "fx": 0.5}, {"id": "f07", "fx": 0.62}]], [54.5, 4, [{"id": "f09", "fx": 0.47}, {"id": "n29", "fx": 0.5}]], [70.0, 8, [{"id": "f11", "fx": 0.53}, {"id": "f12", "fx": 0.45}]], [76.0, 4, [{"id": "f14", "fx": 0.51}, {"id": "n11", "fx": 0.5}]], [83.0, 2, [{"id": "f15c", "fx": 0.4}, {"id": "f13", "fx": 0.45}]], [96.5, 4, [{"id": "f17", "fx": 0.44}, {"id": "f16", "fx": 0.4}]], [107.0, 6, [{"id": "f18", "fx": 0.57}, {"id": "f19", "fx": 0.5}]], [134.3, 2, [{"id": "f22b", "fx": 0.4}, {"id": "f22c", "fx": 0.48}]], [158.0, 8, [{"id": "f25", "fx": 0.5}, {"id": "n22", "fx": 0.5}]], [168.5, 4, [{"id": "n23", "fx": 0.39}, {"id": "n24", "fx": 0.46}]], [180.5, 4, [{"id": "f26", "fx": 0.47}, {"id": "n25", "fx": 0.5}]], [185.6, 0, [{"id": "f27", "fx": 0.64}, {"id": "n26", "fx": 0.55}]]],
          'note': 'word gap after "we still fight" -> warehouse doors BOOM, showdown, final chorus, newspaper, penthouse triumph; ends after the last "heart made of gold" (49.65 s)'}
 CAPTION_FILLS = [[255, 226, 150], [240, 232, 214], [255, 190, 190], [214, 200, 255]]   # deco gold, ivory, crimson blush, lilac
 SFX_COLORS = [[255, 200, 60], [230, 40, 60], [190, 120, 255], [255, 245, 230], [255, 150, 40]]
 CLIP_LEN = 6.0
 # v5 (2026-10-14): new clips in clips/v5 (never *_take1); unit id -> clip file when it differs from clips/v5/<id>.mp4
-CLIP_SRC = {'f23': 'clips/v5/f23_new.mp4', 'f23x': 'clips/v5/f23.mp4'}
-UNIT_IMAGE = {'f23': 'panels/f23_new.jpg', 'f23x': 'panels/f23.jpg'}
+CLIP_SRC = {'f05': 'clips/v6/f05_locked.mp4', 'f23': 'clips/v5/f23_new.mp4', 'f23x': 'clips/v5/f23.mp4'}
+UNIT_IMAGE = {'f05': 'panels/f05_pendant.jpg', 'f23': 'panels/f23_new.jpg', 'f23x': 'panels/f23.jpg'}
 # sequence lead-up sub-panels with no clip: gentle pan/zoom of the still (allowed only as sequence insets)
 NO_CLIP = {'f15a', 'f22a', 'f22d', 'f23a', 'f23c', 'f23d'}
 def clip_rel(fid):
@@ -206,7 +206,7 @@ TRIMS = {'f21': (2.5, 'v5 clip pushes in on the pair; feet leave the cell from ~
 V5_FOCUS = {
  'f02': [R('Uno face', 0.29, 0.0, 0.42, 0.17), R('Aura face', 0.60, 0.08, 0.72, 0.26)],
  'f04': [R('Uno face', 0.52, 0.0, 0.82, 0.60), R('gold 1 chain', 0.38, 0.25, 0.62, 0.75, req=False)],
- 'f05': [R('slot eyes', 0.08, 0.18, 0.25, 0.42), R('Uno face', 0.30, 0.05, 0.52, 0.42), R('Aura face', 0.62, 0.05, 0.80, 0.38)],
+ 'f05': [R('slot eyes', 0.02, 0.10, 0.15, 0.28), R('Uno face', 0.32, 0.04, 0.52, 0.34), R('Aura face', 0.62, 0.0, 0.80, 0.28)],   # f05_locked (pendant still)
  'f06': [R('Aura face', 0.52, 0.08, 0.66, 0.35), R('Ferro face', 0.88, 0.30, 0.98, 0.50, req=False)],
  'f07': [R('Uno face', 0.52, 0.04, 0.66, 0.30), R('cards', 0.68, 0.15, 0.86, 0.45), R('coins', 0.20, 0.70, 0.45, 1.0, req=False)],
  'f08': [R('Ferro face', 0.28, 0.0, 0.48, 0.32), R('Nickel face', 0.52, 0.0, 0.68, 0.35, req=False), R('Uno face', 0.72, 0.0, 0.92, 0.35)],

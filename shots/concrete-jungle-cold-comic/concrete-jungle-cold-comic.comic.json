@@ -50,9 +50,7 @@
     [
      {
       "id": "f02",
-      "fx": 0.5,
-      "zoom": 0.6,
-      "fy": 0.0
+      "fx": 0.5
      },
      {
       "id": "n05",
@@ -83,8 +81,8 @@
       "fx": 0.5
      },
      {
-      "id": "n08",
-      "fx": 0.5
+      "id": "f07",
+      "fx": 0.62
      }
     ]
    ],
@@ -220,8 +218,7 @@
     [
      {
       "id": "f26",
-      "fx": 0.72,
-      "zoom": 0.85
+      "fx": 0.47
      },
      {
       "id": "n25",
@@ -813,7 +810,7 @@
    "panels": [
     {
      "id": "f05",
-     "image": "panels/f05.jpg",
+     "image": "panels/f05_pendant.jpg",
      "at": 34.226,
      "moment": "Speakeasy door slot SNAPS open. Dutch angle as Uno rap-talks the password, and Aura already slips past the bouncer bot",
      "cast": "Uno, Aura",
@@ -826,19 +823,19 @@
      },
      "slot": "a",
      "clip": {
-      "src": "clips/v5/f05.mp4",
+      "src": "clips/v6/f05_locked.mp4",
       "in": 0.0,
       "out": 6.0,
-      "firstFrameNcc": 0.936
+      "firstFrameNcc": 0.998
      },
      "focusRegions": [
       {
        "label": "slot eyes",
        "box": [
-        0.08,
-        0.18,
-        0.25,
-        0.42
+        0.02,
+        0.1,
+        0.15,
+        0.28
        ],
        "required": true,
        "face": true
@@ -846,10 +843,10 @@
       {
        "label": "Uno face",
        "box": [
-        0.3,
-        0.05,
+        0.32,
+        0.04,
         0.52,
-        0.42
+        0.34
        ],
        "required": true,
        "face": true
@@ -858,9 +855,9 @@
        "label": "Aura face",
        "box": [
         0.62,
-        0.05,
+        0.0,
         0.8,
-        0.38
+        0.28
        ],
        "required": true,
        "face": true
