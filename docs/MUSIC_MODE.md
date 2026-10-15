@@ -505,3 +505,4 @@ image path. Writes the mp4 (audio cut from the song with 0.15 s/0.4 s fades), a 
 - **General rules for every video** (reference-first, panel QA, clip consistency, focus regions, varied transitions,
   looping backgrounds, title intro + end card, no clipping, kid-safe, publishing): `docs/VIDEO_PIPELINE.md`.
 - **Comic-book music videos** (pages, layouts, lettering, SFX, comic story workflow, comic QA): `docs/COMIC_MODE.md`.
+- **4K upload master** for every final: `scripts/upload_master_4k.sh IN OUT` (lanczos upscale to 3840x2160 / 2160x3840, H.264 High CRF 16, 2 s keyframes, +faststart, audio copied) so YouTube serves the higher-bitrate VP9/AV1 encode. Upload the 4K file; keep the 1080p as the archive master.
