@@ -212,3 +212,15 @@ for s_ in out:
         open(f"{R}/prompts/{s_['id']}_start.txt", 'w').write(s_['grok']['start_frame_prompt'])
         open(f"{R}/prompts/{s_['id']}_motion.txt", 'w').write(s_['grok']['motion_prompt'])
 print(cnt, 'short', short['dur'], short['shots'])
+
+# Optional Jev sanity check of the authored shots against the rules (text-only judgment; numeric asserts above stay
+# authoritative). Opt in with JEV_SHOTLIST_CHECK=1; skipped silently when Jev is unavailable.
+if os.environ.get('JEV_SHOTLIST_CHECK') == '1':
+    import sys; sys.path.insert(0, '/workspace/webshots-upstream/scripts')
+    try:
+        from jev_qa import check_shotlist
+        res = check_shotlist({'shots': out}); bad = [r['id'] for r in res if r['flag']]
+        esc = [r['id'] for r in res if r['action'] == 'escalate']
+        print('jev shotlist check: flagged', bad or 'none', '| escalate', esc or 'none')
+    except Exception as e:
+        print('jev shotlist check skipped:', e)

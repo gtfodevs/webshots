@@ -500,6 +500,25 @@ locked). `background` is `crypt` (generated dark crypt: stone courses, arch, gly
 image path. Writes the mp4 (audio cut from the song with 0.15 s/0.4 s fades), a 12-frame contact sheet and
 `<out>.plan.json` (snapped shots with `cut_on`, snapped hits, face boxes per second) for QA.
 
+### Cheap judgment calls with Jev (`scripts/jev.py`, `scripts/jev_qa.py`)
+
+Jev (TypeSafe System One, `jev-latest`) is a text-only decision model: yes/no (`jev_noul`), pick-one (`jev_choice`,
+always with an `other` option) and score (`jev_score`), each returning probabilities, confidence and a gated
+`action`: `escalate` below 0.5 (or when Jev is unavailable), `review` 0.5-0.9 (with `top` choices), `act` above 0.9.
+Key in env `JEV_API_KEY` (never logged); direct endpoint `POST https://api.typesafe.ai/v1/systemone`. Retries 429/5xx
+3x with backoff. Decisions are logged to `$JEV_LOG` (default `/tmp/jev-decisions.jsonl`) for threshold tuning.
+
+Use it only where a judgment call would otherwise go to a bigger LLM or a human. Numbers stay rule-based:
+duration checks (truncated 0.54 s downloads), `clip_drift_check.py` NCC/skin/eye rules, frame-diff stats in
+`motion_qa.py` / `static_check.py`, beat snapping and shot-list asserts are NOT routed through Jev.
+
+- `jev_qa.py caption SHOTLIST ID "<vision caption>"`: clip/frame pass-fail from a vision caption vs the shot spec,
+  run after the numeric checks pass (exit 0 pass, 1 fail, 2 review/escalate).
+- `jev_qa.py pick SHOTLIST ID captions.json`: choose between candidate takes (e.g. for `clip_picks.json`) from captions.
+- `jev_qa.py shotlist SHOTLIST`: flag shots that break the rules (2 characters, locked camera, waist-up...);
+  `build_shotlist.py` runs it after writing when `JEV_SHOTLIST_CHECK=1`.
+Jev can't see images, so always give it text: captions, metrics, spec. Anything not `act` goes to the usual review.
+
 ## Comic mode and general rules
 
 - **General rules for every video** (reference-first, panel QA, clip consistency, focus regions, varied transitions,
