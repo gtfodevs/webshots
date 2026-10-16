@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=1280, height=720"><title>{{TITLE}}</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bangers&family=Cinzel+Decorative:wght@700;900&family=Inter:wght@700;900&display=swap">
+<style>
+  html,body{margin:0;width:1280px;height:720px;overflow:hidden;background:#140c26;color:#fff;font-family:Inter,sans-serif}
+  #camera{position:absolute;left:0;top:0;width:1280px;height:720px;transform-origin:0 0}
+  .scene{position:absolute;inset:0;opacity:0;visibility:hidden;overflow:hidden}
+  .layer{position:absolute;inset:-60px}  /* bleed so camera moves never show edges */
+  .ph{position:absolute;left:0;right:0;top:330px;text-align:center;font:400 72px Bangers,sans-serif}
+  /* Vertical (Shorts) reflow: the 16:9 stage becomes the middle band of a 9:16 frame. */
+  html[data-format=vertical],html[data-format=vertical] body{width:720px;height:1280px}
+  html[data-format=vertical] #camera{top:370px;left:-120px;transform:scale(.75)}
+</style></head><body>
+<div id="camera">
+<!--SCENES-->
+</div>
+<script src="/vendor/gsap.min.js"></script><script src="/vendor/DrawSVGPlugin.min.js"></script><script src="/vendor/MotionPathPlugin.min.js"></script>
+<script src="/kit.js"></script><script src="/music.js"></script>
+<script>
+document.documentElement.dataset.format = new URLSearchParams(location.search).get('format') || 'landscape';
+(async () => {
+  await Music.load('timeline.json');
+  Music.theme('fantasy');
+  Music.lyrics({ style: 'karaoke' });
+//SCENES
+  Webshot.start();
+})();
+</script></body></html>

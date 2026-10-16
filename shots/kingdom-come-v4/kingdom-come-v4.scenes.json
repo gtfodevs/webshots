@@ -1,0 +1,20 @@
+[
+ {"scene":"open","bar":0,"label":"chorus 1: the chrome kingdom; the Sorcerer steals its music and light"},
+ {"scene":"spark","bar":5,"label":"chorus 1: the Wizard sends Uno and Aura on a quest; the Jester tags along"},
+ {"scene":"dance1","bar":9,"label":"CHORUS ROUTINE #1 in the great hall: Uno + Aura"},
+ {"scene":"quest","bar":15,"label":"verse 1: crystal forest march; enchanted blade; a shield for the weak"},
+ {"scene":"wake","bar":23,"label":"chorus 2: Aura's music wakes the little robot dragon"},
+ {"scene":"dance2","bar":26,"label":"CHORUS ROUTINE #2: + Jester"},
+ {"scene":"beasts","bar":31,"label":"verse 2: the Sorcerer's knights fall before Uno's might; dawn"},
+ {"scene":"flight","bar":40,"label":"chorus 3: riding out on the robot horse"},
+ {"scene":"dance3","bar":43,"label":"CHORUS ROUTINE #3: + Wizard + the converted knights"},
+ {"scene":"plot","bar":47,"label":"verse 3: the Sorcerer plots; spirit like an arrow; spells unbound"},
+ {"scene":"shatter","bar":56,"label":"chorus 4: the lair; the Sorcerer's blast; Uno shields Aura"},
+ {"scene":"dance4","bar":59,"label":"CHORUS ROUTINE #4: + dragon + horse"},
+ {"scene":"lair","bar":63,"label":"verse 4: showdown; they win with dance and music"},
+ {"scene":"relight","bar":72,"label":"chorus 5: the kingdom's light and music return"},
+ {"scene":"dance5","bar":75,"label":"CHORUS ROUTINE #5: everyone, the Sorcerer front and center"},
+ {"scene":"party","bar":80,"label":"instrumental: victory party in the great hall"},
+ {"scene":"credits","bar":86,"label":"instrumental: cast roll call"},
+ {"scene":"end","bar":96,"label":"title + ProgressiveSlop credit"}
+]

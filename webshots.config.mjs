@@ -14,18 +14,22 @@ const engine =
   undefined;
 const defaultVoice = process.env.WEBSHOTS_VOICE || (tts === 'openai' ? 'alloy' : 'am_michael');
 
+// Output format: landscape 1280x720 (default) or vertical 720x1280 (x1.5 = 1080x1920 for Shorts).
+// `npm run render -- <name> --format vertical` sets WEBSHOTS_FORMAT.
+const vertical = process.env.WEBSHOTS_FORMAT === 'vertical';
+
 export default defineConfig({
   baseURL: 'http://webshot.local',
   demosDir: `shots/${shot}`,
   outputDir: 'out/.argo',
   tts: { defaultVoice, defaultSpeed: 1.0, ...(engine ? { engine } : {}) },
   video: {
-    width: 1280,
-    height: 720,
+    width: vertical ? 720 : 1280,
+    height: vertical ? 1280 : 720,
     fps: 30,
     browser: 'chromium',
     captureMode: 'jpeg-stitch',
-    deviceScaleFactor: 2,
+    deviceScaleFactor: vertical ? 1.5 : 2,
   },
   export: { encoder: 'cpu', preset: 'slow', crf: 18, audio: { loudnorm: true } },
 });

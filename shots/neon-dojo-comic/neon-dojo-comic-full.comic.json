@@ -1,0 +1,1309 @@
+{
+ "title": "Neon Dojo - comic mode, full song",
+ "outName": "neon-dojo-comic",
+ "assetsDir": "/workspace/neon-dojo-comic",
+ "fps": 30,
+ "defaults": {
+  "holdBeats": 1
+ },
+ "song": {
+  "suno": "ea6b85b9-efbb-40b4-83db-e9bb853f4122",
+  "audio": "audio/song.m4a",
+  "audioNote": "relative to assetsDir; not committed. Copy shots/neon-dojo-fighter/stage/assets/song.m4a there",
+  "timeline": "shots/neon-dojo-fighter/stage/timeline.json",
+  "start": 0.0,
+  "end": 166.805,
+  "loudness": -14
+ },
+ "short": {
+  "start": 123.54,
+  "end": 166.805,
+  "note": "climax + finale: katana wave, tag hand-off, double super, belt returned, sunrise (~43 s + 3 s end card); starts right after the held word \"done\" ends (123.54) so no word is cut"
+ },
+ "endCard": {
+  "enabled": true,
+  "seconds": 3.0,
+  "lines": [
+   "BROUGHT TO YOU BY PROGRESSIVE SLOP",
+   "LIKE AND SUBSCRIBE FOR MORE!"
+  ],
+  "note": "held final frame on the full video and the Short; song tail fades under it"
+ },
+ "cast": {
+  "Uno": "Uno (round smooth chrome head, purple fur coat, gold \"1\" chain)",
+  "Aura": "Aura (crimson-streaked dark hair, modest crimson bodysuit, cyan magic)",
+  "SHOGUN": "SHOGUN.EXE (horned samurai mecha, black-red armor)",
+  "KAZE-9": "KAZE-9 (scarf ninja, twin blades)",
+  "RAIJIN": "RAIJIN (boxer, lightning gauntlets)",
+  "TEKKO": "TEKKO (squat sumo robot, piston arms)",
+  "LOTUS": "LOTUS (long-legged crane kicker)",
+  "Sensei": "Sensei Gearhart (old robot, cable beard, cane)"
+ },
+ "styleTemplate": "{scene}. {chars}. All robots chrome, red eyes, headphone ears. 1990s superhero comic, bold ink, halftone, neon magenta-cyan, 16:9, no text.",
+ "motionTemplate": "{move}. {sec}. Camera: {cam}. Slow, simple, clean motion; nobody walks toward the camera. Keep the comic style, faces, hands and limb count; no morphing, no text, no cuts.",
+ "pages": [
+  {
+   "id": "page01",
+   "note": "intro - Neo-Kyoto wakes up",
+   "start": 0.0,
+   "end": 13.909,
+   "panels": [
+    {
+     "id": "n01",
+     "image": "panels/n01.jpg",
+     "at": 0.186,
+     "location": "neo-kyoto skyline",
+     "camera": "extreme wide",
+     "moment": "city at night",
+     "scene": "Extreme wide shot of a rainy neon city at night, pagoda towers and a tournament blimp with a glowing fist logo shape",
+     "prompt": "Extreme wide shot of a rainy neon city at night, pagoda towers and a tournament blimp with a glowing fist logo shape. All robots chrome, red eyes, headphone ears. 1990s superhero comic, bold ink, halftone, neon magenta-cyan, 16:9, no text.",
+     "refs": [
+      "none"
+     ],
+     "motionPrompt": "Rain falls and the blimp drifts slowly left. Neon signs flicker softly. Camera: locked off. Slow, simple, clean motion; nobody walks toward the camera. Keep the comic style, faces, hands and limb count; no morphing, no text, no cuts.",
+     "clip": {
+      "src": "clips/n01.mp4",
+      "in": 0.0,
+      "out": 6.0,
+      "expected": 5.5
+     },
+     "lyric": "YEAH, YOU KNOW THE VIBE",
+     "captions": [
+      {
+       "text": "NEO-KYOTO. THE TOURNAMENT RETURNS.",
+       "anchor": "tl",
+       "at": 0.186
+      },
+      {
+       "text": "YEAH, YOU KNOW THE VIBE",
+       "anchor": "bl",
+       "at": 4.087,
+       "lyric": true
+      }
+     ],
+     "slot": "a"
+    },
+    {
+     "id": "n02",
+     "image": "panels/n02.jpg",
+     "at": 7.059,
+     "location": "rain-soaked rooftop",
+     "camera": "extreme close-up",
+     "moment": "eyes power on",
+     "scene": "Extreme close-up of Uno in the rain, his red eyes powering on, gold chain glinting",
+     "prompt": "Extreme close-up of Uno in the rain, his red eyes powering on, gold chain glinting. Uno (round smooth chrome head, purple fur coat, gold \"1\" chain). All robots chrome, red eyes, headphone ears. 1990s superhero comic, bold ink, halftone, neon magenta-cyan, 16:9, no text.",
+     "refs": [
+      "Uno"
+     ],
+     "motionPrompt": "Uno's red eyes slowly light up. Raindrops run down the chrome. Camera: very slow push-in. Slow, simple, clean motion; nobody walks toward the camera. Keep the comic style, faces, hands and limb count; no morphing, no text, no cuts.",
+     "clip": {
+      "src": "clips/n02.mp4",
+      "in": 0.0,
+      "out": 6.0,
+      "expected": 5.0
+     },
+     "lyric": "QUICK FEET ON THE CONCRETE, MOVE SMOOTH, NEVER MESSY",
+     "captions": [
+      {
+       "text": "QUICK FEET ON THE CONCRETE, MOVE SMOOTH, NEVER MESSY",
+       "anchor": "tl",
+       "at": 7.918,
+       "lyric": true
+      }
+     ],
+     "sfx": [
+      {
+       "text": "VMMM",
+       "at": 7.918,
+       "pos": [
+        0.78,
+        0.5
+       ],
+       "rot": -6,
+       "size": 0.17,
+       "color": [
+        255,
+        90,
+        200
+       ]
+      }
+     ],
+     "slot": "b"
+    }
+   ],
+   "layout": "slant-two"
+  },
+  {
+   "id": "page02",
+   "note": "backstory - the dojo falls",
+   "start": 13.909,
+   "end": 27.609,
+   "panels": [
+    {
+     "id": "n03",
+     "image": "panels/n03.jpg",
+     "at": 13.909,
+     "location": "old wooden dojo",
+     "camera": "warm medium shot",
+     "moment": "bow to the master",
+     "scene": "Sepia-purple flashback: small young Uno bowing to Sensei Gearhart in a cosy wooden dojo, golden belt on the wall",
+     "prompt": "Sepia-purple flashback: small young Uno bowing to Sensei Gearhart in a cosy wooden dojo, golden belt on the wall. Uno (round smooth chrome head, purple fur coat, gold \"1\" chain); Sensei Gearhart (old robot, cable beard, cane). All robots chrome, red eyes, headphone ears. 1990s superhero comic, bold ink, halftone, neon magenta-cyan, 16:9, no text.",
+     "refs": [
+      "Uno"
+     ],
+     "motionPrompt": "Young Uno bows slowly and the Sensei nods. Dust motes float in the light. Camera: locked off. Slow, simple, clean motion; nobody walks toward the camera. Keep the comic style, faces, hands and limb count; no morphing, no text, no cuts.",
+     "clip": {
+      "src": "clips/n03.mp4",
+      "in": 0.0,
+      "out": 5.5,
+      "expected": 5.5,
+      "trimNote": "pose drifts after 5.5 s"
+     },
+     "lyric": "",
+     "captions": [
+      {
+       "text": "YEARS AGO...",
+       "anchor": "tl",
+       "at": 14.35
+      }
+     ],
+     "slot": "a"
+    },
+    {
+     "id": "n04",
+     "image": "panels/n04.jpg",
+     "at": 20.759,
+     "location": "dojo gate at night",
+     "camera": "low-angle silhouette",
+     "moment": "the belt is taken",
+     "scene": "Low-angle silhouette of SHOGUN.EXE carrying the golden dojo belt away through the gate, lanterns glowing red behind him",
+     "prompt": "Low-angle silhouette of SHOGUN.EXE carrying the golden dojo belt away through the gate, lanterns glowing red behind him. SHOGUN.EXE (horned samurai mecha, black-red armor). All robots chrome, red eyes, headphone ears. 1990s superhero comic, bold ink, halftone, neon magenta-cyan, 16:9, no text.",
+     "refs": [
+      "SHOGUN"
+     ],
+     "motionPrompt": "SHOGUN turns his head slowly, visor lighting red. His cape ripples, lanterns sway. Camera: locked off. Slow, simple, clean motion; nobody walks toward the camera. Keep the comic style, faces, hands and limb count; no morphing, no text, no cuts.",
+     "clip": {
+      "src": "clips/n04.mp4",
+      "in": 0.0,
+      "out": 6.0,
+      "expected": 5.5
+     },
+     "lyric": "",
+     "captions": [],
+     "sfx": [
+      {
+       "text": "SHHHK",
+       "at": 21.618,
+       "pos": [
+        0.2,
+        0.5
+       ],
+       "rot": 5,
+       "size": 0.17,
+       "color": [
+        255,
+        90,
+        200
+       ]
+      }
+     ],
+     "slot": "b"
+    }
+   ],
+   "layout": "inset-two"
+  },
+  {
+   "id": "page03",
+   "note": "Aura breaks free, the team forms",
+   "start": 27.609,
+   "end": 41.308,
+   "panels": [
+    {
+     "id": "n05",
+     "image": "panels/n05.jpg",
+     "at": 27.609,
+     "location": "server cable cavern",
+     "camera": "medium shot from below",
+     "moment": "chains of light",
+     "scene": "Aura breaking glowing server-cable chains with a burst of cyan magic inside a dark cable cavern",
+     "prompt": "Aura breaking glowing server-cable chains with a burst of cyan magic inside a dark cable cavern. Aura (crimson-streaked dark hair, modest crimson bodysuit, cyan magic). All robots chrome, red eyes, headphone ears. 1990s superhero comic, bold ink, halftone, neon magenta-cyan, 16:9, no text.",
+     "refs": [
+      "Aura"
+     ],
+     "motionPrompt": "The cables snap apart in a slow cyan pulse. Her crimson-streaked hair lifts. Camera: locked off. Slow, simple, clean motion; nobody walks toward the camera. Keep the comic style, faces, hands and limb count; no morphing, no text, no cuts.",
+     "clip": {
+      "src": "clips/n05.mp4",
+      "in": 0.0,
+      "out": 6.0,
+      "expected": 5.0
+     },
+     "lyric": "",
+     "captions": [],
+     "sfx": [
+      {
+       "text": "SNAP!",
+       "at": 28.468,
+       "pos": [
+        0.78,
+        0.25
+       ],
+       "rot": 6,
+       "size": 0.17,
+       "color": [
+        90,
+        230,
+        255
+       ]
+      }
+     ],
+     "slot": "a"
+    },
+    {
+     "id": "n06",
+     "image": "panels/n06.jpg",
+     "at": 34.458,
+     "location": "rooftop water tower",
+     "camera": "behind-the-back wide",
+     "moment": "together",
+     "scene": "Uno and Aura sitting side by side on a rooftop water tower, seen from behind, watching the tournament blimp pass",
+     "prompt": "Uno and Aura sitting side by side on a rooftop water tower, seen from behind, watching the tournament blimp pass. Uno (round smooth chrome head, purple fur coat, gold \"1\" chain); Aura (crimson-streaked dark hair, modest crimson bodysuit, cyan magic). All robots chrome, red eyes, headphone ears. 1990s superhero comic, bold ink, halftone, neon magenta-cyan, 16:9, no text.",
+     "refs": [
+      "Uno",
+      "Aura"
+     ],
+     "motionPrompt": "The blimp drifts past and Aura nudges Uno. Uno's fur coat ruffles in the wind. Camera: locked off. Slow, simple, clean motion; nobody walks toward the camera. Keep the comic style, faces, hands and limb count; no morphing, no text, no cuts.",
+     "clip": {
+      "src": "clips/n06.mp4",
+      "in": 0.0,
+      "out": 6.0,
+      "expected": 5.5
+     },
+     "lyric": "ONE-TWO IN A CLEAN SWEEP, LIKE A WHISPER IN THE BREEZE",
+     "captions": [
+      {
+       "text": "TOGETHER.",
+       "anchor": "tl",
+       "at": 34.876
+      },
+      {
+       "text": "ONE-TWO IN A CLEAN SWEEP, LIKE A WHISPER IN THE BREEZE",
+       "anchor": "bl",
+       "at": 34.458,
+       "lyric": true
+      }
+     ],
+     "slot": "b"
+    }
+   ],
+   "layout": "tilt-two"
+  },
+  {
+   "id": "page04",
+   "note": "fight 1 - Uno vs TEKKO, rooftop dojo",
+   "start": 41.308,
+   "end": 68.685,
+   "panels": [
+    {
+     "id": "n07",
+     "image": "panels/n07.jpg",
+     "at": 41.308,
+     "location": "neon rooftop dojo",
+     "camera": "side-on wide",
+     "moment": "bow before the bout",
+     "scene": "Side-on wide shot of Uno and TEKKO bowing to each other on a neon rooftop dojo ring, crowd of chrome robot fans behind",
+     "prompt": "Side-on wide shot of Uno and TEKKO bowing to each other on a neon rooftop dojo ring, crowd of chrome robot fans behind. Uno (round smooth chrome head, purple fur coat, gold \"1\" chain); TEKKO (squat sumo robot, piston arms). All robots chrome, red eyes, headphone ears. 1990s superhero comic, bold ink, halftone, neon magenta-cyan, 16:9, no text.",
+     "refs": [
+      "Uno"
+     ],
+     "motionPrompt": "Both fighters bow and straighten up. Fans wave glow sticks. Camera: locked off. Slow, simple, clean motion; nobody walks toward the camera. Keep the comic style, faces, hands and limb count; no morphing, no text, no cuts.",
+     "clip": {
+      "src": "clips/n07_v2.mp4",
+      "in": 0.0,
+      "out": 6.0,
+      "expected": 5.5
+     },
+     "lyric": "I MOVE CALM WITH THE JAW GAME / SHORT SWING, LIKE A CLOCK HAND, PRECISE AND TO THE POINT",
+     "captions": [
+      {
+       "text": "I MOVE CALM WITH THE JAW GAME",
+       "anchor": "tl",
+       "at": 42.585,
+       "lyric": true
+      },
+      {
+       "text": "SHORT SWING, LIKE A CLOCK HAND, PRECISE AND TO THE POINT",
+       "anchor": "bl",
+       "at": 46.44,
+       "lyric": true
+      }
+     ],
+     "slot": "a"
+    },
+    {
+     "id": "n08",
+     "image": "panels/n08.jpg",
+     "at": 49.876,
+     "location": "rooftop dojo ring",
+     "camera": "over-the-shoulder close",
+     "moment": "block the piston slap",
+     "scene": "Over TEKKO's shoulder: Uno blocking a piston palm slap with crossed forearms, sparks flying",
+     "prompt": "Over TEKKO's shoulder: Uno blocking a piston palm slap with crossed forearms, sparks flying. Uno (round smooth chrome head, purple fur coat, gold \"1\" chain); TEKKO (squat sumo robot, piston arms). All robots chrome, red eyes, headphone ears. 1990s superhero comic, bold ink, halftone, neon magenta-cyan, 16:9, no text.",
+     "refs": [
+      "Uno"
+     ],
+     "motionPrompt": "The palm presses in and Uno holds the block. Small sparks drift. Camera: locked off. Slow, simple, clean motion; nobody walks toward the camera. Keep the comic style, faces, hands and limb count; no morphing, no text, no cuts.",
+     "clip": {
+      "src": "clips/n08.mp4",
+      "in": 0.0,
+      "out": 6.0,
+      "expected": 5.0
+     },
+     "lyric": "HIT HARD, THEN I STOP",
+     "captions": [
+      {
+       "text": "HIT HARD, THEN I STOP",
+       "anchor": "tl",
+       "at": 50.294,
+       "lyric": true
+      }
+     ],
+     "sfx": [
+      {
+       "text": "KLAK!",
+       "at": 50.736,
+       "pos": [
+        0.78,
+        0.3
+       ],
+       "rot": -6,
+       "size": 0.17,
+       "color": [
+        255,
+        214,
+        0
+       ]
+      }
+     ],
+     "slot": "b"
+    },
+    {
+     "id": "n09",
+     "image": "panels/n09.jpg",
+     "at": 58.421,
+     "location": "speed-line void",
+     "camera": "eye-level close-up",
+     "moment": "super cut-in: Uno",
+     "scene": "Super-move cut-in: close-up of Uno, red eyes flaring bright, purple speed lines behind him",
+     "prompt": "Super-move cut-in: close-up of Uno, red eyes flaring bright, purple speed lines behind him. Uno (round smooth chrome head, purple fur coat, gold \"1\" chain). All robots chrome, red eyes, headphone ears. 1990s superhero comic, bold ink, halftone, neon magenta-cyan, 16:9, no text.",
+     "refs": [
+      "Uno"
+     ],
+     "motionPrompt": "Uno's eyes flare brighter and the speed lines stream. Fur coat trembles with power. Camera: locked off. Slow, simple, clean motion; nobody walks toward the camera. Keep the comic style, faces, hands and limb count; no morphing, no text, no cuts.",
+     "clip": {
+      "src": "clips/n09.mp4",
+      "in": 0.0,
+      "out": 4.17,
+      "expected": 4.0,
+      "trimNote": "page turns at 63.13s, clip capped to 4.17s"
+     },
+     "lyric": "SAY MY NAME, THEN BITE THE TONGUE",
+     "captions": [
+      {
+       "text": "SAY MY NAME, THEN BITE THE TONGUE",
+       "anchor": "tl",
+       "at": 60.999,
+       "lyric": true
+      }
+     ],
+     "sfx": [
+      {
+       "text": "FWOOM!",
+       "at": 59.281,
+       "pos": [
+        0.78,
+        0.5
+       ],
+       "rot": -6,
+       "size": 0.17,
+       "color": [
+        255,
+        90,
+        200
+       ]
+      }
+     ],
+     "slot": "c"
+    }
+   ],
+   "transition": {
+    "type": "zoom",
+    "panel": "n09",
+    "at": 63.576,
+    "dur": 0.441
+   },
+   "splash": {
+    "id": "s10",
+    "image": "panels/s10.jpg",
+    "at": 63.576,
+    "location": "rooftop dojo edge",
+    "camera": "wide action splash",
+    "moment": "TEKKO on the cushions",
+    "scene": "Uno finishing a spinning kick while TEKKO tumbles harmlessly onto a giant pile of dojo cushions, stars circling his head",
+    "prompt": "Uno finishing a spinning kick while TEKKO tumbles harmlessly onto a giant pile of dojo cushions, stars circling his head. Uno (round smooth chrome head, purple fur coat, gold \"1\" chain); TEKKO (squat sumo robot, piston arms). All robots chrome, red eyes, headphone ears. 1990s superhero comic, bold ink, halftone, neon magenta-cyan, 16:9, no text.",
+    "refs": [
+     "Uno"
+    ],
+    "motionPrompt": "TEKKO bounces gently on the cushions. Stars circle his head, cushions puff. Camera: slow push-in. Slow, simple, clean motion; nobody walks toward the camera. Keep the comic style, faces, hands and limb count; no morphing, no text, no cuts.",
+    "clip": {
+     "src": "clips/s10.mp4",
+     "in": 0.0,
+     "out": 4.59,
+     "expected": 4.5,
+     "trimNote": "jump/morph spike at 5.1 s; page turns at 68.69s, clip capped to 4.59s"
+    },
+    "lyric": "WHEN IT POPS, IT'S ALREADY DONE",
+    "captions": [
+     {
+      "text": "SAY MY NAME, THEN BITE THE TONGUE",
+      "anchor": "bl",
+      "at": 63.576,
+      "lyric": true,
+      "carried": true
+     },
+     {
+      "text": "WHEN IT POPS, IT'S ALREADY DONE",
+      "anchor": "tl",
+      "at": 64.412,
+      "lyric": true
+     }
+    ],
+    "sfx": [
+     {
+      "text": "POMF!",
+      "at": 64.412,
+      "pos": [
+       0.7,
+       0.3
+      ],
+      "rot": 7,
+      "size": 0.2,
+      "color": [
+       255,
+       214,
+       0
+      ]
+     }
+    ]
+   },
+   "layout": "mixed-three",
+   "splashStyle": "breakout"
+  },
+  {
+   "id": "page05",
+   "note": "chorus 1 - rival montage",
+   "start": 68.685,
+   "end": 80.666,
+   "panels": [
+    {
+     "id": "n11",
+     "image": "panels/n11.jpg",
+     "at": 68.685,
+     "location": "rain alley night market",
+     "camera": "dutch angle",
+     "moment": "Aura vs KAZE-9",
+     "scene": "Dutch angle in a rainy night-market alley: Aura facing KAZE-9, his twin blades crossed, paper lanterns overhead",
+     "prompt": "Dutch angle in a rainy night-market alley: Aura facing KAZE-9, his twin blades crossed, paper lanterns overhead. Aura (crimson-streaked dark hair, modest crimson bodysuit, cyan magic); KAZE-9 (scarf ninja, twin blades). All robots chrome, red eyes, headphone ears. 1990s superhero comic, bold ink, halftone, neon magenta-cyan, 16:9, no text.",
+     "refs": [
+      "Aura",
+      "KAZE-9"
+     ],
+     "motionPrompt": "KAZE-9's scarf streams as Aura's palm glows cyan. Lanterns sway, rain falls. Camera: locked off. Slow, simple, clean motion; nobody walks toward the camera. Keep the comic style, faces, hands and limb count; no morphing, no text, no cuts.",
+     "clip": {
+      "src": "clips/n11.mp4",
+      "in": 0.0,
+      "out": 6.0,
+      "expected": 5.0
+     },
+     "lyric": "KNUCKLE TALK, KNUCKLE TALK",
+     "captions": [
+      {
+       "text": "KNUCKLE TALK, KNUCKLE TALK",
+       "anchor": "tl",
+       "at": 68.685,
+       "lyric": true
+      }
+     ],
+     "sfx": [
+      {
+       "text": "SHING!",
+       "at": 69.544,
+       "pos": [
+        0.78,
+        0.25
+       ],
+       "rot": 6,
+       "size": 0.17,
+       "color": [
+        90,
+        230,
+        255
+       ]
+      }
+     ],
+     "slot": "a"
+    },
+    {
+     "id": "n12",
+     "image": "panels/n12.jpg",
+     "at": 73.816,
+     "location": "neo train yard",
+     "camera": "low angle",
+     "moment": "Uno vs RAIJIN",
+     "scene": "Low angle in a neon train yard: Uno raising his guard as RAIJIN winds up a crackling thunder hook",
+     "prompt": "Low angle in a neon train yard: Uno raising his guard as RAIJIN winds up a crackling thunder hook. Uno (round smooth chrome head, purple fur coat, gold \"1\" chain); RAIJIN (boxer, lightning gauntlets). All robots chrome, red eyes, headphone ears. 1990s superhero comic, bold ink, halftone, neon magenta-cyan, 16:9, no text.",
+     "refs": [
+      "Uno",
+      "RAIJIN"
+     ],
+     "motionPrompt": "RAIJIN's gauntlet crackles and Uno raises his guard. Electric sparks flicker on the rails. Camera: locked off. Slow, simple, clean motion; nobody walks toward the camera. Keep the comic style, faces, hands and limb count; no morphing, no text, no cuts.",
+     "clip": {
+      "src": "clips/n12.mp4",
+      "in": 0.0,
+      "out": 6.0,
+      "expected": 5.5
+     },
+     "lyric": "HANDS UP, THEN IT ALL FALLS / KNUCKLE TALK, KNUCKLE TALK",
+     "captions": [
+      {
+       "text": "HANDS UP, THEN IT ALL FALLS",
+       "anchor": "tl",
+       "at": 73.816,
+       "lyric": true
+      },
+      {
+       "text": "KNUCKLE TALK, KNUCKLE TALK",
+       "anchor": "bl",
+       "at": 76.812,
+       "lyric": true
+      }
+     ],
+     "sfx": [
+      {
+       "text": "KZZZT!",
+       "at": 74.699,
+       "pos": [
+        0.78,
+        0.3
+       ],
+       "rot": -6,
+       "size": 0.17,
+       "color": [
+        255,
+        214,
+        0
+       ]
+      }
+     ],
+     "slot": "b"
+    }
+   ],
+   "layout": "slant-two"
+  },
+  {
+   "id": "page06",
+   "note": "fight 2 - Aura vs LOTUS, hologram garden",
+   "start": 80.666,
+   "end": 108.042,
+   "panels": [
+    {
+     "id": "n13",
+     "image": "panels/n13.jpg",
+     "at": 80.666,
+     "location": "pagoda hologram garden",
+     "camera": "symmetrical wide",
+     "moment": "bow on the bridge",
+     "scene": "Symmetrical wide shot of Aura and LOTUS bowing on an arched bridge in a hologram pagoda garden, cherry petals",
+     "prompt": "Symmetrical wide shot of Aura and LOTUS bowing on an arched bridge in a hologram pagoda garden, cherry petals. Aura (crimson-streaked dark hair, modest crimson bodysuit, cyan magic); LOTUS (long-legged crane kicker). All robots chrome, red eyes, headphone ears. 1990s superhero comic, bold ink, halftone, neon magenta-cyan, 16:9, no text.",
+     "refs": [
+      "Aura"
+     ],
+     "motionPrompt": "Both bow slowly on the bridge. Hologram petals drift down. Camera: locked off. Slow, simple, clean motion; nobody walks toward the camera. Keep the comic style, faces, hands and limb count; no morphing, no text, no cuts.",
+     "clip": {
+      "src": "clips/n13.mp4",
+      "in": 0.0,
+      "out": 4.5,
+      "expected": 5.5,
+      "trimNote": "Aura's cyan aura vanishes and figures shift after ~4.5 s"
+     },
+     "lyric": "I DON'T ARGUE, I JUST WALK / TOE-TO-TOE, NAH, I DON'T OVERDO",
+     "captions": [
+      {
+       "text": "I DON'T ARGUE, I JUST WALK",
+       "anchor": "tl",
+       "at": 80.666,
+       "lyric": true
+      },
+      {
+       "text": "TOE-TO-TOE, NAH, I DON'T OVERDO",
+       "anchor": "bl",
+       "at": 81.943,
+       "lyric": true
+      }
+     ],
+     "slot": "a"
+    },
+    {
+     "id": "n14",
+     "image": "panels/n14.jpg",
+     "at": 87.516,
+     "location": "garden stepping stones",
+     "camera": "low ground-level",
+     "moment": "duck under the spin kick",
+     "scene": "Ground-level shot of Aura ducking low as LOTUS's spin kick sweeps over her head, fan tail swirling",
+     "prompt": "Ground-level shot of Aura ducking low as LOTUS's spin kick sweeps over her head, fan tail swirling. Aura (crimson-streaked dark hair, modest crimson bodysuit, cyan magic); LOTUS (long-legged crane kicker). All robots chrome, red eyes, headphone ears. 1990s superhero comic, bold ink, halftone, neon magenta-cyan, 16:9, no text.",
+     "refs": [
+      "Aura"
+     ],
+     "motionPrompt": "LOTUS's kick sweeps slowly over Aura's head. Petals swirl in the kick wind. Camera: locked off. Slow, simple, clean motion; nobody walks toward the camera. Keep the comic style, faces, hands and limb count; no morphing, no text, no cuts.",
+     "clip": {
+      "src": "clips/n14_v2.mp4",
+      "in": 0.0,
+      "out": 5.5,
+      "expected": 5.0,
+      "trimNote": "v2: jump at 5.6 s"
+     },
+     "lyric": "DUCK LOW, THEN I CUT THROUGH / TURN A FRONT LIKE A BACKDOOR VIEW",
+     "captions": [
+      {
+       "text": "DUCK LOW, THEN I CUT THROUGH",
+       "anchor": "tl",
+       "at": 88.375,
+       "lyric": true
+      },
+      {
+       "text": "TURN A FRONT LIKE A BACKDOOR VIEW",
+       "anchor": "bl",
+       "at": 91.788,
+       "lyric": true
+      }
+     ],
+     "sfx": [
+      {
+       "text": "WHSSH!",
+       "at": 88.375,
+       "pos": [
+        0.78,
+        0.25
+       ],
+       "rot": 6,
+       "size": 0.17,
+       "color": [
+        90,
+        230,
+        255
+       ]
+      }
+     ],
+     "slot": "b"
+    },
+    {
+     "id": "n15",
+     "image": "panels/n15.jpg",
+     "at": 97.779,
+     "location": "garden spectator stands",
+     "camera": "high angle",
+     "moment": "the crowd gets loud",
+     "scene": "High angle over cheering chrome robot fans in garden stands, waving fans and glow banners",
+     "prompt": "High angle over cheering chrome robot fans in garden stands, waving fans and glow banners. All robots chrome, red eyes, headphone ears. 1990s superhero comic, bold ink, halftone, neon magenta-cyan, 16:9, no text.",
+     "refs": [
+      "none"
+     ],
+     "motionPrompt": "The crowd jumps and waves on the beat. Glow banners sway. Camera: locked off. Slow, simple, clean motion; nobody walks toward the camera. Keep the comic style, faces, hands and limb count; no morphing, no text, no cuts.",
+     "clip": {
+      "src": "clips/n15.mp4",
+      "in": 0.0,
+      "out": 4.0,
+      "expected": 4.2,
+      "trimNote": "crowd boils/flickers; keep it short"
+     },
+     "lyric": "NO FLEX, BUT A QUICK NECK / IF THE ROOM START TO GET LOUD",
+     "captions": [
+      {
+       "text": "NO FLEX, BUT A QUICK NECK",
+       "anchor": "tl",
+       "at": 98.638,
+       "lyric": true
+      },
+      {
+       "text": "IF THE ROOM START TO GET LOUD",
+       "anchor": "bl",
+       "at": 102.052,
+       "lyric": true
+      }
+     ],
+     "sfx": [
+      {
+       "text": "WOOO!",
+       "at": 98.638,
+       "pos": [
+        0.78,
+        0.3
+       ],
+       "rot": -5,
+       "size": 0.17,
+       "color": [
+        255,
+        90,
+        200
+       ]
+      }
+     ],
+     "slot": "c"
+    }
+   ],
+   "transition": {
+    "type": "zoom",
+    "panel": "n15",
+    "at": 102.911,
+    "dur": 0.418
+   },
+   "splash": {
+    "id": "s16",
+    "image": "panels/s16.jpg",
+    "at": 102.911,
+    "location": "koi pond",
+    "camera": "splash from the water line",
+    "moment": "LOTUS in the pond",
+    "scene": "Aura's cyan wave spinning LOTUS gently into a koi pond with a big comic splash, glowing robot koi fish leaping",
+    "prompt": "Aura's cyan wave spinning LOTUS gently into a koi pond with a big comic splash, glowing robot koi fish leaping. Aura (crimson-streaked dark hair, modest crimson bodysuit, cyan magic); LOTUS (long-legged crane kicker). All robots chrome, red eyes, headphone ears. 1990s superhero comic, bold ink, halftone, neon magenta-cyan, 16:9, no text.",
+    "refs": [
+     "Aura"
+    ],
+    "motionPrompt": "The water splash rises and falls slowly. Koi fish leap. Camera: locked off. Slow, simple, clean motion; nobody walks toward the camera. Keep the comic style, faces, hands and limb count; no morphing, no text, no cuts.",
+    "clip": {
+     "src": "clips/s16.mp4",
+     "in": 0.0,
+     "out": 4.59,
+     "expected": 4.5,
+     "trimNote": "LOTUS fragments in the splash after 5 s; page turns at 108.04s, clip capped to 4.59s"
+    },
+    "lyric": "I MAKE ROOM WITH A CLEAN STEP",
+    "captions": [
+     {
+      "text": "I MAKE ROOM WITH A CLEAN STEP",
+      "anchor": "tl",
+      "at": 105.488,
+      "lyric": true
+     }
+    ],
+    "sfx": [
+     {
+      "text": "SPLOOSH!",
+      "at": 103.77,
+      "pos": [
+       0.7,
+       0.3
+      ],
+      "rot": 6,
+      "size": 0.2,
+      "color": [
+       90,
+       230,
+       255
+      ]
+     }
+    ]
+   },
+   "layout": "diagonal-three",
+   "splashStyle": "tilt"
+  },
+  {
+   "id": "page07",
+   "note": "boss reveal - the server temple",
+   "start": 108.042,
+   "end": 123.437,
+   "panels": [
+    {
+     "id": "n17",
+     "image": "panels/n17.jpg",
+     "at": 108.042,
+     "location": "server temple throne",
+     "camera": "extreme low angle",
+     "moment": "SHOGUN wakes",
+     "scene": "Extreme low angle of SHOGUN.EXE rising from a throne of server racks, horned helmet, eyes igniting red",
+     "prompt": "Extreme low angle of SHOGUN.EXE rising from a throne of server racks, horned helmet, eyes igniting red. SHOGUN.EXE (horned samurai mecha, black-red armor). All robots chrome, red eyes, headphone ears. 1990s superhero comic, bold ink, halftone, neon magenta-cyan, 16:9, no text.",
+     "refs": [
+      "SHOGUN"
+     ],
+     "motionPrompt": "SHOGUN's eyes ignite and he rises slowly. Server lights blink, red smoke curls. Camera: slow tilt up. Slow, simple, clean motion; nobody walks toward the camera. Keep the comic style, faces, hands and limb count; no morphing, no text, no cuts.",
+     "clip": {
+      "src": "clips/n17.mp4",
+      "in": 0.0,
+      "out": 5.6,
+      "expected": 5.0,
+      "trimNote": "jump at 5.75 s"
+     },
+     "lyric": "COUNT IT OUT, ONE BY ONE",
+     "captions": [
+      {
+       "text": "COUNT IT OUT, ONE BY ONE",
+       "anchor": "tl",
+       "at": 108.042,
+       "lyric": true
+      }
+     ],
+     "slot": "a"
+    },
+    {
+     "id": "n18",
+     "image": "panels/n18.jpg",
+     "at": 113.174,
+     "location": "throne pedestal",
+     "camera": "insert close-up",
+     "moment": "the stolen belt",
+     "scene": "Close-up of SHOGUN.EXE's armored hands lifting the stolen golden dojo belt, red light glinting",
+     "prompt": "Close-up of SHOGUN.EXE's armored hands lifting the stolen golden dojo belt, red light glinting. SHOGUN.EXE (horned samurai mecha, black-red armor). All robots chrome, red eyes, headphone ears. 1990s superhero comic, bold ink, halftone, neon magenta-cyan, 16:9, no text.",
+     "refs": [
+      "SHOGUN"
+     ],
+     "motionPrompt": "The belt lifts and the gold glints. Red light pulses. Camera: locked off. Slow, simple, clean motion; nobody walks toward the camera. Keep the comic style, faces, hands and limb count; no morphing, no text, no cuts.",
+     "clip": {
+      "src": "clips/n18.mp4",
+      "in": 0.0,
+      "out": 4.2,
+      "expected": 4.2,
+      "trimNote": "page turns at 117.89s, clip capped to 4.2s"
+     },
+     "lyric": "SAY MY NAME, THEN BITE THE TONGUE / WHEN IT POPS, IT'S ALREADY DONE",
+     "captions": [
+      {
+       "text": "SAY MY NAME, THEN BITE THE TONGUE",
+       "anchor": "tl",
+       "at": 115.31,
+       "lyric": true
+      },
+      {
+       "text": "WHEN IT POPS, IT'S ALREADY DONE",
+       "anchor": "bl",
+       "at": 117.888,
+       "lyric": true
+      }
+     ],
+     "slot": "b"
+    }
+   ],
+   "transition": {
+    "type": "zoom",
+    "panel": "n18",
+    "at": 118.306,
+    "dur": 0.418
+   },
+   "splash": {
+    "id": "s19",
+    "image": "panels/s19.jpg",
+    "at": 118.306,
+    "location": "temple courtyard",
+    "camera": "split-frame tag-team splash",
+    "moment": "two vs one",
+    "scene": "Uno and Aura back to back in cyan light facing giant SHOGUN in red light",
+    "prompt": "Uno and Aura back to back in cyan light facing giant SHOGUN in red light. Uno (round smooth chrome head, purple fur coat, gold \"1\" chain); Aura (crimson-streaked dark hair, modest crimson bodysuit, cyan magic); SHOGUN.EXE (horned samurai mecha, black-red armor). All robots chrome, red eyes, headphone ears. 1990s superhero comic, bold ink, halftone, neon magenta-cyan, 16:9, no text.",
+    "refs": [
+     "Uno",
+     "Aura",
+     "SHOGUN"
+    ],
+    "motionPrompt": "Aura's magic and SHOGUN's red aura pulse. Uno's coat and SHOGUN's cape ripple. Camera: locked off. Slow, simple, clean motion; nobody walks toward the camera. Keep the comic style, faces, hands and limb count; no morphing, no text, no cuts.",
+    "clip": {
+     "src": "clips/s19.mp4",
+     "in": 0.0,
+     "out": 4.6,
+     "expected": 4.5,
+     "trimNote": "Aura's cyan magic disappears and SHOGUN re-poses after ~4.6 s"
+    },
+    "lyric": "WHEN IT POPS, IT'S ALREADY DONE",
+    "captions": [
+     {
+      "text": "WHEN IT POPS, IT'S ALREADY DONE",
+      "anchor": "tl",
+      "at": 118.306,
+      "lyric": true
+     }
+    ],
+    "sfx": [
+     {
+      "text": "VS!",
+      "at": 119.165,
+      "pos": [
+       0.5,
+       0.25
+      ],
+      "rot": -4,
+      "size": 0.2,
+      "color": [
+       255,
+       214,
+       0
+      ]
+     }
+    ]
+   },
+   "layout": "inset-two",
+   "splashStyle": "full"
+  },
+  {
+   "id": "page08",
+   "note": "chorus 2 - the boss hits back, tag-in",
+   "start": 123.437,
+   "end": 137.091,
+   "panels": [
+    {
+     "id": "n20",
+     "image": "panels/n20.jpg",
+     "at": 123.437,
+     "location": "temple stone floor",
+     "camera": "side-on medium",
+     "moment": "katana wave",
+     "scene": "Side-on shot of SHOGUN.EXE's red katana wave pushing Uno back, his heels sliding on the stone floor",
+     "prompt": "Side-on shot of SHOGUN.EXE's red katana wave pushing Uno back, his heels sliding on the stone floor. Uno (round smooth chrome head, purple fur coat, gold \"1\" chain); SHOGUN.EXE (horned samurai mecha, black-red armor). All robots chrome, red eyes, headphone ears. 1990s superhero comic, bold ink, halftone, neon magenta-cyan, 16:9, no text.",
+     "refs": [
+      "Uno",
+      "SHOGUN"
+     ],
+     "motionPrompt": "Uno slides back slowly, holding his guard. Red energy ripples past. Camera: locked off. Slow, simple, clean motion; nobody walks toward the camera. Keep the comic style, faces, hands and limb count; no morphing, no text, no cuts.",
+     "clip": {
+      "src": "clips/n20.mp4",
+      "in": 0.0,
+      "out": 6.0,
+      "expected": 5.5
+     },
+     "lyric": "KEEP IT CLOSE, KEEP IT SMALL / HANDS UP, THEN IT ALL FALLS",
+     "captions": [
+      {
+       "text": "KEEP IT CLOSE, KEEP IT SMALL",
+       "anchor": "tl",
+       "at": 124.714,
+       "lyric": true
+      },
+      {
+       "text": "HANDS UP, THEN IT ALL FALLS",
+       "anchor": "bl",
+       "at": 128.546,
+       "lyric": true
+      }
+     ],
+     "sfx": [
+      {
+       "text": "VWASH!",
+       "at": 124.296,
+       "pos": [
+        0.78,
+        0.25
+       ],
+       "rot": -6,
+       "size": 0.17,
+       "color": [
+        255,
+        90,
+        200
+       ]
+      }
+     ],
+     "slot": "a"
+    },
+    {
+     "id": "n21",
+     "image": "panels/n21.jpg",
+     "at": 130.264,
+     "location": "temple pillar edge",
+     "camera": "close two-shot",
+     "moment": "tag hand-off",
+     "scene": "Tag hand-off: Uno slapping Aura's outstretched hand as she leaps past him into the fight, cyan sparkle at the hands",
+     "prompt": "Tag hand-off: Uno slapping Aura's outstretched hand as she leaps past him into the fight, cyan sparkle at the hands. Uno (round smooth chrome head, purple fur coat, gold \"1\" chain); Aura (crimson-streaked dark hair, modest crimson bodysuit, cyan magic). All robots chrome, red eyes, headphone ears. 1990s superhero comic, bold ink, halftone, neon magenta-cyan, 16:9, no text.",
+     "refs": [
+      "Uno",
+      "Aura"
+     ],
+     "motionPrompt": "Their hands meet in a slow slap and Aura leaps forward. Cyan sparks burst from the hands. Camera: locked off. Slow, simple, clean motion; nobody walks toward the camera. Keep the comic style, faces, hands and limb count; no morphing, no text, no cuts.",
+     "clip": {
+      "src": "clips/n21_v2.mp4",
+      "in": 0.0,
+      "out": 5.5,
+      "expected": 5.5,
+      "trimNote": "v2: jump at 5.6 s"
+     },
+     "lyric": "TAP THE CHIN, MAKE 'EM CRAWL / I DON'T ARGUE, I JUST WALK",
+     "captions": [
+      {
+       "text": "TAP THE CHIN, MAKE 'EM CRAWL",
+       "anchor": "tl",
+       "at": 131.541,
+       "lyric": true
+      },
+      {
+       "text": "I DON'T ARGUE, I JUST WALK",
+       "anchor": "bl",
+       "at": 135.396,
+       "lyric": true
+      }
+     ],
+     "sfx": [
+      {
+       "text": "TAG!",
+       "at": 131.123,
+       "pos": [
+        0.5,
+        0.25
+       ],
+       "rot": 6,
+       "size": 0.17,
+       "color": [
+        90,
+        230,
+        255
+       ]
+      }
+     ],
+     "slot": "b"
+    }
+   ],
+   "layout": "tilt-two"
+  },
+  {
+   "id": "page09",
+   "note": "bridge - standoff and the double super",
+   "start": 137.091,
+   "end": 155.876,
+   "panels": [
+    {
+     "id": "n22",
+     "image": "panels/n22.jpg",
+     "at": 137.091,
+     "location": "wind-swept temple steps",
+     "camera": "wide profile",
+     "moment": "quiet standoff",
+     "scene": "Wide profile on temple steps: Uno and Aura facing SHOGUN, one red leaf drifting between",
+     "prompt": "Wide profile on temple steps: Uno and Aura facing SHOGUN, one red leaf drifting between. Uno (round smooth chrome head, purple fur coat, gold \"1\" chain); Aura (crimson-streaked dark hair, modest crimson bodysuit, cyan magic); SHOGUN.EXE (horned samurai mecha, black-red armor). All robots chrome, red eyes, headphone ears. 1990s superhero comic, bold ink, halftone, neon magenta-cyan, 16:9, no text.",
+     "refs": [
+      "Uno",
+      "Aura",
+      "SHOGUN"
+     ],
+     "motionPrompt": "A single leaf drifts slowly between them. Capes and hair move in the wind. Camera: locked off. Slow, simple, clean motion; nobody walks toward the camera. Keep the comic style, faces, hands and limb count; no morphing, no text, no cuts.",
+     "clip": {
+      "src": "clips/n22.mp4",
+      "in": 0.0,
+      "out": 6.0,
+      "expected": 5.5
+     },
+     "lyric": "THEY TALKING TOUGH, THEIR WORDS ARE TALKING THIN / I JUST GRIN, THEN I SPIN",
+     "captions": [
+      {
+       "text": "THEY TALKING TOUGH, THEIR WORDS ARE TALKING THIN",
+       "anchor": "tl",
+       "at": 137.091,
+       "lyric": true
+      },
+      {
+       "text": "I JUST GRIN, THEN I SPIN",
+       "anchor": "bl",
+       "at": 140.968,
+       "lyric": true
+      }
+     ],
+     "slot": "a"
+    },
+    {
+     "id": "n23",
+     "image": "panels/n23.jpg",
+     "at": 143.94,
+     "location": "cyan energy void",
+     "camera": "three-quarter close-up",
+     "moment": "super cut-in: Aura",
+     "scene": "Super-move cut-in: Aura charging a bright cyan magic orb between her hands, speed lines behind",
+     "prompt": "Super-move cut-in: Aura charging a bright cyan magic orb between her hands, speed lines behind. Aura (crimson-streaked dark hair, modest crimson bodysuit, cyan magic). All robots chrome, red eyes, headphone ears. 1990s superhero comic, bold ink, halftone, neon magenta-cyan, 16:9, no text.",
+     "refs": [
+      "Aura"
+     ],
+     "motionPrompt": "The cyan orb grows slowly between her hands. Her hair lifts in the energy. Camera: locked off. Slow, simple, clean motion; nobody walks toward the camera. Keep the comic style, faces, hands and limb count; no morphing, no text, no cuts.",
+     "clip": {
+      "src": "clips/n23.mp4",
+      "in": 0.0,
+      "out": 4.15,
+      "expected": 4.0,
+      "trimNote": "page turns at 148.63s, clip capped to 4.15s"
+     },
+     "lyric": "ONE SHARP MOVE, WHOLE ROOM STILL, LIKE A FREEZE FRAME / THAT'S THE WAY I SAY WHAT I SAY",
+     "captions": [
+      {
+       "text": "ONE SHARP MOVE, WHOLE ROOM STILL, LIKE A FREEZE FRAME",
+       "anchor": "tl",
+       "at": 144.382,
+       "lyric": true
+      },
+      {
+       "text": "THAT'S THE WAY I SAY WHAT I SAY",
+       "anchor": "bl",
+       "at": 147.772,
+       "lyric": true
+      }
+     ],
+     "sfx": [
+      {
+       "text": "HMMMN",
+       "at": 144.8,
+       "pos": [
+        0.78,
+        0.3
+       ],
+       "rot": -5,
+       "size": 0.17,
+       "color": [
+        90,
+        230,
+        255
+       ]
+      }
+     ],
+     "slot": "b"
+    }
+   ],
+   "transition": {
+    "type": "zoom",
+    "panel": "n23",
+    "at": 149.049,
+    "dur": 0.418
+   },
+   "splash": {
+    "id": "s24",
+    "image": "panels/s24.jpg",
+    "at": 149.049,
+    "location": "temple roof",
+    "camera": "heroic double-super splash",
+    "moment": "armor pops into sparkles",
+    "scene": "Uno's punch and Aura's cyan beam pop SHOGUN's armor into harmless sparkles; he sits dizzy",
+    "prompt": "Uno's punch and Aura's cyan beam pop SHOGUN's armor into harmless sparkles; he sits dizzy. Uno (round smooth chrome head, purple fur coat, gold \"1\" chain); Aura (crimson-streaked dark hair, modest crimson bodysuit, cyan magic); SHOGUN.EXE (horned samurai mecha, black-red armor). All robots chrome, red eyes, headphone ears. 1990s superhero comic, bold ink, halftone, neon magenta-cyan, 16:9, no text.",
+    "refs": [
+     "Uno",
+     "Aura",
+     "SHOGUN"
+    ],
+    "motionPrompt": "Sparkles burst outward and SHOGUN sits down. Cyan and purple light flares. Camera: slow push-in. Slow, simple, clean motion; nobody walks toward the camera. Keep the comic style, faces, hands and limb count; no morphing, no text, no cuts.",
+    "clip": {
+     "src": "clips/s24.mp4",
+     "in": 0.0,
+     "out": 5.4,
+     "expected": 5.0,
+     "trimNote": "jump at 5.5 s"
+    },
+    "lyric": "KNUCKLE TALK, KNUCKLE TALK",
+    "captions": [
+     {
+      "text": "KNUCKLE TALK, KNUCKLE TALK",
+      "anchor": "tl",
+      "at": 151.208,
+      "lyric": true
+     }
+    ],
+    "sfx": [
+     {
+      "text": "KRAK-BOOM!",
+      "at": 149.908,
+      "pos": [
+       0.6,
+       0.3
+      ],
+      "rot": -6,
+      "size": 0.2,
+      "color": [
+       255,
+       214,
+       0
+      ]
+     }
+    ]
+   },
+   "layout": "slant-two",
+   "splashStyle": "breakout"
+  },
+  {
+   "id": "page10",
+   "note": "victory - the belt comes home",
+   "start": 155.876,
+   "end": 166.805,
+   "panels": [
+    {
+     "id": "n25",
+     "image": "panels/n25.jpg",
+     "at": 155.876,
+     "location": "rebuilt dojo",
+     "camera": "warm high angle",
+     "moment": "belt returned",
+     "scene": "Rebuilt dojo: Uno returns the golden belt to Sensei; KAZE-9 and RAIJIN bow",
+     "prompt": "Rebuilt dojo: Uno returns the golden belt to Sensei; KAZE-9 and RAIJIN bow. Uno (round smooth chrome head, purple fur coat, gold \"1\" chain); KAZE-9 (scarf ninja, twin blades); RAIJIN (boxer, lightning gauntlets); Sensei Gearhart (old robot, cable beard, cane). All robots chrome, red eyes, headphone ears. 1990s superhero comic, bold ink, halftone, neon magenta-cyan, 16:9, no text.",
+     "refs": [
+      "Uno",
+      "KAZE-9",
+      "RAIJIN"
+     ],
+     "motionPrompt": "The Sensei takes the belt and everyone bows. Lanterns glow, petals drift. Camera: locked off. Slow, simple, clean motion; nobody walks toward the camera. Keep the comic style, faces, hands and limb count; no morphing, no text, no cuts.",
+     "clip": {
+      "src": "clips/n25.mp4",
+      "in": 0.0,
+      "out": 5.5,
+      "expected": 5.0,
+      "trimNote": "tail drifts"
+     },
+     "lyric": "HANDS UP, THEN IT ALL FALLS",
+     "captions": [
+      {
+       "text": "HANDS UP, THEN IT ALL FALLS",
+       "anchor": "tl",
+       "at": 155.876,
+       "lyric": true
+      }
+     ],
+     "slot": "a"
+    },
+    {
+     "id": "n26",
+     "image": "panels/n26.jpg",
+     "at": 160.984,
+     "location": "sunrise rooftop",
+     "camera": "behind-the-back wide",
+     "moment": "walk off into the sunrise",
+     "scene": "Uno and Aura walking away from the camera across a rooftop into a pink sunrise over Neo-Kyoto",
+     "prompt": "Uno and Aura walking away from the camera across a rooftop into a pink sunrise over Neo-Kyoto. Uno (round smooth chrome head, purple fur coat, gold \"1\" chain); Aura (crimson-streaked dark hair, modest crimson bodysuit, cyan magic). All robots chrome, red eyes, headphone ears. 1990s superhero comic, bold ink, halftone, neon magenta-cyan, 16:9, no text.",
+     "refs": [
+      "Uno",
+      "Aura"
+     ],
+     "motionPrompt": "They walk slowly away into the sunrise. The sun rises and clouds glow. Camera: locked off. Slow, simple, clean motion; nobody walks toward the camera. Keep the comic style, faces, hands and limb count; no morphing, no text, no cuts.",
+     "clip": {
+      "src": "clips/n26.mp4",
+      "in": 0.0,
+      "out": 5.28,
+      "expected": 5.28,
+      "trimNote": "page turns at 166.81s, clip capped to 5.28s"
+     },
+     "lyric": "KNUCKLE TALK, KNUCKLE TALK / I DON'T ARGUE, I JUST WALK",
+     "captions": [
+      {
+       "text": "KNUCKLE TALK, KNUCKLE TALK",
+       "anchor": "tl",
+       "at": 160.984,
+       "lyric": true
+      },
+      {
+       "text": "I DON'T ARGUE, I JUST WALK",
+       "anchor": "bl",
+       "at": 162.261,
+       "lyric": true
+      }
+     ],
+     "slot": "b"
+    }
+   ],
+   "layout": "inset-two"
+  }
+ ]
+}

@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=1280, height=720"><title>Kingdom Come v4 · ProgressiveSlop</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bangers&family=Cinzel+Decorative:wght@700;900&family=Comic+Neue:wght@700&family=Orbitron:wght@700;900&family=Inter:wght@700;900&display=swap">
+<!--
+  Kingdom Come v4 (ProgressiveSlop). Built ONLY from the approved kingdom-come-v4 asset set
+  (channels/progressiveslop/assets/kingdom-come-v4). Every character is a rigged actor
+  (/actors.js): mesh-warped head/chest/arms/hem/hair loops, eye + headphone lights, each on its own
+  phase and beat subdivision; scenes mix and match named animations per character per moment.
+  Every chorus ends in the same CHORUS ROUTINE in the great hall, with the cast joining progressively.
+-->
+<style>
+ html,body{margin:0;width:1280px;height:720px;overflow:hidden;background:#0b0618;color:#fff;font-family:Inter,sans-serif}
+ #camera{position:absolute;left:0;top:0;width:1280px;height:720px;transform-origin:0 0}
+ .scene{position:absolute;inset:0;opacity:0;visibility:hidden;overflow:hidden}
+ .layer{position:absolute;left:-60px;top:-60px;width:1400px;height:840px}
+ .plate{position:absolute;left:-47px;top:0;width:1494px;height:840px}
+ .plate.wide{width:1760px;height:990px;top:-90px;left:-60px}
+ .ui{position:absolute;inset:0}
+ .cast{position:absolute;left:60px;top:60px;width:1280px;height:720px}
+ .tint{position:absolute;inset:0;pointer-events:none}
+ .vign{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 45%,rgba(0,0,0,0) 55%,rgba(8,0,20,.65))}
+ .spot{position:absolute;top:-60px;width:360px;height:900px;margin-left:-180px;transform-origin:50% 0;background:linear-gradient(rgba(255,120,255,.35),rgba(94,231,255,0));clip-path:polygon(44% 0,56% 0,100% 100%,0 100%);mix-blend-mode:screen}
+ .stamp{position:absolute;left:0;right:0;top:22px;text-align:center;font:400 60px/1 Bangers,sans-serif;letter-spacing:.06em;color:#ff4fd8;-webkit-text-stroke:4px #12062a;paint-order:stroke fill;text-shadow:6px 6px 0 #12062a,0 0 26px rgba(94,231,255,.7)}
+ .stamp small{display:block;font-size:24px;color:#bff6ff;letter-spacing:.1em;margin-top:6px}
+ .title-k{text-align:center;font:900 92px/0.95 "Cinzel Decorative",serif;color:#e8ecff;-webkit-text-stroke:2px #2a0d55;
+   background:linear-gradient(#ffffff,#b9c3e6 45%,#6d6f9a 52%,#f2f4ff 70%,#9aa3cf);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 5px 0 #2a0d55) drop-shadow(0 0 22px rgba(255,63,210,.75))}
+ .brand{text-align:center;font:900 34px Orbitron,sans-serif;letter-spacing:.14em;color:#fff;text-shadow:0 0 12px #ff3fd2,0 0 26px #5ee7ff,3px 3px 0 #12062a}
+ .tag{text-align:center;font:700 22px "Comic Neue",sans-serif;color:#bff6ff;letter-spacing:.06em;text-shadow:2px 2px 0 #12062a}
+ .c-panel .bgp{position:absolute;inset:-4%;width:108%;height:108%}
+ .cr-n{position:absolute;left:0;right:0;bottom:0;padding:8px 0 10px;background:#12062a;border-top:5px solid #ff3fd2;text-align:center;font:400 38px/1 Bangers,sans-serif;letter-spacing:.06em;color:#fff;z-index:3;text-shadow:0 0 10px #5ee7ff}
+ .cr-n small{display:block;font:700 17px "Comic Neue",sans-serif;letter-spacing:0;margin-top:4px;color:#bff6ff;text-shadow:none}
+ .m-lyr.slam{top:auto!important;bottom:20px;transform:none!important}
+ .m-lyr.slam .w{font-size:64px!important;color:#ff4fd8!important;text-shadow:6px 6px 0 #12062a,0 0 18px rgba(94,231,255,.8)!important}
+ .m-lyr.comic{bottom:18px}
+ .m-lyr.comic .box{background:#f6f2ff!important;border-color:#12062a!important;box-shadow:6px 6px 0 #ff3fd2!important}
+ .m-lyr.comic .w{color:#12062a!important}
+ .m-lyr.comic .w.hot{color:#d10fa0!important}
+ .c-caption{background:#5ee7ff!important;box-shadow:5px 5px 0 #12062a!important}
+ .drain{position:absolute;inset:0;pointer-events:none;background:#140a2a;mix-blend-mode:color;opacity:0}
+ /* Vertical (Shorts): title band on top, the 16:9 action in the middle (stage x 240..1040 visible), lyrics below. */
+ html[data-format=vertical],html[data-format=vertical] body{width:720px;height:1280px}
+ html[data-format=vertical] #camera{top:318px;left:-216px;transform:scale(.9)}
+ html[data-format=vertical] #camera.comic{left:0;transform:scale(.5625)!important;top:420px}
+ #vhead{display:none}
+ html[data-format=vertical] #vhead{display:block;position:absolute;left:0;right:0;top:46px;text-align:center;z-index:90}
+ html[data-format=vertical] .m-lyr{bottom:150px!important;padding:0 40px}
+ html[data-format=vertical] .m-lyr.slam .w{font-size:58px!important}
+ html[data-format=vertical] .m-lyr.comic .w{font-size:32px}
+ html[data-format=vertical] .stamp{font-size:44px;left:250px;right:250px}
+ html[data-format=vertical] .c-caption{font-size:26px!important}
+ html[data-format=vertical] .c-bubble{font-size:30px!important;max-width:340px}
+</style></head><body>
+<div id="vhead"><div class="title-k" style="font-size:74px">KINGDOM<br>COME</div><div class="brand" style="font-size:26px;margin-top:14px">PROGRESSIVESLOP</div><div class="tag" style="font-size:20px;margin-top:6px">Uno and Aura — hip-hop fun, dressed up.</div></div>
+<div id="camera">
+<section class="scene" id="s-open"><div class="layer" data-depth="0.3"><div class="plate" data-bg="kingdom"></div></div><div class="drain" id="op-drain"></div><div class="layer" data-depth="1"><div class="cast"></div></div><div class="vign"></div>
+ <div class="ui"><div id="op-title" style="position:absolute;left:0;right:0;top:70px"><div class="title-k">KINGDOM COME</div><div class="brand" style="margin-top:12px">PROGRESSIVESLOP</div><div class="tag" style="margin-top:8px">Uno and Aura — hip-hop fun, dressed up.</div></div></div></section>
+<section class="scene" id="s-spark"><div class="c-page">
+ <div class="c-panel c-halftone" id="sp-p1" style="left:24px;top:24px;width:410px;height:672px"><div class="bgp" data-bg="kingdom"></div><div class="cast" style="left:0;top:0"></div></div>
+ <div class="c-panel c-halftone" id="sp-p2" style="left:450px;top:24px;width:806px;height:440px"><div class="bgp" data-bg="forest"></div><div class="cast" style="left:0;top:0"></div></div>
+ <div class="c-panel c-halftone" id="sp-p3" style="left:450px;top:480px;width:806px;height:216px"><div class="bgp" data-bg="kingdom"></div><div class="cast" style="left:0;top:0"></div></div></div></section>
+<section class="scene" id="s-dance1"><div class="danceflr"></div></section>
+<section class="scene" id="s-dance2"><div class="danceflr"></div></section>
+<section class="scene" id="s-dance3"><div class="danceflr"></div></section>
+<section class="scene" id="s-dance4"><div class="danceflr"></div></section>
+<section class="scene" id="s-dance5"><div class="danceflr"></div></section>
+<section class="scene" id="s-quest"><div class="layer" data-depth="0.25"><div class="plate wide" data-bg="forest"></div></div><div class="layer" data-depth="1"><div class="cast"></div></div><div class="vign"></div><div class="ui"></div></section>
+<section class="scene" id="s-wake"><div class="layer" data-depth="0.3"><div class="plate" data-bg="forest"></div></div><div class="layer" data-depth="1"><div class="cast"></div></div><div class="vign"></div><div class="ui"></div></section>
+<section class="scene" id="s-beasts"><div class="layer" data-depth="0.3"><div class="plate wide" data-bg="forest" style="filter:brightness(.6) hue-rotate(-25deg)"></div></div><div class="tint" id="bs-dawn" style="background:linear-gradient(rgba(255,120,220,.0),rgba(255,150,230,.35));opacity:0"></div><div class="layer" data-depth="1"><div class="cast"></div></div><div class="vign"></div><div class="ui"></div></section>
+<section class="scene" id="s-flight"><div class="layer" data-depth="0.15"><div class="plate wide" id="fl-far" data-bg="kingdom" style="width:2400px;height:1350px;top:-300px"></div></div><div class="layer" data-depth="1"><div class="cast"></div></div><div class="vign"></div><div class="ui"></div></section>
+<section class="scene" id="s-plot"><div class="c-page">
+ <div class="c-panel c-halftone" id="pl-p1" style="left:24px;top:24px;width:760px;height:430px"><div class="bgp" data-bg="lair"></div><div class="cast" style="left:0;top:0"></div></div>
+ <div class="c-panel c-halftone" id="pl-p2" style="left:800px;top:24px;width:456px;height:430px"><div class="bgp" data-bg="forest"></div><div class="cast" style="left:0;top:0"></div></div>
+ <div class="c-panel c-halftone" id="pl-p3" style="left:24px;top:470px;width:1232px;height:226px"><div class="bgp" data-bg="kingdom"></div><div class="cast" style="left:0;top:0"></div></div></div></section>
+<section class="scene" id="s-shatter"><div class="layer" data-depth="0.3"><div class="plate" data-bg="lair"></div></div><div class="layer" data-depth="1"><div class="cast"></div></div><div class="tint" id="sh-bolt" style="background:#bff6ff;mix-blend-mode:screen;opacity:0"></div><div class="vign"></div><div class="ui"></div></section>
+<section class="scene" id="s-lair"><div class="layer" data-depth="0.3"><div class="plate" data-bg="lair"></div></div><div class="tint" id="lr-mood" style="background:radial-gradient(ellipse at 50% 70%,rgba(255,63,210,.35),rgba(94,231,255,0) 70%);mix-blend-mode:screen;opacity:0"></div><div class="layer" data-depth="1"><div class="cast"></div></div><div class="vign"></div><div class="ui"></div></section>
+<section class="scene" id="s-relight"><div class="layer" data-depth="0.3"><div class="plate" data-bg="kingdom"></div></div><div class="drain" id="rl-drain" style="opacity:1"></div><div class="layer" data-depth="1"><div class="cast"></div></div><div class="vign"></div><div class="ui"></div></section>
+<section class="scene" id="s-party"><div class="layer" data-depth="0.3"><div class="plate" data-bg="hall-party"></div></div><div class="layer" data-depth="1"><div class="spots"></div><div class="cast"></div></div><div class="vign"></div><div class="ui"></div></section>
+<section class="scene" id="s-credits"><div class="c-page" id="cr-page"></div></section>
+<section class="scene" id="s-end"><div class="layer" data-depth="0.3"><div class="plate" data-bg="hall-party" style="filter:brightness(.5) blur(2px)"></div></div><div class="layer" data-depth="1"><div class="cast"></div></div><div class="vign"></div>
+ <div class="ui"><div id="en-t" style="position:absolute;left:0;right:0;top:400px"><div class="title-k" style="font-size:88px">KINGDOM COME</div><div class="brand" style="margin-top:10px">PROGRESSIVESLOP</div><div class="tag" style="margin-top:6px">Uno and Aura — hip-hop fun, dressed up. · made with Suno · animated with webshots</div></div></div></section>
+</div>
+<script src="/vendor/gsap.min.js"></script>
+<script src="/kit.js"></script><script src="/music.js"></script><script src="/actors.js"></script>
+<script>
+const FMT = document.documentElement.dataset.format = new URLSearchParams(location.search).get('format') || 'landscape';
+const V = FMT === 'vertical';
+const B = (n) => Music.beats(n);
+const C = Music.comic, cam = Music.cam, X = Actors;
+const q = (s, el = document) => el.querySelector(s), qa = (s, el = document) => [...el.querySelectorAll(s)];
+const SFX = (el, text, o) => C.sfx(el, text, o);
+const BAR = Object.fromEntries([['open',0],['spark',5],['dance1',9],['quest',15],['wake',23],['dance2',26],['beasts',31],['flight',40],['dance3',43],['plot',47],['shatter',56],['dance4',59],['lair',63],['relight',72],['dance5',75],['party',80],['credits',86],['end',96]]);
+let T0 = 0; const AT = (sec) => Math.max(0, sec - T0);         // song seconds -> scene-relative tl position (lyric sync)
+let beatOffs = [];
+const onBeatScene = (fn) => beatOffs.push(Music.onBeat(fn));
+function enter(el, name) {
+  T0 = Music.timeline.downbeats[BAR[name]] || 0;
+  beatOffs.forEach((off) => off()); beatOffs = [];
+  qa('.c-sfx,.c-bubble,.c-caption,.ak-star').forEach((n) => { n._off && n._off(); n.remove(); });
+  X.clear(); qa('.cast', el).forEach((c) => (c.innerHTML = ''));
+  cam.reset();
+  document.getElementById('camera').classList.toggle('comic', !!el.querySelector('.c-page'));
+}
+const BGFX = {
+  kingdom: { glow: ['cyan', 'purple', 'white'], shimmer: ['cyan', 'purple'], twinkle: ['white', 'cyan'], fountain: { x: 672, y: 470, w: 200, h: 240 }, amount: 0.35 },
+  forest: { glow: ['cyan', 'magenta', 'purple'], shimmer: ['purple'], twinkle: ['cyan', 'magenta', 'white'], twinkleN: 30, amount: 0.4 },
+  lair: { glow: ['red', 'purple'], pulse: 'bar', amount: 0.6, base: 0.25, eyes: [[617, 176]], twinkle: ['white'], twinkleN: 10 },
+  'hall-party': { glow: ['cyan', 'purple'], amount: 0.6, disco: { x: 640, y: 70, r: 64 }, twinkle: ['white'],
+    lasers: [{ x: 120, y: 60, from: -60, to: -10, color: '#5ee7ff', beats: 8 }, { x: 1160, y: 60, from: 10, to: 60, color: '#ff3fd2', beats: 8, phase: 1.5 }, { x: 420, y: 40, from: -35, to: 25, color: '#b48cff', beats: 4 }, { x: 860, y: 40, from: -25, to: 35, color: '#5ee7ff', beats: 4, phase: 2 }] },
+};
+const bgs = (el, over = {}) => qa('[data-bg]', el).map((p) => X.bg(p, p.dataset.bg, { ...BGFX[p.dataset.bg], ...(over[p.dataset.bg] || {}) }));
+
+/* ---------- the cast (approved ProgressiveSlop v4 set) ---------- */
+X.define('uno', { poses: { stand: 'uno-stand', sword: 'uno-sword', walk: 'uno-walk', dance: 'uno-dance', lean: 'uno-lean', pump: 'uno-pump' }, cloth: 'cape', sub: 0.5, bob: 1.2, gleamTop: { sword: 0.3 }, rim: 0.6 });
+X.define('aura', { poses: { stand: 'aura-stand', twirl: 'aura-twirl', walk: 'aura-walk', dance: 'aura-dance', cast: 'aura-cast', kiss: 'aura-kiss' }, hair: true, cloth: 'gown', sub: 1, sway: 1.3, headScale: 0.8, phones2: '#ff3fd2', eyeR: 0.011 });
+X.define('wizard', { poses: { stand: 'cast-wizard' }, sub: 0.5, headScale: 0.7, sway: 0.8, orb: '#ff3030' });
+X.define('jester', { poses: { stand: 'cast-jester' }, sub: 2, headScale: 1.4, bob: 1.3, magicAlways: false });
+X.define('villain', { poses: { stand: 'cast-villain' }, sub: 0.5, headScale: 0.7, sway: 1.4, orb: '#ff2020' });
+X.define('horse', { poses: { stand: 'cast-horse' }, sub: 1, headScale: 0.6, sway: 0.2, arms: 0.2, eyeR: 0.018 });
+X.define('dragon', { poses: { stand: 'cast-dragon' }, sub: 1, wings: true, headScale: 0.6, sway: 0.2, arms: 0.4, eyeR: 0.03 });
+X.define('guards', { poses: { stand: 'cast-guards' }, sub: 1, headScale: 0.4, sway: 0.2, arms: 0.3 });
+/** act(host, who, {x, y, h, pose, anim, flip, seed, sub}) */
+const act = (host, who, o) => X.actor(host, who, o).play(o.anim || 'idle');
+const H = { uno: 430, aura: 400, wizard: 400, jester: 330, villain: 430, horse: 380, dragon: 190, guards: 390 };
+const flip = (a, v) => { a.flip = v; a.place(); };
+
+/* ---------- THE CHORUS ROUTINE (great hall, identical every chorus) ----------
+   beat 1: everyone hops + camera punch + spotlights swing; Uno/Aura snap to their DANCE pose
+   beat 2: Uno/Aura smear into the ALT pose (pump / twirl)
+   beat 3: small hop; beat 4: smear back. Everyone else keeps their OWN loop at their own phase.
+   The cast joins progressively: #1 Uno+Aura, #2 +Jester, #3 +Wizard+Knights, #4 +Dragon+Horse, #5 +Sorcerer (front and center). */
+const LINEUP = [
+  ['uno', 0], ['aura', 0], ['jester', 2], ['wizard', 3], ['guards', 3], ['dragon', 4], ['horse', 4], ['villain', 5],
+];
+const GAG = [null, 'just us two. for now.', 'the jester insists on joining.', 'the wizard has MOVES.', 'even the horse. even the dragon.', 'the sorcerer: reformed, and front and center.'];
+function routine(n) {
+  Webshot.scene('dance' + n, (tl, el) => {
+    enter(el, 'dance' + n);
+    const floor = q('.danceflr', el);
+    floor.innerHTML = `<div class="layer" data-depth="0.3"><div class="plate" data-bg="hall-party"></div></div>
+      <div class="layer" data-depth="1"><div class="spots"></div><div class="cast"></div></div><div class="vign"></div>
+      <div class="ui"><div class="stamp">KINGDOM COME<small>— official chorus routine #${n} —</small></div></div>`;
+    bgs(floor);
+    const cast = q('.cast', floor), spots = q('.spots', floor), ui = q('.ui', floor);
+    [300, 640, 980].forEach((x, i) => { const s = document.createElement('div'); s.className = 'spot'; s.style.left = x + 60 + 'px'; spots.appendChild(s); gsap.set(s, { rotation: (i - 1) * 14 }); });
+    const who = LINEUP.filter(([, k]) => k <= n).map(([w]) => w);
+    // stage order: villain centre on #5, Uno + Aura always centre-front
+    const back = who.filter((w) => !['uno', 'aura', 'villain'].includes(w));
+    const lo = V ? 310 : 120, hi = V ? 970 : 1160;
+    const front = n === 5 ? ['uno', 'villain', 'aura'] : ['uno', 'aura'];
+    const fx = front.length === 3 ? (V ? [520, 640, 770] : [500, 640, 790]) : (V ? [560, 740] : [540, 760]);
+    const bx = back.map((_, i) => (i % 2 ? hi - Math.floor(i / 2) * (V ? 110 : 150) : lo + Math.floor(i / 2) * (V ? 110 : 150)));
+    const ANIM = { jester: 'bounce', wizard: 'groove', guards: 'groove', dragon: 'hover', horse: 'groove', villain: 'dance' };
+    const backs = back.map((w, i) => act(cast, w, { x: bx[i], y: w === 'dragon' ? 520 : 600, h: H[w] * 0.82, anim: ANIM[w], seed: 0.17 * i + 0.1, flip: bx[i] > 640, z: 1 }));
+    const fr = front.map((w, i) => act(cast, w, { x: fx[i], y: 615, h: H[w] * (w === 'villain' ? 0.95 : 1), pose: w === 'villain' ? 'stand' : 'dance', anim: 'dance', seed: [0, 0.25, 0.5][i], flip: w === 'aura', z: 2 }));
+    const [uno] = fr; const aura = fr.find((a) => a.who === 'aura');
+    tl.from(q('.stamp', ui), { scale: 2.2, autoAlpha: 0, rotation: -6, duration: B(0.5), ease: 'power4.in' }, 0);
+    tl.add(() => { cam.shake(10, 0.5); SFX(ui, n === 1 ? 'DANCE BREAK!' : 'AGAIN!', { x: V ? 640 : 1000, y: 160, size: 60, rot: 8, color: '#5ee7ff' }); }, B(0.5));
+    tl.add(() => C.caption(ui, GAG[n], { x: V ? 260 : 24, y: 590 }), B(2));
+    if (n === 5) tl.add(() => Music.particles(ui, { kind: 'confetti', rate: 16 }), 0);
+    tl.add(() => {}, B(14));
+    let bib = 0; const ALT = { uno: 'pump', aura: 'twirl' };
+    onBeatScene((b) => {
+      bib = b.downbeat ? 0 : bib + 1; const k = bib % 4;
+      if (k === 0) { [...fr, ...backs].forEach((a, i) => X.hop(a, a.who === 'dragon' ? 20 : 34 + (i % 2) * 8, 0.7)); cam.punch(0.035, 1);
+        qa('.spot', spots).forEach((s, i) => gsap.to(s, { rotation: (b.bar + i) % 2 ? 18 : -18, duration: B(0.9), ease: 'power2.inOut' }));
+        [uno, aura].forEach((a) => a.poseName !== 'dance' && X.transition(a, 'dance', { smear: a === uno ? 'left' : 'right', beats: 0.4 })); }
+      if (k === 1) [uno, aura].forEach((a) => X.transition(a, ALT[a.who], { smear: a === uno ? 'up' : 'spin', beats: 0.5 }));
+      if (k === 2) fr.forEach((a) => X.hop(a, 18, 0.5));
+      if (k === 3) [uno, aura].forEach((a) => X.transition(a, 'dance', { smear: 'right', beats: 0.4 }));
+      if (k === 1 && n === 5) X.accent(fr[1], 'flex', 1);
+    });
+  });
+}
+[1, 2, 3, 4, 5].forEach(routine);
+
+(async () => {
+await Music.load('timeline.json');
+await X.load('assets/cast/rig.json'); X.start();
+Music.theme('synthwave');
+Music.lyrics({ styleFor: (l) => (/chorus/.test(l.tag) ? 'slam' : 'comic'), hot: 'kingdom|drum|fire|whole|dragons|legend|arrow|wizard|justice|balance|shattered|blade|beacon' });
+
+// 1 OPEN: the chrome kingdom at night, fountain shimmering. Title. Uno + Aura stroll in; the Sorcerer drains the light.
+Webshot.scene('open', (tl, el) => {
+  enter(el, 'open'); bgs(el); const cast = q('.cast', el), ui = q('.ui', el);
+  const uno = act(cast, 'uno', { x: 430, y: 615, h: H.uno, pose: 'stand', anim: 'groove', seed: 0.1 });
+  const aura = act(cast, 'aura', { x: 650, y: 615, h: H.aura, pose: 'stand', anim: 'groove', seed: 0.55, flip: true });
+  const vil = act(cast, 'villain', { x: 1100, y: 615, h: H.villain, anim: 'menace', flip: true, seed: 0.3 });
+  gsap.set(vil.el, { autoAlpha: 0 });
+  cam.set({ zoom: 1.08, y: -20 }); tl.add(() => cam.to({ zoom: 1, y: 0 }, 8), 0);
+  tl.from('#op-title .title-k', { scale: 2.4, autoAlpha: 0, duration: B(0.5), ease: 'power4.in' }, B(0.2)).from('#op-title .brand', { y: 30, autoAlpha: 0, duration: B(1) }, B(1)).from('#op-title .tag', { autoAlpha: 0, duration: B(1) }, B(2));
+  tl.add(() => { X.accent(uno, 'flex', 1.5); X.impact(ui, 430, 330, { size: 120, color: '#5ee7ff' }); }, B(4));
+  tl.add(() => { X.transition(aura, 'kiss', { smear: 'right' }); }, B(6));
+  tl.to('#op-title', { autoAlpha: 0, y: -40, duration: B(1) }, B(8));
+  tl.add(() => { aura.play('idle'); X.transition(aura, 'stand', { smear: 'none' }); }, B(9));
+  tl.to(vil.el, { autoAlpha: 1, duration: B(1) }, B(10)).from(vil.el, { x: 200, duration: B(2), ease: 'power2.out' }, B(10));
+  tl.add(() => { C.bubble(ui, 'your music... your light... MINE.', { x: 820, y: 150, tail: 260 }); X.accent(vil, 'flare', 2); }, B(11));
+  tl.add(() => { SFX(ui, 'SHHHLUURP', { x: 900, y: 330, size: 66, color: '#ff3fd2' }); gsap.to('#op-drain', { opacity: 0.85, duration: B(3) }); uno.play('react'); aura.play('react'); X.accent(uno, 'recoil', 1.5); cam.shake(12, 1); }, B(14));
+  tl.add(() => { uno.play('idle'); aura.play('idle'); X.transition(uno, 'lean', { smear: 'none' }); C.caption(ui, 'The Sorcerer stole the kingdom\'s music and light.', { x: 24, y: 24 }); }, B(16));
+  tl.to(vil.el, { autoAlpha: 0, x: 120, duration: B(1.5) }, B(17));
+  tl.add(() => {}, B(20));
+});
+
+// 2 SPARK: comic page. Wizard sends them on the quest; Uno sword up, Aura casts; the Jester tags along.
+Webshot.scene('spark', (tl, el) => {
+  enter(el, 'spark'); bgs(el, { kingdom: { amount: 0.1, base: 0.05 } });
+  const p1 = q('#sp-p1', el), p2 = q('#sp-p2', el), p3 = q('#sp-p3', el);
+  const wiz = act(q('.cast', p1), 'wizard', { x: 225, y: 640, h: 520, anim: 'guard', seed: 0.2 });
+  const uno = act(q('.cast', p2), 'uno', { x: 300, y: 430, h: 380, pose: 'stand', anim: 'idle', seed: 0.4 });
+  const aura = act(q('.cast', p2), 'aura', { x: 560, y: 430, h: 360, pose: 'stand', anim: 'idle', seed: 0.8, flip: true });
+  const jes = act(q('.cast', p3), 'jester', { x: 600, y: 200, h: 180, anim: 'bounce', seed: 0.6 });
+  tl.add(C.panels(q('.c-page', el), { beats: 3 }), 0);
+  tl.add(() => { C.bubble(p1, 'Uno! Aura! Bring back the light.', { x: 30, y: 30, tail: 190 }); X.accent(wiz, 'flare', 2); }, B(1));
+  tl.add(() => { X.transition(uno, 'sword', { smear: 'up' }); uno.play('attack'); SFX(p2, 'SHING!', { x: 220, y: 70, size: 80, color: '#e8f0ff', rot: -8 }); }, B(5));
+  tl.add(() => { X.transition(aura, 'cast', { smear: 'right' }); aura.play('cast'); SFX(p2, 'VWOOM', { x: 650, y: 70, size: 66, color: '#5ee7ff', style: 'pop' }); }, B(7));
+  tl.add(() => C.bubble(p3, 'quest?! can I come? I\'ll be comic relief!', { x: 60, y: 12, tail: 360 }), B(9));
+  tl.add(() => { X.hop(jes, 30); X.impact(p3, 680, 60, { size: 90 }); }, B(11));
+  tl.add(() => { uno.play('flex'); aura.play('idle'); X.transition(aura, 'stand', { smear: 'none' }); }, B(12));
+  tl.add(() => {}, B(16));
+});
+
+// 3 QUEST (verse 1): crystal-forest pan; Uno and Aura walk (each its own step phase), Jester bounces behind.
+Webshot.scene('quest', (tl, el) => {
+  enter(el, 'quest'); bgs(el); const cast = q('.cast', el), ui = q('.ui', el);
+  const jes = act(cast, 'jester', { x: 200, y: 610, h: H.jester * 0.9, anim: 'bounce', seed: 0.33 });
+  const aura = act(cast, 'aura', { x: 380, y: 612, h: H.aura, pose: 'walk', anim: 'walk', seed: 0.5 });
+  const uno = act(cast, 'uno', { x: 600, y: 615, h: H.uno, pose: 'walk', anim: 'walk', seed: 0, sub: 1 });
+  gsap.set('#s-quest .plate', { x: 0 }); tl.to('#s-quest .plate', { x: -300, duration: B(32), ease: 'none' }, 0);
+  tl.to([jes.el, aura.el, uno.el], { left: '+=180', duration: B(28), ease: 'none' }, 0);
+  tl.add(() => C.caption(ui, 'Day 1. The crystal forest. Dragons sleep here.', { x: 24, y: 24 }), B(1));
+  tl.add(() => { X.transition(uno, 'sword', { smear: 'up' }); uno.play('attack'); SFX(ui, 'SHING!', { x: 900, y: 200, size: 86, color: '#e8f0ff' }); cam.shake(6, 0.5); }, AT(34.9));
+  tl.add(() => { uno.play('flex'); X.transition(uno, 'stand', { smear: 'none' }); }, AT(37.2));
+  tl.add(() => { aura.play('cheer'); X.transition(aura, 'kiss', { smear: 'right' }); C.bubble(ui, 'my shield. my hero.', { x: 270, y: 150, tail: 120 }); }, AT(38.4));
+  tl.add(() => { jes.play('react'); X.accent(jes, 'shiver', 1); C.bubble(ui, 'I\'m the weak one! shield ME!', { x: 60, y: 300, tail: 120 }); }, AT(39.4));
+  tl.add(() => {}, B(32));
+});
+
+// 4 WAKE (chorus 2): Aura's music wakes the little robot dragon, who joins the quest.
+Webshot.scene('wake', (tl, el) => {
+  enter(el, 'wake'); bgs(el); const cast = q('.cast', el), ui = q('.ui', el);
+  const uno = act(cast, 'uno', { x: 300, y: 615, h: H.uno, pose: 'lean', anim: 'idle', seed: 0.2 });
+  const aura = act(cast, 'aura', { x: 560, y: 612, h: H.aura, pose: 'cast', anim: 'cast', seed: 0.7 });
+  const dr = act(cast, 'dragon', { x: 940, y: 610, h: H.dragon * 1.1, anim: 'sleep', flip: true, seed: 0.1 });
+  tl.add(() => SFX(ui, 'zzz', { x: 980, y: 380, size: 56, color: '#bff6ff', beat: false, rot: 6 }), B(0.2));
+  tl.add(() => { qa('.c-sfx', ui).forEach((n) => n.remove()); dr.play('react'); X.accent(dr, 'flare', 2); SFX(ui, 'BLINK!', { x: 960, y: 330, size: 60, color: '#ff3fd2', style: 'pop' }); }, B(4));
+  tl.add(() => { dr.play('hover'); gsap.to(dr.el, { top: 480, duration: B(2), ease: 'back.out(2)' }); C.bubble(ui, 'rawr! (that means "nice beat")', { x: 760, y: 150, tail: 200 }); uno.play('groove'); }, B(6));
+  tl.add(() => { X.transition(aura, 'dance', { smear: 'spin' }); aura.play('dance'); }, B(8));
+  tl.add(() => {}, B(12));
+});
+
+// 5 BEASTS (verse 2): the Sorcerer's knights block the path; they fall before Uno's might (impact stars), then dawn.
+Webshot.scene('beasts', (tl, el) => {
+  enter(el, 'beasts'); bgs(el, { forest: { amount: 0.25 } }); const cast = q('.cast', el), ui = q('.ui', el);
+  const gd = act(cast, 'guards', { x: 1000, y: 612, h: H.guards, anim: 'guard', seed: 0.4, flip: true });
+  const aura = act(cast, 'aura', { x: 220, y: 612, h: H.aura, pose: 'stand', anim: 'idle', seed: 0.7 });
+  const uno = act(cast, 'uno', { x: 440, y: 615, h: H.uno, pose: 'sword', anim: 'attack', seed: 0.1 });
+  gsap.set('#s-beasts .plate', { x: 0 }); tl.to('#s-beasts .plate', { x: -200, duration: B(36), ease: 'none' }, 0);
+  tl.add(() => C.caption(ui, 'Beasts of nightmare: the Sorcerer\'s knights.', { x: 24, y: 24 }), B(0.5));
+  ['BONK!', 'CLANG!', 'KA-POW!', 'WHAM!'].forEach((w, i) => tl.add(() => {
+    X.impact(ui, 760 + (i % 2) * 70, 300 + (i % 2) * 70, { text: w, size: 150, color: i % 2 ? '#ff3fd2' : '#5ee7ff', rot: -12 + i * 8 }); cam.shake(10, 0.5);
+    gd.play('react'); X.accent(gd, 'recoil', 1); X.flash(gd, 0.5); if (i % 2) X.transition(uno, 'pump', { smear: 'up' }); else X.transition(uno, 'sword', { smear: 'right' });
+  }, AT(56.2) + B(i * 4)));
+  tl.add(() => { aura.play('cast'); X.transition(aura, 'cast', { smear: 'right' }); }, AT(59.6));
+  tl.add(() => { gd.play('guard'); C.bubble(ui, 'we yield! ...is that a dance beat?', { x: 760, y: 140, tail: 230 }); }, AT(63.1));
+  tl.to('#bs-dawn', { opacity: 1, duration: B(8) }, AT(66.5));
+  tl.add(() => { gd.play('groove'); uno.play('groove'); X.transition(uno, 'stand', { smear: 'none' }); aura.play('groove'); X.transition(aura, 'stand', { smear: 'none' }); C.caption(ui, 'Bringing dawn to darkness.', { x: 24, y: 80 }); }, AT(66.6));
+  tl.add(() => {}, B(36));
+});
+
+// 6 FLIGHT (chorus 3): riding out — the robot horse gallops, the dragon flies, Uno and Aura stride.
+Webshot.scene('flight', (tl, el) => {
+  enter(el, 'flight'); bgs(el); const cast = q('.cast', el), ui = q('.ui', el);
+  const horse = act(cast, 'horse', { x: 380, y: 615, h: H.horse, anim: 'gallop', seed: 0.2 });
+  const uno = act(cast, 'uno', { x: 700, y: 615, h: H.uno * 0.95, pose: 'walk', anim: 'walk', seed: 0.6, sub: 1 });
+  const aura = act(cast, 'aura', { x: 900, y: 612, h: H.aura * 0.95, pose: 'walk', anim: 'walk', seed: 0.1 });
+  const dr = act(cast, 'dragon', { x: 1080, y: 300, h: H.dragon, anim: 'hover', seed: 0.8 });
+  tl.fromTo('#fl-far', { x: 0 }, { x: -900, duration: B(12), ease: 'none' }, 0);
+  tl.add(() => SFX(ui, 'CLIP-CLOP!', { x: 380, y: 200, size: 70, color: '#5ee7ff' }), B(1));
+  tl.add(() => C.bubble(ui, 'to the lair. together.', { x: 640, y: 120, tail: 80 }), B(4));
+  tl.add(() => { X.transition(aura, 'twirl', { smear: 'spin' }); aura.play('twirl'); }, B(8));
+  tl.add(() => {}, B(12));
+});
+
+// 7 PLOT (verse 3): comic page. The Sorcerer plots; "my spirit's an arrow"; "spells unbound"; the jester sleeps.
+Webshot.scene('plot', (tl, el) => {
+  enter(el, 'plot'); bgs(el);
+  const p1 = q('#pl-p1', el), p2 = q('#pl-p2', el), p3 = q('#pl-p3', el);
+  const vil = act(q('.cast', p1), 'villain', { x: 380, y: 440, h: 400, anim: 'menace', seed: 0.2 });
+  const uno = act(q('.cast', p2), 'uno', { x: 230, y: 440, h: 380, pose: 'stand', anim: 'idle', seed: 0.5 });
+  const aura = act(q('.cast', p3), 'aura', { x: 470, y: 200, h: 190, pose: 'stand', anim: 'idle', seed: 0.1 });
+  const jes = act(q('.cast', p3), 'jester', { x: 800, y: 200, h: 160, anim: 'sleep', seed: 0.9 });
+  tl.add(C.panels(q('.c-page', el), { beats: 6 }), 0);
+  tl.add(() => C.bubble(p1, 'mwahaha. silence is golden.', { x: 330, y: 30, tail: 60 }), B(1));
+  tl.add(() => { X.transition(uno, 'sword', { smear: 'up' }); uno.play('attack'); SFX(p2, 'ZWIP!', { x: 300, y: 60, size: 76, color: '#e8f0ff' }); }, AT(87.8));
+  tl.add(() => { vil.play('react'); X.accent(vil, 'recoil', 1.5); X.impact(p1, 380, 180, { text: 'POP!', size: 150 }); C.caption(p1, 'his PRIDE: pierced.', { x: 16, y: 370 }); cam.shake(10, 0.5); }, AT(88.9));
+  tl.add(() => { X.transition(aura, 'cast', { smear: 'right' }); aura.play('cast'); }, AT(91.4));
+  tl.add(() => { vil.play('menace'); C.caption(p3, 'Meanwhile, the fearful sleep. (The jester counts as fearful.)', { x: 24, y: 20 }); SFX(p3, 'zzz', { x: 880, y: 60, size: 48, color: '#bff6ff', beat: false }); }, AT(93.5));
+  tl.add(() => {}, B(36));
+});
+
+// 8 SHATTER (chorus 4): the lair. The big dragon's eyes flare; the Sorcerer blasts; Uno shields Aura.
+Webshot.scene('shatter', (tl, el) => {
+  enter(el, 'shatter'); bgs(el, { lair: { amount: 0.8 } }); const cast = q('.cast', el), ui = q('.ui', el);
+  const aura = act(cast, 'aura', { x: 300, y: 612, h: H.aura, pose: 'stand', anim: 'react', seed: 0.3 });
+  const uno = act(cast, 'uno', { x: 500, y: 615, h: H.uno, pose: 'lean', anim: 'idle', seed: 0.6 });
+  const vil = act(cast, 'villain', { x: 1000, y: 615, h: H.villain * 1.05, anim: 'menace', flip: true, seed: 0.1 });
+  tl.from(vil.el, { x: 300, autoAlpha: 0, duration: B(1), ease: 'back.out(1.4)' }, 0);
+  tl.add(() => { C.bubble(ui, 'dance? in MY lair?!', { x: 760, y: 120, tail: 260 }); X.accent(vil, 'flare', 2); }, B(1));
+  tl.add(() => X.accent(vil, 'flex', 1), B(3));
+  tl.to('#sh-bolt', { opacity: 0.8, duration: 0.05 }, B(4)).to('#sh-bolt', { opacity: 0, duration: B(0.6) }, B(4.3));
+  tl.add(() => { X.transition(uno, 'sword', { smear: 'left' }); uno.play('attack'); X.impact(ui, 640, 330, { text: 'KRAKOOM!', size: 200, color: '#ff3fd2' }); cam.shake(20, 1); X.flash(uno, 0.6); aura.play('react'); }, B(4));
+  tl.add(() => C.caption(ui, 'Gonna make the SHATTERED whole...', { x: 24, y: 24 }), B(6));
+  tl.add(() => { uno.play('flex'); }, B(8));
+  tl.add(() => {}, B(12));
+});
+
+// 9 LAIR (verse 4): showdown. "without a single fear"; Aura's magic + their dance: the Sorcerer can't resist.
+Webshot.scene('lair', (tl, el) => {
+  enter(el, 'lair'); bgs(el); const cast = q('.cast', el), ui = q('.ui', el);
+  const uno = act(cast, 'uno', { x: 330, y: 615, h: H.uno, pose: 'sword', anim: 'attack', seed: 0.2 });
+  const aura = act(cast, 'aura', { x: 560, y: 612, h: H.aura, pose: 'stand', anim: 'idle', seed: 0.75 });
+  const vil = act(cast, 'villain', { x: 1000, y: 615, h: H.villain, anim: 'menace', flip: true, seed: 0.45 });
+  tl.add(() => cam.to({ zoom: 1.06 }, 8), 0);
+  tl.add(() => C.caption(ui, 'The wizard\'s cursed lair. The final showdown.', { x: 24, y: 24 }), B(0.5));
+  tl.add(() => { C.bubble(ui, 'not. one. single. fear.', { x: 150, y: 150, tail: 140 }); X.accent(uno, 'flex', 1); }, AT(115.5));
+  tl.add(() => { X.transition(aura, 'cast', { smear: 'right' }); aura.play('cast'); SFX(ui, 'SHWAAAA', { x: 640, y: 120, size: 80, color: '#5ee7ff' }); gsap.to('#lr-mood', { opacity: 1, duration: B(2) }); }, AT(119.8));
+  tl.add(() => { X.transition(uno, 'dance', { smear: 'spin' }); uno.play('dance'); vil.play('react'); X.accent(vil, 'shiver', 2); C.bubble(ui, 'my feet... they\'re MOVING', { x: 760, y: 150, tail: 240 }); }, AT(121.6));
+  tl.add(() => { X.transition(aura, 'dance', { smear: 'spin' }); aura.play('dance'); vil.play('groove'); SFX(ui, 'BALANCE!', { x: 900, y: 300, size: 66, color: '#ff3fd2', style: 'pop' }); }, AT(123.0));
+  tl.add(() => { vil.play('dance'); X.impact(ui, 1000, 260, { size: 110, color: '#5ee7ff' }); }, AT(125.0));
+  tl.add(() => {}, B(36));
+});
+
+// 10 RELIGHT (chorus 5): the kingdom's light and music return; everyone cheers.
+Webshot.scene('relight', (tl, el) => {
+  enter(el, 'relight'); bgs(el, { kingdom: { amount: 0.7 } }); const cast = q('.cast', el), ui = q('.ui', el);
+  const jes = act(cast, 'jester', { x: 170, y: 610, h: H.jester * 0.85, anim: 'bounce', seed: 0.1 });
+  const uno = act(cast, 'uno', { x: 420, y: 615, h: H.uno, pose: 'pump', anim: 'cheer', seed: 0.4 });
+  const aura = act(cast, 'aura', { x: 660, y: 612, h: H.aura, pose: 'dance', anim: 'dance', seed: 0.8 });
+  const wiz = act(cast, 'wizard', { x: 900, y: 612, h: H.wizard * 0.9, anim: 'groove', seed: 0.6, flip: true });
+  const dr = act(cast, 'dragon', { x: 1100, y: 420, h: H.dragon, anim: 'hover', flip: true, seed: 0.3 });
+  tl.to('#rl-drain', { opacity: 0, duration: B(2) }, B(1));
+  tl.add(() => { SFX(ui, 'LIGHTS ON!', { x: 640, y: 150, size: 110, color: '#5ee7ff' }); cam.punch(0.1, 2); Music.particles(ui, { kind: 'sparkles', rate: 20 }); [uno, aura, jes, wiz].forEach((a) => X.flash(a, 1)); }, B(1));
+  tl.add(() => C.bubble(ui, 'WHOLE AGAIN, BABY!', { x: 420, y: 230, tail: 60 }), B(4));
+  tl.add(() => {}, B(12));
+});
+
+// 11 PARTY (instrumental): the great hall; the whole cast parties, each with its own move.
+Webshot.scene('party', (tl, el) => {
+  enter(el, 'party'); bgs(el); const cast = q('.cast', el), ui = q('.ui', el), spots = q('.spots', el); spots.innerHTML = '';
+  [200, 640, 1080].forEach((x) => { const s = document.createElement('div'); s.className = 'spot'; s.style.left = x + 60 + 'px'; spots.appendChild(s); });
+  const plan = V ? [['guards', 300, 'groove'], ['wizard', 390, 'groove'], ['jester', 470, 'bounce'], ['uno', 570, 'dance', 'dance'], ['aura', 730, 'dance', 'dance'], ['villain', 860, 'dance'], ['horse', 960, 'groove']]
+    : [['horse', 120, 'groove'], ['guards', 260, 'groove'], ['wizard', 380, 'groove'], ['uno', 520, 'dance', 'dance'], ['aura', 700, 'dance', 'dance'], ['villain', 860, 'dance'], ['jester', 1000, 'bounce'], ['dragon', 1150, 'hover']];
+  const ds = plan.map(([w, x, an, pose], i) => act(cast, w, { x, y: w === 'dragon' ? 440 : 612, h: H[w] * (['uno', 'aura'].includes(w) ? 1 : 0.8), pose, anim: an, seed: (i * 0.137) % 1, flip: x > 640 && w !== 'aura', z: ['uno', 'aura'].includes(w) ? 2 : 1 }));
+  const uno = ds.find((a) => a.who === 'uno'), aura = ds.find((a) => a.who === 'aura');
+  tl.add(() => SFX(ui, 'PARTY!', { x: 640, y: 140, size: 130, color: '#ff3fd2' }), B(0.5));
+  tl.add(() => Music.particles(ui, { kind: 'confetti', rate: 14 }), 0);
+  onBeatScene((b) => { if (b.downbeat) { cam.punch(0.025, 1); qa('.spot', spots).forEach((s, i) => gsap.to(s, { rotation: ((b.bar + i) % 2 ? 1 : -1) * 20, duration: B(0.9) }));
+      if (b.bar % 2) { X.transition(uno, uno.poseName === 'dance' ? 'pump' : 'dance', { smear: 'up' }); X.transition(aura, aura.poseName === 'dance' ? 'twirl' : 'dance', { smear: 'spin' }); } } });
+  tl.add(() => C.bubble(ui, '...fine. it slaps.', { x: 820, y: 170, tail: 80 }), B(10));
+  tl.add(() => {}, B(24));
+});
+
+// 12 CREDITS: one card per bar; each card holds a live actor.
+Webshot.scene('credits', (tl, el) => {
+  enter(el, 'credits'); const page = q('#cr-page', el); page.innerHTML = '';
+  const cards = [['uno', 'pump', 'flex', 'UNO', 'the protector', 'kingdom'], ['aura', 'cast', 'cast', 'AURA', 'grace and magic', 'forest'], ['wizard', null, 'guard', 'THE WIZARD', 'quest giver', 'kingdom'],
+    ['jester', null, 'bounce', 'THE JESTER', 'comic relief (self-appointed)', 'hall-party'], ['villain', null, 'dance', 'THE SORCERER', 'reformed. loves the routine.', 'lair']];
+  const pos = [[24, 24], [440, 24], [856, 24], [24, 370], [440, 370]];
+  cards.forEach(([w, p, an, n, sub, bg], i) => { const c = document.createElement('div'); c.className = 'c-panel c-halftone cr'; c.style.cssText = `left:${pos[i][0]}px;top:${pos[i][1]}px;width:400px;height:326px`;
+    c.innerHTML = `<div class="bgp" data-bg="${bg}"></div><div class="cast" style="left:0;top:0"></div><div class="cr-n">${n}<small>${sub}</small></div>`; page.appendChild(c);
+    act(q('.cast', c), w, { x: 200, y: 262, h: w === 'jester' ? 210 : 240, pose: p || undefined, anim: an, seed: i * 0.21 }); });
+  const last = document.createElement('div'); last.className = 'c-panel cr'; last.style.cssText = 'left:856px;top:370px;width:400px;height:326px;background:#12062a';
+  last.innerHTML = '<img src="assets/cover.jpg" alt="" style="position:absolute;left:115px;top:18px;width:170px;height:170px;object-fit:cover;border:4px solid #5ee7ff;box-shadow:0 0 20px #ff3fd2"><div class="cr-n">PROGRESSIVESLOP<small>Kingdom Come · Uno and Aura — hip-hop fun, dressed up.</small></div>'; page.appendChild(last);
+  bgs(page, { kingdom: { amount: 0.3 }, forest: { amount: 0.3 } });
+  qa('.cr', page).forEach((c, i) => tl.fromTo(c, { scale: 0, rotation: (i % 2 ? 8 : -8) }, { scale: 1, rotation: 0, duration: B(1), ease: 'back.out(2.2)' }, B(i * 4)));
+  tl.add(() => {}, B(26));
+});
+
+// 13 END
+Webshot.scene('end', (tl, el) => {
+  enter(el, 'end'); bgs(el); const cast = q('.cast', el);
+  const uno = act(cast, 'uno', { x: 480, y: 380, h: 300, pose: 'lean', anim: 'groove', seed: 0.1 });
+  const aura = act(cast, 'aura', { x: 800, y: 380, h: 285, pose: 'kiss', anim: 'groove', seed: 0.6, flip: true });
+  tl.from([uno.el, aura.el], { scale: 0, duration: B(1), ease: 'back.out(2)', stagger: B(0.5) }).from('#en-t .title-k', { scale: 2, autoAlpha: 0, duration: B(0.5), ease: 'power4.in' }).from('#en-t .brand, #en-t .tag', { y: 20, autoAlpha: 0, duration: B(1) });
+});
+
+Webshot.start();
+})();
+</script></body></html>

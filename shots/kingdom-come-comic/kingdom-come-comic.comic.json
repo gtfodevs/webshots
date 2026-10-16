@@ -1,0 +1,1605 @@
+{
+ "title": "Kingdom Come - comic mode, full song",
+ "outName": "kingdom-come-comic",
+ "assetsDir": "/workspace/kingdom-come-comic",
+ "fps": 30,
+ "defaults": {
+  "holdBeats": 1
+ },
+ "song": {
+  "suno": "7bf4887f-eec0-4614-a285-5557aa4382d5",
+  "audio": "audio/song.m4a",
+  "audioNote": "relative to assetsDir; not committed. Copy channels/progressiveslop/songs/7bf4887f-eec0-4614-a285-5557aa4382d5/song.m4a there",
+  "timeline": "shots/kingdom-come-16bit/stage/timeline.json",
+  "start": 0.0,
+  "end": 170.816,
+  "loudness": -14
+ },
+ "short": {
+  "start": 99.033,
+  "end": 144.869,
+  "note": "chorus 4 (dragon lair) -> boss verse -> chorus 5 ballroom -> outro conga, ~46 s"
+ },
+ "cast": {
+  "uno": "Uno: chrome robot hero, smooth round chrome head with no face plate seams, glowing red eyes, round chrome headphone ears, long purple fur coat, gold chain with a big gold number-one pendant",
+  "aura": "Aura: graceful chrome robot lady, long dark hair with crimson streaks, glowing red eyes, round chrome headphone ears, modest crimson armored outfit with high collar and long sleeves, cyan magic glow in her hands",
+  "wizard": "the Wizard: tall silver chrome robot wizard, red eyes, chrome headphone ears under a tall purple star-pattern hat, long silver beard made of fine chrome wire, violet robe, crystal-topped staff",
+  "jester": "the Jester: small bouncy silver chrome robot jester, red eyes, chrome headphone ears, magenta-and-teal diamond suit, three-pointed hat with bells, curly-toed shoes",
+  "knight": "the Knights: silver chrome robot knights, red eye slits, chrome headphone ears on the helmet, red plume, kite shields, spears, each knight a slightly different helmet crest",
+  "sorcerer": "the Horned Sorcerer: tall dark-chrome robot sorcerer, glowing red eyes, curling chrome horns, chrome headphone ears, black-and-purple cape, staff topped with a purple orb",
+  "wolf": "chrome robot wolves, segmented silver plates, red eyes, small chrome headphone ears, each wolf with different markings",
+  "spider": "chrome robot spiders, round silver bodies, eight jointed legs, cluster of red eyes, tiny chrome headphone ears",
+  "bat": "chrome robot bats, silver membrane wings, red eyes, tiny chrome headphone ears",
+  "dragon": "the Dragon: big friendly silver chrome robot dragon, red eyes, chrome headphone ears behind the horns, segmented wings, purple glow in its throat",
+  "crowd": "crowd of chrome robot townsfolk dancers, red eyes, chrome headphone ears, each with a unique outfit (scarves, aprons, capes, hats) in purple, crimson, teal and gold"
+ },
+ "styleTemplate": "{shot} of {action}, {setting}. 1990s American superhero comic book panel, bold black ink outlines, heavy spot blacks, cel-shaded flat colour with halftone dot shading, dynamic foreshortening, speed lines, dramatic {light}, playful kid-friendly adventure tone, early-90s comic energy, 16:9 panel, full bleed. NO text, no lettering, no speech balloons, no sound effects, no logos, no signatures, no panel borders. Characters: {chars}.",
+ "motionTemplate": "Animate this comic panel. {move}. Subtle secondary motion: {sec}. Camera: {cam}. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
+ "pages": [
+  {
+   "id": "page01",
+   "note": "chorus 1 - the kingdom",
+   "start": 0.0,
+   "end": 14.327,
+   "panels": [
+    {
+     "id": "p01",
+     "image": "panels/p01.jpg",
+     "at": 0.209,
+     "location": "castle gate",
+     "camera": "wide establishing shot",
+     "moment": "arrival",
+     "scene": "Wide establishing shot of Uno and Aura walking up to a giant chrome castle gate at dawn, waving at a tiny chrome robot guard who salutes too hard and wobbles, shining chrome kingdom on a hill, purple and gold banners, crystal spires",
+     "prompt": "Wide establishing shot of Uno and Aura walking up to a giant chrome castle gate at dawn, waving at a tiny chrome robot guard who salutes too hard and wobbles, shining chrome kingdom on a hill, purple and gold banners, crystal spires. 1990s American superhero comic book panel, bold black ink outlines, heavy spot blacks, cel-shaded flat colour with halftone dot shading, dynamic foreshortening, speed lines, dramatic sunrise gold and magenta rim light, playful kid-friendly adventure tone, early-90s comic energy, 16:9 panel, full bleed. NO text, no lettering, no speech balloons, no sound effects, no logos, no signatures, no panel borders. Characters: Uno: chrome robot hero, smooth round chrome head with no face plate seams, glowing red eyes, round chrome headphone ears, long purple fur coat, gold chain with a big gold number-one pendant; Aura: graceful chrome robot lady, long dark hair with crimson streaks, glowing red eyes, round chrome headphone ears, modest crimson armored outfit with high collar and long sleeves, cyan magic glow in her hands; the Knights: silver chrome robot knights, red eye slits, chrome headphone ears on the helmet, red plume, kite shields, spears, each knight a slightly different helmet crest.",
+     "refs": [
+      "uno",
+      "aura",
+      "knight"
+     ],
+     "motionPrompt": "Animate this comic panel. Uno and aura stride toward the gate, the little guard wobbles from his salute. Subtle secondary motion: banners ripple, glints run along the spires. Camera: slow push-in. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
+     "clip": {
+      "src": "clips/p01c.mp4",
+      "in": 0.0,
+      "out": 6.0,
+      "trimNote": "clean for the full clip"
+     },
+     "lyric": "KINGDOM COME, KINGDOM COME",
+     "captions": [
+      {
+       "text": "KINGDOM COME, KINGDOM COME",
+       "anchor": "tl",
+       "at": 0.209,
+       "lyric": true
+      }
+     ],
+     "slot": "a"
+    },
+    {
+     "id": "p02",
+     "image": "panels/p02.jpg",
+     "at": 3.738,
+     "location": "castle gate",
+     "camera": "low angle",
+     "moment": "drum call",
+     "scene": "Low-angle shot of Uno swinging two glowing mallets at a huge round chrome war drum mounted on the gate tower, rings of cyan sound bursting out, Aura covering her headphone ears with a grin, top of the castle gate tower, sky full of morning clouds",
+     "prompt": "Low-angle shot of Uno swinging two glowing mallets at a huge round chrome war drum mounted on the gate tower, rings of cyan sound bursting out, Aura covering her headphone ears with a grin, top of the castle gate tower, sky full of morning clouds. 1990s American superhero comic book panel, bold black ink outlines, heavy spot blacks, cel-shaded flat colour with halftone dot shading, dynamic foreshortening, speed lines, dramatic cyan sound-wave glow and warm sun, playful kid-friendly adventure tone, early-90s comic energy, 16:9 panel, full bleed. NO text, no lettering, no speech balloons, no sound effects, no logos, no signatures, no panel borders. Characters: Uno: chrome robot hero, smooth round chrome head with no face plate seams, glowing red eyes, round chrome headphone ears, long purple fur coat, gold chain with a big gold number-one pendant; Aura: graceful chrome robot lady, long dark hair with crimson streaks, glowing red eyes, round chrome headphone ears, modest crimson armored outfit with high collar and long sleeves, cyan magic glow in her hands.",
+     "refs": [
+      "uno",
+      "aura"
+     ],
+     "motionPrompt": "Animate this comic panel. Uno brings both mallets down on the drum, a ring of cyan light pulses out. Subtle secondary motion: coat fur ruffles, clouds drift. Camera: locked off. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
+     "clip": {
+      "src": "clips/p02.mp4",
+      "in": 0.0,
+      "out": 4.31,
+      "trimNote": "clean for the full clip; capped to 4.31 s by the page turn"
+     },
+     "lyric": "HEAR THE PULSE OF MY DRUM / RIGHTEOUS FIRE IN MY SOUL",
+     "captions": [
+      {
+       "text": "HEAR THE PULSE OF MY DRUM",
+       "anchor": "tl",
+       "at": 4.203,
+       "lyric": true
+      },
+      {
+       "text": "RIGHTEOUS FIRE IN MY SOUL",
+       "anchor": "bl",
+       "at": 7.732,
+       "lyric": true
+      }
+     ],
+     "sfx": [
+      {
+       "text": "BOOM!",
+       "at": 4.644,
+       "pos": [
+        0.74,
+        0.22
+       ],
+       "rot": 6,
+       "size": 0.17,
+       "color": [
+        255,
+        214,
+        0
+       ]
+      }
+     ],
+     "slot": "b"
+    }
+   ],
+   "transition": {
+    "type": "zoom",
+    "panel": "p02",
+    "at": 9.056,
+    "dur": 0.441
+   },
+   "splash": {
+    "id": "s03",
+    "image": "panels/s03.jpg",
+    "at": 9.056,
+    "location": "castle courtyard",
+    "camera": "heroic high-angle splash",
+    "moment": "mending the crest",
+    "scene": "Full splash, high angle looking down of Aura casting a spiral of cyan magic that mends a cracked giant chrome kingdom crest on the courtyard floor while Uno and a cheering crowd of robot townsfolk throw confetti, castle courtyard with fountains and purple flags",
+    "prompt": "Full splash, high angle looking down of Aura casting a spiral of cyan magic that mends a cracked giant chrome kingdom crest on the courtyard floor while Uno and a cheering crowd of robot townsfolk throw confetti, castle courtyard with fountains and purple flags. 1990s American superhero comic book panel, bold black ink outlines, heavy spot blacks, cel-shaded flat colour with halftone dot shading, dynamic foreshortening, speed lines, dramatic cyan magic glow and golden confetti sparkle, playful kid-friendly adventure tone, early-90s comic energy, 16:9 panel, full bleed. NO text, no lettering, no speech balloons, no sound effects, no logos, no signatures, no panel borders. Characters: Aura: graceful chrome robot lady, long dark hair with crimson streaks, glowing red eyes, round chrome headphone ears, modest crimson armored outfit with high collar and long sleeves, cyan magic glow in her hands; Uno: chrome robot hero, smooth round chrome head with no face plate seams, glowing red eyes, round chrome headphone ears, long purple fur coat, gold chain with a big gold number-one pendant; crowd of chrome robot townsfolk dancers, red eyes, chrome headphone ears, each with a unique outfit (scarves, aprons, capes, hats) in purple, crimson, teal and gold.",
+    "refs": [
+     "aura",
+     "uno",
+     "crowd"
+    ],
+    "motionPrompt": "Animate this comic panel. The cyan spiral sweeps around the crest and the crack seals with a flash. Subtle secondary motion: confetti falls, crowd arms wave. Camera: slow pull-back. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
+    "clip": {
+     "src": "clips/s03.mp4",
+     "in": 0.0,
+     "out": 4.73,
+     "trimNote": "clean for the full clip; capped to 4.73 s by the page turn"
+    },
+    "lyric": "GONNA MAKE THE BROKEN WHOLE",
+    "captions": [
+     {
+      "text": "GONNA MAKE THE BROKEN WHOLE",
+      "anchor": "tl",
+      "at": 11.703,
+      "lyric": true
+     }
+    ],
+    "sfx": [
+     {
+      "text": "SHWING!",
+      "at": 9.938,
+      "pos": [
+       0.78,
+       0.8
+      ],
+      "rot": -6,
+      "size": 0.2,
+      "color": [
+       90,
+       230,
+       255
+      ]
+     }
+    ]
+   },
+   "layout": "slant-two",
+   "splashStyle": "breakout"
+  },
+  {
+   "id": "page02",
+   "note": "chorus 1 reprise - the quest",
+   "start": 14.327,
+   "end": 26.703,
+   "panels": [
+    {
+     "id": "p04",
+     "image": "panels/p04.jpg",
+     "at": 14.327,
+     "location": "wizard's library",
+     "camera": "over-the-shoulder",
+     "moment": "the quest map",
+     "scene": "Over-the-shoulder shot of the Wizard unrolling a glowing treasure map across a desk for Uno and Aura, the map shows a dragon and a horned silhouette, books flapping around like birds, round tower library with spiral bookshelves and floating candles",
+     "prompt": "Over-the-shoulder shot of the Wizard unrolling a glowing treasure map across a desk for Uno and Aura, the map shows a dragon and a horned silhouette, books flapping around like birds, round tower library with spiral bookshelves and floating candles. 1990s American superhero comic book panel, bold black ink outlines, heavy spot blacks, cel-shaded flat colour with halftone dot shading, dynamic foreshortening, speed lines, dramatic warm candlelight and violet crystal glow, playful kid-friendly adventure tone, early-90s comic energy, 16:9 panel, full bleed. NO text, no lettering, no speech balloons, no sound effects, no logos, no signatures, no panel borders. Characters: the Wizard: tall silver chrome robot wizard, red eyes, chrome headphone ears under a tall purple star-pattern hat, long silver beard made of fine chrome wire, violet robe, crystal-topped staff; Uno: chrome robot hero, smooth round chrome head with no face plate seams, glowing red eyes, round chrome headphone ears, long purple fur coat, gold chain with a big gold number-one pendant; Aura: graceful chrome robot lady, long dark hair with crimson streaks, glowing red eyes, round chrome headphone ears, modest crimson armored outfit with high collar and long sleeves, cyan magic glow in her hands.",
+     "refs": [
+      "wizard",
+      "uno",
+      "aura"
+     ],
+     "motionPrompt": "Animate this comic panel. The map unrolls and a glowing path lights up across it. Subtle secondary motion: books flap overhead, candle flames flicker. Camera: locked off. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
+     "clip": {
+      "src": "clips/p04.mp4",
+      "in": 0.0,
+      "out": 6.0,
+      "trimNote": "clean for the full clip"
+     },
+     "lyric": "KINGDOM COME, KINGDOM COME / HEAR THE PULSE OF MY DRUM",
+     "captions": [
+      {
+       "text": "KINGDOM COME, KINGDOM COME",
+       "anchor": "tl",
+       "at": 15.209,
+       "lyric": true
+      },
+      {
+       "text": "HEAR THE PULSE OF MY DRUM",
+       "anchor": "bl",
+       "at": 18.321,
+       "lyric": true
+      }
+     ],
+     "slot": "a"
+    },
+    {
+     "id": "p05",
+     "image": "panels/p05.jpg",
+     "at": 19.644,
+     "location": "wizard's library",
+     "camera": "close-up",
+     "moment": "jester bonk",
+     "scene": "Comedic close-up of the Jester juggling five glowing orbs, one orb bonking him on the head, his eyes spinning, the Wizard face-palming in the background, library ladder and bookshelves",
+     "prompt": "Comedic close-up of the Jester juggling five glowing orbs, one orb bonking him on the head, his eyes spinning, the Wizard face-palming in the background, library ladder and bookshelves. 1990s American superhero comic book panel, bold black ink outlines, heavy spot blacks, cel-shaded flat colour with halftone dot shading, dynamic foreshortening, speed lines, dramatic magenta and teal orb glow, playful kid-friendly adventure tone, early-90s comic energy, 16:9 panel, full bleed. NO text, no lettering, no speech balloons, no sound effects, no logos, no signatures, no panel borders. Characters: the Jester: small bouncy silver chrome robot jester, red eyes, chrome headphone ears, magenta-and-teal diamond suit, three-pointed hat with bells, curly-toed shoes; the Wizard: tall silver chrome robot wizard, red eyes, chrome headphone ears under a tall purple star-pattern hat, long silver beard made of fine chrome wire, violet robe, crystal-topped staff.",
+     "refs": [
+      "jester",
+      "wizard"
+     ],
+     "motionPrompt": "Animate this comic panel. The orbs arc up and one drops onto the jester's head. Subtle secondary motion: hat bells jingle, dust motes. Camera: locked off. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
+     "clip": {
+      "src": "clips/p05.mp4",
+      "in": 0.0,
+      "out": 6.0,
+      "trimNote": "clean for the full clip"
+     },
+     "lyric": "RIGHTEOUS FIRE IN MY SOUL",
+     "captions": [
+      {
+       "text": "RIGHTEOUS FIRE IN MY SOUL",
+       "anchor": "tl",
+       "at": 22.291,
+       "lyric": true
+      }
+     ],
+     "sfx": [
+      {
+       "text": "BONK!",
+       "at": 20.503,
+       "pos": [
+        0.72,
+        0.2
+       ],
+       "rot": 8,
+       "size": 0.17,
+       "color": [
+        255,
+        120,
+        200
+       ]
+      }
+     ],
+     "slot": "b"
+    }
+   ],
+   "layout": "inset-two"
+  },
+  {
+   "id": "page03",
+   "note": "verse 1 - the road",
+   "start": 26.703,
+   "end": 40.797,
+   "panels": [
+    {
+     "id": "p06",
+     "image": "panels/p06.jpg",
+     "at": 26.703,
+     "location": "dragon peaks",
+     "camera": "extreme wide shot",
+     "moment": "tiptoe past the sleeping dragon",
+     "scene": "Extreme wide shot of Uno and Aura tiptoeing along a narrow cliff path past a giant sleeping chrome dragon curled on a mountain peak, puffing smoke rings while it snores, jagged moonlit mountain peaks above the clouds",
+     "prompt": "Extreme wide shot of Uno and Aura tiptoeing along a narrow cliff path past a giant sleeping chrome dragon curled on a mountain peak, puffing smoke rings while it snores, jagged moonlit mountain peaks above the clouds. 1990s American superhero comic book panel, bold black ink outlines, heavy spot blacks, cel-shaded flat colour with halftone dot shading, dynamic foreshortening, speed lines, dramatic cool moonlight with purple glow from the dragon, playful kid-friendly adventure tone, early-90s comic energy, 16:9 panel, full bleed. NO text, no lettering, no speech balloons, no sound effects, no logos, no signatures, no panel borders. Characters: Uno: chrome robot hero, smooth round chrome head with no face plate seams, glowing red eyes, round chrome headphone ears, long purple fur coat, gold chain with a big gold number-one pendant; Aura: graceful chrome robot lady, long dark hair with crimson streaks, glowing red eyes, round chrome headphone ears, modest crimson armored outfit with high collar and long sleeves, cyan magic glow in her hands; the Dragon: big friendly silver chrome robot dragon, red eyes, chrome headphone ears behind the horns, segmented wings, purple glow in its throat.",
+     "refs": [
+      "uno",
+      "aura",
+      "dragon"
+     ],
+     "motionPrompt": "Animate this comic panel. A smoke ring floats up from the snoring dragon while the heroes tiptoe. Subtle secondary motion: clouds drift below, dragon belly rises and falls. Camera: slow pan right. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
+     "clip": {
+      "src": "clips/p06.mp4",
+      "in": 0.0,
+      "out": 6.0,
+      "trimNote": "clean for the full clip"
+     },
+     "lyric": "FROM THE SHADOWED PEAKS WHERE DRAGONS SLEEP, I ROAM",
+     "captions": [
+      {
+       "text": "FROM THE SHADOWED PEAKS WHERE DRAGONS SLEEP, I ROAM",
+       "anchor": "tl",
+       "at": 27.144,
+       "lyric": true
+      }
+     ],
+     "sfx": [
+      {
+       "text": "ZZZ...",
+       "at": 27.562,
+       "pos": [
+        0.8,
+        0.2
+       ],
+       "rot": -4,
+       "size": 0.17,
+       "color": [
+        200,
+        180,
+        255
+       ]
+      }
+     ],
+     "slot": "a"
+    },
+    {
+     "id": "p07",
+     "image": "panels/p07.jpg",
+     "at": 30.232,
+     "location": "enchanted forest",
+     "camera": "heroic low angle",
+     "moment": "blade raised",
+     "scene": "Heroic low-angle shot of Uno raising a glowing enchanted sword on a mossy boulder while tiny chrome fireflies swirl around the blade, Aura lighting the path with a cyan lantern of magic, enchanted forest of crystal trees and giant glowing mushrooms",
+     "prompt": "Heroic low-angle shot of Uno raising a glowing enchanted sword on a mossy boulder while tiny chrome fireflies swirl around the blade, Aura lighting the path with a cyan lantern of magic, enchanted forest of crystal trees and giant glowing mushrooms. 1990s American superhero comic book panel, bold black ink outlines, heavy spot blacks, cel-shaded flat colour with halftone dot shading, dynamic foreshortening, speed lines, dramatic teal bioluminescence and a shaft of moonlight, playful kid-friendly adventure tone, early-90s comic energy, 16:9 panel, full bleed. NO text, no lettering, no speech balloons, no sound effects, no logos, no signatures, no panel borders. Characters: Uno: chrome robot hero, smooth round chrome head with no face plate seams, glowing red eyes, round chrome headphone ears, long purple fur coat, gold chain with a big gold number-one pendant; Aura: graceful chrome robot lady, long dark hair with crimson streaks, glowing red eyes, round chrome headphone ears, modest crimson armored outfit with high collar and long sleeves, cyan magic glow in her hands.",
+     "refs": [
+      "uno",
+      "aura"
+     ],
+     "motionPrompt": "Animate this comic panel. Uno lifts the sword and a gleam runs down the blade. Subtle secondary motion: fireflies swirl, mushroom glow pulses. Camera: locked off. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
+     "clip": {
+      "src": "clips/p07.mp4",
+      "in": 0.0,
+      "out": 6.0,
+      "trimNote": "clean for the full clip"
+     },
+     "lyric": "THROUGH ANCIENT FORESTS, MAKING EVIL FLEE MY HOME / WITH ENCHANTED BLADE AND COURAGE BRIGHT, I STAND",
+     "captions": [
+      {
+       "text": "THROUGH ANCIENT FORESTS, MAKING EVIL FLEE MY HOME",
+       "anchor": "tl",
+       "at": 31.092,
+       "lyric": true
+      },
+      {
+       "text": "WITH ENCHANTED BLADE AND COURAGE BRIGHT, I STAND",
+       "anchor": "bl",
+       "at": 34.621,
+       "lyric": true
+      }
+     ],
+     "sfx": [
+      {
+       "text": "SHIING!",
+       "at": 31.092,
+       "pos": [
+        0.74,
+        0.5
+       ],
+       "rot": -8,
+       "size": 0.17,
+       "color": [
+        255,
+        214,
+        0
+       ]
+      }
+     ],
+     "slot": "b"
+    }
+   ],
+   "transition": {
+    "type": "zoom",
+    "panel": "p07",
+    "at": 37.291,
+    "dur": 0.441
+   },
+   "splash": {
+    "id": "s08",
+    "image": "panels/s08.jpg",
+    "at": 37.291,
+    "location": "forest clearing",
+    "camera": "dynamic three-quarter splash",
+    "moment": "shield for the weak",
+    "scene": "Full splash, dynamic three-quarter view of Uno holding up a big round shield that blocks a shower of purple thorns, sheltering a family of tiny chrome robot rabbits who peek out and give him a thumbs-up, misty forest clearing with crystal flowers",
+    "prompt": "Full splash, dynamic three-quarter view of Uno holding up a big round shield that blocks a shower of purple thorns, sheltering a family of tiny chrome robot rabbits who peek out and give him a thumbs-up, misty forest clearing with crystal flowers. 1990s American superhero comic book panel, bold black ink outlines, heavy spot blacks, cel-shaded flat colour with halftone dot shading, dynamic foreshortening, speed lines, dramatic purple thorn glow against warm shield highlights, playful kid-friendly adventure tone, early-90s comic energy, 16:9 panel, full bleed. NO text, no lettering, no speech balloons, no sound effects, no logos, no signatures, no panel borders. Characters: Uno: chrome robot hero, smooth round chrome head with no face plate seams, glowing red eyes, round chrome headphone ears, long purple fur coat, gold chain with a big gold number-one pendant.",
+    "refs": [
+     "uno"
+    ],
+    "motionPrompt": "Animate this comic panel. Thorns bounce off the shield in sparks, the little rabbits peek out. Subtle secondary motion: mist curls, flower petals flutter. Camera: slow push-in. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
+    "clip": {
+     "src": "clips/s08.mp4",
+     "in": 0.0,
+     "out": 2.99,
+     "trimNote": "extra rabbits appear after ~3 s; capped to 2.99 s by the page turn"
+    },
+    "lyric": "A SHIELD FOR THE WEAK, ACROSS THIS MYSTIC LAND",
+    "captions": [
+     {
+      "text": "A SHIELD FOR THE WEAK, ACROSS THIS MYSTIC LAND",
+      "anchor": "tl",
+      "at": 38.15,
+      "lyric": true
+     }
+    ],
+    "sfx": [
+     {
+      "text": "KLANG!",
+      "at": 38.15,
+      "pos": [
+       0.78,
+       0.22
+      ],
+      "rot": 7,
+      "size": 0.2,
+      "color": [
+       255,
+       214,
+       0
+      ]
+     }
+    ]
+   },
+   "layout": "tilt-two",
+   "splashStyle": "tilt"
+  },
+  {
+   "id": "page04",
+   "note": "chorus 2 - the jester's carnival",
+   "start": 40.797,
+   "end": 54.938,
+   "panels": [
+    {
+     "id": "p09",
+     "image": "panels/p09.jpg",
+     "at": 40.797,
+     "location": "jester's carnival",
+     "camera": "bird's-eye view",
+     "moment": "carnival dance",
+     "scene": "Bird's-eye view of a ring of chrome robot townsfolk dancing around a striped carnival tent, Uno and Aura in the middle doing a spin, balloons rising, the jester's carnival at dusk with striped tents, a carousel and strings of lights",
+     "prompt": "Bird's-eye view of a ring of chrome robot townsfolk dancing around a striped carnival tent, Uno and Aura in the middle doing a spin, balloons rising, the jester's carnival at dusk with striped tents, a carousel and strings of lights. 1990s American superhero comic book panel, bold black ink outlines, heavy spot blacks, cel-shaded flat colour with halftone dot shading, dynamic foreshortening, speed lines, dramatic warm string lights and magenta dusk sky, playful kid-friendly adventure tone, early-90s comic energy, 16:9 panel, full bleed. NO text, no lettering, no speech balloons, no sound effects, no logos, no signatures, no panel borders. Characters: crowd of chrome robot townsfolk dancers, red eyes, chrome headphone ears, each with a unique outfit (scarves, aprons, capes, hats) in purple, crimson, teal and gold; Uno: chrome robot hero, smooth round chrome head with no face plate seams, glowing red eyes, round chrome headphone ears, long purple fur coat, gold chain with a big gold number-one pendant; Aura: graceful chrome robot lady, long dark hair with crimson streaks, glowing red eyes, round chrome headphone ears, modest crimson armored outfit with high collar and long sleeves, cyan magic glow in her hands.",
+     "refs": [
+      "crowd",
+      "uno",
+      "aura"
+     ],
+     "motionPrompt": "Animate this comic panel. The ring of dancers circles and aura spins under uno's arm. Subtle secondary motion: balloons rise, lights twinkle. Camera: slow rotate. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
+     "clip": {
+      "src": "clips/p09.mp4",
+      "in": 0.0,
+      "out": 4.5,
+      "trimNote": "hard reframe at 4.75 s"
+     },
+     "lyric": "KINGDOM COME, KINGDOM COME / FEEL THE THRUM OF MY DRUM",
+     "captions": [
+      {
+       "text": "KINGDOM COME, KINGDOM COME",
+       "anchor": "tl",
+       "at": 42.144,
+       "lyric": true
+      },
+      {
+       "text": "FEEL THE THRUM OF MY DRUM",
+       "anchor": "bl",
+       "at": 46.092,
+       "lyric": true,
+       "estimated": true
+      }
+     ],
+     "slot": "a"
+    },
+    {
+     "id": "p10",
+     "image": "panels/p10.jpg",
+     "at": 47.88,
+     "location": "jester's carnival",
+     "camera": "dutch angle",
+     "moment": "unicycle juggling",
+     "scene": "Dutch-angle medium shot of the Jester on a wobbly unicycle juggling three tiny chrome robot puppies who are loving it, a chrome robot wolf pup in the crowd chasing its own tail, carnival midway with a strongman bell and popcorn cart",
+     "prompt": "Dutch-angle medium shot of the Jester on a wobbly unicycle juggling three tiny chrome robot puppies who are loving it, a chrome robot wolf pup in the crowd chasing its own tail, carnival midway with a strongman bell and popcorn cart. 1990s American superhero comic book panel, bold black ink outlines, heavy spot blacks, cel-shaded flat colour with halftone dot shading, dynamic foreshortening, speed lines, dramatic popping teal and gold carnival lights, playful kid-friendly adventure tone, early-90s comic energy, 16:9 panel, full bleed. NO text, no lettering, no speech balloons, no sound effects, no logos, no signatures, no panel borders. Characters: the Jester: small bouncy silver chrome robot jester, red eyes, chrome headphone ears, magenta-and-teal diamond suit, three-pointed hat with bells, curly-toed shoes; chrome robot wolves, segmented silver plates, red eyes, small chrome headphone ears, each wolf with different markings; crowd of chrome robot townsfolk dancers, red eyes, chrome headphone ears, each with a unique outfit (scarves, aprons, capes, hats) in purple, crimson, teal and gold.",
+     "refs": [
+      "jester",
+      "wolf",
+      "crowd"
+     ],
+     "motionPrompt": "Animate this comic panel. The puppies arc through the air in the juggle while the wolf pup spins after its tail. Subtle secondary motion: popcorn pops, bunting sways. Camera: locked off. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
+     "clip": {
+      "src": "clips/p10.mp4",
+      "in": 0.0,
+      "out": 4.5,
+      "trimNote": "wolf pup shape drifts late"
+     },
+     "lyric": "RIGHTEOUS FIRE IN MY SOUL / GONNA HELP THE BROKEN WHOLE",
+     "captions": [
+      {
+       "text": "RIGHTEOUS FIRE IN MY SOUL",
+       "anchor": "tl",
+       "at": 51.409,
+       "lyric": true
+      },
+      {
+       "text": "GONNA HELP THE BROKEN WHOLE",
+       "anchor": "bl",
+       "at": 54.497,
+       "lyric": true
+      }
+     ],
+     "sfx": [
+      {
+       "text": "WHEEE!",
+       "at": 48.739,
+       "pos": [
+        0.76,
+        0.2
+       ],
+       "rot": 6,
+       "size": 0.17,
+       "color": [
+        90,
+        230,
+        255
+       ]
+      }
+     ],
+     "slot": "b"
+    }
+   ],
+   "layout": "two-up"
+  },
+  {
+   "id": "page05",
+   "note": "verse 2 - the beasts",
+   "start": 54.938,
+   "end": 70.798,
+   "panels": [
+    {
+     "id": "p11",
+     "image": "panels/p11.jpg",
+     "at": 54.938,
+     "location": "dark woods",
+     "camera": "ground-level wide",
+     "moment": "wolf pack standoff",
+     "scene": "Ground-level wide shot of a pack of chrome robot wolves leaping out of the dark woods at Uno and Aura, except one wolf in front distracted, chasing its own tail in circles, twisted dark woods with fog and glowing red eyes in the trees",
+     "prompt": "Ground-level wide shot of a pack of chrome robot wolves leaping out of the dark woods at Uno and Aura, except one wolf in front distracted, chasing its own tail in circles, twisted dark woods with fog and glowing red eyes in the trees. 1990s American superhero comic book panel, bold black ink outlines, heavy spot blacks, cel-shaded flat colour with halftone dot shading, dynamic foreshortening, speed lines, dramatic cold blue fog and red eye glow, playful kid-friendly adventure tone, early-90s comic energy, 16:9 panel, full bleed. NO text, no lettering, no speech balloons, no sound effects, no logos, no signatures, no panel borders. Characters: chrome robot wolves, segmented silver plates, red eyes, small chrome headphone ears, each wolf with different markings; Uno: chrome robot hero, smooth round chrome head with no face plate seams, glowing red eyes, round chrome headphone ears, long purple fur coat, gold chain with a big gold number-one pendant; Aura: graceful chrome robot lady, long dark hair with crimson streaks, glowing red eyes, round chrome headphone ears, modest crimson armored outfit with high collar and long sleeves, cyan magic glow in her hands.",
+     "refs": [
+      "wolf",
+      "uno",
+      "aura"
+     ],
+     "motionPrompt": "Animate this comic panel. The wolves leap forward, the front wolf spins after its tail. Subtle secondary motion: fog rolls, leaves blow. Camera: locked off. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
+     "clip": {
+      "src": "clips/p11.mp4",
+      "in": 0.0,
+      "out": 6.0,
+      "trimNote": "clean for the full clip"
+     },
+     "lyric": "GONNA HELP THE BROKEN WHOLE / BEASTS OF NIGHTMARE, MAGIC DARK, THEY FALL BEFORE MY MIGHT",
+     "captions": [
+      {
+       "text": "GONNA HELP THE BROKEN WHOLE",
+       "anchor": "tl",
+       "at": 54.938,
+       "lyric": true
+      },
+      {
+       "text": "BEASTS OF NIGHTMARE, MAGIC DARK, THEY FALL BEFORE MY MIGHT",
+       "anchor": "bl",
+       "at": 55.798,
+       "lyric": true
+      }
+     ],
+     "sfx": [
+      {
+       "text": "AWOOO!",
+       "at": 55.798,
+       "pos": [
+        0.74,
+        0.2
+       ],
+       "rot": -6,
+       "size": 0.17,
+       "color": [
+        200,
+        220,
+        255
+       ]
+      }
+     ],
+     "slot": "a"
+    },
+    {
+     "id": "p12",
+     "image": "panels/p12.jpg",
+     "at": 58.468,
+     "location": "spider cave",
+     "camera": "upward from the cave floor",
+     "moment": "web trap",
+     "scene": "Worm's-eye view from the cave floor of a giant chrome robot spider dangling from its web above Aura, who lights the cave with a cyan orb, the spider tangled in its own web looking embarrassed, crystal spider cave with huge glittering webs",
+     "prompt": "Worm's-eye view from the cave floor of a giant chrome robot spider dangling from its web above Aura, who lights the cave with a cyan orb, the spider tangled in its own web looking embarrassed, crystal spider cave with huge glittering webs. 1990s American superhero comic book panel, bold black ink outlines, heavy spot blacks, cel-shaded flat colour with halftone dot shading, dynamic foreshortening, speed lines, dramatic cyan orb light and purple crystal reflections, playful kid-friendly adventure tone, early-90s comic energy, 16:9 panel, full bleed. NO text, no lettering, no speech balloons, no sound effects, no logos, no signatures, no panel borders. Characters: chrome robot spiders, round silver bodies, eight jointed legs, cluster of red eyes, tiny chrome headphone ears; Aura: graceful chrome robot lady, long dark hair with crimson streaks, glowing red eyes, round chrome headphone ears, modest crimson armored outfit with high collar and long sleeves, cyan magic glow in her hands.",
+     "refs": [
+      "spider",
+      "aura"
+     ],
+     "motionPrompt": "Animate this comic panel. The spider wriggles in its web as the cyan orb brightens. Subtle secondary motion: web strands sway, crystals sparkle. Camera: slow push-in. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
+     "clip": {
+      "src": "clips/p12.mp4",
+      "in": 0.0,
+      "out": 4.33,
+      "trimNote": "clean for the full clip; capped to 4.33 s by the page turn"
+     },
+     "lyric": "EVERY STEP A LEGEND, BLAZING THROUGH THE NIGHT / FOR THE INNOCENT, I FIGHT, WITH A WARRIOR'S GRACE",
+     "captions": [
+      {
+       "text": "EVERY STEP A LEGEND, BLAZING THROUGH THE NIGHT",
+       "anchor": "tl",
+       "at": 59.791,
+       "lyric": true
+      },
+      {
+       "text": "FOR THE INNOCENT, I FIGHT, WITH A WARRIOR'S GRACE",
+       "anchor": "bl",
+       "at": 62.856,
+       "lyric": true
+      }
+     ],
+     "sfx": [
+      {
+       "text": "THWIP!",
+       "at": 59.327,
+       "pos": [
+        0.8,
+        0.5
+       ],
+       "rot": -7,
+       "size": 0.17,
+       "color": [
+        255,
+        255,
+        255
+       ]
+      }
+     ],
+     "slot": "b"
+    }
+   ],
+   "transition": {
+    "type": "zoom",
+    "panel": "p12",
+    "at": 63.762,
+    "dur": 0.441
+   },
+   "splash": {
+    "id": "s13",
+    "image": "panels/s13.jpg",
+    "at": 63.762,
+    "location": "cave mouth at dawn",
+    "camera": "silhouette splash",
+    "moment": "dawn breaks",
+    "scene": "Full splash, backlit silhouette of Uno and Aura bursting out of the cave mouth into a blazing sunrise, a stream of little chrome spiders scurrying away waving tiny white flags, mountain cave mouth over a valley at sunrise",
+    "prompt": "Full splash, backlit silhouette of Uno and Aura bursting out of the cave mouth into a blazing sunrise, a stream of little chrome spiders scurrying away waving tiny white flags, mountain cave mouth over a valley at sunrise. 1990s American superhero comic book panel, bold black ink outlines, heavy spot blacks, cel-shaded flat colour with halftone dot shading, dynamic foreshortening, speed lines, dramatic huge golden sunrise backlight with lens flare, playful kid-friendly adventure tone, early-90s comic energy, 16:9 panel, full bleed. NO text, no lettering, no speech balloons, no sound effects, no logos, no signatures, no panel borders. Characters: Uno: chrome robot hero, smooth round chrome head with no face plate seams, glowing red eyes, round chrome headphone ears, long purple fur coat, gold chain with a big gold number-one pendant; Aura: graceful chrome robot lady, long dark hair with crimson streaks, glowing red eyes, round chrome headphone ears, modest crimson armored outfit with high collar and long sleeves, cyan magic glow in her hands; chrome robot spiders, round silver bodies, eight jointed legs, cluster of red eyes, tiny chrome headphone ears.",
+    "refs": [
+     "uno",
+     "aura",
+     "spider"
+    ],
+    "motionPrompt": "Animate this comic panel. The heroes step into the light and the spiders scurry off. Subtle secondary motion: sun rays flicker, dust glitters. Camera: slow push-in. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
+    "clip": {
+     "src": "clips/s13.mp4",
+     "in": 0.0,
+     "out": 6.0,
+     "trimNote": "clean for the full clip"
+    },
+    "lyric": "BRINGING DAWN TO DARKNESS, LEAVING NO TRACE",
+    "captions": [
+     {
+      "text": "BRINGING DAWN TO DARKNESS, LEAVING NO TRACE",
+      "anchor": "tl",
+      "at": 66.386,
+      "lyric": true
+     }
+    ]
+   },
+   "layout": "inset-two",
+   "splashStyle": "full"
+  },
+  {
+   "id": "page06",
+   "note": "chorus 3 - the bat tower",
+   "start": 70.798,
+   "end": 83.174,
+   "panels": [
+    {
+     "id": "p14",
+     "image": "panels/p14.jpg",
+     "at": 70.798,
+     "location": "bat tower",
+     "camera": "extreme low angle",
+     "moment": "bat swarm",
+     "scene": "Extreme low-angle shot of a crooked tall tower against a giant moon, a swirling swarm of chrome robot bats pouring out of the top, Uno and Aura small at the door, crooked spooky-cute tower on a hill",
+     "prompt": "Extreme low-angle shot of a crooked tall tower against a giant moon, a swirling swarm of chrome robot bats pouring out of the top, Uno and Aura small at the door, crooked spooky-cute tower on a hill. 1990s American superhero comic book panel, bold black ink outlines, heavy spot blacks, cel-shaded flat colour with halftone dot shading, dynamic foreshortening, speed lines, dramatic giant pale moon with violet sky, playful kid-friendly adventure tone, early-90s comic energy, 16:9 panel, full bleed. NO text, no lettering, no speech balloons, no sound effects, no logos, no signatures, no panel borders. Characters: chrome robot bats, silver membrane wings, red eyes, tiny chrome headphone ears; Uno: chrome robot hero, smooth round chrome head with no face plate seams, glowing red eyes, round chrome headphone ears, long purple fur coat, gold chain with a big gold number-one pendant; Aura: graceful chrome robot lady, long dark hair with crimson streaks, glowing red eyes, round chrome headphone ears, modest crimson armored outfit with high collar and long sleeves, cyan magic glow in her hands.",
+     "refs": [
+      "bat",
+      "uno",
+      "aura"
+     ],
+     "motionPrompt": "Animate this comic panel. The bat swarm swirls out of the tower top. Subtle secondary motion: moon glow pulses, grass sways. Camera: slow tilt up. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
+     "clip": {
+      "src": "clips/p14.mp4",
+      "in": 0.0,
+      "out": 2.5,
+      "trimNote": "purple vortex artifact from ~2.5 s, reframe at 4.4 s"
+     },
+     "lyric": "KINGDOM COME, KINGDOM COME",
+     "captions": [
+      {
+       "text": "KINGDOM COME, KINGDOM COME",
+       "anchor": "tl",
+       "at": 71.239,
+       "lyric": true
+      }
+     ],
+     "slot": "a"
+    },
+    {
+     "id": "p15",
+     "image": "panels/p15.jpg",
+     "at": 74.327,
+     "location": "bat tower",
+     "camera": "upside-down shot",
+     "moment": "sleepy bats",
+     "scene": "Upside-down medium shot of a row of chrome robot bats hanging upside down from a beam, all bobbing their heads to music in their headphone ears, one bat asleep and slowly slipping off, inside the tower on a spiral staircase",
+     "prompt": "Upside-down medium shot of a row of chrome robot bats hanging upside down from a beam, all bobbing their heads to music in their headphone ears, one bat asleep and slowly slipping off, inside the tower on a spiral staircase. 1990s American superhero comic book panel, bold black ink outlines, heavy spot blacks, cel-shaded flat colour with halftone dot shading, dynamic foreshortening, speed lines, dramatic warm lantern light and purple shadows, playful kid-friendly adventure tone, early-90s comic energy, 16:9 panel, full bleed. NO text, no lettering, no speech balloons, no sound effects, no logos, no signatures, no panel borders. Characters: chrome robot bats, silver membrane wings, red eyes, tiny chrome headphone ears.",
+     "refs": [
+      "bat"
+     ],
+     "motionPrompt": "Animate this comic panel. The bats bob their heads to the beat and the sleepy one slips. Subtle secondary motion: lantern sways, dust drifts. Camera: locked off. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
+     "clip": {
+      "src": "clips/p15.mp4",
+      "in": 0.0,
+      "out": 6.0,
+      "trimNote": "clean for the full clip"
+     },
+     "lyric": "HEAR THE BEAT OF MY DRUM",
+     "captions": [
+      {
+       "text": "HEAR THE BEAT OF MY DRUM",
+       "anchor": "tl",
+       "at": 74.791,
+       "lyric": true
+      }
+     ],
+     "sfx": [
+      {
+       "text": "BOP BOP",
+       "at": 75.233,
+       "pos": [
+        0.76,
+        0.8
+       ],
+       "rot": 5,
+       "size": 0.17,
+       "color": [
+        255,
+        214,
+        0
+       ]
+      }
+     ],
+     "slot": "b"
+    },
+    {
+     "id": "p16",
+     "image": "panels/p16.jpg",
+     "at": 76.115,
+     "location": "bat tower",
+     "camera": "wide interior shot",
+     "moment": "lanterns lit",
+     "scene": "Wide interior shot of Aura sending a wave of cyan fire that lights every lantern on the spiral staircase at once, Uno cheering, the bats spinning in a happy loop, tall hollow tower interior with a spiral staircase",
+     "prompt": "Wide interior shot of Aura sending a wave of cyan fire that lights every lantern on the spiral staircase at once, Uno cheering, the bats spinning in a happy loop, tall hollow tower interior with a spiral staircase. 1990s American superhero comic book panel, bold black ink outlines, heavy spot blacks, cel-shaded flat colour with halftone dot shading, dynamic foreshortening, speed lines, dramatic cyan fire racing up the tower, playful kid-friendly adventure tone, early-90s comic energy, 16:9 panel, full bleed. NO text, no lettering, no speech balloons, no sound effects, no logos, no signatures, no panel borders. Characters: Aura: graceful chrome robot lady, long dark hair with crimson streaks, glowing red eyes, round chrome headphone ears, modest crimson armored outfit with high collar and long sleeves, cyan magic glow in her hands; Uno: chrome robot hero, smooth round chrome head with no face plate seams, glowing red eyes, round chrome headphone ears, long purple fur coat, gold chain with a big gold number-one pendant; chrome robot bats, silver membrane wings, red eyes, tiny chrome headphone ears.",
+     "refs": [
+      "aura",
+      "uno",
+      "bat"
+     ],
+     "motionPrompt": "Animate this comic panel. The cyan flame races up the spiral lighting each lantern. Subtle secondary motion: bats loop, sparks drift. Camera: slow tilt up. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
+     "clip": {
+      "src": "clips/p16.mp4",
+      "in": 0.0,
+      "out": 6.0,
+      "trimNote": "clean for the full clip"
+     },
+     "lyric": "HOLY FIRE IN MY BONES / GONNA MAKE THE BROKEN WHOLE",
+     "captions": [
+      {
+       "text": "HOLY FIRE IN MY BONES",
+       "anchor": "tl",
+       "at": 78.739,
+       "lyric": true
+      },
+      {
+       "text": "GONNA MAKE THE BROKEN WHOLE",
+       "anchor": "bl",
+       "at": 81.386,
+       "lyric": true,
+       "estimated": true
+      }
+     ],
+     "focus": [
+      0.5,
+      0.45
+     ],
+     "sfx": [
+      {
+       "text": "FWOOSH!",
+       "at": 76.974,
+       "pos": [
+        0.8,
+        0.3
+       ],
+       "rot": -6,
+       "size": 0.17,
+       "color": [
+        90,
+        230,
+        255
+       ]
+      }
+     ],
+     "slot": "c"
+    }
+   ],
+   "layout": "inset-three"
+  },
+  {
+   "id": "page07",
+   "note": "verse 3 - the plains of peril",
+   "start": 83.174,
+   "end": 99.033,
+   "panels": [
+    {
+     "id": "p17",
+     "image": "panels/p17.jpg",
+     "at": 83.174,
+     "location": "plains of peril",
+     "camera": "aerial view",
+     "moment": "knights march",
+     "scene": "Aerial view of a column of the Sorcerer's chrome robot knights marching across a cracked purple plain toward a dark castle, one knight at the back tripping on his own spear, cracked purple plains under storm clouds, the dark castle on the horizon",
+     "prompt": "Aerial view of a column of the Sorcerer's chrome robot knights marching across a cracked purple plain toward a dark castle, one knight at the back tripping on his own spear, cracked purple plains under storm clouds, the dark castle on the horizon. 1990s American superhero comic book panel, bold black ink outlines, heavy spot blacks, cel-shaded flat colour with halftone dot shading, dynamic foreshortening, speed lines, dramatic storm light with purple lightning in the distance, playful kid-friendly adventure tone, early-90s comic energy, 16:9 panel, full bleed. NO text, no lettering, no speech balloons, no sound effects, no logos, no signatures, no panel borders. Characters: the Knights: silver chrome robot knights, red eye slits, chrome headphone ears on the helmet, red plume, kite shields, spears, each knight a slightly different helmet crest.",
+     "refs": [
+      "knight"
+     ],
+     "motionPrompt": "Animate this comic panel. The column marches forward and the last knight stumbles. Subtle secondary motion: storm clouds roll, dust kicks up. Camera: slow push forward. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
+     "clip": {
+      "src": "clips/p17.mp4",
+      "in": 0.0,
+      "out": 6.0,
+      "trimNote": "clean for the full clip"
+     },
+     "lyric": "ACROSS THE PLAINS OF PERIL, WHERE THE WICKED PLOTS RESIDE",
+     "captions": [
+      {
+       "text": "ACROSS THE PLAINS OF PERIL, WHERE THE WICKED PLOTS RESIDE",
+       "anchor": "tl",
+       "at": 84.474,
+       "lyric": true
+      }
+     ],
+     "slot": "a"
+    },
+    {
+     "id": "p18",
+     "image": "panels/p18.jpg",
+     "at": 86.703,
+     "location": "plains of peril",
+     "camera": "extreme close-up",
+     "moment": "magic arrow",
+     "scene": "Extreme close-up of Aura drawing a bow made of cyan light, a glowing cyan magic arrow beside her red eye, focused and calm, windswept rocky ridge above the plains",
+     "prompt": "Extreme close-up of Aura drawing a bow made of cyan light, a glowing cyan magic arrow beside her red eye, focused and calm, windswept rocky ridge above the plains. 1990s American superhero comic book panel, bold black ink outlines, heavy spot blacks, cel-shaded flat colour with halftone dot shading, dynamic foreshortening, speed lines, dramatic cyan arrow glow on chrome, playful kid-friendly adventure tone, early-90s comic energy, 16:9 panel, full bleed. NO text, no lettering, no speech balloons, no sound effects, no logos, no signatures, no panel borders. Characters: Aura: graceful chrome robot lady, long dark hair with crimson streaks, glowing red eyes, round chrome headphone ears, modest crimson armored outfit with high collar and long sleeves, cyan magic glow in her hands.",
+     "refs": [
+      "aura"
+     ],
+     "motionPrompt": "Animate this comic panel. Aura draws the light-bow and the arrow flares. Subtle secondary motion: crimson-streaked hair blows. Camera: locked off. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
+     "clip": {
+      "src": "clips/p18.mp4",
+      "in": 0.0,
+      "out": 5.0,
+      "trimNote": "flash jump at 5.6 s"
+     },
+     "lyric": "MY SPIRIT'S AN ARROW, PIERCING THROUGH THEIR PRIDE / WITH SPELLS UNBOUND, AND ANCIENT OATHS I KEEP",
+     "captions": [
+      {
+       "text": "MY SPIRIT'S AN ARROW, PIERCING THROUGH THEIR PRIDE",
+       "anchor": "tl",
+       "at": 87.562,
+       "lyric": true
+      },
+      {
+       "text": "WITH SPELLS UNBOUND, AND ANCIENT OATHS I KEEP",
+       "anchor": "bl",
+       "at": 91.556,
+       "lyric": true
+      }
+     ],
+     "sfx": [
+      {
+       "text": "ZWING!",
+       "at": 87.562,
+       "pos": [
+        0.76,
+        0.5
+       ],
+       "rot": -6,
+       "size": 0.17,
+       "color": [
+        90,
+        230,
+        255
+       ]
+      }
+     ],
+     "slot": "b"
+    }
+   ],
+   "transition": {
+    "type": "zoom",
+    "panel": "p18",
+    "at": 93.762,
+    "dur": 0.441
+   },
+   "splash": {
+    "id": "s19",
+    "image": "panels/s19.jpg",
+    "at": 93.762,
+    "location": "plains battlefield",
+    "camera": "side-on panoramic splash",
+    "moment": "knight dominoes",
+    "scene": "Full splash, side-on panorama of the cyan arrow bouncing off the first knight's helmet and the whole row of chrome robot knights toppling over like dominoes, Uno laughing with his hands on his hips, the plains of peril with the dark castle behind",
+    "prompt": "Full splash, side-on panorama of the cyan arrow bouncing off the first knight's helmet and the whole row of chrome robot knights toppling over like dominoes, Uno laughing with his hands on his hips, the plains of peril with the dark castle behind. 1990s American superhero comic book panel, bold black ink outlines, heavy spot blacks, cel-shaded flat colour with halftone dot shading, dynamic foreshortening, speed lines, dramatic cyan streak and purple storm light, playful kid-friendly adventure tone, early-90s comic energy, 16:9 panel, full bleed. NO text, no lettering, no speech balloons, no sound effects, no logos, no signatures, no panel borders. Characters: the Knights: silver chrome robot knights, red eye slits, chrome headphone ears on the helmet, red plume, kite shields, spears, each knight a slightly different helmet crest; Uno: chrome robot hero, smooth round chrome head with no face plate seams, glowing red eyes, round chrome headphone ears, long purple fur coat, gold chain with a big gold number-one pendant; Aura: graceful chrome robot lady, long dark hair with crimson streaks, glowing red eyes, round chrome headphone ears, modest crimson armored outfit with high collar and long sleeves, cyan magic glow in her hands.",
+    "refs": [
+     "knight",
+     "uno",
+     "aura"
+    ],
+    "motionPrompt": "Animate this comic panel. The knights topple one after another like dominoes. Subtle secondary motion: shields bounce, dust puffs. Camera: slow pan left. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
+    "clip": {
+     "src": "clips/s19.mp4",
+     "in": 0.0,
+     "out": 3.5,
+     "trimNote": "knight pile reframes at 3.5 s"
+    },
+    "lyric": "THE REALM'S PROTECTOR, WHILE THE FEARFUL SLEEP",
+    "captions": [
+     {
+      "text": "THE REALM'S PROTECTOR, WHILE THE FEARFUL SLEEP",
+      "anchor": "tl",
+      "at": 95.527,
+      "lyric": true,
+      "estimated": true
+     }
+    ],
+    "sfx": [
+     {
+      "text": "CLANG-CLANG-CLANG!",
+      "at": 94.645,
+      "pos": [
+       0.6,
+       0.55
+      ],
+      "rot": -4,
+      "size": 0.2,
+      "color": [
+       255,
+       214,
+       0
+      ]
+     }
+    ]
+   },
+   "layout": "tilt-two",
+   "splashStyle": "full"
+  },
+  {
+   "id": "page08",
+   "note": "chorus 4 - the dragon's lair",
+   "start": 99.033,
+   "end": 111.363,
+   "panels": [
+    {
+     "id": "p20",
+     "image": "panels/p20.jpg",
+     "at": 99.033,
+     "location": "dragon's lair",
+     "camera": "wide shot from behind a gold pile",
+     "moment": "dragon wakes",
+     "scene": "Wide shot from behind a pile of gold of the big chrome robot dragon waking up in its treasure cave, one eye opening, Uno and Aura peeking over the gold coins, volcanic treasure cave full of gold coins and crystal stalactites",
+     "prompt": "Wide shot from behind a pile of gold of the big chrome robot dragon waking up in its treasure cave, one eye opening, Uno and Aura peeking over the gold coins, volcanic treasure cave full of gold coins and crystal stalactites. 1990s American superhero comic book panel, bold black ink outlines, heavy spot blacks, cel-shaded flat colour with halftone dot shading, dynamic foreshortening, speed lines, dramatic orange lava glow and purple throat glow, playful kid-friendly adventure tone, early-90s comic energy, 16:9 panel, full bleed. NO text, no lettering, no speech balloons, no sound effects, no logos, no signatures, no panel borders. Characters: the Dragon: big friendly silver chrome robot dragon, red eyes, chrome headphone ears behind the horns, segmented wings, purple glow in its throat; Uno: chrome robot hero, smooth round chrome head with no face plate seams, glowing red eyes, round chrome headphone ears, long purple fur coat, gold chain with a big gold number-one pendant; Aura: graceful chrome robot lady, long dark hair with crimson streaks, glowing red eyes, round chrome headphone ears, modest crimson armored outfit with high collar and long sleeves, cyan magic glow in her hands.",
+     "refs": [
+      "dragon",
+      "uno",
+      "aura"
+     ],
+     "motionPrompt": "Animate this comic panel. The dragon opens one eye and lifts its head. Subtle secondary motion: coins slide, lava glows. Camera: slow push-in. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
+     "clip": {
+      "src": "clips/p20.mp4",
+      "in": 0.0,
+      "out": 3.0,
+      "trimNote": "heroes at the bottom vanish after ~3 s"
+     },
+     "lyric": "KINGDOM COME, KINGDOM COME",
+     "captions": [
+      {
+       "text": "KINGDOM COME, KINGDOM COME",
+       "anchor": "tl",
+       "at": 99.474,
+       "lyric": true
+      }
+     ],
+     "slot": "a"
+    },
+    {
+     "id": "p21",
+     "image": "panels/p21.jpg",
+     "at": 100.798,
+     "location": "dragon's lair",
+     "camera": "frontal close-up",
+     "moment": "spark sneeze",
+     "scene": "Comedic frontal close-up of the dragon sneezing a burst of harmless sparkly sparks, the Jester in front with his hat singed and smoking, blinking, inside the treasure cave",
+     "prompt": "Comedic frontal close-up of the dragon sneezing a burst of harmless sparkly sparks, the Jester in front with his hat singed and smoking, blinking, inside the treasure cave. 1990s American superhero comic book panel, bold black ink outlines, heavy spot blacks, cel-shaded flat colour with halftone dot shading, dynamic foreshortening, speed lines, dramatic bright gold sneeze sparks, playful kid-friendly adventure tone, early-90s comic energy, 16:9 panel, full bleed. NO text, no lettering, no speech balloons, no sound effects, no logos, no signatures, no panel borders. Characters: the Dragon: big friendly silver chrome robot dragon, red eyes, chrome headphone ears behind the horns, segmented wings, purple glow in its throat; the Jester: small bouncy silver chrome robot jester, red eyes, chrome headphone ears, magenta-and-teal diamond suit, three-pointed hat with bells, curly-toed shoes.",
+     "refs": [
+      "dragon",
+      "jester"
+     ],
+     "motionPrompt": "Animate this comic panel. The dragon sneezes and sparks spray, the jester blinks. Subtle secondary motion: smoke curls from the hat. Camera: locked off. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
+     "clip": {
+      "src": "clips/p21.mp4",
+      "in": 0.0,
+      "out": 4.33,
+      "trimNote": "clean for the full clip; capped to 4.33 s by the page turn"
+     },
+     "lyric": "HEAR THE BEAT OF MY DRUM",
+     "captions": [
+      {
+       "text": "HEAR THE BEAT OF MY DRUM",
+       "anchor": "tl",
+       "at": 103.445,
+       "lyric": true
+      }
+     ],
+     "sfx": [
+      {
+       "text": "AH-CHOO!",
+       "at": 101.68,
+       "pos": [
+        0.76,
+        0.22
+       ],
+       "rot": 7,
+       "size": 0.17,
+       "color": [
+        255,
+        214,
+        0
+       ]
+      }
+     ],
+     "slot": "b"
+    }
+   ],
+   "transition": {
+    "type": "zoom",
+    "panel": "p21",
+    "at": 106.092,
+    "dur": 0.418
+   },
+   "splash": {
+    "id": "s22",
+    "image": "panels/s22.jpg",
+    "at": 106.092,
+    "location": "stormy sky",
+    "camera": "flying action splash",
+    "moment": "dragon ride",
+    "scene": "Full splash, flying action shot of Uno and Aura riding the friendly chrome dragon through the storm clouds toward the Sorcerer's horned castle, Aura's cyan magic trailing behind, stormy night sky above the clouds",
+    "prompt": "Full splash, flying action shot of Uno and Aura riding the friendly chrome dragon through the storm clouds toward the Sorcerer's horned castle, Aura's cyan magic trailing behind, stormy night sky above the clouds. 1990s American superhero comic book panel, bold black ink outlines, heavy spot blacks, cel-shaded flat colour with halftone dot shading, dynamic foreshortening, speed lines, dramatic lightning flashes and cyan trail glow, playful kid-friendly adventure tone, early-90s comic energy, 16:9 panel, full bleed. NO text, no lettering, no speech balloons, no sound effects, no logos, no signatures, no panel borders. Characters: the Dragon: big friendly silver chrome robot dragon, red eyes, chrome headphone ears behind the horns, segmented wings, purple glow in its throat; Uno: chrome robot hero, smooth round chrome head with no face plate seams, glowing red eyes, round chrome headphone ears, long purple fur coat, gold chain with a big gold number-one pendant; Aura: graceful chrome robot lady, long dark hair with crimson streaks, glowing red eyes, round chrome headphone ears, modest crimson armored outfit with high collar and long sleeves, cyan magic glow in her hands.",
+    "refs": [
+     "dragon",
+     "uno",
+     "aura"
+    ],
+    "motionPrompt": "Animate this comic panel. The dragon beats its wings and banks toward the castle. Subtle secondary motion: clouds whip past, coat flutters. Camera: tracking alongside. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
+    "clip": {
+     "src": "clips/s22b.mp4",
+     "in": 0.0,
+     "out": 4.5,
+     "trimNote": "one-head regen (s22b); fast flight, stable dragon"
+    },
+    "lyric": "RIGHTEOUS FIRE IN MY SOUL / GONNA MAKE THE SHATTERED WHOLE",
+    "captions": [
+     {
+      "text": "RIGHTEOUS FIRE IN MY SOUL",
+      "anchor": "tl",
+      "at": 106.533,
+      "lyric": true
+     },
+     {
+      "text": "GONNA MAKE THE SHATTERED WHOLE",
+      "anchor": "bl",
+      "at": 110.945,
+      "lyric": true
+     }
+    ],
+    "sfx": [
+     {
+      "text": "WHOOSH!",
+      "at": 106.974,
+      "pos": [
+       0.78,
+       0.45
+      ],
+      "rot": -6,
+      "size": 0.2,
+      "color": [
+       90,
+       230,
+       255
+      ]
+     }
+    ]
+   },
+   "layout": "slant-two",
+   "splashStyle": "tilt"
+  },
+  {
+   "id": "page09",
+   "note": "verse 4 - the boss",
+   "start": 111.363,
+   "end": 127.222,
+   "panels": [
+    {
+     "id": "p23",
+     "image": "panels/p23.jpg",
+     "at": 111.363,
+     "location": "forgotten ruins",
+     "camera": "framed through a broken arch",
+     "moment": "entering the lair",
+     "scene": "Shot framed through a broken arch of Uno and Aura stepping through crumbling overgrown ruins toward a glowing purple doorway carved with horns, forgotten ruins at the edge of the Sorcerer's lair, vines and floating rocks",
+     "prompt": "Shot framed through a broken arch of Uno and Aura stepping through crumbling overgrown ruins toward a glowing purple doorway carved with horns, forgotten ruins at the edge of the Sorcerer's lair, vines and floating rocks. 1990s American superhero comic book panel, bold black ink outlines, heavy spot blacks, cel-shaded flat colour with halftone dot shading, dynamic foreshortening, speed lines, dramatic purple doorway glow and green moss light, playful kid-friendly adventure tone, early-90s comic energy, 16:9 panel, full bleed. NO text, no lettering, no speech balloons, no sound effects, no logos, no signatures, no panel borders. Characters: Uno: chrome robot hero, smooth round chrome head with no face plate seams, glowing red eyes, round chrome headphone ears, long purple fur coat, gold chain with a big gold number-one pendant; Aura: graceful chrome robot lady, long dark hair with crimson streaks, glowing red eyes, round chrome headphone ears, modest crimson armored outfit with high collar and long sleeves, cyan magic glow in her hands.",
+     "refs": [
+      "uno",
+      "aura"
+     ],
+     "motionPrompt": "Animate this comic panel. The heroes step through the arch toward the glow. Subtle secondary motion: vines sway, floating rocks bob. Camera: slow push-in. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
+     "clip": {
+      "src": "clips/p23.mp4",
+      "in": 0.0,
+      "out": 6.0,
+      "trimNote": "clean for the full clip"
+     },
+     "lyric": "GONNA MAKE THE SHATTERED WHOLE / FROM FORGOTTEN RUINS TO THE WIZARD'S CURSED LAIR",
+     "captions": [
+      {
+       "text": "GONNA MAKE THE SHATTERED WHOLE",
+       "anchor": "tl",
+       "at": 111.363,
+       "lyric": true
+      },
+      {
+       "text": "FROM FORGOTTEN RUINS TO THE WIZARD'S CURSED LAIR",
+       "anchor": "bl",
+       "at": 112.245,
+       "lyric": true
+      }
+     ],
+     "slot": "a"
+    },
+    {
+     "id": "p24",
+     "image": "panels/p24.jpg",
+     "at": 114.916,
+     "location": "boss throne room",
+     "camera": "low angle on the throne",
+     "moment": "the music is caged",
+     "scene": "Low-angle shot of the Horned Sorcerer lounging on a spiky throne, holding a birdcage full of glowing music notes, grinning smugly, grand throne room with purple banners and a cracked marble floor",
+     "prompt": "Low-angle shot of the Horned Sorcerer lounging on a spiky throne, holding a birdcage full of glowing music notes, grinning smugly, grand throne room with purple banners and a cracked marble floor. 1990s American superhero comic book panel, bold black ink outlines, heavy spot blacks, cel-shaded flat colour with halftone dot shading, dynamic foreshortening, speed lines, dramatic red and purple uplight, playful kid-friendly adventure tone, early-90s comic energy, 16:9 panel, full bleed. NO text, no lettering, no speech balloons, no sound effects, no logos, no signatures, no panel borders. Characters: the Horned Sorcerer: tall dark-chrome robot sorcerer, glowing red eyes, curling chrome horns, chrome headphone ears, black-and-purple cape, staff topped with a purple orb.",
+     "refs": [
+      "sorcerer"
+     ],
+     "motionPrompt": "Animate this comic panel. The sorcerer taps the cage and the notes flutter. Subtle secondary motion: banners ripple, purple orb glows. Camera: slow push-in. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
+     "clip": {
+      "src": "clips/p24.mp4",
+      "in": 0.0,
+      "out": 3.5,
+      "trimNote": "sorcerer's pose/face morphs after ~3.5 s"
+     },
+     "lyric": "",
+     "captions": [],
+     "slot": "b"
+    },
+    {
+     "id": "p25",
+     "image": "panels/p25.jpg",
+     "at": 116.657,
+     "location": "boss throne room",
+     "camera": "wide two-shot",
+     "moment": "magic clash",
+     "scene": "Wide two-shot of the Sorcerer's purple lightning crashing into Aura's cyan shield while Uno charges forward with his sword, the throne room floor cracking with energy",
+     "prompt": "Wide two-shot of the Sorcerer's purple lightning crashing into Aura's cyan shield while Uno charges forward with his sword, the throne room floor cracking with energy. 1990s American superhero comic book panel, bold black ink outlines, heavy spot blacks, cel-shaded flat colour with halftone dot shading, dynamic foreshortening, speed lines, dramatic purple versus cyan clash flare, playful kid-friendly adventure tone, early-90s comic energy, 16:9 panel, full bleed. NO text, no lettering, no speech balloons, no sound effects, no logos, no signatures, no panel borders. Characters: the Horned Sorcerer: tall dark-chrome robot sorcerer, glowing red eyes, curling chrome horns, chrome headphone ears, black-and-purple cape, staff topped with a purple orb; Aura: graceful chrome robot lady, long dark hair with crimson streaks, glowing red eyes, round chrome headphone ears, modest crimson armored outfit with high collar and long sleeves, cyan magic glow in her hands; Uno: chrome robot hero, smooth round chrome head with no face plate seams, glowing red eyes, round chrome headphone ears, long purple fur coat, gold chain with a big gold number-one pendant.",
+     "refs": [
+      "sorcerer",
+      "aura",
+      "uno"
+     ],
+     "motionPrompt": "Animate this comic panel. Purple lightning hits the cyan shield and splashes off. Subtle secondary motion: floor cracks spark, cape billows. Camera: locked off. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
+     "clip": {
+      "src": "clips/p25.mp4",
+      "in": 0.0,
+      "out": 4.29,
+      "trimNote": "clean for the full clip; capped to 4.29 s by the page turn"
+     },
+     "lyric": "I FACE THE UNKNOWN, WITHOUT A SINGLE FEAR / A BEACON OF JUSTICE, AGAINST THE CREEPING DREAD",
+     "captions": [
+      {
+       "text": "I FACE THE UNKNOWN, WITHOUT A SINGLE FEAR",
+       "anchor": "tl",
+       "at": 116.657,
+       "lyric": true,
+       "estimated": true
+      },
+      {
+       "text": "A BEACON OF JUSTICE, AGAINST THE CREEPING DREAD",
+       "anchor": "bl",
+       "at": 119.745,
+       "lyric": true
+      }
+     ],
+     "focus": [
+      0.5,
+      0.45
+     ],
+     "sfx": [
+      {
+       "text": "KRA-KOOM!",
+       "at": 117.539,
+       "pos": [
+        0.76,
+        0.55
+       ],
+       "rot": -4,
+       "size": 0.17,
+       "color": [
+        255,
+        214,
+        0
+       ]
+      }
+     ],
+     "slot": "c"
+    }
+   ],
+   "transition": {
+    "type": "zoom",
+    "panel": "p25",
+    "at": 121.951,
+    "dur": 0.441
+   },
+   "splash": {
+    "id": "s26",
+    "image": "panels/s26.jpg",
+    "at": 121.951,
+    "location": "boss throne room",
+    "camera": "impact close-up splash",
+    "moment": "music set free",
+    "scene": "Full splash, impact close-up of Uno's sword breaking the cage open, hundreds of glowing music notes bursting out like birds, the Sorcerer tumbling backwards with his crown of horns knocked crooked, the throne room filling with light",
+    "prompt": "Full splash, impact close-up of Uno's sword breaking the cage open, hundreds of glowing music notes bursting out like birds, the Sorcerer tumbling backwards with his crown of horns knocked crooked, the throne room filling with light. 1990s American superhero comic book panel, bold black ink outlines, heavy spot blacks, cel-shaded flat colour with halftone dot shading, dynamic foreshortening, speed lines, dramatic white-gold burst light, playful kid-friendly adventure tone, early-90s comic energy, 16:9 panel, full bleed. NO text, no lettering, no speech balloons, no sound effects, no logos, no signatures, no panel borders. Characters: Uno: chrome robot hero, smooth round chrome head with no face plate seams, glowing red eyes, round chrome headphone ears, long purple fur coat, gold chain with a big gold number-one pendant; the Horned Sorcerer: tall dark-chrome robot sorcerer, glowing red eyes, curling chrome horns, chrome headphone ears, black-and-purple cape, staff topped with a purple orb.",
+    "refs": [
+     "uno",
+     "sorcerer"
+    ],
+    "motionPrompt": "Animate this comic panel. The cage bursts and the notes fly out. Subtle secondary motion: the sorcerer tumbles, sparkles fall. Camera: slow push-in. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
+    "clip": {
+     "src": "clips/s26.mp4",
+     "in": 0.0,
+     "out": 2.25,
+     "trimNote": "scene changes / sorcerer vanishes at 2.25 s"
+    },
+    "lyric": "RESTORING BALANCE, UNTIL ALL EVIL'S BLED",
+    "captions": [
+     {
+      "text": "RESTORING BALANCE, UNTIL ALL EVIL'S BLED",
+      "anchor": "tl",
+      "at": 122.834,
+      "lyric": true
+     }
+    ],
+    "sfx": [
+     {
+      "text": "KRAK-BOOM!",
+      "at": 122.834,
+      "pos": [
+       0.62,
+       0.8
+      ],
+      "rot": -7,
+      "size": 0.2,
+      "color": [
+       255,
+       214,
+       0
+      ]
+     }
+    ]
+   },
+   "layout": "tilt-three",
+   "splashStyle": "breakout"
+  },
+  {
+   "id": "page10",
+   "note": "chorus 5 - the ballroom party",
+   "start": 127.222,
+   "end": 137.81,
+   "panels": [
+    {
+     "id": "p27",
+     "image": "panels/p27.jpg",
+     "at": 127.222,
+     "location": "dance-party ballroom",
+     "camera": "wide high angle",
+     "moment": "the party starts",
+     "scene": "Wide high-angle shot of a packed ballroom of chrome robot dancers under a giant spinning crystal disco chandelier, the freed music notes swirling above them, palace ballroom with laser beams and a mirror floor",
+     "prompt": "Wide high-angle shot of a packed ballroom of chrome robot dancers under a giant spinning crystal disco chandelier, the freed music notes swirling above them, palace ballroom with laser beams and a mirror floor. 1990s American superhero comic book panel, bold black ink outlines, heavy spot blacks, cel-shaded flat colour with halftone dot shading, dynamic foreshortening, speed lines, dramatic purple and cyan lasers, playful kid-friendly adventure tone, early-90s comic energy, 16:9 panel, full bleed. NO text, no lettering, no speech balloons, no sound effects, no logos, no signatures, no panel borders. Characters: crowd of chrome robot townsfolk dancers, red eyes, chrome headphone ears, each with a unique outfit (scarves, aprons, capes, hats) in purple, crimson, teal and gold.",
+     "refs": [
+      "crowd"
+     ],
+     "motionPrompt": "Animate this comic panel. The chandelier spins and the crowd jumps on the beat. Subtle secondary motion: lasers sweep, notes swirl. Camera: slow rotate. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
+     "clip": {
+      "src": "clips/p27.mp4",
+      "in": 0.0,
+      "out": 4.5,
+      "trimNote": "busy crowd; keep it short of the late drift"
+     },
+     "lyric": "KINGDOM COME, KINGDOM COME",
+     "captions": [
+      {
+       "text": "KINGDOM COME, KINGDOM COME",
+       "anchor": "tl",
+       "at": 128.569,
+       "lyric": true
+      }
+     ],
+     "slot": "a"
+    },
+    {
+     "id": "p28",
+     "image": "panels/p28.jpg",
+     "at": 129.01,
+     "location": "dance-party ballroom",
+     "camera": "medium two-shot",
+     "moment": "the reformed sorcerer dances",
+     "scene": "Medium two-shot of the reformed Horned Sorcerer doing an awkward robot dance with the Jester, a wolf and a bat dancing beside them, edge of the ballroom dance floor",
+     "prompt": "Medium two-shot of the reformed Horned Sorcerer doing an awkward robot dance with the Jester, a wolf and a bat dancing beside them, edge of the ballroom dance floor. 1990s American superhero comic book panel, bold black ink outlines, heavy spot blacks, cel-shaded flat colour with halftone dot shading, dynamic foreshortening, speed lines, dramatic magenta spotlight, playful kid-friendly adventure tone, early-90s comic energy, 16:9 panel, full bleed. NO text, no lettering, no speech balloons, no sound effects, no logos, no signatures, no panel borders. Characters: the Horned Sorcerer: tall dark-chrome robot sorcerer, glowing red eyes, curling chrome horns, chrome headphone ears, black-and-purple cape, staff topped with a purple orb; the Jester: small bouncy silver chrome robot jester, red eyes, chrome headphone ears, magenta-and-teal diamond suit, three-pointed hat with bells, curly-toed shoes; chrome robot wolves, segmented silver plates, red eyes, small chrome headphone ears, each wolf with different markings; chrome robot bats, silver membrane wings, red eyes, tiny chrome headphone ears.",
+     "refs": [
+      "sorcerer",
+      "jester",
+      "wolf",
+      "bat"
+     ],
+     "motionPrompt": "Animate this comic panel. The sorcerer does a stiff robot dance and the jester copies him. Subtle secondary motion: wolf wags, bat flaps. Camera: locked off. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
+     "clip": {
+      "src": "clips/p28.mp4",
+      "in": 0.0,
+      "out": 4.5,
+      "trimNote": "dancers drift late"
+     },
+     "lyric": "HEAR THE BEAT OF MY DRUM",
+     "captions": [
+      {
+       "text": "HEAR THE BEAT OF MY DRUM",
+       "anchor": "tl",
+       "at": 131.634,
+       "lyric": true
+      }
+     ],
+     "sfx": [
+      {
+       "text": "BOING!",
+       "at": 129.869,
+       "pos": [
+        0.76,
+        0.2
+       ],
+       "rot": 6,
+       "size": 0.17,
+       "color": [
+        255,
+        120,
+        200
+       ]
+      }
+     ],
+     "slot": "b"
+    },
+    {
+     "id": "p29",
+     "image": "panels/p29.jpg",
+     "at": 132.54,
+     "location": "dance-party ballroom",
+     "camera": "spotlight centre-stage",
+     "moment": "dance-off",
+     "scene": "Centre-stage spotlight shot of Uno and Aura in a dance-off in a circle of light, Uno spinning on his back, Aura striking a pose with cyan sparkles, the crowd cheering, centre of the ballroom dance floor",
+     "prompt": "Centre-stage spotlight shot of Uno and Aura in a dance-off in a circle of light, Uno spinning on his back, Aura striking a pose with cyan sparkles, the crowd cheering, centre of the ballroom dance floor. 1990s American superhero comic book panel, bold black ink outlines, heavy spot blacks, cel-shaded flat colour with halftone dot shading, dynamic foreshortening, speed lines, dramatic single white spotlight and cyan sparkles, playful kid-friendly adventure tone, early-90s comic energy, 16:9 panel, full bleed. NO text, no lettering, no speech balloons, no sound effects, no logos, no signatures, no panel borders. Characters: Uno: chrome robot hero, smooth round chrome head with no face plate seams, glowing red eyes, round chrome headphone ears, long purple fur coat, gold chain with a big gold number-one pendant; Aura: graceful chrome robot lady, long dark hair with crimson streaks, glowing red eyes, round chrome headphone ears, modest crimson armored outfit with high collar and long sleeves, cyan magic glow in her hands; crowd of chrome robot townsfolk dancers, red eyes, chrome headphone ears, each with a unique outfit (scarves, aprons, capes, hats) in purple, crimson, teal and gold.",
+     "refs": [
+      "uno",
+      "aura",
+      "crowd"
+     ],
+     "motionPrompt": "Animate this comic panel. Uno spins on his back and aura hits a pose. Subtle secondary motion: crowd claps, sparkles fall. Camera: slow push-in. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
+     "clip": {
+      "src": "clips/p29.mp4",
+      "in": 0.0,
+      "out": 4.75,
+      "trimNote": "clean for the full clip; capped to 4.75 s by the page turn"
+     },
+     "lyric": "RIGHTEOUS FIRE IN MY SOUL",
+     "captions": [
+      {
+       "text": "RIGHTEOUS FIRE IN MY SOUL",
+       "anchor": "tl",
+       "at": 134.722,
+       "lyric": true
+      }
+     ],
+     "focus": [
+      0.5,
+      0.42
+     ],
+     "sfx": [
+      {
+       "text": "WOOO!",
+       "at": 133.399,
+       "pos": [
+        0.8,
+        0.25
+       ],
+       "rot": -6,
+       "size": 0.17,
+       "color": [
+        90,
+        230,
+        255
+       ]
+      }
+     ],
+     "slot": "c"
+    }
+   ],
+   "layout": "diagonal-three"
+  },
+  {
+   "id": "page11",
+   "note": "outro - victory",
+   "start": 137.81,
+   "end": 170.816,
+   "panels": [
+    {
+     "id": "p30",
+     "image": "panels/p30.jpg",
+     "at": 137.81,
+     "location": "palace hallway",
+     "camera": "tracking side view",
+     "moment": "conga line",
+     "scene": "Tracking side view of a conga line of the Knights, the wolves, the spiders and the Jester snaking down a palace hallway, the spider using all eight legs to keep the beat, long palace hallway with tall windows and banners",
+     "prompt": "Tracking side view of a conga line of the Knights, the wolves, the spiders and the Jester snaking down a palace hallway, the spider using all eight legs to keep the beat, long palace hallway with tall windows and banners. 1990s American superhero comic book panel, bold black ink outlines, heavy spot blacks, cel-shaded flat colour with halftone dot shading, dynamic foreshortening, speed lines, dramatic warm morning light through windows, playful kid-friendly adventure tone, early-90s comic energy, 16:9 panel, full bleed. NO text, no lettering, no speech balloons, no sound effects, no logos, no signatures, no panel borders. Characters: the Knights: silver chrome robot knights, red eye slits, chrome headphone ears on the helmet, red plume, kite shields, spears, each knight a slightly different helmet crest; chrome robot wolves, segmented silver plates, red eyes, small chrome headphone ears, each wolf with different markings; chrome robot spiders, round silver bodies, eight jointed legs, cluster of red eyes, tiny chrome headphone ears; the Jester: small bouncy silver chrome robot jester, red eyes, chrome headphone ears, magenta-and-teal diamond suit, three-pointed hat with bells, curly-toed shoes.",
+     "refs": [
+      "knight",
+      "wolf",
+      "spider",
+      "jester"
+     ],
+     "motionPrompt": "Animate this comic panel. The conga line bounces along step by step. Subtle secondary motion: banners sway, light beams shimmer. Camera: slow pan. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
+     "clip": {
+      "src": "clips/p30.mp4",
+      "in": 0.0,
+      "out": 4.5,
+      "trimNote": "conga drifts late"
+     },
+     "lyric": "",
+     "captions": [
+      {
+       "text": "AND THE MUSIC CAME HOME.",
+       "anchor": "tl",
+       "at": 138.252
+      }
+     ],
+     "slot": "a"
+    },
+    {
+     "id": "p31",
+     "image": "panels/p31.jpg",
+     "at": 143.105,
+     "location": "palace balcony DJ booth",
+     "camera": "over-the-decks shot",
+     "moment": "wizard DJ",
+     "scene": "Over-the-decks shot of the Wizard DJing on glowing chrome turntables with the dragon beside him blowing smoke rings in the shape of hearts, palace balcony DJ booth above the party",
+     "prompt": "Over-the-decks shot of the Wizard DJing on glowing chrome turntables with the dragon beside him blowing smoke rings in the shape of hearts, palace balcony DJ booth above the party. 1990s American superhero comic book panel, bold black ink outlines, heavy spot blacks, cel-shaded flat colour with halftone dot shading, dynamic foreshortening, speed lines, dramatic violet and pink stage light, playful kid-friendly adventure tone, early-90s comic energy, 16:9 panel, full bleed. NO text, no lettering, no speech balloons, no sound effects, no logos, no signatures, no panel borders. Characters: the Wizard: tall silver chrome robot wizard, red eyes, chrome headphone ears under a tall purple star-pattern hat, long silver beard made of fine chrome wire, violet robe, crystal-topped staff; the Dragon: big friendly silver chrome robot dragon, red eyes, chrome headphone ears behind the horns, segmented wings, purple glow in its throat.",
+     "refs": [
+      "wizard",
+      "dragon"
+     ],
+     "motionPrompt": "Animate this comic panel. The wizard scratches a record and the dragon blows a heart-shaped smoke ring. Subtle secondary motion: beard sways, lights pulse. Camera: locked off. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
+     "clip": {
+      "src": "clips/p31.mp4",
+      "in": 0.0,
+      "out": 6.0,
+      "trimNote": "clean for the full clip"
+     },
+     "lyric": "",
+     "captions": [],
+     "sfx": [
+      {
+       "text": "WIKKA-WIKKA!",
+       "at": 143.987,
+       "pos": [
+        0.74,
+        0.8
+       ],
+       "rot": -5,
+       "size": 0.17,
+       "color": [
+        255,
+        214,
+        0
+       ]
+      }
+     ],
+     "slot": "b"
+    }
+   ],
+   "transition": {
+    "type": "zoom",
+    "panel": "p31",
+    "at": 150.21,
+    "dur": 0.441
+   },
+   "splash": {
+    "id": "s32",
+    "image": "panels/s32.jpg",
+    "at": 150.21,
+    "location": "castle rampart at sunrise",
+    "camera": "epic wide victory splash",
+    "moment": "sunrise victory",
+    "scene": "Full splash, epic wide shot of Uno and Aura standing on the castle rampart at sunrise, waving, with the whole cast and townsfolk cheering behind them, the dragon curled around a tower and bats circling, the chrome kingdom restored, rainbow over the hills",
+    "prompt": "Full splash, epic wide shot of Uno and Aura standing on the castle rampart at sunrise, waving, with the whole cast and townsfolk cheering behind them, the dragon curled around a tower and bats circling, the chrome kingdom restored, rainbow over the hills. 1990s American superhero comic book panel, bold black ink outlines, heavy spot blacks, cel-shaded flat colour with halftone dot shading, dynamic foreshortening, speed lines, dramatic golden sunrise and a soft rainbow, playful kid-friendly adventure tone, early-90s comic energy, 16:9 panel, full bleed. NO text, no lettering, no speech balloons, no sound effects, no logos, no signatures, no panel borders. Characters: Uno: chrome robot hero, smooth round chrome head with no face plate seams, glowing red eyes, round chrome headphone ears, long purple fur coat, gold chain with a big gold number-one pendant; Aura: graceful chrome robot lady, long dark hair with crimson streaks, glowing red eyes, round chrome headphone ears, modest crimson armored outfit with high collar and long sleeves, cyan magic glow in her hands; the Wizard: tall silver chrome robot wizard, red eyes, chrome headphone ears under a tall purple star-pattern hat, long silver beard made of fine chrome wire, violet robe, crystal-topped staff; the Jester: small bouncy silver chrome robot jester, red eyes, chrome headphone ears, magenta-and-teal diamond suit, three-pointed hat with bells, curly-toed shoes; the Knights: silver chrome robot knights, red eye slits, chrome headphone ears on the helmet, red plume, kite shields, spears, each knight a slightly different helmet crest; the Horned Sorcerer: tall dark-chrome robot sorcerer, glowing red eyes, curling chrome horns, chrome headphone ears, black-and-purple cape, staff topped with a purple orb; the Dragon: big friendly silver chrome robot dragon, red eyes, chrome headphone ears behind the horns, segmented wings, purple glow in its throat; chrome robot bats, silver membrane wings, red eyes, tiny chrome headphone ears; crowd of chrome robot townsfolk dancers, red eyes, chrome headphone ears, each with a unique outfit (scarves, aprons, capes, hats) in purple, crimson, teal and gold.",
+    "refs": [
+     "uno",
+     "aura",
+     "wizard",
+     "jester",
+     "knight",
+     "sorcerer",
+     "dragon",
+     "bat",
+     "crowd"
+    ],
+    "motionPrompt": "Animate this comic panel. Everyone waves and the sun rises. Subtle secondary motion: banners ripple, bats circle. Camera: slow pull-back. Keep the exact comic art style, ink lines and colours, keep faces and hands unchanged, same number of arms and fingers, no new characters, no morphing, no text, no cuts.",
+    "clip": {
+     "src": "clips/s32.mp4",
+     "in": 0.0,
+     "out": 6.0,
+     "trimNote": "clean for the full clip"
+    },
+    "lyric": "",
+    "captions": [
+     {
+      "text": "KINGDOM COME.",
+      "anchor": "tl",
+      "at": 150.651
+     }
+    ]
+   },
+   "layout": "slant-two",
+   "splashStyle": "full"
+  }
+ ]
+}

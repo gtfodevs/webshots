@@ -1,0 +1,344 @@
+[
+ {
+  "id": "f03",
+  "splash": false,
+  "lyric": "Deadbolt shaking",
+  "aspect": "16:9",
+  "characters": [],
+  "prompt": "Extreme close-up: a heavy brass deadbolt on an old wooden door rattling, fresh claw scratch marks raking across the green-wallpapered hall wall beside it, candle light flickering. No characters. Haunted mansion at 3 AM, kid-safe eerie Halloween mood, no humans, no gore, no blood. Characters are the same height. Hands apart and clearly drawn, no clasped hands. 1990s superhero comic panel, bold ink, heavy blacks, halftone, deep teal and black, sickly green glow, candle orange highlights, rain, fog, lightning, 16:9, no text, no letters, no logos.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/c542333dd5429d16c251957261c84b0f945e0a93051079b666fc07878bbfe94d.jpg",
+   "/workspace/halloween-comic/panels/f02.jpg"
+  ],
+  "out": "/workspace/halloween-comic/panels/f03.jpg"
+ },
+ {
+  "id": "f04",
+  "splash": false,
+  "lyric": "Mud on the carpet",
+  "aspect": "16:9",
+  "characters": [
+   "Uno",
+   "Aura"
+  ],
+  "prompt": "Low angle: Uno kneeling on a long red hallway carpet, examining muddy clawed footprints that lead straight into the wall, his red eyes flaring, Aura standing behind him holding a candle lantern. Uno (tall robot, round smooth chrome dome head, glowing red eyes, headphone ears, long purple fur coat, gold \"1\" chain); Aura (clearly a robot, same height as Uno: grey chrome face, glowing red eyes, headphone ears, chrome arms and legs with visible joints, flowing dark crimson hair, modest long-sleeved crimson pantsuit, cyan magic). Haunted mansion at 3 AM, kid-safe eerie Halloween mood, no humans, no gore, no blood. Characters are the same height. Hands apart and clearly drawn, no clasped hands. 1990s superhero comic panel, bold ink, heavy blacks, halftone, deep teal and black, sickly green glow, candle orange highlights, rain, fog, lightning, 16:9, no text, no letters, no logos.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/c542333dd5429d16c251957261c84b0f945e0a93051079b666fc07878bbfe94d.jpg",
+   "/workspace/halloween-comic/panels/f02.jpg"
+  ],
+  "out": "/workspace/halloween-comic/panels/f04.jpg"
+ },
+ {
+  "id": "f05",
+  "splash": false,
+  "lyric": "I don't like what I just saw",
+  "aspect": "16:9",
+  "characters": [
+   "Aura"
+  ],
+  "prompt": "Tight close-up: Aura holding up a shaking candle lantern, her red robot eyes wide with fear, crimson hair framing her grey chrome face, darkness behind her. Aura (clearly a robot, same height as Uno: grey chrome face, glowing red eyes, headphone ears, chrome arms and legs with visible joints, flowing dark crimson hair, modest long-sleeved crimson pantsuit, cyan magic). Haunted mansion at 3 AM, kid-safe eerie Halloween mood, no humans, no gore, no blood. Characters are the same height. Hands apart and clearly drawn, no clasped hands. 1990s superhero comic panel, bold ink, heavy blacks, halftone, deep teal and black, sickly green glow, candle orange highlights, rain, fog, lightning, 16:9, no text, no letters, no logos.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/c542333dd5429d16c251957261c84b0f945e0a93051079b666fc07878bbfe94d.jpg",
+   "/workspace/halloween-comic/panels/f02.jpg"
+  ],
+  "out": "/workspace/halloween-comic/panels/f05.jpg"
+ },
+ {
+  "id": "f07",
+  "splash": false,
+  "lyric": "(strike)",
+  "aspect": "16:9",
+  "characters": [
+   "Uno",
+   "Aura",
+   "Leaners"
+  ],
+  "prompt": "Low dynamic angle: Uno stepping in front of Aura with one arm thrown out to shield her, Aura raising her other hand with a burst of cyan magic, tall thin shadow robots recoiling backward into doorways. Uno (tall robot, round smooth chrome dome head, glowing red eyes, headphone ears, long purple fur coat, gold \"1\" chain); Aura (clearly a robot, same height as Uno: grey chrome face, glowing red eyes, headphone ears, chrome arms and legs with visible joints, flowing dark crimson hair, modest long-sleeved crimson pantsuit, cyan magic); the Leaners (tall thin shadow robots, matte black bodies, hollow faces with glowing red eyes). Haunted mansion at 3 AM, kid-safe eerie Halloween mood, no humans, no gore, no blood. Characters are the same height. Hands apart and clearly drawn, no clasped hands. 1990s superhero comic panel, bold ink, heavy blacks, halftone, deep teal and black, sickly green glow, candle orange highlights, rain, fog, lightning, 16:9, no text, no letters, no logos.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/c542333dd5429d16c251957261c84b0f945e0a93051079b666fc07878bbfe94d.jpg",
+   "/workspace/halloween-comic/panels/f02.jpg"
+  ],
+  "out": "/workspace/halloween-comic/panels/f07.jpg"
+ },
+ {
+  "id": "f08",
+  "splash": false,
+  "lyric": "I'm looking for the door",
+  "aspect": "16:9",
+  "characters": [
+   "Uno",
+   "Aura"
+  ],
+  "prompt": "Extreme Dutch angle wide shot: Uno and Aura standing small in a dizzying maze of identical tall wooden doors stretching in every direction, sickly green glow, fog on the floor. Uno (tall robot, round smooth chrome dome head, glowing red eyes, headphone ears, long purple fur coat, gold \"1\" chain); Aura (clearly a robot, same height as Uno: grey chrome face, glowing red eyes, headphone ears, chrome arms and legs with visible joints, flowing dark crimson hair, modest long-sleeved crimson pantsuit, cyan magic). Haunted mansion at 3 AM, kid-safe eerie Halloween mood, no humans, no gore, no blood. Characters are the same height. Hands apart and clearly drawn, no clasped hands. 1990s superhero comic panel, bold ink, heavy blacks, halftone, deep teal and black, sickly green glow, candle orange highlights, rain, fog, lightning, 16:9, no text, no letters, no logos.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/c542333dd5429d16c251957261c84b0f945e0a93051079b666fc07878bbfe94d.jpg",
+   "/workspace/halloween-comic/panels/f02.jpg"
+  ],
+  "out": "/workspace/halloween-comic/panels/f08.jpg"
+ },
+ {
+  "id": "f09",
+  "splash": false,
+  "lyric": "Black cat screaming, clock stuck on three",
+  "aspect": "16:9",
+  "characters": [
+   "cat"
+  ],
+  "prompt": "Medium shot: a chrome robot black cat hissing with its back arched on top of a tall grandfather clock whose hands are frozen at three o'clock, lightning flashing through a window. a small chrome robot black cat with glowing red eyes. Haunted mansion at 3 AM, kid-safe eerie Halloween mood, no humans, no gore, no blood. Characters are the same height. Hands apart and clearly drawn, no clasped hands. 1990s superhero comic panel, bold ink, heavy blacks, halftone, deep teal and black, sickly green glow, candle orange highlights, rain, fog, lightning, 16:9, no text, no letters, no logos.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/c542333dd5429d16c251957261c84b0f945e0a93051079b666fc07878bbfe94d.jpg",
+   "/workspace/halloween-comic/panels/f02.jpg"
+  ],
+  "out": "/workspace/halloween-comic/panels/f09.jpg"
+ },
+ {
+  "id": "f10",
+  "splash": false,
+  "lyric": "Every little shadow got a name for me",
+  "aspect": "16:9",
+  "characters": [
+   "Uno",
+   "Aura"
+  ],
+  "prompt": "Wide shot: long jagged shadows on the wall stretching into the giant silhouettes of Uno and Aura, the real Uno and Aura small in the foreground looking up at them, candle light from below. Uno (tall robot, round smooth chrome dome head, glowing red eyes, headphone ears, long purple fur coat, gold \"1\" chain); Aura (clearly a robot, same height as Uno: grey chrome face, glowing red eyes, headphone ears, chrome arms and legs with visible joints, flowing dark crimson hair, modest long-sleeved crimson pantsuit, cyan magic). Haunted mansion at 3 AM, kid-safe eerie Halloween mood, no humans, no gore, no blood. Characters are the same height. Hands apart and clearly drawn, no clasped hands. 1990s superhero comic panel, bold ink, heavy blacks, halftone, deep teal and black, sickly green glow, candle orange highlights, rain, fog, lightning, 16:9, no text, no letters, no logos.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/c542333dd5429d16c251957261c84b0f945e0a93051079b666fc07878bbfe94d.jpg",
+   "/workspace/halloween-comic/panels/f02.jpg"
+  ],
+  "out": "/workspace/halloween-comic/panels/f10.jpg"
+ },
+ {
+  "id": "f11",
+  "splash": false,
+  "lyric": "This whole house feels wrong",
+  "aspect": "16:9",
+  "characters": [
+   "Uno",
+   "Aura"
+  ],
+  "prompt": "Extreme high angle: an impossible twisting staircase that loops upside down like an Escher drawing, Uno and Aura climbing it with Aura upside down above Uno, fog and teal light. Uno (tall robot, round smooth chrome dome head, glowing red eyes, headphone ears, long purple fur coat, gold \"1\" chain); Aura (clearly a robot, same height as Uno: grey chrome face, glowing red eyes, headphone ears, chrome arms and legs with visible joints, flowing dark crimson hair, modest long-sleeved crimson pantsuit, cyan magic). Haunted mansion at 3 AM, kid-safe eerie Halloween mood, no humans, no gore, no blood. Characters are the same height. Hands apart and clearly drawn, no clasped hands. 1990s superhero comic panel, bold ink, heavy blacks, halftone, deep teal and black, sickly green glow, candle orange highlights, rain, fog, lightning, 16:9, no text, no letters, no logos.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/c542333dd5429d16c251957261c84b0f945e0a93051079b666fc07878bbfe94d.jpg",
+   "/workspace/halloween-comic/panels/f02.jpg"
+  ],
+  "out": "/workspace/halloween-comic/panels/f11.jpg"
+ },
+ {
+  "id": "f12",
+  "splash": true,
+  "lyric": "Wolves on the roof",
+  "aspect": "16:9",
+  "characters": [
+   "wolves"
+  ],
+  "prompt": "Splash, low angle: chrome robot wolves silhouetted on the mansion roof ridge howling against a huge sickly green full moon, storm clouds, lightning. chrome robot wolves (sleek chrome bodies, glowing red eyes). Haunted mansion at 3 AM, kid-safe eerie Halloween mood, no humans, no gore, no blood. Characters are the same height. Hands apart and clearly drawn, no clasped hands. 1990s superhero comic panel, bold ink, heavy blacks, halftone, deep teal and black, sickly green glow, candle orange highlights, rain, fog, lightning, 16:9, no text, no letters, no logos.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/c542333dd5429d16c251957261c84b0f945e0a93051079b666fc07878bbfe94d.jpg",
+   "/workspace/halloween-comic/panels/f02.jpg"
+  ],
+  "out": "/workspace/halloween-comic/panels/f12.jpg"
+ },
+ {
+  "id": "f13",
+  "splash": false,
+  "lyric": "and the graveyard's gone",
+  "aspect": "16:9",
+  "characters": [
+   "Uno",
+   "Aura"
+  ],
+  "prompt": "Over-the-shoulder shot: Uno and Aura at a tall rain-streaked window looking out at a graveyard sinking into thick green fog until only the tips of the tombstones remain. Uno (tall robot, round smooth chrome dome head, glowing red eyes, headphone ears, long purple fur coat, gold \"1\" chain); Aura (clearly a robot, same height as Uno: grey chrome face, glowing red eyes, headphone ears, chrome arms and legs with visible joints, flowing dark crimson hair, modest long-sleeved crimson pantsuit, cyan magic). Haunted mansion at 3 AM, kid-safe eerie Halloween mood, no humans, no gore, no blood. Characters are the same height. Hands apart and clearly drawn, no clasped hands. 1990s superhero comic panel, bold ink, heavy blacks, halftone, deep teal and black, sickly green glow, candle orange highlights, rain, fog, lightning, 16:9, no text, no letters, no logos.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/c542333dd5429d16c251957261c84b0f945e0a93051079b666fc07878bbfe94d.jpg",
+   "/workspace/halloween-comic/panels/f02.jpg"
+  ],
+  "out": "/workspace/halloween-comic/panels/f13.jpg"
+ },
+ {
+  "id": "f14",
+  "splash": false,
+  "lyric": "Storm at the window",
+  "aspect": "16:9",
+  "characters": [
+   "Uno",
+   "wolves"
+  ],
+  "prompt": "Extreme low angle, mid-strike: a chrome robot wolf crashing in through a shattering window and Uno catching it mid-leap with a rising uppercut, glass shards and rain spraying, lightning behind. Uno (tall robot, round smooth chrome dome head, glowing red eyes, headphone ears, long purple fur coat, gold \"1\" chain); chrome robot wolves (sleek chrome bodies, glowing red eyes). Haunted mansion at 3 AM, kid-safe eerie Halloween mood, no humans, no gore, no blood. Characters are the same height. Hands apart and clearly drawn, no clasped hands. 1990s superhero comic panel, bold ink, heavy blacks, halftone, deep teal and black, sickly green glow, candle orange highlights, rain, fog, lightning, 16:9, no text, no letters, no logos.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/c542333dd5429d16c251957261c84b0f945e0a93051079b666fc07878bbfe94d.jpg",
+   "/workspace/halloween-comic/panels/f02.jpg"
+  ],
+  "out": "/workspace/halloween-comic/panels/f14.jpg"
+ },
+ {
+  "id": "f15",
+  "splash": false,
+  "lyric": "doom keeps coming on",
+  "aspect": "16:9",
+  "characters": [
+   "Aura",
+   "wolves"
+  ],
+  "prompt": "Wide action shot, mid-strike: Aura thrusting both palms forward firing a huge cyan magic blast that throws two chrome robot wolves backward through the air, wind whipping her crimson hair. Aura (clearly a robot, same height as Uno: grey chrome face, glowing red eyes, headphone ears, chrome arms and legs with visible joints, flowing dark crimson hair, modest long-sleeved crimson pantsuit, cyan magic); chrome robot wolves (sleek chrome bodies, glowing red eyes). Haunted mansion at 3 AM, kid-safe eerie Halloween mood, no humans, no gore, no blood. Characters are the same height. Hands apart and clearly drawn, no clasped hands. 1990s superhero comic panel, bold ink, heavy blacks, halftone, deep teal and black, sickly green glow, candle orange highlights, rain, fog, lightning, 16:9, no text, no letters, no logos.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/c542333dd5429d16c251957261c84b0f945e0a93051079b666fc07878bbfe94d.jpg",
+   "/workspace/halloween-comic/panels/f02.jpg"
+  ],
+  "out": "/workspace/halloween-comic/panels/f15.jpg"
+ },
+ {
+  "id": "f16",
+  "splash": false,
+  "lyric": "I need out tonight",
+  "aspect": "16:9",
+  "characters": [
+   "Uno",
+   "Aura"
+  ],
+  "prompt": "Low tracking angle: Uno and Aura sprinting side by side down a long corridor toward the camera, a row of candles behind them going out one by one into darkness. Uno (tall robot, round smooth chrome dome head, glowing red eyes, headphone ears, long purple fur coat, gold \"1\" chain); Aura (clearly a robot, same height as Uno: grey chrome face, glowing red eyes, headphone ears, chrome arms and legs with visible joints, flowing dark crimson hair, modest long-sleeved crimson pantsuit, cyan magic). Haunted mansion at 3 AM, kid-safe eerie Halloween mood, no humans, no gore, no blood. Characters are the same height. Hands apart and clearly drawn, no clasped hands. 1990s superhero comic panel, bold ink, heavy blacks, halftone, deep teal and black, sickly green glow, candle orange highlights, rain, fog, lightning, 16:9, no text, no letters, no logos.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/c542333dd5429d16c251957261c84b0f945e0a93051079b666fc07878bbfe94d.jpg",
+   "/workspace/halloween-comic/panels/f02.jpg"
+  ],
+  "out": "/workspace/halloween-comic/panels/f16.jpg"
+ },
+ {
+  "id": "f17",
+  "splash": false,
+  "lyric": "Ghost in the mirror, and it just moved twice",
+  "aspect": "16:9",
+  "characters": [
+   "Aura",
+   "ghost"
+  ],
+  "prompt": "Medium shot: Aura standing still in front of a tall ornate mirror while her reflection, the pale cold-green mirror-ghost, turns its head and raises a hand on its own. Aura (clearly a robot, same height as Uno: grey chrome face, glowing red eyes, headphone ears, chrome arms and legs with visible joints, flowing dark crimson hair, modest long-sleeved crimson pantsuit, cyan magic); the mirror-ghost (a pale, cold-green glowing translucent robot copy of Aura: same crimson-hair silhouette and pantsuit but all ghostly green). Haunted mansion at 3 AM, kid-safe eerie Halloween mood, no humans, no gore, no blood. Characters are the same height. Hands apart and clearly drawn, no clasped hands. 1990s superhero comic panel, bold ink, heavy blacks, halftone, deep teal and black, sickly green glow, candle orange highlights, rain, fog, lightning, 16:9, no text, no letters, no logos.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/c542333dd5429d16c251957261c84b0f945e0a93051079b666fc07878bbfe94d.jpg",
+   "/workspace/halloween-comic/panels/f02.jpg"
+  ],
+  "out": "/workspace/halloween-comic/panels/f17.jpg"
+ },
+ {
+  "id": "f18",
+  "splash": true,
+  "lyric": "(strike) SMASH",
+  "aspect": "16:9",
+  "characters": [
+   "Aura",
+   "ghost"
+  ],
+  "prompt": "Splash, mid-strike: the cold-green mirror-ghost reaching out of the mirror glass and Aura smashing the mirror with a cyan-glowing fist, the glass bursting into glittering shards. Aura (clearly a robot, same height as Uno: grey chrome face, glowing red eyes, headphone ears, chrome arms and legs with visible joints, flowing dark crimson hair, modest long-sleeved crimson pantsuit, cyan magic); the mirror-ghost (a pale, cold-green glowing translucent robot copy of Aura: same crimson-hair silhouette and pantsuit but all ghostly green). Haunted mansion at 3 AM, kid-safe eerie Halloween mood, no humans, no gore, no blood. Characters are the same height. Hands apart and clearly drawn, no clasped hands. 1990s superhero comic panel, bold ink, heavy blacks, halftone, deep teal and black, sickly green glow, candle orange highlights, rain, fog, lightning, 16:9, no text, no letters, no logos.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/c542333dd5429d16c251957261c84b0f945e0a93051079b666fc07878bbfe94d.jpg",
+   "/workspace/halloween-comic/panels/f02.jpg"
+  ],
+  "out": "/workspace/halloween-comic/panels/f18.jpg"
+ },
+ {
+  "id": "f19",
+  "splash": false,
+  "lyric": "No sleep till dawn",
+  "aspect": "16:9",
+  "characters": [
+   "Uno",
+   "Aura"
+  ],
+  "prompt": "Low angle: Uno looking up as the ceiling bulges downward and plaster dust falls, Aura beside him lifting the lantern, cracks spreading overhead. Uno (tall robot, round smooth chrome dome head, glowing red eyes, headphone ears, long purple fur coat, gold \"1\" chain); Aura (clearly a robot, same height as Uno: grey chrome face, glowing red eyes, headphone ears, chrome arms and legs with visible joints, flowing dark crimson hair, modest long-sleeved crimson pantsuit, cyan magic). Haunted mansion at 3 AM, kid-safe eerie Halloween mood, no humans, no gore, no blood. Characters are the same height. Hands apart and clearly drawn, no clasped hands. 1990s superhero comic panel, bold ink, heavy blacks, halftone, deep teal and black, sickly green glow, candle orange highlights, rain, fog, lightning, 16:9, no text, no letters, no logos.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/c542333dd5429d16c251957261c84b0f945e0a93051079b666fc07878bbfe94d.jpg",
+   "/workspace/halloween-comic/panels/f02.jpg"
+  ],
+  "out": "/workspace/halloween-comic/panels/f19.jpg"
+ },
+ {
+  "id": "f20",
+  "splash": false,
+  "lyric": "I hear 'em at the ceiling",
+  "aspect": "16:9",
+  "characters": [],
+  "prompt": "Worm's-eye view: dozens of glowing red eyes peering down through cracks in a dark wooden ceiling, dust drifting in thin beams of green light. No characters. Haunted mansion at 3 AM, kid-safe eerie Halloween mood, no humans, no gore, no blood. Characters are the same height. Hands apart and clearly drawn, no clasped hands. 1990s superhero comic panel, bold ink, heavy blacks, halftone, deep teal and black, sickly green glow, candle orange highlights, rain, fog, lightning, 16:9, no text, no letters, no logos.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/c542333dd5429d16c251957261c84b0f945e0a93051079b666fc07878bbfe94d.jpg",
+   "/workspace/halloween-comic/panels/f02.jpg"
+  ],
+  "out": "/workspace/halloween-comic/panels/f20.jpg"
+ },
+ {
+  "id": "f21",
+  "splash": false,
+  "lyric": "When the doors start buckling and the candles die",
+  "aspect": "16:9",
+  "characters": [
+   "Uno",
+   "Aura"
+  ],
+  "prompt": "Wide shot: the grand front door at the end of the hall in sight, all the side doors bowing outward, the last candle snuffing out, only the red eyes of Uno and Aura glowing in the dark. Uno (tall robot, round smooth chrome dome head, glowing red eyes, headphone ears, long purple fur coat, gold \"1\" chain); Aura (clearly a robot, same height as Uno: grey chrome face, glowing red eyes, headphone ears, chrome arms and legs with visible joints, flowing dark crimson hair, modest long-sleeved crimson pantsuit, cyan magic). Haunted mansion at 3 AM, kid-safe eerie Halloween mood, no humans, no gore, no blood. Characters are the same height. Hands apart and clearly drawn, no clasped hands. 1990s superhero comic panel, bold ink, heavy blacks, halftone, deep teal and black, sickly green glow, candle orange highlights, rain, fog, lightning, 16:9, no text, no letters, no logos.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/c542333dd5429d16c251957261c84b0f945e0a93051079b666fc07878bbfe94d.jpg",
+   "/workspace/halloween-comic/panels/f02.jpg"
+  ],
+  "out": "/workspace/halloween-comic/panels/f21.jpg"
+ },
+ {
+  "id": "f22",
+  "splash": true,
+  "lyric": "I'm rapping through the panic",
+  "aspect": "16:9",
+  "characters": [
+   "Uno",
+   "Aura"
+  ],
+  "prompt": "Splash, mid-strike: Uno and Aura blasting the front double doors open together, Uno punching and Aura firing cyan magic, the doors bursting outward into pale dawn light, splinters and fog flying. Uno (tall robot, round smooth chrome dome head, glowing red eyes, headphone ears, long purple fur coat, gold \"1\" chain); Aura (clearly a robot, same height as Uno: grey chrome face, glowing red eyes, headphone ears, chrome arms and legs with visible joints, flowing dark crimson hair, modest long-sleeved crimson pantsuit, cyan magic). Haunted mansion at 3 AM, kid-safe eerie Halloween mood, no humans, no gore, no blood. Characters are the same height. Hands apart and clearly drawn, no clasped hands. 1990s superhero comic panel, bold ink, heavy blacks, halftone, deep teal and black, sickly green glow, candle orange highlights, rain, fog, lightning, 16:9, no text, no letters, no logos.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/c542333dd5429d16c251957261c84b0f945e0a93051079b666fc07878bbfe94d.jpg",
+   "/workspace/halloween-comic/panels/f02.jpg"
+  ],
+  "out": "/workspace/halloween-comic/panels/f22.jpg"
+ },
+ {
+  "id": "f23",
+  "splash": false,
+  "lyric": "till the sky goes shy (final chorus)",
+  "aspect": "16:9",
+  "characters": [
+   "Uno",
+   "Aura"
+  ],
+  "prompt": "Wide shot: sunrise over the misty hill, Uno and Aura sitting on the grass laughing in relief, the mansion small behind them, warm orange morning light. Uno (tall robot, round smooth chrome dome head, glowing red eyes, headphone ears, long purple fur coat, gold \"1\" chain); Aura (clearly a robot, same height as Uno: grey chrome face, glowing red eyes, headphone ears, chrome arms and legs with visible joints, flowing dark crimson hair, modest long-sleeved crimson pantsuit, cyan magic). Haunted mansion at 3 AM, kid-safe eerie Halloween mood, no humans, no gore, no blood. Characters are the same height. Hands apart and clearly drawn, no clasped hands. 1990s superhero comic panel, bold ink, heavy blacks, halftone, deep teal and black, sickly green glow, candle orange highlights, rain, fog, lightning, 16:9, no text, no letters, no logos.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/c542333dd5429d16c251957261c84b0f945e0a93051079b666fc07878bbfe94d.jpg",
+   "/workspace/halloween-comic/panels/f02.jpg"
+  ],
+  "out": "/workspace/halloween-comic/panels/f23.jpg"
+ },
+ {
+  "id": "f24",
+  "splash": false,
+  "lyric": "Fright night (final chorus)",
+  "aspect": "16:9",
+  "characters": [
+   "ghost"
+  ],
+  "prompt": "Telephoto shot: the mansion in morning mist, one upstairs window where the cold-green mirror-ghost copy of Aura waves goodbye. the mirror-ghost (a pale, cold-green glowing translucent robot copy of Aura: same crimson-hair silhouette and pantsuit but all ghostly green). Haunted mansion at 3 AM, kid-safe eerie Halloween mood, no humans, no gore, no blood. Characters are the same height. Hands apart and clearly drawn, no clasped hands. 1990s superhero comic panel, bold ink, heavy blacks, halftone, deep teal and black, sickly green glow, candle orange highlights, rain, fog, lightning, 16:9, no text, no letters, no logos.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/c542333dd5429d16c251957261c84b0f945e0a93051079b666fc07878bbfe94d.jpg",
+   "/workspace/halloween-comic/panels/f02.jpg"
+  ],
+  "out": "/workspace/halloween-comic/panels/f24.jpg"
+ },
+ {
+  "id": "f25",
+  "splash": true,
+  "lyric": "(cliffhanger) TO BE CONTINUED",
+  "aspect": "16:9",
+  "characters": [
+   "Aura"
+  ],
+  "prompt": "Extreme close-up: Aura's face turned toward the viewer, her eyes flickering from red to cold ghostly green, a slight knowing smile on her grey chrome face, crimson hair at the frame edges, headphone ears visible. Aura (clearly a robot, same height as Uno: grey chrome face, glowing red eyes, headphone ears, chrome arms and legs with visible joints, flowing dark crimson hair, modest long-sleeved crimson pantsuit, cyan magic). Haunted mansion at 3 AM, kid-safe eerie Halloween mood, no humans, no gore, no blood. Characters are the same height. Hands apart and clearly drawn, no clasped hands. 1990s superhero comic panel, bold ink, heavy blacks, halftone, deep teal and black, sickly green glow, candle orange highlights, rain, fog, lightning, 16:9, no text, no letters, no logos.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/c542333dd5429d16c251957261c84b0f945e0a93051079b666fc07878bbfe94d.jpg",
+   "/workspace/halloween-comic/panels/f02.jpg"
+  ],
+  "out": "/workspace/halloween-comic/panels/f25.jpg"
+ }
+]

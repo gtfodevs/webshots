@@ -1,0 +1,17 @@
+[
+ {
+  "id": "s10",
+  "reason": "r2 is usable but the smoke thickens steadily and is heavy by 6 s",
+  "prompt": "Handsome, sleek, well-designed chrome robots. Uno: round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold 1 chain. Aura: beautiful grey chrome robot face, red eyes, headphone ears, flowing dark crimson hair, modest crimson bodysuit. Sensei: elderly chrome robot, grey robe, white cable beard, cane. Each character keeps the exact same face, body, outfit and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. The haze stays thin and low at the floor for the whole shot; the fighters hold their stance and only their coats and scarves sway. Locked-off camera, no zoom, slow subtle motion only, every character stays fully in frame."
+ },
+ {
+  "id": "v08",
+  "reason": "v1 clip jumps at 5.25 s (playing 5.0 s)",
+  "prompt": "Handsome, sleek, well-designed chrome robots. Uno: round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold 1 chain. Aura: beautiful grey chrome robot face, red eyes, headphone ears, flowing dark crimson hair, modest crimson bodysuit. Each character keeps the exact same face, body, outfit and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. Hold the exact panel framing; the strike stays locked at the moment of impact, sparks drift slowly, no new action starts. Locked-off camera, no zoom, slow subtle motion only, every character stays fully in frame."
+ },
+ {
+  "id": "v22",
+  "reason": "v1 clip jumps at 5.25 s (playing 5.2 s)",
+  "prompt": "Handsome, sleek, well-designed chrome robots. SHOGUN: red samurai robot, horned helmet, glowing red katana. Each character keeps the exact same face, body, outfit and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. Hold the exact panel framing; the blade lock holds steady, the red glow pulses gently, no new action starts. Locked-off camera, no zoom, slow subtle motion only, every character stays fully in frame."
+ }
+]

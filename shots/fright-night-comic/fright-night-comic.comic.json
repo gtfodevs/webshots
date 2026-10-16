@@ -1,0 +1,1559 @@
+{
+ "title": "Fright Night - comic mode (Progressive Slop)",
+ "outName": "fright-night-comic",
+ "assetsDir": "/workspace/halloween-comic",
+ "fps": 30,
+ "defaults": {
+  "holdBeats": 1
+ },
+ "mood": "eerie",
+ "bgTheme": "blinking_eyes",
+ "loop": true,
+ "bg_video": {
+  "landscape": "bg/eyes-landscape.mp4",
+  "vertical": "bg/eyes-vertical.mp4"
+ },
+ "song": {
+  "suno": "6ad72320-98e4-4b59-8575-fdc8b96b2005",
+  "audio": "audio.mp3",
+  "audioNote": "relative to assetsDir; not committed",
+  "timeline": "shots/fright-night-comic/timeline.json",
+  "start": 0.0,
+  "end": 114.0,
+  "loudness": -14
+ },
+ "short": {
+  "start": 72.64,
+  "end": 114.0,
+  "note": "chorus (Fright night / No sleep till dawn) -> mirror ghost SMASH -> ceiling -> doors buckle, BOOM escape -> sunrise -> ghost in the window -> cliffhanger, then TO BE CONTINUED + end card (~47 s)"
+ },
+ "intro": {
+  "enabled": true,
+  "title": "FRIGHT NIGHT",
+  "subtitle": "PROGRESSIVE SLOP PRESENTS",
+  "seconds": 2.6,
+  "style": "drip",
+  "lightning": true,
+  "glow": [
+   120,
+   255,
+   90
+  ],
+  "glow2": [
+   150,
+   40,
+   220
+  ],
+  "chrome": [
+   [
+    235,
+    255,
+    210
+   ],
+   [
+    170,
+    230,
+    120
+   ],
+   [
+    90,
+    150,
+    60
+   ],
+   [
+    20,
+    40,
+    18
+   ],
+   [
+    120,
+    190,
+    80
+   ],
+   [
+    215,
+    250,
+    180
+   ]
+  ],
+  "subColor": [
+   200,
+   255,
+   170
+  ],
+  "rot": -3,
+  "dim": 0.6
+ },
+ "tbc": {
+  "enabled": true,
+  "text": "TO BE CONTINUED...",
+  "seconds": 2.5
+ },
+ "endCard": {
+  "enabled": true,
+  "seconds": 3.0,
+  "lines": [
+   "BROUGHT TO YOU BY PROGRESSIVE SLOP",
+   "LIKE AND SUBSCRIBE FOR MORE!"
+  ]
+ },
+ "pages": [
+  {
+   "id": "p01",
+   "start": 0.0,
+   "end": 9.497,
+   "layout": "two-up",
+   "panels": [
+    {
+     "id": "f01",
+     "slot": "a",
+     "image": "panels/f01.jpg",
+     "at": 0.186,
+     "moment": "Chorus \"Fright night\": storm, mansion on hill, lightning reveals red eyes in every window.",
+     "motionPrompt": "Lightning flickers behind the mansion on the hill, rain falls, fog drifts across the dead trees, slow push-in toward the glowing windows. Locked camera, one continuous shot, no people.",
+     "captions": [],
+     "clip": {
+      "src": "clips/f01_a.mp4",
+      "in": 0.0,
+      "out": 6.0
+     },
+     "focusRegions": [
+      {
+       "label": "mansion + red windows",
+       "box": [
+        0.28,
+        0.15,
+        0.68,
+        0.58
+       ],
+       "required": true
+      }
+     ]
+    },
+    {
+     "id": "f02",
+     "slot": "b",
+     "image": "panels/f02.jpg",
+     "at": 2.763,
+     "moment": "Aura (candle lantern) and Uno step inside; door SLAMS shut behind them (SFX).",
+     "motionPrompt": "Handsome, sleek, well-designed chrome robots. Uno: tall robot, round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold 1 chain. Aura: clearly a robot, same height as Uno, grey chrome face, red eyes, headphone ears, chrome jointed limbs, dark crimson hair, modest crimson pantsuit. Each character keeps the exact same face, body, outfit and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. Only these characters in shot. The heavy door swings shut behind them with one hard slam, dust puffs up, the lantern flame flickers. Slow push-in.",
+     "captions": [
+      {
+       "text": "FRIGHT NIGHT, FRIGHT NIGHT",
+       "anchor": "tl",
+       "at": 3.599,
+       "lyric": true,
+       "fill": [
+        198,
+        236,
+        160
+       ]
+      }
+     ],
+     "clip": {
+      "src": "clips/f02_b.mp4",
+      "in": 0.0,
+      "out": 6.0
+     },
+     "focusRegions": [
+      {
+       "label": "Uno face",
+       "box": [
+        0.31,
+        0.15,
+        0.42,
+        0.33
+       ],
+       "required": true
+      },
+      {
+       "label": "Aura face",
+       "box": [
+        0.48,
+        0.12,
+        0.57,
+        0.3
+       ],
+       "required": true
+      }
+     ],
+     "sfx": [
+      {
+       "text": "SLAM!",
+       "at": 3.599,
+       "pos": [
+        0.3,
+        0.3
+       ],
+       "rot": 7,
+       "size": 0.17,
+       "color": [
+        150,
+        255,
+        90
+       ],
+       "impact": true
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p02",
+   "start": 9.497,
+   "end": 20.735,
+   "layout": "slant-two",
+   "panels": [
+    {
+     "id": "f03",
+     "slot": "b",
+     "image": "panels/f03.jpg",
+     "at": 9.497,
+     "moment": "\"Deadbolt shaking\": close on deadbolt rattling; scratch marks appear on the hall wall.",
+     "motionPrompt": "The brass deadbolt rattles, dust shakes loose, candle light flickers over the scratch marks. Locked camera, one continuous shot, no people.",
+     "captions": [
+      {
+       "text": "IT AIN'T MY KIND OF NIGHT",
+       "anchor": "tl",
+       "at": 9.915,
+       "lyric": true,
+       "fill": [
+        232,
+        226,
+        204
+       ],
+       "until": 13.677
+      }
+     ],
+     "clip": {
+      "src": "clips/f03_a.mp4",
+      "in": 0.0,
+      "out": 6.0
+     },
+     "focusRegions": [
+      {
+       "label": "rattling deadbolt",
+       "box": [
+        0.22,
+        0.22,
+        0.45,
+        0.62
+       ],
+       "required": true
+      },
+      {
+       "label": "scratch marks",
+       "box": [
+        0.58,
+        0.15,
+        0.86,
+        0.58
+       ],
+       "required": true
+      }
+     ]
+    },
+    {
+     "id": "f04",
+     "slot": "a",
+     "image": "panels/f04.jpg",
+     "at": 13.677,
+     "moment": "\"Mud on the carpet\": clawed footprints leading INTO the wall; Uno kneels, eyes flare.",
+     "motionPrompt": "Handsome, sleek, well-designed chrome robots. Uno: tall robot, round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold 1 chain. Aura: clearly a robot, same height as Uno, grey chrome face, red eyes, headphone ears, chrome jointed limbs, dark crimson hair, modest crimson pantsuit. Each character keeps the exact same face, body, outfit and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. Only these characters in shot. Uno leans closer to the footprints and his red eyes flare brighter, the lantern flame flickers. Slow push-in.",
+     "captions": [
+      {
+       "text": "DEADBOLT SHAKING, SOMETHING SCRATCHING AT THE HALL",
+       "anchor": "tl",
+       "at": 13.677,
+       "lyric": true,
+       "fill": [
+        206,
+        188,
+        244
+       ]
+      },
+      {
+       "text": "MUD ON THE CARPET, HEAR THEM MOVING IN THE WALL",
+       "anchor": "bl",
+       "at": 16.184,
+       "lyric": true,
+       "fill": [
+        255,
+        196,
+        120
+       ]
+      }
+     ],
+     "clip": {
+      "src": "clips/f04_a.mp4",
+      "in": 0.0,
+      "out": 6.0
+     },
+     "focusRegions": [
+      {
+       "label": "Uno face",
+       "box": [
+        0.32,
+        0.15,
+        0.48,
+        0.4
+       ],
+       "required": true
+      },
+      {
+       "label": "Aura",
+       "box": [
+        0.75,
+        0.04,
+        0.86,
+        0.26
+       ],
+       "required": true
+      },
+      {
+       "label": "clawed prints",
+       "box": [
+        0.3,
+        0.65,
+        0.75,
+        0.95
+       ],
+       "required": false
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p03",
+   "start": 20.735,
+   "end": 32.299,
+   "layout": "three",
+   "panels": [
+    {
+     "id": "f05",
+     "slot": "a",
+     "image": "panels/f05.jpg",
+     "at": 20.735,
+     "moment": "\"I don't like what I just saw\": Aura's red eyes wide, lantern shaking.",
+     "motionPrompt": "Handsome, sleek, well-designed chrome robots. Aura: clearly a robot, same height as Uno, grey chrome face, red eyes, headphone ears, chrome jointed limbs, dark crimson hair, modest crimson pantsuit. Each character keeps the exact same face, body, outfit and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. Only these characters in shot. The lantern trembles slightly and the flame flickers across her chrome face, her hair stirs in a cold draft. Slow push-in.",
+     "captions": [
+      {
+       "text": "FRIGHT NIGHT, FRIGHT NIGHT",
+       "anchor": "tl",
+       "at": 20.735,
+       "lyric": true,
+       "fill": [
+        198,
+        236,
+        160
+       ]
+      }
+     ],
+     "clip": {
+      "src": "clips/f05_a.mp4",
+      "in": 0.0,
+      "out": 6.0
+     },
+     "focusRegions": [
+      {
+       "label": "Aura eyes + face",
+       "box": [
+        0.42,
+        0.12,
+        0.82,
+        0.72
+       ],
+       "required": true
+      }
+     ]
+    },
+    {
+     "id": "f06",
+     "slot": "b",
+     "image": "panels/f06.jpg",
+     "at": 22.802,
+     "moment": "\"Figures in the hallway, leaning in\": long hallway, tall thin shadow robots lean out of doorways.",
+     "motionPrompt": "Handsome, sleek, well-designed chrome robots. Uno: tall robot, round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold 1 chain. Aura: clearly a robot, same height as Uno, grey chrome face, red eyes, headphone ears, chrome jointed limbs, dark crimson hair, modest crimson pantsuit. The Leaners: tall thin matte-black shadow robots with red eyes. Each character keeps the exact same face, body, outfit and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. Only these characters in shot. The Leaners lean slowly out of the doorways toward the pair, candles flicker, fog drifts along the floor. Slow push-in.",
+     "captions": [
+      {
+       "text": "I DON'T LIKE WHAT I JUST SAW",
+       "anchor": "tl",
+       "at": 22.802,
+       "lyric": true,
+       "fill": [
+        232,
+        226,
+        204
+       ]
+      }
+     ],
+     "clip": {
+      "src": "clips/f06_a.mp4",
+      "in": 0.0,
+      "out": 6.0
+     },
+     "focusRegions": [
+      {
+       "label": "Aura face",
+       "box": [
+        0.4,
+        0.15,
+        0.5,
+        0.32
+       ],
+       "required": true
+      },
+      {
+       "label": "Uno face",
+       "box": [
+        0.52,
+        0.3,
+        0.62,
+        0.48
+       ],
+       "required": true
+      },
+      {
+       "label": "Leaners",
+       "box": [
+        0.0,
+        0.1,
+        1.0,
+        0.6
+       ],
+       "required": false
+      }
+     ]
+    },
+    {
+     "id": "f07",
+     "slot": "c",
+     "image": "panels/f07.jpg",
+     "at": 25.287,
+     "moment": "Uno shoves Aura behind him, cyan magic flares; Leaners recoil (strike beat).",
+     "motionPrompt": "Handsome, sleek, well-designed chrome robots. Uno: tall robot, round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold 1 chain. Aura: clearly a robot, same height as Uno, grey chrome face, red eyes, headphone ears, chrome jointed limbs, dark crimson hair, modest crimson pantsuit. The Leaners: tall thin matte-black shadow robots with red eyes. Each character keeps the exact same face, body, outfit and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. Only these characters in shot. One strike: the cyan magic burst flares and the Leaners recoil back into the doorways, then hold. Locked camera.",
+     "captions": [
+      {
+       "text": "BONE-DEEP COLD, GOT THE AIR GOING THIN",
+       "anchor": "tl",
+       "at": 25.287,
+       "lyric": true,
+       "fill": [
+        206,
+        188,
+        244
+       ]
+      },
+      {
+       "text": "FIGURES IN THE HALLWAY, AND THEY'RE LEANING IN",
+       "anchor": "bl",
+       "at": 29.838,
+       "lyric": true,
+       "fill": [
+        255,
+        196,
+        120
+       ]
+      }
+     ],
+     "clip": {
+      "src": "clips/f07_a.mp4",
+      "in": 0.0,
+      "out": 6.0
+     },
+     "focusRegions": [
+      {
+       "label": "Uno face",
+       "box": [
+        0.35,
+        0.04,
+        0.48,
+        0.22
+       ],
+       "required": true
+      },
+      {
+       "label": "Aura face",
+       "box": [
+        0.55,
+        0.05,
+        0.65,
+        0.25
+       ],
+       "required": true
+      },
+      {
+       "label": "cyan magic",
+       "box": [
+        0.7,
+        0.0,
+        0.88,
+        0.25
+       ],
+       "required": true
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p04",
+   "start": 32.299,
+   "end": 46.5,
+   "layout": "wide-three",
+   "panels": [
+    {
+     "id": "f08",
+     "slot": "b",
+     "image": "panels/f08.jpg",
+     "at": 32.299,
+     "moment": "\"Looking for the door\": maze of identical doors, extreme dutch angle.",
+     "motionPrompt": "Handsome, sleek, well-designed chrome robots. Uno: tall robot, round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold 1 chain. Aura: clearly a robot, same height as Uno, grey chrome face, red eyes, headphone ears, chrome jointed limbs, dark crimson hair, modest crimson pantsuit. Each character keeps the exact same face, body, outfit and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. Only these characters in shot. Fog drifts between the doors, the green light pulses slowly, the pair glance around. Slow push-in.",
+     "captions": [
+      {
+       "text": "FRIGHT NIGHT, FRIGHT NIGHT",
+       "anchor": "tl",
+       "at": 33.553,
+       "lyric": true,
+       "fill": [
+        198,
+        236,
+        160
+       ],
+       "until": 35.201
+      },
+      {
+       "text": "I'M LOOKING FOR THE DOOR",
+       "anchor": "bl",
+       "at": 35.201,
+       "lyric": true,
+       "fill": [
+        232,
+        226,
+        204
+       ],
+       "until": 39.753
+      }
+     ],
+     "clip": {
+      "src": "clips/f08_a.mp4",
+      "in": 0.0,
+      "out": 6.0
+     },
+     "focusRegions": [
+      {
+       "label": "Uno",
+       "box": [
+        0.44,
+        0.4,
+        0.52,
+        0.56
+       ],
+       "required": true
+      },
+      {
+       "label": "Aura",
+       "box": [
+        0.53,
+        0.46,
+        0.6,
+        0.6
+       ],
+       "required": true
+      }
+     ]
+    },
+    {
+     "id": "f09",
+     "slot": "c",
+     "image": "panels/f09.jpg",
+     "at": 36.432,
+     "moment": "\"Black cat screaming, clock stuck on three\": chrome black cat hisses; grandfather clock frozen at 3:00.",
+     "motionPrompt": "Handsome, sleek, well-designed chrome robots. A small chrome robot black cat with red eyes. Each character keeps the exact same face, body, outfit and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. Only these characters in shot. The cat hisses once, lightning flickers through the window, the frozen clock pendulum hangs still. Locked camera.",
+     "captions": [],
+     "clip": {
+      "src": "clips/f09_a.mp4",
+      "in": 0.0,
+      "out": 6.0
+     },
+     "focusRegions": [
+      {
+       "label": "chrome cat",
+       "box": [
+        0.5,
+        0.1,
+        0.78,
+        0.35
+       ],
+       "required": true
+      },
+      {
+       "label": "clock at three",
+       "box": [
+        0.5,
+        0.35,
+        0.75,
+        0.66
+       ],
+       "required": true
+      }
+     ]
+    },
+    {
+     "id": "f10",
+     "slot": "a",
+     "image": "panels/f10.jpg",
+     "at": 39.753,
+     "moment": "\"Every shadow got a name\": shadows on the wall spell UNO and AURA.",
+     "motionPrompt": "Handsome, sleek, well-designed chrome robots. Uno: tall robot, round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold 1 chain. Aura: clearly a robot, same height as Uno, grey chrome face, red eyes, headphone ears, chrome jointed limbs, dark crimson hair, modest crimson pantsuit. Each character keeps the exact same face, body, outfit and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. Only these characters in shot. The giant shadows sway as the candle flickers, the pair stay still and look up. Slow push-in.",
+     "captions": [
+      {
+       "text": "BLACK CAT SCREAMING, CLOCK STUCK ON THREE",
+       "anchor": "tl",
+       "at": 39.753,
+       "lyric": true,
+       "fill": [
+        206,
+        188,
+        244
+       ]
+      },
+      {
+       "text": "EVERY LITTLE SHADOW GOT A NAME FOR ME",
+       "anchor": "bl",
+       "at": 42.632,
+       "lyric": true,
+       "fill": [
+        255,
+        196,
+        120
+       ]
+      }
+     ],
+     "clip": {
+      "src": "clips/f10_a.mp4",
+      "in": 0.0,
+      "out": 6.0
+     },
+     "focusRegions": [
+      {
+       "label": "Uno head",
+       "box": [
+        0.27,
+        0.3,
+        0.36,
+        0.45
+       ],
+       "required": true
+      },
+      {
+       "label": "Aura head",
+       "box": [
+        0.39,
+        0.3,
+        0.5,
+        0.48
+       ],
+       "required": true
+      },
+      {
+       "label": "shadow eyes",
+       "box": [
+        0.55,
+        0.12,
+        0.9,
+        0.38
+       ],
+       "required": true
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p05",
+   "start": 46.5,
+   "end": 59.536,
+   "layout": "three",
+   "panels": [
+    {
+     "id": "f11",
+     "slot": "a",
+     "image": "panels/f11.jpg",
+     "at": 46.765,
+     "moment": "\"This whole house feels wrong\": staircase twists upside down (Escher room).",
+     "motionPrompt": "Handsome, sleek, well-designed chrome robots. Uno: tall robot, round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold 1 chain. Aura: clearly a robot, same height as Uno, grey chrome face, red eyes, headphone ears, chrome jointed limbs, dark crimson hair, modest crimson pantsuit. Each character keeps the exact same face, body, outfit and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. Only these characters in shot. Fog drifts through the staircase, the pair climb one slow step, candle light flickers. Locked camera.",
+     "captions": [
+      {
+       "text": "FRIGHT NIGHT, FRIGHT NIGHT",
+       "anchor": "tl",
+       "at": 46.765,
+       "lyric": true,
+       "fill": [
+        198,
+        236,
+        160
+       ],
+       "until": 48.808
+      },
+      {
+       "text": "THIS WHOLE HOUSE FEELS WRONG",
+       "anchor": "bl",
+       "at": 48.808,
+       "lyric": true,
+       "fill": [
+        232,
+        226,
+        204
+       ],
+       "until": 52.941
+      }
+     ],
+     "clip": {
+      "src": "clips/f11_a.mp4",
+      "in": 0.0,
+      "out": 6.0
+     },
+     "focusRegions": [
+      {
+       "label": "Aura",
+       "box": [
+        0.48,
+        0.05,
+        0.6,
+        0.3
+       ],
+       "required": true
+      },
+      {
+       "label": "Uno face",
+       "box": [
+        0.33,
+        0.45,
+        0.46,
+        0.65
+       ],
+       "required": true
+      }
+     ]
+    },
+    {
+     "id": "f12",
+     "slot": "b",
+     "image": "panels/f12.jpg",
+     "at": 49.644,
+     "moment": "\"Wolves on the roof\": chrome wolves silhouetted on the roof against the moon.",
+     "motionPrompt": "Handsome, sleek, well-designed chrome robots. Chrome robot wolves with red eyes. Each character keeps the exact same face, body, outfit and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. Only these characters in shot. The wolves lift their heads in a slow howl, storm clouds roll past the moon, lightning flickers. Locked camera.",
+     "captions": [],
+     "clip": {
+      "src": "clips/f12_a.mp4",
+      "in": 0.0,
+      "out": 6.0
+     },
+     "focusRegions": [
+      {
+       "label": "chrome wolves",
+       "box": [
+        0.05,
+        0.45,
+        0.42,
+        0.75
+       ],
+       "required": true
+      },
+      {
+       "label": "moon",
+       "box": [
+        0.27,
+        0.05,
+        0.55,
+        0.48
+       ],
+       "required": false
+      }
+     ]
+    },
+    {
+     "id": "f13",
+     "slot": "c",
+     "image": "panels/f13.jpg",
+     "at": 52.941,
+     "moment": "\"Graveyard's gone\": out the window, the graveyard sinks into fog.",
+     "motionPrompt": "Handsome, sleek, well-designed chrome robots. Uno: tall robot, round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold 1 chain. Aura: clearly a robot, same height as Uno, grey chrome face, red eyes, headphone ears, chrome jointed limbs, dark crimson hair, modest crimson pantsuit. Each character keeps the exact same face, body, outfit and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. Only these characters in shot. The fog slowly swallows the tombstones outside, rain streaks down the glass. Slow push-in.",
+     "captions": [
+      {
+       "text": "WOLVES ON THE ROOF AND THE GRAVEYARD'S GONE",
+       "anchor": "tl",
+       "at": 52.941,
+       "lyric": true,
+       "fill": [
+        206,
+        188,
+        244
+       ],
+       "until": 56.239
+      },
+      {
+       "text": "STORM AT THE WINDOW, DOOM KEEPS COMING ON",
+       "anchor": "bl",
+       "at": 56.239,
+       "lyric": true,
+       "fill": [
+        255,
+        196,
+        120
+       ]
+      }
+     ],
+     "clip": {
+      "src": "clips/f13_a.mp4",
+      "in": 0.0,
+      "out": 6.0
+     },
+     "focusRegions": [
+      {
+       "label": "Uno head",
+       "box": [
+        0.1,
+        0.0,
+        0.28,
+        0.25
+       ],
+       "required": true
+      },
+      {
+       "label": "Aura head",
+       "box": [
+        0.68,
+        0.05,
+        0.88,
+        0.35
+       ],
+       "required": true
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p06",
+   "start": 59.536,
+   "end": 72.64,
+   "layout": "big-three",
+   "panels": [
+    {
+     "id": "f14",
+     "slot": "b",
+     "image": "panels/f14.jpg",
+     "at": 59.536,
+     "moment": "Wolf crashes through the window: Uno uppercut mid-strike, KRAK! (fight beat-cut).",
+     "motionPrompt": "Handsome, sleek, well-designed chrome robots. Uno: tall robot, round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold 1 chain. Chrome robot wolves with red eyes. Each character keeps the exact same face, body, outfit and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. Only these characters in shot. One strike: Uno's uppercut connects and the wolf is knocked upward, glass shards hang and drift. Locked camera, slight shake.",
+     "captions": [
+      {
+       "text": "FRIGHT NIGHT, FRIGHT NIGHT",
+       "anchor": "tl",
+       "at": 59.536,
+       "lyric": true,
+       "fill": [
+        198,
+        236,
+        160
+       ],
+       "until": 61.997
+      },
+      {
+       "text": "I NEED OUT TONIGHT",
+       "anchor": "bl",
+       "at": 61.997,
+       "lyric": true,
+       "fill": [
+        232,
+        226,
+        204
+       ],
+       "until": 65.295
+      }
+     ],
+     "clip": {
+      "src": "clips/f14_a.mp4",
+      "in": 0.0,
+      "out": 6.0
+     },
+     "focusRegions": [
+      {
+       "label": "wolf head",
+       "box": [
+        0.4,
+        0.1,
+        0.6,
+        0.45
+       ],
+       "required": true
+      },
+      {
+       "label": "Uno face",
+       "box": [
+        0.62,
+        0.1,
+        0.82,
+        0.45
+       ],
+       "required": true
+      }
+     ],
+     "sfx": [
+      {
+       "text": "KRAK!",
+       "at": 60.372,
+       "pos": [
+        0.7,
+        0.32
+       ],
+       "rot": -8,
+       "size": 0.17,
+       "color": [
+        255,
+        70,
+        50
+       ],
+       "impact": true
+      }
+     ]
+    },
+    {
+     "id": "f15",
+     "slot": "c",
+     "image": "panels/f15.jpg",
+     "at": 62.415,
+     "moment": "Aura cyan blast throws two wolves back, FWOOSH!",
+     "motionPrompt": "Handsome, sleek, well-designed chrome robots. Aura: clearly a robot, same height as Uno, grey chrome face, red eyes, headphone ears, chrome jointed limbs, dark crimson hair, modest crimson pantsuit. Chrome robot wolves with red eyes. Each character keeps the exact same face, body, outfit and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. Only these characters in shot. One strike: the cyan blast fires and the two wolves fly back, sparks drift. Locked camera.",
+     "captions": [],
+     "clip": {
+      "src": "clips/f15_a.mp4",
+      "in": 0.0,
+      "out": 6.0
+     },
+     "focusRegions": [
+      {
+       "label": "Aura face",
+       "box": [
+        0.18,
+        0.1,
+        0.3,
+        0.3
+       ],
+       "required": true
+      },
+      {
+       "label": "cyan blast",
+       "box": [
+        0.45,
+        0.15,
+        0.8,
+        0.7
+       ],
+       "required": true
+      }
+     ],
+     "sfx": [
+      {
+       "text": "FWOOSH!",
+       "at": 63.251,
+       "pos": [
+        0.3,
+        0.3
+       ],
+       "rot": 7,
+       "size": 0.17,
+       "color": [
+        190,
+        120,
+        255
+       ],
+       "impact": true
+      }
+     ]
+    },
+    {
+     "id": "f16",
+     "slot": "a",
+     "image": "panels/f16.jpg",
+     "at": 65.295,
+     "moment": "\"Need out tonight\": the pair sprint down the corridor, candles dying behind them one by one.",
+     "motionPrompt": "Handsome, sleek, well-designed chrome robots. Uno: tall robot, round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold 1 chain. Aura: clearly a robot, same height as Uno, grey chrome face, red eyes, headphone ears, chrome jointed limbs, dark crimson hair, modest crimson pantsuit. Each character keeps the exact same face, body, outfit and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. Only these characters in shot. The candles behind them go out one by one, coats and hair stream back. Locked camera.",
+     "captions": [
+      {
+       "text": "GHOST IN THE MIRROR, AND IT JUST MOVED TWICE",
+       "anchor": "tl",
+       "at": 65.295,
+       "lyric": true,
+       "fill": [
+        206,
+        188,
+        244
+       ],
+       "until": 69.01
+      },
+      {
+       "text": "END OF THE BLOCK, BUT IT STILL DON'T FEEL NICE",
+       "anchor": "bl",
+       "at": 69.01,
+       "lyric": true,
+       "fill": [
+        255,
+        196,
+        120
+       ]
+      }
+     ],
+     "clip": {
+      "src": "clips/f16_b.mp4",
+      "in": 0.0,
+      "out": 6.0
+     },
+     "focusRegions": [
+      {
+       "label": "Uno face",
+       "box": [
+        0.22,
+        0.0,
+        0.4,
+        0.35
+       ],
+       "required": true
+      },
+      {
+       "label": "Aura face",
+       "box": [
+        0.62,
+        0.1,
+        0.78,
+        0.32
+       ],
+       "required": true
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "p07",
+   "start": 72.64,
+   "end": 86.216,
+   "layout": "three",
+   "panels": [
+    {
+     "id": "f17",
+     "slot": "a",
+     "image": "panels/f17.jpg",
+     "at": 72.702,
+     "moment": "\"Ghost in the mirror, moved twice\": Aura's reflection moves when she doesn't.",
+     "motionPrompt": "Handsome, sleek, well-designed chrome robots. Aura: clearly a robot, same height as Uno, grey chrome face, red eyes, headphone ears, chrome jointed limbs, dark crimson hair, modest crimson pantsuit. The mirror-ghost: pale cold-green translucent robot copy of Aura. Each character keeps the exact same face, body, outfit and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. Only these characters in shot. Aura stays still while the green reflection slowly tilts its head, candle light flickers. Slow push-in.",
+     "captions": [
+      {
+       "text": "FRIGHT NIGHT, FRIGHT NIGHT",
+       "anchor": "tl",
+       "at": 72.702,
+       "lyric": true,
+       "fill": [
+        198,
+        236,
+        160
+       ],
+       "until": 75.976
+      }
+     ],
+     "clip": {
+      "src": "clips/f17_a.mp4",
+      "in": 0.0,
+      "out": 6.0
+     },
+     "focusRegions": [
+      {
+       "label": "Aura face",
+       "box": [
+        0.08,
+        0.1,
+        0.25,
+        0.35
+       ],
+       "required": true
+      },
+      {
+       "label": "mirror ghost",
+       "box": [
+        0.45,
+        0.1,
+        0.75,
+        0.6
+       ],
+       "required": true
+      }
+     ]
+    },
+    {
+     "id": "f18",
+     "slot": "b",
+     "image": "panels/f18.jpg",
+     "at": 75.976,
+     "moment": "Mirror-ghost reaches out of the glass; Aura shatters the mirror, SMASH!",
+     "motionPrompt": "Handsome, sleek, well-designed chrome robots. Aura: clearly a robot, same height as Uno, grey chrome face, red eyes, headphone ears, chrome jointed limbs, dark crimson hair, modest crimson pantsuit. The mirror-ghost: pale cold-green translucent robot copy of Aura. Each character keeps the exact same face, body, outfit and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. Only these characters in shot. One strike: Aura's fist hits and the mirror bursts, shards drift outward slowly, the ghost fades back into the frame. Locked camera, slight shake.",
+     "captions": [
+      {
+       "text": "NO SLEEP TILL DAWN",
+       "anchor": "tl",
+       "at": 75.976,
+       "lyric": true,
+       "fill": [
+        232,
+        226,
+        204
+       ],
+       "until": 78.437
+      }
+     ],
+     "clip": {
+      "src": "clips/f18_a.mp4",
+      "in": 0.0,
+      "out": 6.0
+     },
+     "focusRegions": [
+      {
+       "label": "mirror ghost",
+       "box": [
+        0.12,
+        0.0,
+        0.42,
+        0.55
+       ],
+       "required": true
+      },
+      {
+       "label": "fist + glass",
+       "box": [
+        0.4,
+        0.25,
+        0.62,
+        0.55
+       ],
+       "required": true
+      },
+      {
+       "label": "Aura face",
+       "box": [
+        0.76,
+        0.05,
+        1.0,
+        0.42
+       ],
+       "required": true
+      }
+     ],
+     "sfx": [
+      {
+       "text": "SMASH!",
+       "at": 76.788,
+       "pos": [
+        0.3,
+        0.3
+       ],
+       "rot": 7,
+       "size": 0.17,
+       "color": [
+        255,
+        170,
+        40
+       ],
+       "impact": true
+      }
+     ]
+    },
+    {
+     "id": "f19",
+     "slot": "c",
+     "image": "panels/f19.jpg",
+     "at": 78.437,
+     "moment": "\"No sleep till dawn\": ceiling bulges, dust falls, Uno looks up.",
+     "motionPrompt": "Handsome, sleek, well-designed chrome robots. Uno: tall robot, round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold 1 chain. Aura: clearly a robot, same height as Uno, grey chrome face, red eyes, headphone ears, chrome jointed limbs, dark crimson hair, modest crimson pantsuit. Each character keeps the exact same face, body, outfit and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. Only these characters in shot. Dust trickles down from the bulging ceiling, the lantern flickers. Slow push-in.",
+     "captions": [
+      {
+       "text": "IF THE DEAD WANT IN, THEY CAN'T WAIT LONG",
+       "anchor": "tl",
+       "at": 78.437,
+       "lyric": true,
+       "fill": [
+        206,
+        188,
+        244
+       ]
+      },
+      {
+       "text": "I HEAR 'EM AT THE CEILING, AND THEY'RE GETTING STRONG",
+       "anchor": "bl",
+       "at": 82.129,
+       "lyric": true,
+       "fill": [
+        255,
+        196,
+        120
+       ]
+      }
+     ],
+     "clip": {
+      "src": "clips/f19_a.mp4",
+      "in": 0.0,
+      "out": 6.0
+     },
+     "focusRegions": [
+      {
+       "label": "Uno face",
+       "box": [
+        0.24,
+        0.15,
+        0.4,
+        0.4
+       ],
+       "required": true
+      },
+      {
+       "label": "Aura face",
+       "box": [
+        0.55,
+        0.15,
+        0.68,
+        0.42
+       ],
+       "required": true
+      }
+     ]
+    }
+   ],
+   "mood": "action"
+  },
+  {
+   "id": "p08",
+   "start": 86.216,
+   "end": 99.335,
+   "layout": "wide-three",
+   "panels": [
+    {
+     "id": "f20",
+     "slot": "b",
+     "image": "panels/f20.jpg",
+     "at": 86.216,
+     "moment": "\"I hear 'em at the ceiling\": dozens of red eyes through cracks overhead.",
+     "motionPrompt": "Red eyes blink slowly in the cracks overhead, dust drifts through the light beams. Locked camera, one continuous shot, no people.",
+     "captions": [
+      {
+       "text": "FRIGHT NIGHT, FRIGHT NIGHT",
+       "anchor": "tl",
+       "at": 86.216,
+       "lyric": true,
+       "fill": [
+        198,
+        236,
+        160
+       ],
+       "until": 89.095
+      }
+     ],
+     "clip": {
+      "src": "clips/f20_a.mp4",
+      "in": 0.0,
+      "out": 6.0
+     },
+     "focusRegions": [
+      {
+       "label": "red eyes in the cracks",
+       "box": [
+        0.3,
+        0.12,
+        0.75,
+        0.6
+       ],
+       "required": true
+      }
+     ]
+    },
+    {
+     "id": "f21",
+     "slot": "c",
+     "image": "panels/f21.jpg",
+     "at": 89.095,
+     "moment": "\"Doors start buckling, candles die\": front door in sight, doors bowing, last candle snuffs out. Darkness, only their red eyes.",
+     "motionPrompt": "Handsome, sleek, well-designed chrome robots. Uno: tall robot, round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold 1 chain. Aura: clearly a robot, same height as Uno, grey chrome face, red eyes, headphone ears, chrome jointed limbs, dark crimson hair, modest crimson pantsuit. Each character keeps the exact same face, body, outfit and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. Only these characters in shot. The last candle flame gutters out and the doors bow slowly, their red eyes glow steady. Locked camera.",
+     "captions": [
+      {
+       "text": "IT AIN'T RIGHT NIGHT",
+       "anchor": "tl",
+       "at": 89.095,
+       "lyric": true,
+       "fill": [
+        232,
+        226,
+        204
+       ],
+       "until": 92.369
+      }
+     ],
+     "clip": {
+      "src": "clips/f21_a.mp4",
+      "in": 0.0,
+      "out": 6.0
+     },
+     "focusRegions": [
+      {
+       "label": "Uno eyes",
+       "box": [
+        0.15,
+        0.45,
+        0.27,
+        0.6
+       ],
+       "required": true
+      },
+      {
+       "label": "Aura eyes",
+       "box": [
+        0.77,
+        0.45,
+        0.9,
+        0.6
+       ],
+       "required": true
+      }
+     ],
+     "focus": [
+      0.27,
+      0.45
+     ]
+    },
+    {
+     "id": "f22",
+     "slot": "a",
+     "image": "panels/f22.jpg",
+     "at": 92.369,
+     "moment": "Uno and Aura blast the front door open together, BOOM!, and tumble out into the dawn.",
+     "motionPrompt": "Handsome, sleek, well-designed chrome robots. Uno: tall robot, round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold 1 chain. Aura: clearly a robot, same height as Uno, grey chrome face, red eyes, headphone ears, chrome jointed limbs, dark crimson hair, modest crimson pantsuit. Each character keeps the exact same face, body, outfit and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. Only these characters in shot. One strike: the doors burst open with the blast and dawn light floods in, splinters drift. Locked camera, slight shake.",
+     "captions": [
+      {
+       "text": "WHEN THE DOORS START BUCKLING AND THE CANDLES DIE",
+       "anchor": "tl",
+       "at": 92.369,
+       "lyric": true,
+       "fill": [
+        206,
+        188,
+        244
+       ],
+       "until": 95.225
+      },
+      {
+       "text": "I'M RAPPING THROUGH THE PANIC TILL THE SKY GOES SHY",
+       "anchor": "bl",
+       "at": 95.225,
+       "lyric": true,
+       "fill": [
+        255,
+        196,
+        120
+       ]
+      }
+     ],
+     "clip": {
+      "src": "clips/f22_a.mp4",
+      "in": 0.0,
+      "out": 6.0
+     },
+     "focusRegions": [
+      {
+       "label": "Uno face",
+       "box": [
+        0.28,
+        0.05,
+        0.42,
+        0.3
+       ],
+       "required": true
+      },
+      {
+       "label": "door blast",
+       "box": [
+        0.45,
+        0.15,
+        0.7,
+        0.6
+       ],
+       "required": true
+      },
+      {
+       "label": "Aura face",
+       "box": [
+        0.73,
+        0.2,
+        0.88,
+        0.42
+       ],
+       "required": true
+      }
+     ],
+     "sfx": [
+      {
+       "text": "BOOM!",
+       "at": 93.182,
+       "pos": [
+        0.7,
+        0.35
+       ],
+       "rot": -6,
+       "size": 0.17,
+       "color": [
+        255,
+        245,
+        230
+       ],
+       "impact": true
+      }
+     ]
+    }
+   ],
+   "mood": "action"
+  },
+  {
+   "id": "p09",
+   "start": 99.335,
+   "end": 114.0,
+   "layout": "three",
+   "panels": [
+    {
+     "id": "f23",
+     "slot": "a",
+     "image": "panels/f23.jpg",
+     "at": 99.335,
+     "moment": "Final chorus: sunrise over the hill, they laugh, safe... relief beat.",
+     "motionPrompt": "Handsome, sleek, well-designed chrome robots. Uno: tall robot, round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold 1 chain. Aura: clearly a robot, same height as Uno, grey chrome face, red eyes, headphone ears, chrome jointed limbs, dark crimson hair, modest crimson pantsuit. Each character keeps the exact same face, body, outfit and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. Only these characters in shot. Sunlight slowly brightens, mist drifts, the pair laugh and shake with relief. Slow push-in.",
+     "captions": [
+      {
+       "text": "FRIGHT NIGHT, FRIGHT NIGHT",
+       "anchor": "tl",
+       "at": 99.335,
+       "lyric": true,
+       "fill": [
+        198,
+        236,
+        160
+       ],
+       "until": 102.586
+      }
+     ],
+     "clip": {
+      "src": "clips/f23_a.mp4",
+      "in": 0.0,
+      "out": 6.0
+     },
+     "focusRegions": [
+      {
+       "label": "Uno face",
+       "box": [
+        0.2,
+        0.2,
+        0.32,
+        0.45
+       ],
+       "required": true
+      },
+      {
+       "label": "Aura face",
+       "box": [
+        0.4,
+        0.25,
+        0.52,
+        0.48
+       ],
+       "required": true
+      }
+     ]
+    },
+    {
+     "id": "f24",
+     "slot": "b",
+     "image": "panels/f24.jpg",
+     "at": 102.586,
+     "moment": "Slow push toward the mansion: one upstairs window, Aura's mirror-ghost waving goodbye.",
+     "motionPrompt": "Handsome, sleek, well-designed chrome robots. The mirror-ghost: pale cold-green translucent robot copy of Aura. Each character keeps the exact same face, body, outfit and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. Only these characters in shot. Slow push toward the window, the green ghost waves slowly, mist drifts. Locked camera.",
+     "captions": [
+      {
+       "text": "FRIGHT NIGHT, FRIGHT NIGHT",
+       "anchor": "tl",
+       "at": 102.586,
+       "lyric": true,
+       "fill": [
+        232,
+        226,
+        204
+       ],
+       "until": 107.114
+      }
+     ],
+     "clip": {
+      "src": "clips/f24_a.mp4",
+      "in": 0.0,
+      "out": 6.0
+     },
+     "focusRegions": [
+      {
+       "label": "ghost in the window",
+       "box": [
+        0.42,
+        0.15,
+        0.58,
+        0.45
+       ],
+       "required": true
+      }
+     ]
+    },
+    {
+     "id": "f25",
+     "slot": "c",
+     "image": "panels/f25.jpg",
+     "at": 105.883,
+     "moment": "CLIFFHANGER: Aura turns to Uno; in a close-up, her eyes flicker from red to the ghost's cold green. She smiles. Hard cut to black: \"TO BE CONTINUED...\"",
+     "motionPrompt": "Handsome, sleek, well-designed chrome robots. Aura: clearly a robot, same height as Uno, grey chrome face, red eyes, headphone ears, chrome jointed limbs, dark crimson hair, modest crimson pantsuit. Each character keeps the exact same face, body, outfit and size for the entire shot; one continuous shot; the opening frame matches the image exactly; nothing melts, morphs, transforms, appears or vanishes. Only these characters in shot. Her eyes slowly shift from red to cold green and a slight smile forms, nothing else moves. Very slow push-in.",
+     "captions": [
+      {
+       "text": "FRIGHT NIGHT, FRIGHT NIGHT",
+       "anchor": "tl",
+       "at": 107.114,
+       "lyric": true,
+       "fill": [
+        206,
+        188,
+        244
+       ]
+      }
+     ],
+     "clip": {
+      "src": "clips/f25_b.mp4",
+      "in": 0.0,
+      "out": 6.0
+     },
+     "focusRegions": [
+      {
+       "label": "both eyes (red -> green)",
+       "box": [
+        0.22,
+        0.18,
+        0.8,
+        0.5
+       ],
+       "required": true
+      }
+     ]
+    }
+   ],
+   "mood": "eerie"
+  }
+ ]
+}

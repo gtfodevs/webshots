@@ -1,0 +1,22 @@
+{
+ "soundtrack": "stage/assets/song.m4a",
+ "duration": 166.805,
+ "start": 0,
+ "end": 166.805,
+ "loudness": -14,
+ "fadeOut": 2,
+ "theme": "synthwave",
+ "lyricStyle": "karaoke",
+ "shorts": {
+  "start": 107.9,
+  "end": 151.1,
+  "note": "boss drama -> VS -> boss fight -> freeze-frame KO"
+ },
+ "brand": "channels/progressiveslop/style.json",
+ "pixel": {
+  "w": 960,
+  "h": 540,
+  "lowres": true
+ },
+ "style": "pixel-game"
+}

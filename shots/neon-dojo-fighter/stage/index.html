@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Neon Dojo · SF2-style fighter · ProgressiveSlop</title>
+<!--
+  Neon Dojo fighter (pixel-game music shot, docs/MUSIC_MODE.md). ONE low-res canvas (480x270, 270x480 for the
+  Short) drawn every frame from the song clock. Game logic is in fight.js (pure, shared with scripts/fighter_qa.mjs):
+  scene list, fight scripts (exchanges), the sprite-state machine, HUD and FX. PLACEHOLDER PASS: fighters are
+  rect figures built with the shared-master method (fixed core + per-pose limbs); portraits / stages / close-ups
+  are labelled boxes. Text is the 8px bitmap font only. Sections are stubs so `npm run check` sees the scene list.
+-->
+<style>
+ html,body{margin:0;width:100vw;height:100vh;overflow:hidden;background:#000}
+ #g{position:absolute;left:0;top:0;width:100vw;height:100vh;image-rendering:pixelated}
+ .scene{display:none}
+</style></head><body>
+<canvas id="g"></canvas>
+<section class="scene" id="s-title"></section><section class="scene" id="s-cut"></section><section class="scene" id="s-select"></section>
+<section class="scene" id="s-map"></section><section class="scene" id="s-vs"></section><section class="scene" id="s-fight"></section>
+<section class="scene" id="s-boss_intro"></section><section class="scene" id="s-ending"></section>
+<script src="/vendor/gsap.min.js"></script>
+<script src="/kit.js"></script>
+<script src="/music.js"></script>
+<script src="fight.js"></script>
+<script>
+(async () => {
+const VERT = new URLSearchParams(location.search).get('format') === 'vertical' || document.documentElement.dataset.format === 'vertical';
+const W = 480, H = 270, R = Math.round, Z = 2; // logic in 480x270, drawn at 960x540 (sprites keep 2x detail)
+const cv = document.getElementById('g'); cv.width = VERT ? 540 : 960; cv.height = VERT ? 960 : 540;
+const out = cv.getContext('2d'); out.imageSmoothingEnabled = false;
+const wc = document.createElement('canvas'); wc.width = W * Z; wc.height = H * Z;
+const g = wc.getContext('2d'); g.imageSmoothingEnabled = false;
+const TL = await Music.load('timeline.json');
+const E = FIGHT.build(TL), CH = FIGHT.CHARS, ST = FIGHT.STAGES;
+const img = (src) => new Promise((ok) => { const i = new Image(); i.onload = () => ok(i); i.src = src; });
+const font = await img('assets/px/font8.png');
+const SPR = {}; for (const c of Object.keys(FIGHT.SPRITE_ANIMS)) SPR[c] = { meta: await (await fetch(`assets/px/${c}.json`)).json(), img: await img(`assets/px/${c}.png`) };
+const whiteOf = new Map(); function white(c) { if (whiteOf.has(c)) return whiteOf.get(c); const a = SPR[c].img, k = document.createElement('canvas'); k.width = a.width; k.height = a.height; const x = k.getContext('2d'); x.drawImage(a, 0, 0); x.globalCompositeOperation = 'source-in'; x.fillStyle = '#fff'; x.fillRect(0, 0, k.width, k.height); whiteOf.set(c, k); return k; }
+const hash = (n) => { const x = Math.sin(n * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const beatIdx = (t) => { let n = -1; for (const b of TL.beats) { if (b > t) break; n++; } return n; };
+const PAL = { ink: '#12062a', mag: '#ff3fd2', cyan: '#5ee7ff', gold: '#ffe36b', white: '#ffffff', red: '#e0102a', lilac: '#bfb3ff' };
+
+// ---------- bitmap font ----------
+const tints = new Map();
+function tint(col) { if (tints.has(col)) return tints.get(col); const k = document.createElement('canvas'); k.width = font.width; k.height = 8; const x = k.getContext('2d'); x.drawImage(font, 0, 0); x.globalCompositeOperation = 'source-in'; x.fillStyle = col; x.fillRect(0, 0, k.width, 8); tints.set(col, k); return k; }
+const textW = (s, sc = 1) => String(s).length * 8 * sc;
+function text(c, s, x, y, col = '#fff', sc = 1, align = 'left', shadow = PAL.ink) {
+  s = String(s).replace(/[\u2018\u2019]/g, "'").replace(/[^\x20-\x7e]/g, ''); let X = align === 'center' ? x - textW(s, sc) / 2 : align === 'right' ? x - textW(s, sc) : x; X = R(X); y = R(y);
+  const draw = (ox, oy, k) => { for (let i = 0; i < s.length; i++) { const ch = s.charCodeAt(i) - 32; if (ch <= 0 || ch > 94) continue; c.drawImage(k, ch * 8, 0, 8, 8, X + i * 8 * sc + ox, y + oy, 8 * sc, 8 * sc); } };
+  if (shadow) draw(sc, sc, tint(shadow)); draw(0, 0, tint(col));
+  if (window.__qa && window.__qa.texts && !TXT_SKIP && s.trim()) window.__qa.texts.push([c === out ? 'out' : 'world', X, y, textW(s, sc) + (shadow ? sc : 0), 8 * sc + (shadow ? sc : 0), s, TXT_GROUP]);
+}
+let TXT_SKIP = 0, TXT_GROUP = 0; // text QA: logo outline passes are not separate texts; one lyric line = one group
+const CHROME = ['#ffffff', '#e8ecff', '#c9d0f0', '#9aa4d8', '#ff7ae0', '#ff3fd2', '#c41ea8', '#7a1070'];
+const FIRE = ['#fff6c0', '#ffe36b', '#ffc23a', '#ff8a2a', '#ff4a2a', '#e0102a', '#a00a22', '#600818'];
+function logo(c, s, cx, y, sc, bands = CHROME) {
+  const X = R(cx - textW(s, sc) / 2);
+  if (window.__qa && window.__qa.texts) window.__qa.texts.push([c === out ? 'out' : 'world', X - 1, y - 1, textW(s, sc) + 4, 8 * sc + 4, s, 'logo']); TXT_SKIP++;
+  for (const [ox, oy] of [[-1, 0], [1, 0], [0, -1], [0, 1], [2, 2], [3, 3], [-1, -1], [1, 1]]) text(c, s, X + ox, y + oy, PAL.ink, sc, 'left', null);
+  for (let r = 0; r < 8; r++) { const k = tint(bands[r]); for (let i = 0; i < s.length; i++) { const ch = s.charCodeAt(i) - 32; if (ch <= 0) continue; c.drawImage(k, ch * 8, r, 8, 1, X + i * 8 * sc, y + r * sc, 8 * sc, sc); } }
+  TXT_SKIP--;
+}
+function wrap(s, max) { const o = []; let line = ''; for (const w of s.split(' ')) { if ((line + ' ' + w).trim().length > max) { o.push(line.trim()); line = w; } else line += ' ' + w; } if (line.trim()) o.push(line.trim()); return o; }
+function frameBox(c, x, y, w, h, edge = PAL.mag) { c.fillStyle = PAL.ink; c.fillRect(x, y, w, h); c.fillStyle = edge; c.fillRect(x + 1, y + 1, w - 2, h - 2); c.fillStyle = '#1d0b45'; c.fillRect(x + 2, y + 2, w - 4, h - 4); }
+function ph(c, x, y, w, h, label, col = '#3a1a70') { // labelled placeholder box (replaced by generated art)
+  c.fillStyle = col; c.fillRect(x, y, w, h); c.fillStyle = '#ffffff22';
+  for (let i = -h; i < w; i += 12) for (let k = 0; k < h; k++) if (i + k >= 0 && i + k < w && k % 2 === 0) c.fillRect(x + i + k, y + k, 1, 1);
+  c.fillStyle = PAL.ink; c.fillRect(x, y, w, 1); c.fillRect(x, y + h - 1, w, 1); c.fillRect(x, y, 1, h); c.fillRect(x + w - 1, y, 1, h);
+  if (label) wrap(label, Math.max(4, Math.floor((w - 6) / 8))).forEach((ln, i) => text(c, ln, x + w / 2, y + 4 + i * 10, '#fff', 1, 'center'));
+}
+
+// ---------- placeholder fighter (shared-master rects) + contact shadow ----------
+const COL = (C) => ({ chrome: C.chrome, dark: '#4a4e66', limb: '#8a90a8', foot: '#2a2c3a', acc: C.acc, acc2: C.acc2, eye: '#ff2030', fist: C.chrome });
+// painted stage art: parallax layers at 960x540 (built by build_assets.py)
+const ART = {};
+for (const [k, S] of Object.entries(ST)) if (S.art) { const base = `assets/px/stage-${S.art}`; ART[k] = { meta: await (await fetch(base + '.json')).json() };
+  for (const [L] of ART[k].meta.layers) ART[k][L] = await img(`${base}-${L}.png`);
+  ART[k].glow = {}; for (const [n] of ART[k].meta.glows || []) ART[k].glow[n] = await img(`${base}-glow-${n}.png`);
+  ART[k].figs = await Promise.all((ART[k].meta.figures || []).map((_, i) => img(`${base}-fig${i}.png`))); }
+// SF2 restraint: layers drift with the camera only. Layers sit on an INPAINTED CLEAN PLATE; every animated background figure
+// (crowd robot, monk, spectator) is its own cutout and rises 1px on the beat (alternate figures on alternate beats);
+// occluder layers (railings) are drawn after the figures. Bobbing whole bands is not allowed (fighter_qa fails it). Lanterns flicker;
+// optional pond shimmer (rows offset +-1px, slow) and a few slow drifting petals
+function artStage(k, t, cam) {
+  cam = clamp(cam, -12, 12); const A = ART[k], M = A.meta, off = (s) => R(-cam * Z * s);
+  const bi = beatIdx(t), ph = bi >= 0 ? (t - TL.beats[bi]) / E.beatLen : 0;
+  g.save(); g.setTransform(1, 0, 0, 1, 0, 0);
+  for (const [L, sp, fx] of M.layers) {
+    if (L === 'floor') continue;
+    g.drawImage(A[L], off(sp), 0);
+    if (L === M.figure_layer) M.figures.forEach(([x, y, w, h, p], i) => g.drawImage(A.figs[i], x + off(M.figure_speed),
+      y - (M.figure_mode === 'breathe' ? (Math.sin(t * 1.7 + i * 1.9) > 0.3 ? 1 : 0) : ((bi + p) % 2 === 0 && ph < 0.35 ? 1 : 0))));   // guards: slow 1px breath, offset per figure
+    if (L === 'mid' && M.shimmer) { const [x, y, w, h, sp2] = M.shimmer; for (let yy = y; yy < y + h; yy += 2) { const dx = R(Math.sin(t * 1.3 + yy * 0.35)); if (dx) g.drawImage(A.mid, x, yy, w, 2, x + dx + off(sp2), yy, w, 2); } }
+  }
+  g.globalCompositeOperation = 'lighter';
+  const lx = off((M.layers.find((l) => l[0] === 'gate' || l[0] === 'mid' || l[0] === M.figure_layer) || [0, 0.6])[1]);
+  for (const [n, mode] of M.glows || []) { // additive glow layers: crest pulse, torch flicker, rare window lightning
+    const a = mode === 'pulse' ? 0.35 + 0.3 * Math.sin(t * 2.2) : mode === 'flicker' ? 0.3 + 0.35 * hash(Math.floor(t * 12)) : (() => { const c = Math.floor(t / 2.7), u = t - c * 2.7; return hash(c * 7 + 1) > 0.55 && u < 0.18 ? (u < 0.06 || u > 0.12 ? 1 : 0.25) : 0; })();
+    if (a > 0.01) { g.globalAlpha = Math.min(1, a); g.drawImage(A.glow[n], off(mode === 'flash' ? 0.1 : 0.6), 0); g.globalAlpha = 1; } }
+  M.lanterns.forEach(([x, y, r], i) => { const f = 0.5 + 0.5 * Math.sin(t * (2.1 + hash(i) * 1.7) + i * 2) * Math.sin(t * 0.7 + i); const a = 0.05 + 0.07 * f;
+    g.fillStyle = `rgba(255,120,170,${a.toFixed(3)})`; g.fillRect(x - r + lx, y - r, r * 2, r * 2); g.fillRect(x - r + 3 + lx, y - r - 3, r * 2 - 6, r * 2 + 6); });
+  g.globalCompositeOperation = 'source-over';
+  g.drawImage(A.floor, off(1), 0);
+  if (ST[k].tint) { g.globalCompositeOperation = 'multiply'; g.fillStyle = ST[k].tint; g.fillRect(0, 0, W * Z, H * Z); g.globalCompositeOperation = 'source-over'; } // tinted stage variant
+  if (M.petals) for (let i = 0; i < M.petals; i++) { const sp = 6 + hash(i + 3) * 10, x = R(((hash(i) * 1100 + t * sp * 1.6) % 1100) - 70 + Math.sin(t * 0.8 + i) * 6), y = R((hash(i + 7) * 600 + t * sp) % 600 - 30);
+    g.fillStyle = i % 3 ? '#ff9ad6' : '#ffd0ea'; g.fillRect(x, y, 4, 2); g.fillRect(x + 1, y + 2, 2, 2); }
+  g.restore();
+}
+const qa = (window.__qa = window.__qa || { draws: [] });
+function fighter(st, o = {}, t = Music.time()) {
+  const C = CH[st.char], rects = SPR[st.char] ? [] : FIGHT.poseRects(st.char, st.anim, st.frame), col = COL(C), s = st.flip ? -1 : 1;
+  const gy = o.ground ?? st.y; // contact shadow on the stage ground even when airborne
+  g.fillStyle = '#0000007a'; const sw = R(C.w * 1.6 + 10); g.fillRect(R(st.x - sw / 2), (o.groundRow ?? st.y) - 1 + (st.air ? 0 : 0), sw, 3); g.fillRect(R(st.x - sw / 2) + 3, (o.groundRow ?? st.y) + 2, sw - 6, 1);
+  if (SPR[st.char]) { // real art: atlas frame at full 960x540 resolution, anchor (belt x, sole row) on the ground
+    const pose = FIGHT.animOf(st.char, st.anim).frames[st.frame], fr = SPR[st.char].meta.frames[pose], [sx, sy, w, h] = fr.rect;
+    const ax = st.flip ? w - 1 - fr.ax : fr.ax, dx = R(st.x * Z) - ax, dy = R(gy * Z) - fr.ay;
+    g.save(); g.setTransform(1, 0, 0, 1, 0, 0);
+    if (o.k) { const px = R(st.x * Z), py = R(gy * Z); g.translate(px, py); g.scale(o.k, o.k); g.translate(-px, -py); } // close-up scale (nearest)
+    if (st.flip) { g.translate(dx + w, dy); g.scale(-1, 1); } else g.translate(dx, dy);
+    g.drawImage(o.white ? white(st.char) : SPR[st.char].img, sx, sy, w, h, 0, 0, w, h);
+    if (fr.fx && !o.white) { // energy layer: additive, flickers on a 3-step cycle so it reads as effect, not body
+      const [fx, fy, fw, fh] = fr.fx.rect, fl = Math.floor(t * 20) % 3; g.globalCompositeOperation = 'lighter'; g.globalAlpha = fl === 0 ? 1 : fl === 1 ? 0.7 : 0.45;
+      g.drawImage(SPR[st.char].img, fx, fy, fw, fh, fr.fx.ox, fr.fx.oy, fw, fh); g.globalAlpha = 1; g.globalCompositeOperation = 'source-over'; }
+    g.restore();
+    qa.draws.push([st.char, st.anim, st.frame, st.x, st.y, st.air ? 1 : 0, pose]); return;
+  }
+  for (const [x, y, w, h, k] of rects) { g.fillStyle = o.white ? '#ffffff' : o.tint || col[k]; const X = s > 0 ? st.x + x : st.x - x - w + 1; g.fillRect(R(X), R(gy + y), w, h); }
+  if (FIGHT.ANIMS[st.anim].frames[st.frame].glow) { g.fillStyle = C.acc2; const hx = st.x + s * 30; g.fillRect(R(hx - 3), R(gy - 50), 6, 6); }
+  qa.draws.push([st.char, st.anim, st.frame, st.x, st.y, st.air ? 1 : 0]);
+}
+
+// ---------- stage backgrounds (placeholder art: sky band, skyline, floor with a hard ground line) ----------
+function stageBg(k, t, cam = 0) {
+  if (ART[k]) return artStage(k, t, cam);
+  const S = ST[k], G = S.ground;
+  for (let y = 0; y < G; y++) { const a = y / G; g.fillStyle = a < 0.5 ? S.sky[0] : S.sky[1]; if ((y % 4 === 0) && a > 0.45 && a < 0.55) g.fillStyle = S.sky[1]; g.fillRect(0, y, W, 1); }
+  for (let i = 0; i < 40; i++) { g.fillStyle = '#ffffff55'; g.fillRect(R(hash(i) * W), R(hash(i + 3) * 90), 1, 1); }
+  const off = R(cam * 0.4);
+  for (let i = 0; i < 14; i++) { const x = ((i * 41 - off) % 560 + 560) % 560 - 40, h = 40 + R(hash(i + 11) * 70); g.fillStyle = '#0c0420'; g.fillRect(x, G - 30 - h, 30, h + 30); g.fillStyle = S.acc; for (let w = 0; w < 6; w++) if (hash(i * 9 + w + Math.floor(t)) > 0.5) g.fillRect(x + 4 + (w % 3) * 9, G - 24 - h + 10 + (w >> 1) * 14, 3, 2); }
+  g.fillStyle = '#1a0c36'; g.fillRect(0, G + 1, W, H - G - 1); g.fillStyle = S.acc; g.fillRect(0, G + 1, W, 1);
+  g.fillStyle = '#2a1458'; for (let x = -((cam) % 32); x < W; x += 32) g.fillRect(R(x), G + 3, 1, H - G - 3);
+  g.fillStyle = '#ffffff10'; g.fillRect(0, G + 8, W, 1);
+  text(g, 'PLACEHOLDER STAGE: ' + S.name, W / 2, G + 5, '#8a7ab8', 1, 'center', null);
+}
+
+// ---------- HUD: SF2 bars with a damage trail, 99 timer, round pips, names ----------
+function hpBar(c, x, y, w, hp, trail, right) {
+  c.fillStyle = PAL.ink; c.fillRect(x - 1, y - 1, w + 2, 12);
+  c.fillStyle = '#c41e1e'; c.fillRect(x, y, w, 10);
+  const tw = R(w * trail / 100), hw = R(w * hp / 100);
+  c.fillStyle = '#ffffff'; right ? c.fillRect(x + w - tw, y, tw, 10) : c.fillRect(x, y, tw, 10);
+  c.fillStyle = '#ffd400'; right ? c.fillRect(x + w - hw, y, hw, 10) : c.fillRect(x, y, hw, 10);
+  c.fillStyle = '#fff6a0'; right ? c.fillRect(x + w - hw, y + 1, hw, 2) : c.fillRect(x, y + 1, hw, 2);
+  c.fillStyle = '#b08a00'; right ? c.fillRect(x + w - hw, y + 8, hw, 2) : c.fillRect(x, y + 8, hw, 2);
+}
+function hud(c, f, t, cw) {
+  const h = E.hud(f, t), mid = cw / 2, bw = R(cw / 2 - 30);
+  hpBar(c, 8, 12, bw, h.p1.hp, h.p1.trail, false); hpBar(c, cw - 8 - bw, 12, bw, h.p2.hp, h.p2.trail, true);
+  frameBox(c, mid - 16, 6, 32, 22, PAL.gold); text(c, String(h.timer).padStart(2, '0'), mid, 10, h.timer < 20 && Math.floor(t * 4) % 2 ? PAL.red : PAL.white, 2, 'center');
+  text(c, h.p1.name, 8, 26, PAL.white); text(c, h.p2.name, cw - 8, 26, PAL.white, 1, 'right');
+  for (let i = 0; i < 2; i++) { c.fillStyle = i < h.pips[0] ? PAL.gold : '#3a2a60'; c.fillRect(8 + bw - 10 - i * 10, 27, 7, 7); c.fillStyle = i < h.pips[1] ? PAL.gold : '#3a2a60'; c.fillRect(cw - 8 - bw + 3 + i * 10, 27, 7, 7); }
+  text(c, '1P', 8, 2, PAL.mag, 1, 'left', null); text(c, 'CPU', cw - 8, 2, PAL.cyan, 1, 'right', null);
+}
+
+// ---------- FX ----------
+function spark(s) {
+  const n = s.kind === 'big' ? 16 : s.kind === 'block' ? 8 : 10, r = (s.kind === 'big' ? 6 : 4) + s.frame * (s.kind === 'big' ? 6 : 4), col = s.kind === 'block' ? PAL.cyan : s.frame === 0 ? '#ffffff' : PAL.gold;
+  g.fillStyle = col; if (s.frame === 0) g.fillRect(s.x - 3, s.y - 3, 7, 7);
+  for (let i = 0; i < n; i++) { const a = i / n * Math.PI * 2 + s.frame * 0.3; g.fillRect(R(s.x + Math.cos(a) * r), R(s.y + Math.sin(a) * r), s.frame === 2 ? 1 : 2, s.frame === 2 ? 1 : 2); }
+}
+function banner(s, t) {
+  let big = s === 'K.O.' ? 6 : s === 'FIGHT!' ? 5 : 4; if (VERT) big = Math.max(2, Math.min(big, Math.floor(250 / (s.length * 8)))); // fits the Short crop
+  const col = s === 'K.O.' ? FIRE : s === 'FIGHT!' ? FIRE : CHROME;
+  logo(g, s, W / 2, 92, big, col);
+}
+function cutin(c, t) { // super cut-in framing: dark band + speed lines + sliding eye-band portrait placeholder
+  const d = t - c.t0, left = c.t1 - t, k = Math.min(1, d / 0.12, left / 0.12), bh = R(70 * k); if (bh < 2) return;
+  const cy = 120, y0 = cy - (bh >> 1);
+  g.fillStyle = '#0b0618'; g.fillRect(0, y0, W, bh);
+  for (let i = 0; i < 34; i++) { const yy = y0 + R(hash(i * 3.1) * bh), len = 20 + R(hash(i * 7.7) * 70); const xx = R(((hash(i) * W * 2 - d * 900 * (0.6 + hash(i + 2))) % (W + len) + W + len) % (W + len)) - len; g.fillStyle = i % 3 ? '#3a2470' : PAL.cyan; g.fillRect(xx, yy, len, 1); }
+  g.fillStyle = PAL.mag; g.fillRect(0, y0, W, 1); g.fillRect(0, y0 + bh - 1, W, 1);
+  g.save(); g.beginPath(); g.rect(0, y0 + 1, W, bh - 2); g.clip();
+  const slide = R((1 - Math.min(1, d / 0.15)) * 120), img = CUT[c.who];
+  if (img) { const sh = bh * Z, sy = R(CUT_Y[c.who] * 540 - sh / 2); g.save(); g.setTransform(1, 0, 0, 1, 0, 0); g.drawImage(img, 0, sy, 960, sh, -slide * Z, y0 * Z, 960, sh); g.restore(); }
+  qa.cutins = qa.cutins || []; qa.cutins.push([c.who, R(t * 100) / 100]);
+  g.restore();
+  text(g, 'SUPER!', W / 2, y0 + bh + 4, PAL.gold, 2, 'center');
+}
+
+// ---------- scenes ----------
+function titleScene(t, s) {
+  g.fillStyle = '#0b0618'; g.fillRect(0, 0, W, H);
+  for (let i = 0; i < 70; i++) { g.fillStyle = i % 3 ? '#5a4aa0' : '#ffffff'; g.fillRect(R(hash(i) * W), R((hash(i + 5) * H + t * 6 * (1 + hash(i))) % H), 1, 1); }
+  if (t < TL.downbeats[1]) { const k = Math.floor(t * 20) % 2; g.fillStyle = k ? '#1d0b45' : '#0b0618'; g.fillRect(0, 0, W, H); text(g, 'PROGRESSIVESLOP SYSTEM 32', W / 2, 120, PAL.cyan, 1, 'center'); text(g, 'CHECKING ROM... OK', W / 2, 134, '#8a7ab8', 1, 'center'); return; }
+  const d = t - TL.downbeats[1], drop = R(Math.max(0, 1 - d / 0.15) * -80);
+  g.save(); g.setTransform(1, 0, 0, 1, 0, 0); g.drawImage(LOGO, R(480 - LOGO.width / 2), R((10 + drop) * Z)); g.restore();
+  text(g, 'CHAMPION EDITION', W / 2, 166, PAL.cyan, 1, 'center');
+  const credit = t >= s.coin ? 1 : 0;
+  if (!credit) { if (Math.floor(t * 2) % 2 === 0) text(g, 'INSERT COIN', W / 2, 184, PAL.gold, 2, 'center'); }
+  else if (Math.floor(t * 8) % 2) text(g, 'PRESS START', W / 2, 184, PAL.mag, 2, 'center');
+  const sx = W / 2, sy = 222; g.fillStyle = '#2a1270'; g.fillRect(sx - 9, sy - 2, 18, 8); g.fillStyle = PAL.ink; g.fillRect(sx - 6, sy, 12, 2);
+  if (t > s.coin - 0.5 && t < s.coin) { const k = (t - s.coin + 0.5) / 0.5; g.fillStyle = PAL.gold; g.fillRect(sx - 3, R(sy - 120 * (1 - k * k)) - 6, 6, 6); }
+  text(g, 'CREDIT ' + credit, W - 10, 258, '#fff', 1, 'right'); text(g, '(C) PROGRESSIVESLOP 2026', W / 2, 258, '#8a7ab8', 1, 'center', null);
+  text(g, '1UP', 10, 6, PAL.mag); text(g, 'HI 0999990', W - 10, 6, PAL.cyan, 1, 'right');
+  const end = s.t1, w = clamp((t - (end - 0.25)) / 0.25, 0, 1); if (w > 0) { g.fillStyle = '#fff'; g.fillRect(0, 0, R(W * w), H); }
+}
+const PANEL_LABEL = { city: 'WIDE: NEO-KYOTO RAIN SKYLINE', uno_eyes: 'CLOSE-UP: UNO EYES POWER ON + PENDANT GLINT', flashback: 'FLASHBACK: YOUNG UNO BOWS TO SENSEI GEARHART', shogun_fire: 'SHOGUN SILHOUETTE IN THE DOJO FIRE, RED VISOR', fist: 'CLOSE-UP: UNO FIST CLENCHED, SPARKS', aura_magic: 'CLOSE-UP: AURA HAIR + CYAN PALM MAGIC', aura_chains: 'AURA BREAKS SERVER-CABLE CHAINS', rooftop: 'TWO-SHOT: UNO + AURA ROOFTOP BACKS, BLIMP' };
+function cutScene(t, s) {
+  const d = t - s.t0, sepia = s.panel === 'flashback' || s.panel === 'shogun_fire';
+  g.fillStyle = '#000'; g.fillRect(0, 0, W, H);
+  kenBurns(PAN[s.panel], clamp(d / (s.t1 - s.t0), 0, 1), KB[s.panel], sepia ? 'sepia(0.85) saturate(1.2) contrast(1.05)' : '');
+  // letterbox + typewriter subtitle
+  g.fillStyle = '#000'; g.fillRect(0, 0, W, 12); g.fillRect(0, 196, W, H - 196);
+  frameBox(g, 16, 202, 448, 40); const n = Math.floor(Math.max(0, d - 0.15) * 28);
+  wrap(s.txt.slice(0, n), 52).forEach((ln, i) => text(g, ln, 26, 212 + i * 12, '#fff'));
+  if (d < 0.1 || s.t1 - t < 0.08) { g.fillStyle = '#000'; g.fillRect(0, 0, W, H); }
+}
+function selectScene(t, s) {
+  g.fillStyle = '#0b0618'; g.fillRect(0, 0, W, H); g.fillStyle = '#1a1040'; g.fillRect(0, 150, W, 120); g.fillStyle = PAL.mag; g.fillRect(0, 150, W, 1);
+  logo(g, 'PLAYER SELECT', W / 2, 10, 2, CHROME);
+  const R0 = FIGHT.ROSTER, cols = 4, pw = 54, phh = 46, x0 = W / 2 - (cols * (pw + 6)) / 2;
+  const lock = t >= s.lock, b = Math.max(0, beatIdx(t) - beatIdx(s.t0)), cur = lock ? R0.indexOf(s.pick) : [1, 2, 6, 5, 3, 4, 0][b % 7];
+  R0.forEach((c, i) => { const x = R(x0 + (i % cols) * (pw + 6) + (i >= 4 ? (pw + 6) / 2 : 0)), y = 36 + Math.floor(i / cols) * (phh + 6);
+    g.fillStyle = CH[c].hero ? '#3a1a70' : CH[c].boss ? '#5a0a22' : '#2a2a50'; g.fillRect(x, y, pw, phh); portrait(c, x, y, pw, phh, false);
+    if (i === cur) { g.fillStyle = lock && Math.floor(t * 12) % 2 ? '#fff' : PAL.mag; g.fillRect(x - 2, y - 2, pw + 4, 2); g.fillRect(x - 2, y + phh, pw + 4, 2); g.fillRect(x - 2, y, 2, phh); g.fillRect(x + pw, y, 2, phh); text(g, '1P', x + 2, y + phh - 10, PAL.mag); } });
+  const c = R0[cur]; g.fillStyle = '#3a1a70'; g.fillRect(20, 160, 110, 100); portrait(c, 20, 160, 110, 100, true); text(g, CH[c].name, 140, 170, PAL.gold, 2); text(g, lock ? 'LOCKED IN!' : 'CHOOSE YOUR FIGHTER', 140, 196, lock ? PAL.mag : '#fff');
+  text(g, 'TIME ' + String(Math.max(0, 9 - b)).padStart(2, '0'), W - 10, 10, PAL.cyan, 1, 'right');
+}
+function mapScene(t, s) {
+  kenBurns(MAP, clamp((t - s.t0) / (s.t1 - s.t0), 0, 1) * 0.5, [0, 0]);
+  const P = STORY.pins.map(([x, y]) => [x / 2, y / 2]).sort((a, b) => a[0] - b[0]), pts = [P[0], P[2], P[1], P[4]], k = clamp((t - s.t0) / (s.t1 - s.t0 - 0.3), 0, 1);
+  g.fillStyle = PAL.mag; for (let i = 0; i < 60; i++) { const q = i / 60; if (q > k) break; const seg = Math.min(2, Math.floor(q * 3)), u = q * 3 - seg; const [a, b] = [pts[seg], pts[seg + 1]]; if (i % 2 === 0) g.fillRect(R(a[0] + (b[0] - a[0]) * u), R(a[1] + (b[1] - a[1]) * u), 2, 2); }
+  pts.forEach(([x, y], i) => { if (i / 3 <= k + 0.01) { g.fillStyle = i === 3 ? PAL.gold : PAL.cyan; g.fillRect(R(x) - 2, R(y) - 2, 4, 4); } });
+  const seg = Math.min(2, Math.floor(k * 3)), u = k * 3 - seg, a = pts[seg], b = pts[seg + 1]; g.fillStyle = '#fff'; g.fillRect(R(a[0] + (b[0] - a[0]) * u) - 4, R(a[1] + (b[1] - a[1]) * u) - 2, 9, 4);
+  text(g, 'NEXT: ' + ST[s.to].name, W / 2, 240, PAL.gold, 1, 'center');
+}
+function vsScene(t, s) {
+  const d = t - s.t0, k = clamp(d / 0.35, 0, 1), sl = R((1 - k) * (1 - k) * 120); // restrained ease-out slide
+  g.fillStyle = '#0b0618'; g.fillRect(0, 0, W, H);
+  for (let y = 0; y < H; y++) { const x = R(W / 2 + (y - H / 2) * 0.35); g.fillStyle = '#2a0f52'; g.fillRect(0 - sl, y, x, 1); g.fillStyle = '#4a0a22'; g.fillRect(x + sl, y, W - x, 1); }
+  const left = s.p1; left.forEach((c, i) => portrait(c, 20 + i * 90 - sl, 40, left.length > 1 ? 130 : 180, 170, true));
+  portrait(s.p2, 280 + sl, 40, 180, 170, false);
+  text(g, left.map((c) => CH[c].name).join(' + '), 24, 220, PAL.gold, 2); text(g, CH[s.p2].name, 456, 220, PAL.gold, 2, 'right'); // names stay put (inside the frame) while the busts slide
+  if (t >= s.slam) { const e = t - s.slam, sc = e < 0.08 ? 8 : 6; logo(g, 'VS', W / 2, 100 - (sc - 6) * 4, sc, FIRE); if (e < 0.1) { g.fillStyle = '#ffffffaa'; g.fillRect(0, 0, W, H); } }
+  text(g, 'STAGE: ' + ST[(s.p2 === 'tekko' ? 'rooftop' : s.p2 === 'lotus' ? 'garden' : 'temple')].name, W / 2, 252, PAL.cyan, 1, 'center');
+}
+let SHAKE = 0;
+// story close-ups / ending panels / world map / logo (story_art.py). Ken Burns: one slow ease-in-out push (1.00 -> 1.06)
+// with a small drift, smoothed sub-pixel at 960x540 so painted art glides instead of crawling; never above source res.
+const STORY = await (await fetch('assets/px/story.json')).json(), PAN = {};
+for (const n of STORY.panels) PAN[n] = await img(`assets/px/panel-${n}.png`);
+const MAP = await img('assets/px/world-map.png'), LOGO = await img('assets/px/logo.png');
+const KB = { city: [1, 0], uno_eyes: [0, 0], flashback: [-1, 0], shogun_fire: [0, -1], fist: [1, 1], aura_magic: [-1, 0], aura_chains: [0, 1], rooftop: [1, 0], belt: [-1, 0], sensei: [0, -1], bow: [1, 0] };
+function kenBurns(im, u, dir = [0, 0], filter = '') {
+  const e = u * u * (3 - 2 * u), z = 1 + 0.06 * e, w = 960 * z, h = 540 * z, x = -(w - 960) / 2 + dir[0] * 18 * (e - 0.5), y = -(h - 540) / 2 + dir[1] * 10 * (e - 0.5);
+  g.save(); g.setTransform(1, 0, 0, 1, 0, 0); g.imageSmoothingEnabled = true; g.imageSmoothingQuality = 'high'; if (filter) g.filter = filter;
+  g.drawImage(im, 0, 0, im.width, im.height, x, y, w, h); g.restore(); g.imageSmoothingEnabled = false; qa.art = (qa.art || 0) + 1;
+}
+// VS portraits (busts face left; the left-side fighter is mirrored so the pair face each other) + super cut-in art
+const POR = {}, CUT = {}, CUT_Y = { uno: 0.42, aura: 0.36, shogun: 0.34 };
+for (const c of FIGHT.ROSTER) POR[c] = await img(`assets/px/portrait-${c}.png`);
+for (const c of Object.keys(CUT_Y)) CUT[c] = await img(`assets/px/cutin-${c}.png`);
+function portrait(c, x, y, w, h, mirror) { // contain-fit, bottom-aligned in the slot (logic coords), drawn at 960x540 detail
+  const P = POR[c], k = Math.min((w * Z) / P.width, (h * Z) / P.height), dw = R(P.width * k), dh = R(P.height * k), X0 = R(x * Z + (w * Z - dw) / 2), Y0 = R((y + h) * Z - dh);
+  g.save(); g.setTransform(1, 0, 0, 1, 0, 0); g.beginPath(); g.rect(x * Z, y * Z, w * Z, h * Z); g.clip();
+  if (mirror) { g.translate(X0 + dw, Y0); g.scale(-1, 1); g.drawImage(P, 0, 0, dw, dh); } else g.drawImage(P, X0, Y0, dw, dh);
+  g.restore(); qa.portraits = qa.portraits || {}; qa.portraits[c] = 1;
+}
+function fightScene(t, s) {
+  const f = E.fights[s.fight], X = E.fx(f, t), tw = X.hold ?? t; // tw: world clock (held still during a super cut-in)
+  const a0 = E.fighterAt(f, 1, tw), b0 = E.fighterAt(f, 2, tw), cam = clamp(((a0.x + b0.x) / 2 - 240) * 0.3, -8, 8); // gentle camera follow
+  stageBg(f.stage, tw, cam);
+  // crowd bounce on "room start to get loud"
+  if (f.id === 'f2' && !ST[f.stage].art) for (let i = 0; i < 18; i++) { const j = t > 101.9 && t < 106 ? (beatIdx(t) + i) % 2 * 3 : 0; g.fillStyle = '#2a1a50'; g.fillRect(14 + i * 26, f.ground - 26 - j, 12, 26 + j); g.fillStyle = '#ff2030'; g.fillRect(17 + i * 26, f.ground - 22 - j, 2, 1); g.fillRect(22 + i * 26, f.ground - 22 - j, 2, 1); }
+  const a = E.fighterAt(f, 1, tw), b = E.fighterAt(f, 2, tw);
+  const flash = (st) => f.events.some((e) => e.side !== st.side && e.res !== 'block' && t - e.t >= 0 && t - e.t < 0.05);
+  // the attacker draws in front
+  const order = f.events.find((e) => Math.abs(t - e.t) < 0.4)?.side === 2 ? [a, b] : [b, a];
+  for (const st of order) fighter(st, { white: !X.hold && flash(st), groundRow: f.ground }, tw);
+  X.sparks.forEach(spark);
+  if (X.combo) text(g, X.combo.n + ' HITS', X.combo.side === 1 ? 10 : W - 10, 60, PAL.gold, 2, X.combo.side === 1 ? 'left' : 'right');
+  if (!VERT && !f.montage) hud(g, f, t, W);
+  if (f.montage) { text(g, CH[f.p1].name + ' VS ' + CH[f.p2].name, W / 2, 10, PAL.cyan, 1, 'center'); hpBar(g, 8, 22, 200, E.hp(f, 1, t), E.hp(f, 1, t), false); hpBar(g, W - 208, 22, 200, E.hp(f, 2, t), E.hp(f, 2, t), true); }
+  if (X.tag) { const e = t - X.tag.t0, y = 70 - R(Math.min(1, e / 0.1) * 6); if (e < 0.42 || Math.floor(e * 16) % 2) text(g, 'TAG!', 24, y, PAL.gold, 2); }
+  if (X.dust) { const { x, y, u } = X.dust, r = R(6 + u * 16); g.fillStyle = `rgba(210,200,230,${(0.55 * (1 - u)).toFixed(2)})`; for (const sx of [-1, 1]) { g.fillRect(R(x + sx * r) - 3, y - 4 - R(u * 3), 6, 3); g.fillRect(R(x + sx * r * 0.6) - 2, y - 7 - R(u * 4), 4, 2); } }
+  if (X.banner) banner(X.banner, t);
+  if (X.cutin) cutin(X.cutin, t);
+  if (f.standoff && t >= f.standoff[0] && t < f.standoff[1]) { // leaf + wind, both bars flash low
+    const d = t - f.standoff[0]; g.fillStyle = '#ff7ad9'; g.fillRect(R(W - d * 70), R(80 + Math.sin(d * 3) * 20), 3, 2); g.fillStyle = '#ffffff22'; for (let i = 0; i < 10; i++) g.fillRect(R((hash(i) * W - d * 200 * (1 + hash(i + 1))) % W + W) % W, R(hash(i + 4) * 200), 18, 1); }
+  SHAKE = X.shake ? R((hash(Math.floor(t * 30)) - 0.5) * 2 * X.shake) : 0;
+  if (X.freeze) { const im = g.getImageData(0, 0, W * Z, H * Z), p = im.data; for (let i = 0; i < p.length; i += 4) { const l = (p[i] * 3 + p[i + 1] * 6 + p[i + 2]) / 10; const v = l > 110 ? [18, 6, 42] : [255, 63, 210]; p[i] = v[0]; p[i + 1] = v[1]; p[i + 2] = v[2]; } g.putImageData(im, 0, 0); g.setTransform(Z, 0, 0, Z, 0, 0); text(g, 'FREEZE FRAME', W / 2, 40, '#fff', 2, 'center'); }
+  if (window.__qa) qa.fight = f.id;
+}
+function bossIntro(t, s) {
+  g.fillStyle = '#000'; g.fillRect(0, 0, W, H);
+  if (t < s.helm) { s.counts.forEach((c, i) => { if (t >= c) { const opp = ['tekko', 'kaze9', 'raijin', 'lotus'][i]; g.fillStyle = '#2a2a50'; g.fillRect(20 + i * 114, 60, 100, 110); portrait(opp, 20 + i * 114, 60, 100, 110, false); g.fillStyle = '#0b061899'; g.fillRect(20 + i * 114, 60, 100, 110); g.fillStyle = '#000'; for (let k = 0; k < 20; k++) g.fillRect(70 + i * 114 - k + (k % 3), 60 + k * 5, 2, 5); logo(g, String(i + 1), 70 + i * 114, 178, 3, FIRE); } }); return; }
+  // real SHOGUN.EXE art: rises out of the dark (idle breath + flickering red glow), then the victory pose holding the belt
+  const redBg = (k) => { stageBg('temple', t, 0); g.fillStyle = `rgba(0,0,0,${(0.75 - 0.45 * k).toFixed(3)})`; g.fillRect(0, 0, W, H); }; // the palace, darkened until he rises
+  if (t < s.belt) { const d = t - s.helm, e = Math.min(1, d / 1.2); redBg(e);
+    fighter({ char: 'shogun', anim: 'idle', frame: FIGHT.frameAt('idle', t, 1), x: W / 2, y: 330 + R((1 - e * e) * 150), flip: true }, { k: 2 }, t);
+    if (d > 1.2 && Math.floor(d * 10) % 2) { g.fillStyle = '#ff203055'; g.fillRect(0, 0, W, H); } return; }
+  redBg(1); fighter({ char: 'shogun', anim: 'victory', frame: t - s.belt > 0.12 ? 1 : 0, x: W / 2, y: 330, flip: true }, { k: 2 }, t);
+  if (t >= s.card) { const e = t - s.card; g.fillStyle = '#000000aa'; g.fillRect(0, 100, W, 50); logo(g, 'SHOGUN.EXE', W / 2 + (e < 0.15 ? R((hash(t * 99) - 0.5) * 8) : 0), 108, VERT ? 3 : 4, FIRE); }
+  if (t >= s.warn && Math.floor((t - s.warn) * 6) % 2 === 0) { g.fillStyle = '#e0102a'; g.fillRect(0, 230, W, 22); text(g, VERT ? '!! NEW CHALLENGER !!' : '!! WARNING !! A NEW CHALLENGER !! WARNING !!', W / 2, 237, '#fff', 1, 'center', null); }
+}
+function endingScene(t, s) {
+  g.fillStyle = '#1a0626'; g.fillRect(0, 0, W, H);
+  const i = Math.floor((t - s.t0) / E.barLen), V = ['BELT RETURNED TO THE REBUILT DOJO', 'SENSEI GEARHART NODS', 'TEKKO, LOTUS, KAZE-9, RAIJIN BOW', 'ROOFTOP SUNRISE'];
+  if (t < s.crawl) { const P4 = ['belt', 'sensei', 'bow', 'dawn'][i % 4], u = clamp((t - s.t0 - i * E.barLen) / E.barLen, 0, 1);
+    if (P4 === 'dawn') { stageBg('rooftop', t, 0); g.save(); g.setTransform(1, 0, 0, 1, 0, 0); g.globalCompositeOperation = 'multiply'; g.fillStyle = '#ffb88a'; g.fillRect(0, 0, 960, 540);
+      g.globalCompositeOperation = 'screen'; const gr = g.createLinearGradient(0, 0, 0, 540); gr.addColorStop(0, '#ff7a4a66'); gr.addColorStop(0.55, '#ffcf8a22'); gr.addColorStop(1, '#00000000'); g.fillStyle = gr; g.fillRect(0, 0, 960, 540); g.restore(); } // rooftop graded to dawn
+    else kenBurns(PAN[P4], u, KB[P4], P4 === 'belt' || P4 === 'sensei' ? 'brightness(1.22) contrast(1.04)' : '');
+    if (u < 0.08) { g.fillStyle = `rgba(0,0,0,${(1 - u / 0.08).toFixed(2)})`; g.fillRect(0, 0, W, H); } return; }
+  stageBg('rooftop', t, (t - s.t0) * 20);
+  if (t < s.walk) { const d = t - s.crawl; ['UNO AND AURA TOOK BACK THE BELT.', 'THE DOJO LIGHTS AGAIN.', 'THEY DID NOT ARGUE. THEY JUST WALKED.'].forEach((ln, k) => { if (d > k * 0.8) text(g, ln, W / 2, 60 + k * 14, '#fff', 1, 'center'); });
+    fighter({ char: 'uno', anim: 'idle', frame: FIGHT.frameAt('idle', t, 1), x: 200, y: ST.rooftop.ground, flip: false }); fighter({ char: 'aura', anim: 'idle', frame: FIGHT.frameAt('idle', t + 0.4, 1), x: 250, y: ST.rooftop.ground, flip: false }); return; }
+  const d = t - s.walk; // walk-off (walk cycle, feet pinned on the ground)
+  fighter({ char: 'uno', anim: 'walk', frame: FIGHT.frameAt('walk', d, 1), x: R(200 + d * 70), y: ST.rooftop.ground }); fighter({ char: 'aura', anim: 'walk', frame: FIGHT.frameAt('walk', d + 0.12, 1), x: R(250 + d * 70), y: ST.rooftop.ground });
+  if (t >= s.over) { g.fillStyle = '#000000cc'; g.fillRect(0, 70, W, 70); logo(g, 'GAME OVER', W / 2, 78, 4, CHROME); text(g, 'THANKS FOR PLAYING', W / 2, 116, PAL.cyan, 1, 'center'); if (Math.floor(t * 2) % 2) text(g, 'INSERT COIN', W / 2, 128, PAL.gold, 1, 'center'); }
+}
+// ---------- lyrics (pixel font, sung words lit) ----------
+const LY = TL.lyrics.map((l) => ({ ...l, text: l.text.replace(/^\((Man|Woman)\)\s*/, ''), words: (l.words || []).filter((w) => !/^\(/.test(w.w)) }));
+function lyrics(c, t, cw, y) {
+  const l = LY.find((x) => t >= x.t - 0.05 && t < (x.end ?? x.t + 3) + 0.2); if (!l || !l.text) return;
+  const sung = l.words.filter((w) => (w.t ?? w.s) <= t + 0.04).length, lines = wrap(l.text, Math.floor((cw - 12) / 8)); let k = 0;
+  TXT_GROUP = 'lyric'; lines.forEach((ln, j) => { let x = cw / 2 - textW(ln) / 2; ln.split(' ').forEach((w) => { text(c, w, x, y + j * 10, k < sung ? (/woman/i.test(l.tag) || /chorus/.test(l.tag) ? PAL.mag : PAL.white) : '#6a5a98'); x += textW(w + ' '); k++; }); }); TXT_GROUP = 0;
+}
+// ---------- router ----------
+function drawWorld(t) {
+  const s = E.sceneAt(t); g.setTransform(Z, 0, 0, Z, 0, 0); g.globalAlpha = 1; SHAKE = 0; qa.draws = []; qa.scene = s.name;
+  ({ title: titleScene, cut: cutScene, select: selectScene, map: mapScene, vs: vsScene, fight: fightScene, boss_intro: bossIntro, ending: endingScene })[s.name](t, s);
+  return s;
+}
+function frame() {
+  if (window.__qa && window.__qa.texts) window.__qa.texts = [];
+  const t = Music.time(), s = drawWorld(t);
+  if (window.__qa) { window.__qa.t = t; window.__qa.vsFit = VERT && s.name === 'vs'; }
+  out.setTransform(1, 0, 0, 1, 0, 0); out.fillStyle = '#000';
+  if (!VERT) { out.fillRect(0, 0, 960, 540); out.drawImage(wc, SHAKE * Z, SHAKE ? -SHAKE : 0); out.setTransform(Z, 0, 0, Z, 0, 0); if (s.name !== 'title') lyrics(out, t, 480, 261); }
+  else { // Short: HUD band on top / fight crop in the middle / portrait + lyric panel at the bottom
+    out.fillStyle = '#0b0618'; out.fillRect(0, 0, 540, 960);
+    if (s.name === 'vs') { out.imageSmoothingEnabled = true; out.drawImage(wc, 0, 0, 960, 540, 0, 318, 540, 304); out.imageSmoothingEnabled = false; } // VS: whole frame fitted, both busts visible
+    else out.drawImage(wc, 210, 0, 540, 540, SHAKE * Z, 200, 540, 540);
+    out.setTransform(Z, 0, 0, Z, 0, 0);
+    out.fillStyle = PAL.mag; out.fillRect(0, 98, 270, 2); out.fillRect(0, 370, 270, 2);
+    if (s.name === 'fight' && !E.fights[s.fight].montage) hud(out, E.fights[s.fight], t, 270);
+    else { out.save(); out.setTransform(1, 0, 0, 1, 0, 0); out.imageSmoothingEnabled = true; const lw = 300, lh = R(LOGO.height * lw / LOGO.width); out.drawImage(LOGO, 270 - lw / 2, 14, lw, lh); out.restore(); out.imageSmoothingEnabled = false; text(out, 'PROGRESSIVESLOP', 135, 88, PAL.cyan, 1, 'center'); }
+    if (s.name === 'fight') { const f = E.fights[s.fight], h = E.hud(f, t); [[f.tagged ? f.tagged(t) : f.p1, 6, true], [f.p2, 186, false]].forEach(([c, x, m]) => { out.fillStyle = CH[c].boss ? '#5a0a22' : '#3a1a70'; out.fillRect(x, 378, 78, 56); const P = POR[c], k = Math.min(156 / P.width, 112 / P.height), dw = R(P.width * k), dh = R(P.height * k);
+      out.save(); out.setTransform(1, 0, 0, 1, 0, 0); out.imageSmoothingEnabled = true; out.beginPath(); out.rect(x * Z, 378 * Z, 156, 112); out.clip(); const X0 = x * Z + R((156 - dw) / 2), Y0 = 378 * Z + 112 - dh;
+      if (m) { out.translate(X0 + dw, Y0); out.scale(-1, 1); out.drawImage(P, 0, 0, dw, dh); } else out.drawImage(P, X0, Y0, dw, dh); out.restore(); out.imageSmoothingEnabled = false; text(out, CH[c].name, x + 39, 438, PAL.gold, 1, 'center'); }); text(out, 'VS', 135, 400, PAL.gold, 2, 'center'); }
+    lyrics(out, t, 270, 450);
+  }
+  requestAnimationFrame(frame);
+}
+['title', 'cut', 'select', 'map', 'vs', 'fight', 'boss_intro', 'ending'].forEach((n) => Webshot.scene(n, () => {}));
+requestAnimationFrame(frame);
+Webshot.start();
+})();
+</script>
+</body></html>

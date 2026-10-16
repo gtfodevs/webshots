@@ -1,0 +1,53 @@
+{
+ "soundtrack": "stage/assets/song.m4a",
+ "duration": 170.816,
+ "start": 0,
+ "end": 170.816,
+ "loudness": -14,
+ "fadeOut": 1.5,
+ "theme": "synthwave",
+ "shorts": {
+  "start": 111.363,
+  "end": 155.504,
+  "note": "FINAL STAGE boss fight -> victory chorus routine -> STAGE CLEAR (bars 63-88)"
+ },
+ "storyline": {
+  "cast": {
+   "Uno": "strong chrome hero, purple fur cloak, gold 1 chain, sword",
+   "Aura": "graceful chrome lady, crimson gown, cyan magic",
+   "Wizard": "sends them on the quest",
+   "Jester": "tags along",
+   "Knights": "the Sorcerer's guards",
+   "Sorcerer": "boss who stole the music"
+  },
+  "arc": {
+   "setup": [
+    "title",
+    "stage1"
+   ],
+   "journey": [
+    "stage2",
+    "stage3"
+   ],
+   "conflict": [
+    "stage4",
+    "boss"
+   ],
+   "payoff": [
+    "dance5",
+    "party"
+   ],
+   "coda": [
+    "end"
+   ]
+  },
+  "routine": "great hall, the same 1-bar sprite routine every chorus (frames locked to beats); the crowd grows 4/8/12/16/24"
+ },
+ "brand": "channels/progressiveslop/style.json",
+ "pixel": {
+  "w": 480,
+  "h": 270,
+  "lowres": true
+ },
+ "style": "pixel-game"
+}

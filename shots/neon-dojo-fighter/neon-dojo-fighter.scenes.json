@@ -1,0 +1,10 @@
+[
+ {"scene":"title","bar":0,"label":"arcade attract: NEON DOJO logo slam, INSERT COIN, coin on 4.1 'Yeah'"},
+ {"scene":"cut","bar":4,"label":"8 close-up cutscene panels x 2 bars: backstories (Uno, Sensei, SHOGUN fire, Aura chains)"},
+ {"scene":"select","bar":20,"label":"SF2 player select, cursor hops on beats, locks UNO"},
+ {"scene":"map","bar":23,"label":"world map flight to the stage"},
+ {"scene":"vs","bar":24,"label":"VS screens (UNO vs TEKKO, AURA vs LOTUS, UNO+AURA vs SHOGUN.EXE)"},
+ {"scene":"fight","bar":26,"label":"fights + chorus montage: HUD, exchanges where the CPU fights back, super cut-ins, KO"},
+ {"scene":"boss_intro","bar":64,"label":"'Count it out' 1-2-3-4 beaten rivals, SHOGUN reveal, WARNING"},
+ {"scene":"ending","bar":90,"label":"victory vignettes, crawl, walk-off, GAME OVER / INSERT COIN"}
+]

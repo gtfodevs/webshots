@@ -1,0 +1,575 @@
+[
+ {
+  "id": "d01",
+  "page": "p01",
+  "slot": "a",
+  "time": 0.186,
+  "aspect": "16:9",
+  "beat": "The Deadstar Arena floats on a burnt-out star; a single gold crown of light spins above it.",
+  "sfx": null,
+  "characters": [],
+  "prompt": "Extreme wide establishing shot: the floating Deadstar Arena colosseum on the grey husk of a dead star, a glowing gold crown of light spinning high above it, dead grey stars all around. No characters. All robots chrome with red eyes and headphone ears, no humans, kid-friendly. Setting: the Deadstar Arena, a floating colosseum built on the cold husk of a dead star, black space full of burnt-out grey stars, violet nebula, red warning lights, a crowd of robot spectators. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta, cyan and gold, 16:9, no text.",
+  "reference_image_paths": [],
+  "out": "/workspace/deadstars-comic/panels/d01.jpg"
+ },
+ {
+  "id": "d02",
+  "page": "p01",
+  "slot": "b",
+  "time": 4.481,
+  "aspect": "16:9",
+  "beat": "NULLSTAR, the ringmaster, lifts his dead-star cane: the show (and the clown hunt) begins.",
+  "sfx": null,
+  "characters": [
+   "NULLSTAR"
+  ],
+  "prompt": "Worm's-eye view: NULLSTAR standing on the arena balcony raising his dead-star cane, red spotlights sweeping, the robot crowd roaring behind him. NULLSTAR (very tall thin chrome ringmaster robot, red eyes, headphone ears, chest core of a dead star - a black sphere ringed by a dim red corona, jagged crown of broken black star-shards, long violet-black tailcoat, cane topped with a small dead-star orb). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. Setting: the Deadstar Arena, a floating colosseum built on the cold husk of a dead star, black space full of burnt-out grey stars, violet nebula, red warning lights, a crowd of robot spectators. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta, cyan and gold, 16:9, no text. NULLSTAR has a black chrome robot skull face, no human face.",
+  "reference_image_paths": [
+   "/workspace/deadstars-comic/refs/deadstar-court.jpg"
+  ],
+  "out": "/workspace/deadstars-comic/panels/d02.jpg"
+ },
+ {
+  "id": "d03",
+  "page": "p02",
+  "slot": "a",
+  "time": 8.707,
+  "aspect": "16:9",
+  "beat": "Uno and Aura step out of the launch tunnel into the blinding arena lights.",
+  "sfx": null,
+  "characters": [
+   "Uno",
+   "Aura"
+  ],
+  "prompt": "Low tracking-angle medium shot: Uno and Aura walking side by side out of a dark launch tunnel into blinding arena floodlights, confetti of grey stardust. Uno (chrome robot, round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold \"1\" chain); Aura (beautiful grey chrome robot face, red eyes, headphone ears, flowing dark crimson hair, modest crimson bodysuit, cyan light magic). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. Setting: the Deadstar Arena, a floating colosseum built on the cold husk of a dead star, black space full of burnt-out grey stars, violet nebula, red warning lights, a crowd of robot spectators. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta, cyan and gold, 16:9, no text. Aura is clearly a robot: chrome mechanical joints, grey chrome face, no human skin.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/1a70147613238d45a1d50100c327a4beaf976b8a58dab1b1971802446bbc5cbb.jpg"
+  ],
+  "out": "/workspace/deadstars-comic/panels/d03.jpg"
+ },
+ {
+  "id": "d04",
+  "page": "p02",
+  "slot": "b",
+  "time": 12.098,
+  "aspect": "16:9",
+  "beat": "The HECKLE drones swoop down and project a giant holographic clown nose onto Uno's face.",
+  "sfx": "HONK!",
+  "characters": [
+   "Uno",
+   "Aura",
+   "HECKLE"
+  ],
+  "prompt": "Dutch angle close-up: the twin HECKLE drones hovering in front of Uno, beaming a big red holographic clown nose onto his chrome face, Uno frowning, Aura glaring at the drones. Uno (chrome robot, round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold \"1\" chain); Aura (beautiful grey chrome robot face, red eyes, headphone ears, flowing dark crimson hair, modest crimson bodysuit, cyan light magic); HECKLE (twin small round flying chrome drones, red eyes, headphone ears, megaphone-shaped mouths, tiny hover jets). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. Setting: the Deadstar Arena, a floating colosseum built on the cold husk of a dead star, black space full of burnt-out grey stars, violet nebula, red warning lights, a crowd of robot spectators. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta, cyan and gold, 16:9, no text. Aura is clearly a robot: chrome mechanical joints, grey chrome face, no human skin.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/1a70147613238d45a1d50100c327a4beaf976b8a58dab1b1971802446bbc5cbb.jpg",
+   "/workspace/deadstars-comic/refs/deadstar-court.jpg"
+  ],
+  "out": "/workspace/deadstars-comic/panels/d04.jpg"
+ },
+ {
+  "id": "s05",
+  "page": "p02",
+  "slot": "splash",
+  "time": 15.441,
+  "aspect": "16:9",
+  "beat": "Title-page splash: the whole Deadstar Court lines up against Uno and Aura across the arena floor.",
+  "sfx": null,
+  "characters": [
+   "Uno",
+   "Aura",
+   "NULLSTAR",
+   "GRAVEL",
+   "HECKLE"
+  ],
+  "prompt": "Splash, extreme wide low angle: Uno and Aura on one side of a cracked arena floor facing NULLSTAR, GRAVEL and the twin HECKLE drones on the other side, dead star glowing dim red behind them. Uno (chrome robot, round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold \"1\" chain); Aura (beautiful grey chrome robot face, red eyes, headphone ears, flowing dark crimson hair, modest crimson bodysuit, cyan light magic); NULLSTAR (very tall thin chrome ringmaster robot, red eyes, headphone ears, chest core of a dead star - a black sphere ringed by a dim red corona, jagged crown of broken black star-shards, long violet-black tailcoat, cane topped with a small dead-star orb); GRAVEL (hulking chrome brute robot, red eyes, headphone ears, huge fists crusted with grey asteroid rock, dented shoulder plates); HECKLE (twin small round flying chrome drones, red eyes, headphone ears, megaphone-shaped mouths, tiny hover jets). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. Setting: the Deadstar Arena, a floating colosseum built on the cold husk of a dead star, black space full of burnt-out grey stars, violet nebula, red warning lights, a crowd of robot spectators. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta, cyan and gold, 16:9, no text. Aura is clearly a robot: chrome mechanical joints, grey chrome face, no human skin. NULLSTAR has a black chrome robot skull face, no human face.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/1a70147613238d45a1d50100c327a4beaf976b8a58dab1b1971802446bbc5cbb.jpg",
+   "/workspace/deadstars-comic/refs/deadstar-court.jpg"
+  ],
+  "out": "/workspace/deadstars-comic/panels/s05.jpg"
+ },
+ {
+  "id": "d06",
+  "page": "p03",
+  "slot": "a",
+  "time": 17.113,
+  "aspect": "16:9",
+  "beat": "Wind-up: GRAVEL rears back a boulder-sized fist over Uno.",
+  "sfx": null,
+  "characters": [
+   "GRAVEL",
+   "Uno"
+  ],
+  "prompt": "Extreme low angle: GRAVEL towering over Uno, rearing back a huge asteroid-rock fist, the dead star behind his head like a halo. GRAVEL (hulking chrome brute robot, red eyes, headphone ears, huge fists crusted with grey asteroid rock, dented shoulder plates); Uno (chrome robot, round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold \"1\" chain). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. Setting: the Deadstar Arena, a floating colosseum built on the cold husk of a dead star, black space full of burnt-out grey stars, violet nebula, red warning lights, a crowd of robot spectators. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta, cyan and gold, 16:9, no text.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/1a70147613238d45a1d50100c327a4beaf976b8a58dab1b1971802446bbc5cbb.jpg",
+   "/workspace/deadstars-comic/refs/deadstar-court.jpg"
+  ],
+  "out": "/workspace/deadstars-comic/panels/d06.jpg"
+ },
+ {
+  "id": "d07",
+  "page": "p03",
+  "slot": "b",
+  "time": 19.226,
+  "aspect": "16:9",
+  "beat": "Impact: the fist slams Uno into the arena floor.",
+  "sfx": "KRUNCH!",
+  "characters": [
+   "GRAVEL",
+   "Uno"
+  ],
+  "prompt": "High overhead angle: GRAVEL's rock fist slamming Uno flat onto the cracked arena floor, a ring-shaped shockwave of dust and sparks. GRAVEL (hulking chrome brute robot, red eyes, headphone ears, huge fists crusted with grey asteroid rock, dented shoulder plates); Uno (chrome robot, round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold \"1\" chain). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. Setting: the Deadstar Arena, a floating colosseum built on the cold husk of a dead star, black space full of burnt-out grey stars, violet nebula, red warning lights, a crowd of robot spectators. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta, cyan and gold, 16:9, no text.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/1a70147613238d45a1d50100c327a4beaf976b8a58dab1b1971802446bbc5cbb.jpg",
+   "/workspace/deadstars-comic/refs/deadstar-court.jpg"
+  ],
+  "out": "/workspace/deadstars-comic/panels/d07.jpg"
+ },
+ {
+  "id": "d08",
+  "page": "p03",
+  "slot": "c",
+  "time": 21.734,
+  "aspect": "16:9",
+  "beat": "Reaction: the robot crowd laughs; HECKLE drones blare \"CLOWN!\" while holographic tomatoes rain down.",
+  "sfx": "HA-HA-HA!",
+  "characters": [
+   "HECKLE",
+   "Uno"
+  ],
+  "prompt": "Wide crowd shot: the robot crowd pointing and laughing, the twin HECKLE drones blaring from their megaphone mouths, glowing hologram tomatoes falling toward Uno lying in a crater. HECKLE (twin small round flying chrome drones, red eyes, headphone ears, megaphone-shaped mouths, tiny hover jets); Uno (chrome robot, round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold \"1\" chain). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. Setting: the Deadstar Arena, a floating colosseum built on the cold husk of a dead star, black space full of burnt-out grey stars, violet nebula, red warning lights, a crowd of robot spectators. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta, cyan and gold, 16:9, no text.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/1a70147613238d45a1d50100c327a4beaf976b8a58dab1b1971802446bbc5cbb.jpg",
+   "/workspace/deadstars-comic/refs/deadstar-court.jpg"
+  ],
+  "out": "/workspace/deadstars-comic/panels/d08.jpg"
+ },
+ {
+  "id": "d09",
+  "page": "p04",
+  "slot": "a",
+  "time": 23.847,
+  "aspect": "16:9",
+  "beat": "Aura's cyan shield dome slams down over Uno; the next rock fist cracks against it.",
+  "sfx": "KLANNG!",
+  "characters": [
+   "Aura",
+   "Uno",
+   "GRAVEL"
+  ],
+  "prompt": "Over-the-shoulder Dutch angle: Aura kneeling over fallen Uno with one arm raised, a cyan light shield dome blocking GRAVEL's rock fist, sparks flying off the shield. Aura (beautiful grey chrome robot face, red eyes, headphone ears, flowing dark crimson hair, modest crimson bodysuit, cyan light magic); Uno (chrome robot, round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold \"1\" chain); GRAVEL (hulking chrome brute robot, red eyes, headphone ears, huge fists crusted with grey asteroid rock, dented shoulder plates). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. Setting: the Deadstar Arena, a floating colosseum built on the cold husk of a dead star, black space full of burnt-out grey stars, violet nebula, red warning lights, a crowd of robot spectators. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta, cyan and gold, 16:9, no text. Aura is clearly a robot: chrome mechanical joints, grey chrome face, no human skin.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/1a70147613238d45a1d50100c327a4beaf976b8a58dab1b1971802446bbc5cbb.jpg",
+   "/workspace/deadstars-comic/refs/deadstar-court.jpg"
+  ],
+  "out": "/workspace/deadstars-comic/panels/d09.jpg"
+ },
+ {
+  "id": "d10",
+  "page": "p04",
+  "slot": "b",
+  "time": 28.05,
+  "aspect": "16:9",
+  "beat": "Uno grabs Aura's offered hand - she pulls him up.",
+  "sfx": null,
+  "characters": [
+   "Aura",
+   "Uno"
+  ],
+  "prompt": "Extreme close-up: Aura's hand gripping Uno's chrome hand, cyan light glowing between their fingers, gold \"1\" chain swinging. Aura (beautiful grey chrome robot face, red eyes, headphone ears, flowing dark crimson hair, modest crimson bodysuit, cyan light magic); Uno (chrome robot, round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold \"1\" chain). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. Setting: the Deadstar Arena, a floating colosseum built on the cold husk of a dead star, black space full of burnt-out grey stars, violet nebula, red warning lights, a crowd of robot spectators. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta, cyan and gold, 16:9, no text. Aura is clearly a robot: chrome mechanical joints, grey chrome face, no human skin.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/1a70147613238d45a1d50100c327a4beaf976b8a58dab1b1971802446bbc5cbb.jpg"
+  ],
+  "out": "/workspace/deadstars-comic/panels/d10.jpg"
+ },
+ {
+  "id": "s11",
+  "page": "p04",
+  "slot": "splash",
+  "time": 30.975,
+  "aspect": "16:9",
+  "beat": "Flip the script: Uno back-flips over GRAVEL and kicks the clown hologram right back at him.",
+  "sfx": "FLIP!",
+  "characters": [
+   "Uno",
+   "GRAVEL",
+   "Aura"
+  ],
+  "prompt": "Splash, upside-down extreme angle: Uno mid back-flip upside down over GRAVEL, kicking the red holographic clown nose onto GRAVEL's face, Aura below with cyan light trailing, purple fur coat flaring. Uno (chrome robot, round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold \"1\" chain); GRAVEL (hulking chrome brute robot, red eyes, headphone ears, huge fists crusted with grey asteroid rock, dented shoulder plates); Aura (beautiful grey chrome robot face, red eyes, headphone ears, flowing dark crimson hair, modest crimson bodysuit, cyan light magic). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. Setting: the Deadstar Arena, a floating colosseum built on the cold husk of a dead star, black space full of burnt-out grey stars, violet nebula, red warning lights, a crowd of robot spectators. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta, cyan and gold, 16:9, no text. Aura is clearly a robot: chrome mechanical joints, grey chrome face, no human skin.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/1a70147613238d45a1d50100c327a4beaf976b8a58dab1b1971802446bbc5cbb.jpg",
+   "/workspace/deadstars-comic/refs/deadstar-court.jpg"
+  ],
+  "out": "/workspace/deadstars-comic/panels/s11.jpg"
+ },
+ {
+  "id": "d12",
+  "page": "p05",
+  "slot": "a",
+  "time": 37.268,
+  "aspect": "16:9",
+  "beat": "Wind-up: Uno plants his feet, fist glowing diamond-white.",
+  "sfx": null,
+  "characters": [
+   "Uno",
+   "GRAVEL"
+  ],
+  "prompt": "Low three-quarter angle: Uno in a deep stance pulling back a fist that glows bright diamond-white, purple fur coat whipping, GRAVEL charging in the background. Uno (chrome robot, round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold \"1\" chain); GRAVEL (hulking chrome brute robot, red eyes, headphone ears, huge fists crusted with grey asteroid rock, dented shoulder plates). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. Setting: the Deadstar Arena, a floating colosseum built on the cold husk of a dead star, black space full of burnt-out grey stars, violet nebula, red warning lights, a crowd of robot spectators. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta, cyan and gold, 16:9, no text.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/1a70147613238d45a1d50100c327a4beaf976b8a58dab1b1971802446bbc5cbb.jpg",
+   "/workspace/deadstars-comic/refs/deadstar-court.jpg"
+  ],
+  "out": "/workspace/deadstars-comic/panels/d12.jpg"
+ },
+ {
+  "id": "d13",
+  "page": "p05",
+  "slot": "b",
+  "time": 40.217,
+  "aspect": "16:9",
+  "beat": "Strike + impact: the diamond fist meets the rock fist - the rock shatters.",
+  "sfx": "KRAK-KOOM!",
+  "characters": [
+   "Uno",
+   "GRAVEL"
+  ],
+  "prompt": "Extreme close-up side view: Uno's diamond-white glowing fist meeting GRAVEL's rock fist, grey asteroid rock shattering into pieces, white impact flash. Uno (chrome robot, round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold \"1\" chain); GRAVEL (hulking chrome brute robot, red eyes, headphone ears, huge fists crusted with grey asteroid rock, dented shoulder plates). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. Setting: the Deadstar Arena, a floating colosseum built on the cold husk of a dead star, black space full of burnt-out grey stars, violet nebula, red warning lights, a crowd of robot spectators. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta, cyan and gold, 16:9, no text.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/1a70147613238d45a1d50100c327a4beaf976b8a58dab1b1971802446bbc5cbb.jpg",
+   "/workspace/deadstars-comic/refs/deadstar-court.jpg"
+  ],
+  "out": "/workspace/deadstars-comic/panels/d13.jpg"
+ },
+ {
+  "id": "d14",
+  "page": "p05",
+  "slot": "c",
+  "time": 43.584,
+  "aspect": "16:9",
+  "beat": "Reaction: GRAVEL skids back, shocked; Uno calls the bluff with a point.",
+  "sfx": "SKRRRT!",
+  "characters": [
+   "GRAVEL",
+   "Uno",
+   "Aura"
+  ],
+  "prompt": "Dutch angle wide shot: GRAVEL skidding backward with bare cracked chrome fists and a shocked face, Uno pointing at him, Aura folding her arms beside Uno. GRAVEL (hulking chrome brute robot, red eyes, headphone ears, huge fists crusted with grey asteroid rock, dented shoulder plates); Uno (chrome robot, round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold \"1\" chain); Aura (beautiful grey chrome robot face, red eyes, headphone ears, flowing dark crimson hair, modest crimson bodysuit, cyan light magic). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. Setting: the Deadstar Arena, a floating colosseum built on the cold husk of a dead star, black space full of burnt-out grey stars, violet nebula, red warning lights, a crowd of robot spectators. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta, cyan and gold, 16:9, no text. Aura is clearly a robot: chrome mechanical joints, grey chrome face, no human skin.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/1a70147613238d45a1d50100c327a4beaf976b8a58dab1b1971802446bbc5cbb.jpg",
+   "/workspace/deadstars-comic/refs/deadstar-court.jpg"
+  ],
+  "out": "/workspace/deadstars-comic/panels/d14.jpg"
+ },
+ {
+  "id": "d15",
+  "page": "p06",
+  "slot": "a",
+  "time": 47.787,
+  "aspect": "16:9",
+  "beat": "The HECKLE drones dive at Uno's back with megaphone sonic blasts.",
+  "sfx": "WUB-WUB!",
+  "characters": [
+   "HECKLE",
+   "Uno"
+  ],
+  "prompt": "Extreme high angle: the twin HECKLE drones diving from above toward Uno's back, magenta sonic rings blasting from their megaphone mouths. HECKLE (twin small round flying chrome drones, red eyes, headphone ears, megaphone-shaped mouths, tiny hover jets); Uno (chrome robot, round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold \"1\" chain). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. Setting: the Deadstar Arena, a floating colosseum built on the cold husk of a dead star, black space full of burnt-out grey stars, violet nebula, red warning lights, a crowd of robot spectators. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta, cyan and gold, 16:9, no text.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/1a70147613238d45a1d50100c327a4beaf976b8a58dab1b1971802446bbc5cbb.jpg",
+   "/workspace/deadstars-comic/refs/deadstar-court.jpg"
+  ],
+  "out": "/workspace/deadstars-comic/panels/d15.jpg"
+ },
+ {
+  "id": "s16",
+  "page": "p06",
+  "slot": "splash",
+  "time": 51.107,
+  "aspect": "16:9",
+  "beat": "Aura spins and swats both drones into each other with a ribbon of cyan light.",
+  "sfx": "BONK-BONK!",
+  "characters": [
+   "Aura",
+   "HECKLE"
+  ],
+  "prompt": "Splash, low spinning angle: Aura mid-spin swinging a ribbon of cyan light that knocks the two HECKLE drones into each other in a burst of sparks, her crimson hair flying. Aura (beautiful grey chrome robot face, red eyes, headphone ears, flowing dark crimson hair, modest crimson bodysuit, cyan light magic); HECKLE (twin small round flying chrome drones, red eyes, headphone ears, megaphone-shaped mouths, tiny hover jets). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. Setting: the Deadstar Arena, a floating colosseum built on the cold husk of a dead star, black space full of burnt-out grey stars, violet nebula, red warning lights, a crowd of robot spectators. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta, cyan and gold, 16:9, no text. Aura is clearly a robot: chrome mechanical joints, grey chrome face, no human skin.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/1a70147613238d45a1d50100c327a4beaf976b8a58dab1b1971802446bbc5cbb.jpg",
+   "/workspace/deadstars-comic/refs/deadstar-court.jpg"
+  ],
+  "out": "/workspace/deadstars-comic/panels/s16.jpg"
+ },
+ {
+  "id": "d17",
+  "page": "p07",
+  "slot": "a",
+  "time": 54.056,
+  "aspect": "16:9",
+  "beat": "NULLSTAR snaps his fingers - the dead star swallows every light.",
+  "sfx": "SNAP!",
+  "characters": [
+   "NULLSTAR"
+  ],
+  "prompt": "Medium close-up: NULLSTAR snapping his chrome fingers, his dead-star chest core pulling all the arena light into it, the arena going dark. NULLSTAR (very tall thin chrome ringmaster robot, red eyes, headphone ears, chest core of a dead star - a black sphere ringed by a dim red corona, jagged crown of broken black star-shards, long violet-black tailcoat, cane topped with a small dead-star orb). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. Setting: the Deadstar Arena, a floating colosseum built on the cold husk of a dead star, black space full of burnt-out grey stars, violet nebula, red warning lights, a crowd of robot spectators. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta, cyan and gold, 16:9, no text. NULLSTAR has a black chrome robot skull face, no human face.",
+  "reference_image_paths": [
+   "/workspace/deadstars-comic/refs/deadstar-court.jpg"
+  ],
+  "out": "/workspace/deadstars-comic/panels/d17.jpg"
+ },
+ {
+  "id": "d18",
+  "page": "p07",
+  "slot": "b",
+  "time": 57.4,
+  "aspect": "16:9",
+  "beat": "In the dark, Aura glows cyan and lights the way.",
+  "sfx": null,
+  "characters": [
+   "Aura",
+   "Uno"
+  ],
+  "prompt": "Wide shot: Aura glowing bright cyan in a pitch-dark arena, lighting a path of floating platforms for Uno, dead stars faintly visible. Aura (beautiful grey chrome robot face, red eyes, headphone ears, flowing dark crimson hair, modest crimson bodysuit, cyan light magic); Uno (chrome robot, round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold \"1\" chain). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. Setting: the Deadstar Arena, a floating colosseum built on the cold husk of a dead star, black space full of burnt-out grey stars, violet nebula, red warning lights, a crowd of robot spectators. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta, cyan and gold, 16:9, no text. Aura is clearly a robot: chrome mechanical joints, grey chrome face, no human skin.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/1a70147613238d45a1d50100c327a4beaf976b8a58dab1b1971802446bbc5cbb.jpg"
+  ],
+  "out": "/workspace/deadstars-comic/panels/d18.jpg"
+ },
+ {
+  "id": "d19",
+  "page": "p07",
+  "slot": "c",
+  "time": 60.767,
+  "aspect": "16:9",
+  "beat": "Aura launches Uno skyward from her cupped hands toward the crown platform.",
+  "sfx": "FWOOSH!",
+  "characters": [
+   "Aura",
+   "Uno"
+  ],
+  "prompt": "Worm's-eye view: Aura boosting Uno upward from her cupped hands, Uno rising toward the glowing crown platform high above, cyan light trail. Aura (beautiful grey chrome robot face, red eyes, headphone ears, flowing dark crimson hair, modest crimson bodysuit, cyan light magic); Uno (chrome robot, round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold \"1\" chain). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. Setting: the Deadstar Arena, a floating colosseum built on the cold husk of a dead star, black space full of burnt-out grey stars, violet nebula, red warning lights, a crowd of robot spectators. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta, cyan and gold, 16:9, no text. Aura is clearly a robot: chrome mechanical joints, grey chrome face, no human skin.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/1a70147613238d45a1d50100c327a4beaf976b8a58dab1b1971802446bbc5cbb.jpg"
+  ],
+  "out": "/workspace/deadstars-comic/panels/d19.jpg"
+ },
+ {
+  "id": "d20",
+  "page": "p08",
+  "slot": "a",
+  "time": 64.134,
+  "aspect": "16:9",
+  "beat": "Wind-up: NULLSTAR opens his coat; the dead-star core begins to pull.",
+  "sfx": "VWOOOM!",
+  "characters": [
+   "NULLSTAR"
+  ],
+  "prompt": "Extreme low angle: NULLSTAR throwing open his violet-black tailcoat, his dead-star chest core glowing a dim red, gravity rings rippling outward. NULLSTAR (very tall thin chrome ringmaster robot, red eyes, headphone ears, chest core of a dead star - a black sphere ringed by a dim red corona, jagged crown of broken black star-shards, long violet-black tailcoat, cane topped with a small dead-star orb). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. Setting: the Deadstar Arena, a floating colosseum built on the cold husk of a dead star, black space full of burnt-out grey stars, violet nebula, red warning lights, a crowd of robot spectators. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta, cyan and gold, 16:9, no text. NULLSTAR has a black chrome robot skull face, no human face.",
+  "reference_image_paths": [
+   "/workspace/deadstars-comic/refs/deadstar-court.jpg"
+  ],
+  "out": "/workspace/deadstars-comic/panels/d20.jpg"
+ },
+ {
+  "id": "d21",
+  "page": "p08",
+  "slot": "b",
+  "time": 67.454,
+  "aspect": "16:9",
+  "beat": "Impact: the gravity well yanks Uno down out of the air.",
+  "sfx": "KRRZZT!",
+  "characters": [
+   "Uno",
+   "NULLSTAR"
+  ],
+  "prompt": "High angle Dutch shot: Uno being pulled down out of the air by red gravity rings toward NULLSTAR, coat and chain flailing, debris spiraling. Uno (chrome robot, round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold \"1\" chain); NULLSTAR (very tall thin chrome ringmaster robot, red eyes, headphone ears, chest core of a dead star - a black sphere ringed by a dim red corona, jagged crown of broken black star-shards, long violet-black tailcoat, cane topped with a small dead-star orb). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. Setting: the Deadstar Arena, a floating colosseum built on the cold husk of a dead star, black space full of burnt-out grey stars, violet nebula, red warning lights, a crowd of robot spectators. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta, cyan and gold, 16:9, no text. NULLSTAR has a black chrome robot skull face, no human face.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/1a70147613238d45a1d50100c327a4beaf976b8a58dab1b1971802446bbc5cbb.jpg",
+   "/workspace/deadstars-comic/refs/deadstar-court.jpg"
+  ],
+  "out": "/workspace/deadstars-comic/panels/d21.jpg"
+ },
+ {
+  "id": "d22",
+  "page": "p08",
+  "slot": "c",
+  "time": 70.426,
+  "aspect": "16:9",
+  "beat": "\"I got you\": Aura catches Uno's wrist at the edge of the gravity well.",
+  "sfx": null,
+  "characters": [
+   "Aura",
+   "Uno"
+  ],
+  "prompt": "Extreme close-up: Aura gripping Uno's wrist at the edge of a swirling red gravity well, her cyan light pushing back the red. Aura (beautiful grey chrome robot face, red eyes, headphone ears, flowing dark crimson hair, modest crimson bodysuit, cyan light magic); Uno (chrome robot, round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold \"1\" chain). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. Setting: the Deadstar Arena, a floating colosseum built on the cold husk of a dead star, black space full of burnt-out grey stars, violet nebula, red warning lights, a crowd of robot spectators. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta, cyan and gold, 16:9, no text. Aura is clearly a robot: chrome mechanical joints, grey chrome face, no human skin.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/1a70147613238d45a1d50100c327a4beaf976b8a58dab1b1971802446bbc5cbb.jpg"
+  ],
+  "out": "/workspace/deadstars-comic/panels/d22.jpg"
+ },
+ {
+  "id": "s23",
+  "page": "p08",
+  "slot": "splash",
+  "time": 74.188,
+  "aspect": "16:9",
+  "beat": "Together they pull free and turn to face NULLSTAR, back to back.",
+  "sfx": "SHING!",
+  "characters": [
+   "Uno",
+   "Aura",
+   "NULLSTAR"
+  ],
+  "prompt": "Splash, circling low angle: Uno and Aura standing back to back in fighting stances, cyan and diamond-white glow around them, NULLSTAR looming in the dark behind with his cane raised. Uno (chrome robot, round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold \"1\" chain); Aura (beautiful grey chrome robot face, red eyes, headphone ears, flowing dark crimson hair, modest crimson bodysuit, cyan light magic); NULLSTAR (very tall thin chrome ringmaster robot, red eyes, headphone ears, chest core of a dead star - a black sphere ringed by a dim red corona, jagged crown of broken black star-shards, long violet-black tailcoat, cane topped with a small dead-star orb). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. Setting: the Deadstar Arena, a floating colosseum built on the cold husk of a dead star, black space full of burnt-out grey stars, violet nebula, red warning lights, a crowd of robot spectators. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta, cyan and gold, 16:9, no text. Aura is clearly a robot: chrome mechanical joints, grey chrome face, no human skin. NULLSTAR has a black chrome robot skull face, no human face.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/1a70147613238d45a1d50100c327a4beaf976b8a58dab1b1971802446bbc5cbb.jpg",
+   "/workspace/deadstars-comic/refs/deadstar-court.jpg"
+  ],
+  "out": "/workspace/deadstars-comic/panels/s23.jpg"
+ },
+ {
+  "id": "d24",
+  "page": "p09",
+  "slot": "a",
+  "time": 80.875,
+  "aspect": "16:9",
+  "beat": "Wind-up: Aura spins up a cyan light spiral; Uno charges a diamond fist inside it.",
+  "sfx": null,
+  "characters": [
+   "Aura",
+   "Uno"
+  ],
+  "prompt": "Low three-quarter angle: Aura spinning a cyan light spiral around Uno while he charges a diamond-white glowing fist inside it, sparks swirling. Aura (beautiful grey chrome robot face, red eyes, headphone ears, flowing dark crimson hair, modest crimson bodysuit, cyan light magic); Uno (chrome robot, round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold \"1\" chain). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. Setting: the Deadstar Arena, a floating colosseum built on the cold husk of a dead star, black space full of burnt-out grey stars, violet nebula, red warning lights, a crowd of robot spectators. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta, cyan and gold, 16:9, no text. Aura is clearly a robot: chrome mechanical joints, grey chrome face, no human skin.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/1a70147613238d45a1d50100c327a4beaf976b8a58dab1b1971802446bbc5cbb.jpg"
+  ],
+  "out": "/workspace/deadstars-comic/panels/d24.jpg"
+ },
+ {
+  "id": "d25",
+  "page": "p09",
+  "slot": "b",
+  "time": 84.242,
+  "aspect": "16:9",
+  "beat": "Strike: the combined punch rockets into NULLSTAR's chest core.",
+  "sfx": "KA-BLAM!",
+  "characters": [
+   "Uno",
+   "NULLSTAR"
+  ],
+  "prompt": "Extreme foreshortened angle: Uno's diamond-and-cyan glowing fist rushing toward the viewer and NULLSTAR's dead-star chest core, speed lines, NULLSTAR raising his cane too late. Uno (chrome robot, round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold \"1\" chain); NULLSTAR (very tall thin chrome ringmaster robot, red eyes, headphone ears, chest core of a dead star - a black sphere ringed by a dim red corona, jagged crown of broken black star-shards, long violet-black tailcoat, cane topped with a small dead-star orb). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. Setting: the Deadstar Arena, a floating colosseum built on the cold husk of a dead star, black space full of burnt-out grey stars, violet nebula, red warning lights, a crowd of robot spectators. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta, cyan and gold, 16:9, no text. NULLSTAR has a black chrome robot skull face, no human face.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/1a70147613238d45a1d50100c327a4beaf976b8a58dab1b1971802446bbc5cbb.jpg",
+   "/workspace/deadstars-comic/refs/deadstar-court.jpg"
+  ],
+  "out": "/workspace/deadstars-comic/panels/d25.jpg"
+ },
+ {
+  "id": "d26",
+  "page": "p09",
+  "slot": "c",
+  "time": 87.586,
+  "aspect": "16:9",
+  "beat": "Impact: the core cracks with blinding white light; NULLSTAR's shard crown flies off.",
+  "sfx": "KRA-KOOOM!",
+  "characters": [
+   "NULLSTAR"
+  ],
+  "prompt": "Dutch angle close-up: NULLSTAR's dead-star chest core cracking with beams of white light, his black shard crown flying off his head, his red eyes wide in shock. NULLSTAR (very tall thin chrome ringmaster robot, red eyes, headphone ears, chest core of a dead star - a black sphere ringed by a dim red corona, jagged crown of broken black star-shards, long violet-black tailcoat, cane topped with a small dead-star orb). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. Setting: the Deadstar Arena, a floating colosseum built on the cold husk of a dead star, black space full of burnt-out grey stars, violet nebula, red warning lights, a crowd of robot spectators. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta, cyan and gold, 16:9, no text. NULLSTAR has a black chrome robot skull face, no human face.",
+  "reference_image_paths": [
+   "/workspace/deadstars-comic/refs/deadstar-court.jpg"
+  ],
+  "out": "/workspace/deadstars-comic/panels/d26.jpg"
+ },
+ {
+  "id": "d27",
+  "page": "p10",
+  "slot": "a",
+  "time": 90.953,
+  "aspect": "16:9",
+  "beat": "NULLSTAR, GRAVEL and the HECKLE drones are knocked into a heap wearing the clown nose hologram.",
+  "sfx": "BOINK!",
+  "characters": [
+   "NULLSTAR",
+   "GRAVEL",
+   "HECKLE"
+  ],
+  "prompt": "High angle wide shot: NULLSTAR, GRAVEL and the twin HECKLE drones dazed in a pile on the arena floor, the red holographic clown nose now on NULLSTAR, cartoon stars circling their heads. NULLSTAR (very tall thin chrome ringmaster robot, red eyes, headphone ears, chest core of a dead star - a black sphere ringed by a dim red corona, jagged crown of broken black star-shards, long violet-black tailcoat, cane topped with a small dead-star orb); GRAVEL (hulking chrome brute robot, red eyes, headphone ears, huge fists crusted with grey asteroid rock, dented shoulder plates); HECKLE (twin small round flying chrome drones, red eyes, headphone ears, megaphone-shaped mouths, tiny hover jets). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. Setting: the Deadstar Arena, a floating colosseum built on the cold husk of a dead star, black space full of burnt-out grey stars, violet nebula, red warning lights, a crowd of robot spectators. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta, cyan and gold, 16:9, no text. NULLSTAR has a black chrome robot skull face, no human face.",
+  "reference_image_paths": [
+   "/workspace/deadstars-comic/refs/deadstar-court.jpg"
+  ],
+  "out": "/workspace/deadstars-comic/panels/d27.jpg"
+ },
+ {
+  "id": "d28",
+  "page": "p10",
+  "slot": "b",
+  "time": 97.64,
+  "aspect": "16:9",
+  "beat": "The dead star reignites gold behind Uno and Aura; the robot crowd cheers.",
+  "sfx": null,
+  "characters": [
+   "Uno",
+   "Aura"
+  ],
+  "prompt": "Extreme wide low angle: the dead star behind the arena reigniting in brilliant gold light, the robot crowd on its feet cheering, Uno and Aura silhouetted center. Uno (chrome robot, round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold \"1\" chain); Aura (beautiful grey chrome robot face, red eyes, headphone ears, flowing dark crimson hair, modest crimson bodysuit, cyan light magic). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. Setting: the Deadstar Arena, a floating colosseum built on the cold husk of a dead star, black space full of burnt-out grey stars, violet nebula, red warning lights, a crowd of robot spectators. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta, cyan and gold, 16:9, no text. Aura is clearly a robot: chrome mechanical joints, grey chrome face, no human skin.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/1a70147613238d45a1d50100c327a4beaf976b8a58dab1b1971802446bbc5cbb.jpg"
+  ],
+  "out": "/workspace/deadstars-comic/panels/d28.jpg"
+ },
+ {
+  "id": "s29",
+  "page": "p10",
+  "slot": "splash",
+  "time": 101.007,
+  "aspect": "16:9",
+  "beat": "The Crown of Light floats down toward them.",
+  "sfx": "WHOOOM!",
+  "characters": [
+   "Uno",
+   "Aura"
+  ],
+  "prompt": "Splash, worm's-eye view: the glowing gold crown of light descending from the sky between Uno and Aura, both looking up, golden stardust falling. Uno (chrome robot, round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold \"1\" chain); Aura (beautiful grey chrome robot face, red eyes, headphone ears, flowing dark crimson hair, modest crimson bodysuit, cyan light magic). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. Setting: the Deadstar Arena, a floating colosseum built on the cold husk of a dead star, black space full of burnt-out grey stars, violet nebula, red warning lights, a crowd of robot spectators. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta, cyan and gold, 16:9, no text. Aura is clearly a robot: chrome mechanical joints, grey chrome face, no human skin.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/1a70147613238d45a1d50100c327a4beaf976b8a58dab1b1971802446bbc5cbb.jpg"
+  ],
+  "out": "/workspace/deadstars-comic/panels/s29.jpg"
+ },
+ {
+  "id": "d30",
+  "page": "p11",
+  "slot": "a",
+  "time": 104.35,
+  "aspect": "16:9",
+  "beat": "Aura places the Crown of Light on Uno's dome; he lifts her hand high.",
+  "sfx": null,
+  "characters": [
+   "Aura",
+   "Uno"
+  ],
+  "prompt": "Low medium shot: Aura placing the glowing gold crown of light on Uno's round chrome dome while Uno raises her hand high in victory, golden light behind them. Aura (beautiful grey chrome robot face, red eyes, headphone ears, flowing dark crimson hair, modest crimson bodysuit, cyan light magic); Uno (chrome robot, round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold \"1\" chain). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. Setting: the Deadstar Arena, a floating colosseum built on the cold husk of a dead star, black space full of burnt-out grey stars, violet nebula, red warning lights, a crowd of robot spectators. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta, cyan and gold, 16:9, no text. Aura is clearly a robot: chrome mechanical joints, grey chrome face, no human skin.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/1a70147613238d45a1d50100c327a4beaf976b8a58dab1b1971802446bbc5cbb.jpg"
+  ],
+  "out": "/workspace/deadstars-comic/panels/d30.jpg"
+ },
+ {
+  "id": "d31",
+  "page": "p11",
+  "slot": "b",
+  "time": 108.112,
+  "aspect": "16:9",
+  "beat": "Final shot: the reborn golden star burns over the arena, Uno and Aura on the balcony.",
+  "sfx": null,
+  "characters": [
+   "Uno",
+   "Aura"
+  ],
+  "prompt": "Extreme wide shot: Uno with the crown and Aura standing together on the arena balcony, the reborn golden star blazing behind them over the floating colosseum. Uno (chrome robot, round smooth chrome dome head, red eyes, headphone ears, purple fur coat, gold \"1\" chain); Aura (beautiful grey chrome robot face, red eyes, headphone ears, flowing dark crimson hair, modest crimson bodysuit, cyan light magic). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. Setting: the Deadstar Arena, a floating colosseum built on the cold husk of a dead star, black space full of burnt-out grey stars, violet nebula, red warning lights, a crowd of robot spectators. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta, cyan and gold, 16:9, no text. Aura is clearly a robot: chrome mechanical joints, grey chrome face, no human skin.",
+  "reference_image_paths": [
+   "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/1a70147613238d45a1d50100c327a4beaf976b8a58dab1b1971802446bbc5cbb.jpg"
+  ],
+  "out": "/workspace/deadstars-comic/panels/d31.jpg"
+ }
+]

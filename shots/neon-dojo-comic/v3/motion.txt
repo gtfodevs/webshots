@@ -1,0 +1,30 @@
+v01 | The blimp glides slowly left, rain falls. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.
+v02 | Sensei slowly raises his cane toward the empty hook, rain drips. Locked low camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.
+v03 | Uno and Aura turn their heads and glare at each other, a spark pops. Slow push-in. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.
+v04 | The impact flash bursts and both robots fly backward. Locked camera, slight shake. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.
+s05 | Uno and Aura stumble and splash down into the puddle. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.
+v06 | Sensei pulls the glowing cable tight around their wrists. Locked overhead camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.
+v07 | Both robots spin once in sync and the dummy topples. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.
+v08 | Aura's cyan shield flares as the mech arm hits it. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.
+v09 | The two hands meet and a bright spark bursts. Locked macro camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.
+s10 | Uno's fist connects and the mech bursts into sparks. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.
+v12 | The spotlights sweep across the four rivals. Slow tilt up. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.
+v13 | The red scarf whips and the blade glints. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.
+v14 | RAIJIN pulls his fist back and lightning crackles. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.
+v15 | Uno's uppercut snaps up and RAIJIN's head rocks back. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.
+v16 | TEKKO tips backward off the ring edge. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.
+s17 | LOTUS's kick lands on Aura's guard and the impact ring flashes. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.
+v18 | Sparks spray as the blades grind on the shield. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.
+v19 | Aura hits the mat and the impact flash pops. Locked overhead camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.
+v20 | Aura's cyan glow flickers once. Very slow push-in. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.
+s21 | Uno steps slowly left to right across the frame carrying Aura. Locked side camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.
+v22 | SHOGUN draws the katana and it ignites red. Slow tilt up. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.
+v23 | The armored hands tighten on the belt, red glint. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.
+s24 | Sparks spray from the blade lock as they push. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.
+v25 | Their hands slap and the starburst flares. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.
+v26 | SHOGUN is knocked upward by the kick. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.
+v28 | Uno's red eyes flare brighter. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.
+v29 | The cyan orb swells and crackles. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.
+s30 | The armour bursts outward into sparkles. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.
+v31 | Sensei lifts the belt and the rivals bow. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.
+v32 | The sun rises slowly, their coat and hair stir in the wind. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera.

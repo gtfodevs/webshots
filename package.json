@@ -10,7 +10,9 @@
     "preview": "node scripts/webshots.mjs preview",
     "check": "node scripts/webshots.mjs check",
     "render": "node scripts/webshots.mjs render",
-    "list": "node scripts/webshots.mjs list"
+    "comic": "node scripts/webshots.mjs comic",
+    "list": "node scripts/webshots.mjs list",
+    "suno:sync": "node scripts/suno-sync.mjs"
   },
   "dependencies": {
     "@argo-video/cli": "0.41.0",
@@ -19,5 +21,7 @@
     "kokoro-js": "1.2.1",
     "playwright": "1.63.0"
   },
-  "engines": { "node": ">=20" }
+  "engines": {
+    "node": ">=20"
+  }
 }

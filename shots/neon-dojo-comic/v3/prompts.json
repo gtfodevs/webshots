@@ -1,0 +1,479 @@
+[
+ {
+  "id": "v01",
+  "page": "p01",
+  "slot": "a",
+  "time": 0.186,
+  "lyric": "(instrumental)",
+  "beat": "Neo-Kyoto at night, the tournament blimp glides over the city - the stakes are announced.",
+  "refs": [
+   "none"
+  ],
+  "sfx": null,
+  "reuse": "/workspace/neon-dojo-comic/panels/n01.jpg",
+  "prompt": null,
+  "motion": "The blimp glides slowly left, rain falls. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera."
+ },
+ {
+  "id": "v02",
+  "page": "p01",
+  "slot": "b",
+  "time": 4.087,
+  "lyric": "(Man) Yeah, you know the vibe",
+  "beat": "Sensei, alone in his leaking dojo, holds up an empty belt hook: win it back or lose the dojo.",
+  "refs": [
+   "none"
+  ],
+  "sfx": null,
+  "reuse": null,
+  "prompt": "Worm's-eye view: the old robot sensei standing in a leaking wooden dojo at night, pointing his cane at an empty golden belt hook on the wall, rain dripping through the roof, lantern glow. Sensei (elderly chrome robot, grey robe, white cable beard, cane). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta and cyan, 16:9, no text.",
+  "motion": "Sensei slowly raises his cane toward the empty hook, rain drips. Locked low camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera."
+ },
+ {
+  "id": "v03",
+  "page": "p02",
+  "slot": "a",
+  "time": 13.909,
+  "lyric": "(Man) Quick feet on the concrete, move smooth, never messy",
+  "beat": "First drill: Uno and Aura bump shoulders and bicker mid-kata - two stars, no team.",
+  "refs": [
+   "Uno",
+   "Aura"
+  ],
+  "sfx": "BONK!",
+  "reuse": null,
+  "prompt": "Dutch angle medium shot: Uno and Aura bumping shoulders mid-kata in the dojo, glaring at each other, sparks between their heads, Sensei facepalming behind. Uno (chrome robot, round smooth chrome head, red eyes, headphone ears, purple fur coat, gold \"1\" chain); Aura (robot, grey face, red eyes, headphone ears, dark crimson hair, modest crimson bodysuit, cyan magic); Sensei (elderly chrome robot, grey robe, white cable beard, cane). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta and cyan, 16:9, no text.",
+  "motion": "Uno and Aura turn their heads and glare at each other, a spark pops. Slow push-in. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera."
+ },
+ {
+  "id": "v04",
+  "page": "p02",
+  "slot": "b",
+  "time": 20.759,
+  "lyric": "(Man) Quick feet on the concrete, move smooth, never messy",
+  "beat": "Their attacks collide: Uno's punch meets Aura's cyan blast and blows them both across the mat.",
+  "refs": [
+   "Uno",
+   "Aura"
+  ],
+  "sfx": "KA-POW!",
+  "reuse": null,
+  "prompt": "Extreme low side angle: Uno's punch and Aura's cyan magic blast colliding in a huge impact flash between them, both robots blown backward off their feet, dojo mats flying. Uno (chrome robot, round smooth chrome head, red eyes, headphone ears, purple fur coat, gold \"1\" chain); Aura (robot, grey face, red eyes, headphone ears, dark crimson hair, modest crimson bodysuit, cyan magic). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta and cyan, 16:9, no text.",
+  "motion": "The impact flash bursts and both robots fly backward. Locked camera, slight shake. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera."
+ },
+ {
+  "id": "s05",
+  "page": "p02",
+  "slot": "splash",
+  "time": 24.613,
+  "lyric": "(Man) Quick feet on the concrete, move smooth, never messy",
+  "beat": "The botched tag: their hand-off misses and they crash into a puddle while Sensei watches.",
+  "refs": [
+   "Uno",
+   "Aura"
+  ],
+  "sfx": "SPLOOSH!",
+  "reuse": "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/1a70147613238d45a1d50100c327a4beaf976b8a58dab1b1971802446bbc5cbb.jpg",
+  "prompt": null,
+  "motion": "Uno and Aura stumble and splash down into the puddle. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera."
+ },
+ {
+  "id": "v06",
+  "page": "p03",
+  "slot": "a",
+  "time": 27.609,
+  "lyric": "(Man) Quick feet on the concrete, move smooth, never messy",
+  "beat": "Sensei ties their wrists together with a glowing cable: fight as one.",
+  "refs": [
+   "Uno",
+   "Aura"
+  ],
+  "sfx": null,
+  "reuse": null,
+  "prompt": "High angle overhead shot: Sensei looping a glowing cable around Uno's and Aura's wrists, both robots sulking, rain-soaked dojo floor reflecting lanterns. Uno (chrome robot, round smooth chrome head, red eyes, headphone ears, purple fur coat, gold \"1\" chain); Aura (robot, grey face, red eyes, headphone ears, dark crimson hair, modest crimson bodysuit, cyan magic); Sensei (elderly chrome robot, grey robe, white cable beard, cane). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta and cyan, 16:9, no text.",
+  "motion": "Sensei pulls the glowing cable tight around their wrists. Locked overhead camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera."
+ },
+ {
+  "id": "v07",
+  "page": "p03",
+  "slot": "b",
+  "time": 34.458,
+  "lyric": "(Man) One-two in a clean sweep, like a whisper in the breeze",
+  "beat": "\"One-two in a clean sweep\": still tied, they land a perfectly synced double sweep kick.",
+  "refs": [
+   "Uno",
+   "Aura"
+  ],
+  "sfx": "SWOOSH!",
+  "reuse": null,
+  "prompt": "Extreme low wide shot: Uno and Aura, wrists still tied, spinning in sync and sweeping a training dummy off its base, circular speed lines, water spray. Uno (chrome robot, round smooth chrome head, red eyes, headphone ears, purple fur coat, gold \"1\" chain); Aura (robot, grey face, red eyes, headphone ears, dark crimson hair, modest crimson bodysuit, cyan magic). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta and cyan, 16:9, no text.",
+  "motion": "Both robots spin once in sync and the dummy topples. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera."
+ },
+ {
+  "id": "v08",
+  "page": "p04",
+  "slot": "a",
+  "time": 42.585,
+  "lyric": "(Man) I move calm with the jaw game, ain't no need for deployed",
+  "beat": "A heavy training mech swings at Aura; she blocks and reaches back for Uno.",
+  "refs": [
+   "Aura",
+   "Uno"
+  ],
+  "sfx": "KLANG!",
+  "reuse": null,
+  "prompt": "Over-the-shoulder Dutch angle: Aura blocking a giant training mech's swinging arm with a cyan shield, reaching her free hand back toward Uno, sparks. Aura (robot, grey face, red eyes, headphone ears, dark crimson hair, modest crimson bodysuit, cyan magic); Uno (chrome robot, round smooth chrome head, red eyes, headphone ears, purple fur coat, gold \"1\" chain). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta and cyan, 16:9, no text.",
+  "motion": "Aura's cyan shield flares as the mech arm hits it. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera."
+ },
+ {
+  "id": "v09",
+  "page": "p04",
+  "slot": "b",
+  "time": 46.44,
+  "lyric": "(Man) Short swing, like a clock hand, precise and to the point",
+  "beat": "\"Short swing, like a clock hand\": the tag slap lands - clean.",
+  "refs": [
+   "Uno",
+   "Aura"
+  ],
+  "sfx": "TAG!",
+  "reuse": null,
+  "prompt": "Extreme close-up: Uno's chrome hand slapping Aura's gloved hand in a tag, a starburst of cyan and purple sparks, speed lines. Uno (chrome robot, round smooth chrome head, red eyes, headphone ears, purple fur coat, gold \"1\" chain); Aura (robot, grey face, red eyes, headphone ears, dark crimson hair, modest crimson bodysuit, cyan magic). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta and cyan, 16:9, no text.",
+  "motion": "The two hands meet and a bright spark bursts. Locked macro camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera."
+ },
+ {
+  "id": "s10",
+  "page": "p04",
+  "slot": "splash",
+  "time": 54.149,
+  "lyric": "(Man) Hit hard, then I stop, man, no need to disappoint",
+  "beat": "Tag-in finisher: Uno flies over Aura and smashes the mech; Sensei finally smiles.",
+  "refs": [
+   "Uno",
+   "Aura"
+  ],
+  "sfx": "KRA-KOOM!",
+  "reuse": null,
+  "prompt": "Splash, worm's-eye view: Uno vaulting over Aura's shoulders, fist-first into the training mech which bursts into harmless bolts and confetti sparks, Sensei smiling in the background. Uno (chrome robot, round smooth chrome head, red eyes, headphone ears, purple fur coat, gold \"1\" chain); Aura (robot, grey face, red eyes, headphone ears, dark crimson hair, modest crimson bodysuit, cyan magic); Sensei (elderly chrome robot, grey robe, white cable beard, cane). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta and cyan, 16:9, no text.",
+  "motion": "Uno's fist connects and the mech bursts into sparks. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera."
+ },
+ {
+  "id": "v12",
+  "page": "p05",
+  "slot": "a",
+  "time": 60.999,
+  "lyric": "(Woman) Say my name, then bite the tongue",
+  "beat": "\"Say my name\": the arena roars as the rivals are introduced under spotlights.",
+  "refs": [
+   "KAZE-9",
+   "RAIJIN"
+  ],
+  "sfx": null,
+  "reuse": null,
+  "prompt": "Worm's-eye wide shot: tournament arena floor under crossing spotlights, rivals posing in a line: KAZE-9, RAIJIN, TEKKO and LOTUS, huge cheering robot crowd. KAZE-9 (lean ninja robot, red scarf, twin blades); RAIJIN (bulky boxer robot, lightning gauntlets); TEKKO (squat sumo robot, piston arms); LOTUS (long-legged crane-kick robot). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta and cyan, 16:9, no text.",
+  "motion": "The spotlights sweep across the four rivals. Slow tilt up. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera."
+ },
+ {
+  "id": "v13",
+  "page": "p05",
+  "slot": "b",
+  "time": 64.412,
+  "lyric": "(Woman) When it pops, it\u2019s already done",
+  "beat": "KAZE-9 picks his rival: he points a blade at Aura. It's personal.",
+  "refs": [
+   "KAZE-9",
+   "Aura"
+  ],
+  "sfx": "SHING!",
+  "reuse": null,
+  "prompt": "Extreme close-up, Dutch angle: KAZE-9's masked face and red scarf whipping in the wind, one blade pointed at the viewer, Aura's reflection in the steel. KAZE-9 (lean ninja robot, red scarf, twin blades); Aura (robot, grey face, red eyes, headphone ears, dark crimson hair, modest crimson bodysuit, cyan magic). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta and cyan, 16:9, no text.",
+  "motion": "The red scarf whips and the blade glints. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera."
+ },
+ {
+  "id": "v14",
+  "page": "p06",
+  "slot": "a",
+  "time": 68.685,
+  "lyric": "(Woman) Knuckle talk, knuckle talk",
+  "beat": "Wind-up: RAIJIN cocks a crackling lightning hook at Uno.",
+  "refs": [
+   "RAIJIN",
+   "Uno"
+  ],
+  "sfx": "BZZZT!",
+  "reuse": null,
+  "prompt": "Low Dutch angle: RAIJIN winding up a giant crackling lightning gauntlet, Uno raising his guard, ring ropes and flashbulbs. RAIJIN (bulky boxer robot, lightning gauntlets); Uno (chrome robot, round smooth chrome head, red eyes, headphone ears, purple fur coat, gold \"1\" chain). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta and cyan, 16:9, no text.",
+  "motion": "RAIJIN pulls his fist back and lightning crackles. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera."
+ },
+ {
+  "id": "v15",
+  "page": "p06",
+  "slot": "b",
+  "time": 72.121,
+  "lyric": "(Woman) Knuckle talk, knuckle talk",
+  "beat": "\"Knuckle talk\": strike and impact - Uno ducks and lands the uppercut.",
+  "refs": [
+   "Uno",
+   "RAIJIN"
+  ],
+  "sfx": "POW!",
+  "reuse": "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/525a9cb723f54bafe8f25c99d2bf1a8d2ea498ceb87ac9abbb898e73d14508a8.jpg",
+  "prompt": null,
+  "motion": "Uno's uppercut snaps up and RAIJIN's head rocks back. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera."
+ },
+ {
+  "id": "v16",
+  "page": "p06",
+  "slot": "c",
+  "time": 73.816,
+  "lyric": "(Woman) Hands up, then it all falls",
+  "beat": "\"Hands up, then it all falls\": Aura tags in and pushes TEKKO out of the ring.",
+  "refs": [
+   "Aura"
+  ],
+  "sfx": "WHUMP!",
+  "reuse": null,
+  "prompt": "Wide side angle: Aura's cyan wave pushing TEKKO off the edge of the ring, TEKKO tumbling harmlessly onto a pile of cushions, crowd jumping. Aura (robot, grey face, red eyes, headphone ears, dark crimson hair, modest crimson bodysuit, cyan magic); TEKKO (squat sumo robot, piston arms). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta and cyan, 16:9, no text.",
+  "motion": "TEKKO tips backward off the ring edge. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera."
+ },
+ {
+  "id": "s17",
+  "page": "p06",
+  "slot": "splash",
+  "time": 76.812,
+  "lyric": "(Woman) Knuckle talk, knuckle talk",
+  "beat": "Reaction: LOTUS strikes from above; Aura blocks the crane kick mid-air.",
+  "refs": [
+   "Aura"
+  ],
+  "sfx": "WHAM!",
+  "reuse": null,
+  "prompt": "Splash, worm's-eye view: LOTUS diving down with a crane kick against Aura's crossed cyan-glowing forearms, giant impact ring, cherry petals and spotlights. LOTUS (long-legged crane-kick robot); Aura (robot, grey face, red eyes, headphone ears, dark crimson hair, modest crimson bodysuit, cyan magic). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta and cyan, 16:9, no text.",
+  "motion": "LOTUS's kick lands on Aura's guard and the impact ring flashes. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera."
+ },
+ {
+  "id": "v18",
+  "page": "p07",
+  "slot": "a",
+  "time": 81.943,
+  "lyric": "(Man) Toe-to-toe, nah, I don't overdo, keep it understated",
+  "beat": "The rivalry match: Aura vs KAZE-9, blade against cyan shield.",
+  "refs": [
+   "Aura",
+   "KAZE-9"
+  ],
+  "sfx": "SKRRRK!",
+  "reuse": null,
+  "prompt": "Extreme close-up, Dutch angle: KAZE-9's twin blades grinding against Aura's cyan shield, sparks spraying, their red eyes locked. Aura (robot, grey face, red eyes, headphone ears, dark crimson hair, modest crimson bodysuit, cyan magic); KAZE-9 (lean ninja robot, red scarf, twin blades). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta and cyan, 16:9, no text.",
+  "motion": "Sparks spray as the blades grind on the shield. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera."
+ },
+ {
+  "id": "v19",
+  "page": "p07",
+  "slot": "b",
+  "time": 88.375,
+  "lyric": "(Man) Duck low, then I cut through, unexpected, unseen",
+  "beat": "\"Duck low, then I cut through\": KAZE-9 feints and drops Aura to the mat.",
+  "refs": [
+   "Aura",
+   "KAZE-9"
+  ],
+  "sfx": "THOOM!",
+  "reuse": null,
+  "prompt": "High angle top-down: Aura falling flat onto the arena mat with an impact flash, KAZE-9 landing behind her in a crouch, red scarf trailing. Aura (robot, grey face, red eyes, headphone ears, dark crimson hair, modest crimson bodysuit, cyan magic); KAZE-9 (lean ninja robot, red scarf, twin blades). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta and cyan, 16:9, no text.",
+  "motion": "Aura hits the mat and the impact flash pops. Locked overhead camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera."
+ },
+ {
+  "id": "v20",
+  "page": "p07",
+  "slot": "c",
+  "time": 95.225,
+  "lyric": "(Man) No chess, just a slick check, a subtle shift in the air",
+  "beat": "Uno kneels over Aura; her cyan glow flickers out. The crowd goes quiet.",
+  "refs": [
+   "Uno",
+   "Aura"
+  ],
+  "sfx": null,
+  "reuse": null,
+  "prompt": "Low angle close shot, dim light: Uno kneeling over fallen Aura, one hand on her shoulder, her cyan magic flickering weakly, single spotlight, silent crowd in shadow. Uno (chrome robot, round smooth chrome head, red eyes, headphone ears, purple fur coat, gold \"1\" chain); Aura (robot, grey face, red eyes, headphone ears, dark crimson hair, modest crimson bodysuit, cyan magic). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta and cyan, 16:9, no text.",
+  "motion": "Aura's cyan glow flickers once. Very slow push-in. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera."
+ },
+ {
+  "id": "s21",
+  "page": "p07",
+  "slot": "splash",
+  "time": 102.911,
+  "lyric": "(Man) If the room start to get loud, and the tension begins to rise",
+  "beat": "\"If the room start to get loud... I make room with a clean step\": Uno carries Aura out of the ring; KAZE-9 lowers his blades in respect.",
+  "refs": [
+   "Uno",
+   "Aura",
+   "KAZE-9"
+  ],
+  "sfx": null,
+  "reuse": null,
+  "prompt": "Splash, wide side-on shot: Uno carrying Aura on his back across the arena, side-on, crowd parting, KAZE-9 in the background lowering his blades and bowing. Uno (chrome robot, round smooth chrome head, red eyes, headphone ears, purple fur coat, gold \"1\" chain); Aura (robot, grey face, red eyes, headphone ears, dark crimson hair, modest crimson bodysuit, cyan magic); KAZE-9 (lean ninja robot, red scarf, twin blades). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta and cyan, 16:9, no text.",
+  "motion": "Uno steps slowly left to right across the frame carrying Aura. Locked side camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera."
+ },
+ {
+  "id": "v22",
+  "page": "p08",
+  "slot": "a",
+  "time": 108.042,
+  "lyric": "(Woman) Count it out, one by one",
+  "beat": "\"Count it out, one by one\": SHOGUN rises from the arena throne and ignites his red katana.",
+  "refs": [
+   "SHOGUN"
+  ],
+  "sfx": "VMMMM!",
+  "reuse": null,
+  "prompt": "Extreme worm's-eye view: SHOGUN rising from a throne of server racks, red katana igniting, glowing red smoke rolling down the steps. SHOGUN (red samurai robot, horned helmet, glowing red katana). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta and cyan, 16:9, no text.",
+  "motion": "SHOGUN draws the katana and it ignites red. Slow tilt up. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera."
+ },
+ {
+  "id": "v23",
+  "page": "p08",
+  "slot": "b",
+  "time": 115.31,
+  "lyric": "(Woman) Say my name, then bite the tongue",
+  "beat": "\"Say my name\": the prize - SHOGUN grips the golden belt.",
+  "refs": [
+   "SHOGUN"
+  ],
+  "sfx": null,
+  "reuse": "/workspace/neon-dojo-comic/panels/n18.jpg",
+  "prompt": null,
+  "motion": "The armored hands tighten on the belt, red glint. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera."
+ },
+ {
+  "id": "s24",
+  "page": "p08",
+  "slot": "splash",
+  "time": 118.306,
+  "lyric": "(Woman) When it pops, it\u2019s already done",
+  "beat": "\"When it pops\": Uno, alone, meets SHOGUN in a blade lock.",
+  "refs": [
+   "Uno",
+   "SHOGUN"
+  ],
+  "sfx": "KZZZANG!",
+  "reuse": "/home/box/agent-data/agents/7ab6020d-de13-47d8-8ee8-1d6ca8bc0c89/assets/0284aa8eafe96aebecf0ee0edb9b36d3ed5995fce00285ed6693716e23056eac.jpg",
+  "prompt": null,
+  "motion": "Sparks spray from the blade lock as they push. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera."
+ },
+ {
+  "id": "v25",
+  "page": "p09",
+  "slot": "a",
+  "time": 124.714,
+  "lyric": "(Woman) Keep it close, keep it small",
+  "beat": "\"Keep it close\": Aura, recovered and blazing cyan, dives in and slaps the tag.",
+  "refs": [
+   "Aura",
+   "Uno"
+  ],
+  "sfx": "TAG!",
+  "reuse": null,
+  "prompt": "Dutch angle mid-air shot: Aura diving in over the arena, cyan aura blazing, slapping Uno's outstretched hand mid-air, starburst of sparks. Aura (robot, grey face, red eyes, headphone ears, dark crimson hair, modest crimson bodysuit, cyan magic); Uno (chrome robot, round smooth chrome head, red eyes, headphone ears, purple fur coat, gold \"1\" chain). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta and cyan, 16:9, no text.",
+  "motion": "Their hands slap and the starburst flares. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera."
+ },
+ {
+  "id": "v26",
+  "page": "p09",
+  "slot": "b",
+  "time": 128.546,
+  "lyric": "(Woman) Hands up, then it all falls",
+  "beat": "\"Hands up, then it all falls\": tag combo - Uno launches SHOGUN, Aura blasts him in the air.",
+  "refs": [
+   "Uno",
+   "Aura",
+   "SHOGUN"
+  ],
+  "sfx": "KA-BLAM!",
+  "reuse": null,
+  "prompt": "Worm's-eye wide shot: Uno's rising kick launching SHOGUN into the air while Aura's cyan beam hits him from the side, double impact flash, speed lines. Uno (chrome robot, round smooth chrome head, red eyes, headphone ears, purple fur coat, gold \"1\" chain); Aura (robot, grey face, red eyes, headphone ears, dark crimson hair, modest crimson bodysuit, cyan magic); SHOGUN (red samurai robot, horned helmet, glowing red katana). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta and cyan, 16:9, no text.",
+  "motion": "SHOGUN is knocked upward by the kick. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera."
+ },
+ {
+  "id": "v28",
+  "page": "p10",
+  "slot": "a",
+  "time": 137.091,
+  "lyric": "(Man) Uh, uh, they talking tough, yeah, their words are talking thin",
+  "beat": "\"They talking tough... I just grin\": SUPER cut-in - Uno's eyes flare.",
+  "refs": [
+   "Uno"
+  ],
+  "sfx": null,
+  "reuse": "/workspace/neon-dojo-comic/panels/n09.jpg",
+  "prompt": null,
+  "motion": "Uno's red eyes flare brighter. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera."
+ },
+ {
+  "id": "v29",
+  "page": "p10",
+  "slot": "b",
+  "time": 144.382,
+  "lyric": "(Man) One sharp move, whole room still, like a freeze frame, a pause",
+  "beat": "\"One sharp move\": SUPER cut-in - Aura charges a cyan orb.",
+  "refs": [
+   "Aura"
+  ],
+  "sfx": null,
+  "reuse": "/workspace/neon-dojo-comic/panels/n23.jpg",
+  "prompt": null,
+  "motion": "The cyan orb swells and crackles. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera."
+ },
+ {
+  "id": "s30",
+  "page": "p10",
+  "slot": "splash",
+  "time": 149.049,
+  "lyric": "(Man) That's the way I say what I say, ain't no need for applause",
+  "beat": "Double finisher: punch plus orb - SHOGUN's armour bursts into harmless sparkles.",
+  "refs": [
+   "Uno",
+   "Aura",
+   "SHOGUN"
+  ],
+  "sfx": "KA-BOOOOM!",
+  "reuse": null,
+  "prompt": "Splash, centred low angle: Uno's glowing punch and Aura's cyan orb hitting SHOGUN together, his red armour bursting apart into harmless sparkles and stars, a small plain robot left dizzy inside. Uno (chrome robot, round smooth chrome head, red eyes, headphone ears, purple fur coat, gold \"1\" chain); Aura (robot, grey face, red eyes, headphone ears, dark crimson hair, modest crimson bodysuit, cyan magic); SHOGUN (red samurai robot, horned helmet, glowing red katana). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta and cyan, 16:9, no text.",
+  "motion": "The armour bursts outward into sparkles. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera."
+ },
+ {
+  "id": "v31",
+  "page": "p11",
+  "slot": "a",
+  "time": 157.594,
+  "lyric": "(Woman) Knuckle talk, knuckle talk",
+  "beat": "Uno and Aura hand the golden belt to Sensei; un-armoured SHOGUN and the rivals bow.",
+  "refs": [
+   "Uno",
+   "Aura",
+   "KAZE-9",
+   "RAIJIN"
+  ],
+  "sfx": null,
+  "reuse": null,
+  "prompt": "High angle wide shot in the repaired dojo: Uno and Aura presenting the golden belt to the smiling Sensei in the repaired sunny dojo, small un-armoured SHOGUN, KAZE-9 and RAIJIN bowing. Uno (chrome robot, round smooth chrome head, red eyes, headphone ears, purple fur coat, gold \"1\" chain); Aura (robot, grey face, red eyes, headphone ears, dark crimson hair, modest crimson bodysuit, cyan magic); Sensei (elderly chrome robot, grey robe, white cable beard, cane); KAZE-9 (lean ninja robot, red scarf, twin blades); RAIJIN (bulky boxer robot, lightning gauntlets). All robots chrome with red eyes and headphone ears, no humans, kid-friendly. 1990s superhero comic panel, bold ink, heavy blacks, halftone, speed lines, impact flash, neon magenta and cyan, 16:9, no text.",
+  "motion": "Sensei lifts the belt and the rivals bow. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera."
+ },
+ {
+  "id": "v32",
+  "page": "p11",
+  "slot": "b",
+  "time": 160.984,
+  "lyric": "(Woman) Knuckle talk, knuckle talk",
+  "beat": "\"I don't argue, I just walk\": Uno and Aura, from behind, facing the sunrise.",
+  "refs": [
+   "Uno",
+   "Aura"
+  ],
+  "sfx": null,
+  "reuse": "/workspace/neon-dojo-comic/panels/n26.jpg",
+  "prompt": null,
+  "motion": "The sun rises slowly, their coat and hair stir in the wind. Locked camera. Keep every robot's shape, face and limb count; no morphing, no new characters, nobody walks toward the camera."
+ }
+]
